@@ -1,0 +1,73 @@
+Column names should be capitalized to conform with naming conventions in R
+I'm ok with column names using periods to separate words (rather than underscores).  This is the default in R when importing column names with spaces, and will help distinguish column names from variable (object) names that should use underscores (?)
+
+================================================================================
+NAMING CONVENTIONS
+
+Files:      words separated by \s - _ ; punctuation according to file system
+Objects:    Capitalized, CamelCase, terms separated by _ , suffix/prefix separated by .
+Constants:  UPPER-CASE, words separated by _ , suffix/prefix separated by .
+Tables:     Plural / collective, Capitalized, CamelCase, other Object conventions.
+Columns:    Singular, Capitalized, words separated by .
+[ Factors:  Capital     ]
+[ Data:     lower-case ?]
+            Data Frame column names rarely appear to use _'s ;
+            . is nearly always used to separate words.  
+            In fact, R automatically replaces illegal characters in imported column names with .
+functions:  lower case, or camelCase; words separated by _
+            ONLY suffix/prefix (methods, namespace) separated by '.'
+  function arguments: lowercase, or camelCase; words separated by '.'
+
+================================================================================
+SAMPLE ID
+  aka "Patch ID", "Sample ID Code"
+  A concatenation of single-character codes for columns in order of nesting:
+  "Block" + "Time" +  "Chamber" + "-" + "Fragmentation" + "." + "Position"
+
+  Separate columns are kept to facilitate different ways of filtering or sorting data.
+________________________________________________________________________________
+Block
+
+
+________________________________________________________________________________
+Time Point
+* Time
+  time.point
+  Time.pt
+  TimePoint
+  TimePt
+X  T.point
+X  T.pt
+
+________________________________________________________________________________
+Chamber treatment (code)
+  Chamber
+  Climate
+  Warming
+
+________________________________________________________________________________
+Fragmentation treatment (code)
+  Fragmentation
+  Frag
+  Frag.trt
+________________________________________________________________________________
+Patch Position (code)
+  Position
+  Pos
+  pos
+  Patch
+
+
+================================================================================
+VARIABLES
+
+________________________________________________________________________________
+Cyanobacteria Count
+  cb
+  Veg.count - Vegetative cell count.
+  V.qty
+  V_count   - Vegetative cell count.
+  H_count   - Heterocyst cell count
+  H.qty
+  Cells.qty
+  Cells     - Total Cells
