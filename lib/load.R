@@ -47,44 +47,23 @@ head(SECC.base)
 ##################################################
 ## CHECK & CLEAN DATA
 ##################################################
+##================================================
+## MANUALLY CLEAN & PROCESS DATA
+##================================================
 # If files need Special Attention (individual cleaning), 
 # that goes here; or in a separate script that is source()'d here.
 
-Data_Check <- TRUE	# default value: set to FALSE if a check fails.
 
-## Standardize ID column names and types (based on template)
-ColNames_std <- colnames(SECC.base)	# could use colnames(SECC.base) or Trt_nest_order
-if (  min( colnames(SECC.base) %in% ColNames_std ) == 0 ) {
-  # min(boolean_vector) == 0 means there was at least on FALSE result
-  # Check for most likely non-standard names
-  # Attempt to rename based on likely matches.
-  # If column names still do not match, throw an Error message: this file needs Special Attention.
+##================================================
+## AUTOMATICALLY CHECK & CLEAN DATA
+##================================================
+
+for (DataObject in Data_objects)
+{
+  assign( DataObject, checkSECCdata( get(DataObject), DataObject ) )
+    # Returns an updated clean version of data object.
+    # It will fail with an error message if the object is unsuitable for merging.
 }
-
-## Standardize ID column types & values (levels)
-  # Check that column types & values (levels) match template
-  # Attempt to convert column types if necessary
-  # Check for unexpected Warnings: 
-  # Unexpected Warnings means this file needs Special Attention.
-
-
-## Standardize factor levels
-if ( min(levels(SECC.base$Pos) %in% Pos_all_lvls) == 0 ) {
-  # min(boolean_vector) == 0 means there was at least on FALSE result
-  
-}
-
-# Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)
-  # Check number of rows - data files may only be a subset
-  # If fewer rows, are they a subset: can missing rows be replaced with NA's?
-# If IDs still do not match, throw an Error message: this file needs Special Attention.
-
-# If all checks pass, continue.  
-# Otherwise, throw an Error message: this file needs Special Attention.
-
-if Data_Check == FALSE stop(
-  paste("ERROR: There is an unknown problem with data frame: ", DataFrame)
-)
 
 ##################################################
 ## PROCESS DATA
@@ -92,39 +71,23 @@ if Data_Check == FALSE stop(
 ##================================================
 ## Merge all main response variables into a single data frame: SECC
 ##================================================
+SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
+merge.SECC <- Data_objects[substr(Data_objects, 1, 5)=="SECC."]  # merge objects beginning with "SECC."
+SECC.by <- colnames(SECC.base)
+for (DataObject in Data_objects)
+{
+  SECC <- merge( SECC, DataObject, by=SECC.by, all=TRUE, sort=FALSE)
+}
 
 ##================================================
 ## Generate factor columns, re-order factor levels, etc.
 ##================================================
-SECC <- within( SECC.raw, {
-  ## Rename columns /convert to standard informative names for the rest of this script
-  Block   <- factor(Block)
-  Time    <- factor(Time)
-  Chamber <- factor(Warming)
-  Frag    <- factor(Frag)
-  Pos     <- factor(Pos)
-  ## rename and reorder factor levels the easy way - maintains empty values if empty factor specified, otherwise converts to 'NA'.  Requires package 'car'
-  Chamber <- recode( Warming, 
-    "'A'='Ambient'; 'B'='Partial Chamber'; 'C'='Full Chamber'; else=''", 
-    levels=c( "Ambient", "Partial Chamber", "Full Chamber" ),
-    as.factor.result=TRUE
-  )
-	levels(Frag) <- list( 'Continuous'=1, 'Full Corridors'=2, 'Pseudo-Corridors'=3, 'Isolated'=4 )
-	Position <- factor(Pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
-	levels(Position) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings).
-	# New factor with simplified recoded values for Patch Position
-	Pos <- recode( Position, 
-		"'I'='Inner'; 'O'='Outer'; else='other'", 
-		levels=c( "Inner", "other", "Outer" ),
-		as.factor.result=TRUE
-	)
-})
+SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`  
 
-
-## Summarize data by means across different (or all) Positions to prevent unbalanced effects?
-SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, TimePt=TimePt, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
-SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, TimePt=TimePt, Chamber=Chamber, Frag=Frag, Pos1=Pos1), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
+### Summarize data by means across different (or all) Positions to prevent unbalanced effects?
+# SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
+# SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
 
 
 ##################################################
@@ -134,9 +97,9 @@ SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, TimePt=TimePt, Ch
 head(SECC)		# have a peek at the first 6 rows & columns: is this what you expected?
 str(SECC)		# check structure: are the appropriate variables factors, numeric, etc.?
 
-## Regional data
-head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?
-str(SECCr)		# check structure: are the appropriate variables factors, numeric, etc.?
+# ## Regional data
+# head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?
+# str(SECCr)		# check structure: are the appropriate variables factors, numeric, etc.?
 
 ##################################################
 ## SAVE DATA
@@ -147,3 +110,15 @@ str(SECCr)		# check structure: are the appropriate variables factors, numeric, e
 # + SECC.fauna - Microarthropod community data corresponding to SECC.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
+load_export <- c( 'SECC', 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+save( list=load_export, file="./save/SECC_data.R" )
+
+# Export data frames to csv, just in case.
+for (DataFrame in load_export)
+{
+  filename <- gsub('.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
+  write.csv( get(DataFrame), 
+    file = paste("./save/", filename, ".csv", sep=""), 
+    row.names=FALSE
+  ) 
+}
