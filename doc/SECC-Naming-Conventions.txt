@@ -71,3 +71,75 @@ Cyanobacteria Count
   H.qty
   Cells.qty
   Cells     - Total Cells
+
+
+================================================================================
+FINAL DATA STRUCTURE
+
+   Label            Units           Description
+   ---------------  ----------      ----------------
+## ID columns
+   SampleID                         Block & Time & Chamber - Fragmentation . Position
+   Block                            1-8
+   Time                             1-4 (not 3)
+   Chamber                          A (Ambient), B (Partial), C (Full)
+   Fragmentation                    1 (Cont.), 2 (Corr.), 3 (pseudo-corr.), 4 (isolated)
+   Position                         I(nner), O(uter), N(orth)/S(outh), E(ast)/W(est)
+## Environmental Data               SECC.env
+   UTM.E            metres          UTM coordinates East  (x)
+   UTM.N            metres          UTM coordinates North (y)
+   Sample.dwt        g              Dry Weight of entire sample (pi*12.5^2 = 490.87 cm^2)
+   ARA.dwt          mg              Dry Weight of ARA sample (20 shoots)
+   CB.dwt           mg              Dry Weight of Cyanobacteria samples (2 shoots)
+   H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
+   Growth           mm              Moss Growth (total?)*
+                                    * These were all in t4 samples, 
+                                    but measured at each time-point. Repeated measures.
++    growth.t1      mm              * Moss Growth @ t1
++    growth.t2      mm              * Moss Growth @ t2
++    growth.t3      mm              * Moss Growth @ t3 (i.e. when t4 was sampled).
+>  Prod             mg dwt          Moss growth converted to biomass (productivity).
+   Decomposition    %mass loss      Decomposition rates.
+   N.avail          ?               Available Nitrogen Compounds (Ion resin)
+## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
+   Nostoc           #/g dwt         Nostoc cyanobacteria cells
+>  Nostoc.h         #/g dwt         Nostoc heterocysts
+   Stigonema        #/g dwt         Stigonema cyanobacteria cells
+>  Stigonema.h      #/g dwt         Stigonema heterocysts
+   Other.cells      #/g dwt         Other cyanobacteria cells
+   Cells            #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
+>  H.cells          #/g dwt         Heterocyst cell density
+   ARA              umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
+>  Nfix             umol/g/day      Nitrogen-fixation rates (ARA /3)
+## Microarthropod Community data    SECC.fauna [separate data frame?]
+   [1 column/taxa]  #/g dwt         Microarthropod community data
+
+
+================================================================================
+FILE NAMES
+
+## Data files
+
+Each data file should be prefixed appropriately to group files that are related,
+or are to be merged together during the load process.
+
+### Main Experiment
+
+Files to be merged into standard data frames (SECC, SECC.env, SECC.fauna)
+consist of a single data point or calculated value for each patch in the
+experiment.
+
+>   'SECC_' & [data name] & ['_t'#] + '.csv'/'.txt'
+(The "SECC" prefix is important for all these files, to specify which data
+frames are to be merged).
+
+### Other Data
+
+Other data consists of special data that does not conform to the main data
+table:
+
++ Temperature         Time Series
++ Relative Humidity   Time Series
+>   TRH_SECC.csv
++ Patch ID data       Recorded patch positions used to generate data template.
+>   PatchIDs_SECC.csv

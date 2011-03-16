@@ -19,7 +19,7 @@ load('./save/SECC_factors.R')	# includes SECC.base data.frame,
 SECC.raw <- read.csv("./save/SECC_base.csv") # just to check how it is imported.  
   # Should be the same values as SECC.base, but raw column types (only character columns are factors).
 
-Data_files <- dir('./data/')
+Data_files <- dir('./data/')  # get list of file names.
 Data_objects <- NULL          # empty object to hold vector of object names.
 for (File_name in Data_files) {
   File_path <- paste("./data/", File_name, sep="")
@@ -32,7 +32,7 @@ for (File_name in Data_files) {
   # collect a list of object names for further processing.
   Data_objects <- c(Data_objects, Object_name)
 }
-rm( list=c('File_name', 'File_path','temp','Object_name') )
+rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 
 ##================================================
 ## CHECK DATA
@@ -138,4 +138,12 @@ str(SECC)		# check structure: are the appropriate variables factors, numeric, et
 head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?
 str(SECCr)		# check structure: are the appropriate variables factors, numeric, etc.?
 
-# Save data to native R file in "./save/", or leave in memory.
+##################################################
+## SAVE DATA
+##################################################
+# Save data to native R file "./save/SECC_data.R", or leave in memory:
+# + SECC       - data from experimental patches.  **Main table for analysis**
+# + SECC.env   - Environmental data corresponding to SECC.
+# + SECC.fauna - Microarthropod community data corresponding to SECC.
+# + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
+# + [Other]

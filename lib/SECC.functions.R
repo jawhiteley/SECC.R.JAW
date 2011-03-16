@@ -4,13 +4,13 @@
 # Jonathan Whiteley		R v2.10.1		2010-05-08
 ##################################################
 ## access these functions in another file by using: 
-## 	source("path/to/this/file.R")
+## 	 source("path/to/this/file.R")
 
 ##################################################
 ## ANOVA: standardized analysis of individual response variables
 ##################################################
 # Standard univariate Analysis of Variance on NESTED treatments: 
-# No fancy mixed effects or error distribution families (GLMM).
+# No fancy mixed effects or error distribution families (GLMM) yet.
 # The same experimental design applies for each response variable, 
 # therefore a standard analytical procedure applies.
 # Major differences include details such as:
@@ -18,10 +18,11 @@
 #   - Graphs of significant Main Effects
 
 ##================================================
-## DATA PROCESSING & EXPLORATION
+## DATA EXPLORATION
 ##================================================
-# Produce a data frame with standard columns
-# used for standardized analysis steps.
+# See `/lib/fun.R` for data processing functions
+# used to produce a data frame with standard columns
+# for standardized analysis steps.
 
 
 

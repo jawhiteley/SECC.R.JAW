@@ -102,7 +102,7 @@ head(SECC.base)		# have a peek at the first 6 rows & columns: is this what you e
 ## LOAD METADATA & PATCH IDs
 ####################################################
 # Load MetaData containing actual (observed) patch positions.
-PatchIDs <- read.csv("./data/SECC-PatchIDs.csv")
+PatchIDs <- read.csv("./data/PatchIDs_SECC.csv")
 PatchIDs <- with( PatchIDs, data.frame(
   PatchID  = as.character(PatchID),
   Block    = factor(Block),
