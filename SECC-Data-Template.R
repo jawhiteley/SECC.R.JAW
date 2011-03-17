@@ -148,7 +148,8 @@ if (Rows_mismatched == 0) {
     Pos <- factor(Patch_pos$Position, levels = Pos_all_lvls)  # levels in desired order.
     SampleID = paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
   })
-} else stop("Rows do not all match.  Check row sorting before trying to merge.")
+}
+else stop("Rows do not all match.  Check row sorting before trying to merge.")
 
 IDs_mismatched <- sum( SECC.merged$SampleID != Patch_pos$PatchID )
 if (IDs_mismatched == 0) {

@@ -2,6 +2,23 @@
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
 # Jonathan Whiteley		R v2.12		2011-01-26
+##================================================
+## All Data files in './data' are loaded into memory.
+## Load scripts for manual processing are source()'d
+##   as necessary: cleaning, processing, calculations, etc.
+##   This may also generate a new object suitable for analysis
+##   and mergining, by combining several others.
+##   - redundant objects should be removed from memory.
+## Data objects whose names start with 'SECC.'
+##   are checked and merged onto 'SECC.base'
+##   -> SECC : Main data frame of response variables.
+## Data objects starting with 'SECC_env'
+##   are checked and merged onto 'SECC.base' -> SECC.env
+##   -> SECC.env : Environmental data.
+## Faunal data is loaded into 'SECC.fauna'
+## Data objects starting with 'TRH.'
+##   are checked and merged as a Time Series.
+##   -> SECC.TRH : Temperature & Relative Humidity Time Series.
 ##################################################
 
 # setwd('./ SECC/')   # project directory
@@ -9,7 +26,8 @@ getwd()             # check current wd
 
 ## LOAD LIBRARIES
 source("./lib/fun.R")   # define functions
-library(car)		# load external package 'car', for recode()
+require(car)		# load external package 'car', for recode()
+require(reshape)	# sort_df (sort data frame) wrapper for order
 
 ##################################################
 ## LOAD DATA FILES
@@ -53,17 +71,24 @@ head(SECC.base)
 # If files need Special Attention (individual cleaning), 
 # that goes here; or in a separate script that is source()'d here.
 
+source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
 
 ##================================================
 ## AUTOMATICALLY CHECK & CLEAN DATA
 ##================================================
+# Check & merge only objects beginning with "SECC."
+merge.SECC <- Data_objects[substr(Data_objects, 1, 5)=="SECC."]  
 
-for (DataObject in Data_objects)
+for (DataObject in merge.SECC)
 {
   assign( DataObject, checkSECCdata( get(DataObject), DataObject ) )
     # Returns an updated clean version of data object.
     # It will fail with an error message if the object is unsuitable for merging.
 }
+# What does this warning mean exactly?
+#   In min(levels(data[[ColName]]) %in% Col_lvls) :
+#   no non-missing arguments to min; returning Inf
+# It might result from a column of NAs being compared?
 
 ##################################################
 ## PROCESS DATA
@@ -73,12 +98,25 @@ for (DataObject in Data_objects)
 ##================================================
 SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
-merge.SECC <- Data_objects[substr(Data_objects, 1, 5)=="SECC."]  # merge objects beginning with "SECC."
-SECC.by <- colnames(SECC.base)
-for (DataObject in Data_objects)
+SECC.by <- names(SECC.base)
+merge.mark <- "SECC."  # column name prefix marking which columns to include in the merge.
+mark.pattern <- paste("\\b", merge.prefix, sep="")
+for (ObjectName in merge.SECC)
 {
-  SECC <- merge( SECC, DataObject, by=SECC.by, all=TRUE, sort=FALSE)
+  DataObject <- get(ObjectName)
+  # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
+  KeepCols <- names(DataObject)[substr(names(DataObject), 1, 5) == merge.mark]
+  KeepCols <- gsub(mark.pattern, "", KeepCols, perl=TRUE)  # strip markers
+  KeepCols <- c(SECC.by, KeepCols)
+  names(DataObject) <- gsub(mark.pattern, "", names(DataObject), perl=TRUE)  # strip markers
+  DataObject <- DataObject[,KeepCols]
+  # Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
+  SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
 }
+# Proper sort order
+SECC <- sort_df( SECC, 
+  vars=c(Trt_sort_order, "Pos") 
+)
 
 ##================================================
 ## Generate factor columns, re-order factor levels, etc.

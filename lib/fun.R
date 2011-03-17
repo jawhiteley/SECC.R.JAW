@@ -18,7 +18,66 @@ source('./lib/jaw.misc_functions.R')
 ## CHECK DATA
 ##================================================
 
-checkSECCdata <- function (data=NULL, DataName="data") {
+SECCcolumnNames <- function(data=NULL, DataName="data")
+{
+  ## Standardize column names
+  # Check if first argument is actually a data frame.
+  if ('data.frame' %in% class(data) == FALSE) stop(
+      paste("The first argument of the SECCcolumns() function", 
+          "must be an object of class \"data.frame\"."
+         )
+     )
+
+  ## REQUIRES:
+  load('./save/SECC_factors.R')	# includes SECC.base data.frame, 
+    # and other vectors of standard column names and levels.
+  ## Standard ID column names and types (based on template)
+   # colnames(SECC.base) includes SampleID ; Trt_nest_order does not
+  ColNames_std <- colnames(SECC.base)
+  SampleID.synonyms <- c("SampleID", "PatchID", "ID", "Sample")
+  Block.synonyms   <- c("Block", "block")
+  Time.synonyms    <- c("Time", "TimePt", "time.point", "time.pt")
+  Chamber.synonyms <- c("Chamber", "chamber", "Warming", "warming", "warm", "Chamber.trt", "Warming.trt")
+  Frag.synonyms    <- c("Frag", "Fragmentation", "Frag.trt", "fragmentation", "frag", "frag.trt")
+  Pos.synonyms     <- c("Pos", "Position", "position", "pos")
+
+  for (ColName in ColNames_std) 
+  {
+    ## Check for presence of standard ID columns.--------------------------------  
+    ## Check for most likely non-standard names (synonyms)
+    col.synonyms <- get(paste(ColName, ".synonyms", sep=""))
+    ## Attempt to rename based on likely matches.
+    # which synonym is present in the data frame?
+    colnames.std <- colnames(data) %in% col.synonyms  
+    # replace synonymous colnames in data frame with standard name (1st item)
+    colnames(data)[colnames.std==TRUE] <- col.synonyms[1]
+      
+    # If column name still does not match, throw an Error message: this file needs Special Attention.
+    if ( ColName %in% colnames(data) == FALSE )
+    {
+      Data_Check <- FALSE
+      print('column synonyms:')
+      print(col.synonyms)
+      print('column names:')
+      print(colnames(data))
+      print('columns present:')
+      print(colnames.std)
+      stop(
+        paste( "Column \'", ColName, "\' is missing from data frame: ", DataName, "\n",
+               "Automatic search & re-naming based on common synonyms failed.\n", 
+               "This File needs Special Attention.",
+               sep=""
+            )
+      )
+    }
+    ##--------------------------------
+  }
+  return(data)
+}
+
+
+checkSECCdata <- function(data=NULL, DataName="data")
+{
   ## Checks a data frame argument to make sure that 
   ## it conforms to the standards for the 
   ## Schefferville Experiment on Climate Change (SEC-C).
@@ -34,115 +93,133 @@ checkSECCdata <- function (data=NULL, DataName="data") {
   ## REQUIRES:
   load('./save/SECC_factors.R')	# includes SECC.base data.frame, 
     # and other vectors of standard column names and levels.
-  Pos_lvls <- Pos_all_lvls  # for convenience later.
-  SampleID.synonyms <- c("SampleID", "PatchID", "ID")
-  Block.synonyms   <- c("Block", "block")
-  Time.synonyms    <- c("Time", "time.pt", "TimePt")
-  Chamber.synonyms <- c("Chamber", "chamber", "Warming", "warming", "warm", "Chamber.trt", "Warming.trt")
-  Frag.synonyms    <- c("Frag", "Fragmentation", "Frag.trt", "fragmentation", "frag", "frag.trt")
-  Pos.synonyms     <- c("Pos", "Position", "position", "pos")
-  
+# Pos_lvls <- Pos_all_lvls  # for convenience later.
   ## Standard ID column names and types (based on template)
-  ColNames_std <- colnames(SECC.base)	# colnames(SECC.base) (SampleID) or Trt_nest_order
+   # colnames(SECC.base) includes SampleID ; Trt_nest_order does not
+  ColNames_std <- colnames(SECC.base)
   
   ## BEGIN checking data frame
   Data_Check <- TRUE	# default value: set to FALSE if a check fails.
   # data.new   <- data    # this is what will be returned.
-  
-  if ( min( colnames(DataObject) %in% ColNames_std ) == 0 )
+
+  ## Strip blank (empty) rows with no data? values of NA or '' in all columns?
+  data <- data[is.na(data[1])==FALSE,]
+  data <- data[data[1]!='',]
+
+  if ( min( ColNames_std %in% colnames(DataObject) ) == 0 )
   {
     # min(boolean_vector) == 0 means there was at least one FALSE result
-    # this check is built into the checks for each column,
-    # to put all operations in a single loop.
+    data <- SECCcolumnNames(data, DataName)  # standardize column names.
   }
-    for (ColName in ColNames_std) 
-    {
-      ## Check for presence of standard ID columns.--------------------------------  
-      ## Check for most likely non-standard names (synonyms)
-      col.synonyms <- get(paste(ColName, ".synonyms", sep=""))
-      ## Attempt to rename based on likely matches.
-      # which synonym is present in the data frame?
-      colnames.std <- colnames(data) %in% col.synonyms  
-      # replace synonymous colnames in data frame with standard name (1st item)
-      colnames(data)[colnames.std==TRUE] <- col.synonyms[1]
-        
-      # If column name still does not match, throw an Error message: this file needs Special Attention.
-      if ( ColName %in% colnames(DataObject) == FALSE )
-      {
-        Data_Check <- FALSE
-        stop(
-          paste( "Column \'", ColName, "\' is missing from data frame:", DataName, "\n",
-                 "      Automatic search & re-naming based on common synonyms failed.\n", 
-                 "      This File needs Special Attention."
-               )
-        )
-      }
-      ##-------------------------------- 
-      
-      ## Standardize ID column types & values (levels) ---------------- 
-       # Check that column types & values (levels) match template
-      if ( typeof(data[[ColName]]) != typeof(SECC.base[[ColName]])
-      {
-        # Attempt to convert column data type if necessary
-        data[[ColName]] <- as( data[[ColName]], typeof(SECC.base[[ColName]]) )
-        # Check for unexpected Warnings: 
-        # Unexpected Warnings means this file needs Special Attention.
-      } 
-      if ( class(data[[ColName]]) != class(SECC.base[[ColName]])
-      {
-        # Attempt to convert column class if necessary
-        data[[ColName]] <- as( data[[ColName]], class(SECC.base[[ColName]]) )
-        # Check for unexpected Warnings: 
-        # Unexpected Warnings means this file needs Special Attention.
-      } 
+  ## Strip rows with no valid time points?  Need standard column names first!
+#  data <- data[(data$Time %in% levels(SECC.base$Time) ),]
+  for (ColName in ColNames_std) 
+  {
+    ## Strip rows with no valid levels?  Need standard column names first!
+     # This does not remove factor levels that are no longer present:
+     #   removing unused levels would require recoding or re-definition of factor column.
+#    data <- data[(data[[ColName]] %in% levels(SECC.base[[ColName]])),]
 
-      if ( class(data[[ColName]]) == "factor" )
+    ## Standardize ID column types & values (levels) ---------------- 
+     # Check that column types & values (levels) match template
+    if ( class(data[[ColName]]) != class(SECC.base[[ColName]]) )
+    {
+      # Attempt to convert column class if necessary
+      if (is.factor(SECC.base[[ColName]]))
+        data[[ColName]] <- factor(data[[ColName]])  # Convert to a factor.
+      else
       {
-        ## Standardize factor levels
-        Col_lvls <- get( paste(ColName, "_lvls", sep="") )
-        if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 )
+        # as() will not remove extraneous factor levels.
+        # as() will wipe out integer values when converting to a factor :(
+        data[[ColName]] <- as( data[[ColName]], class(SECC.base[[ColName]]) )
+      }
+      # Check for unexpected Warnings: 
+      # Unexpected Warnings means this file needs Special Attention.
+    } 
+
+    if ( class(data[[ColName]]) == "factor" )
+    {
+      ## Standardize factor levels
+       # Unused factor levels may still be present after filtering.
+       # It might be more reliable to check for unique() values
+       # and leave the factor levels to recoding after the merge.
+      # Do I care more about missing standard levels (subset), or extra non-standard levels?
+      # Some factors I expect to have missing levels (e.g. Time, Position),
+      # whereas others might have extra levels specific to the data (e.g. ARA controls).
+      data[[ColName]] <- factor(data[[ColName]])  # to remove unused factor levels
+      Col_lvls <- levels( SECC.base[[ColName]] )
+      if ( min( levels(data[[ColName]]) %in% Col_lvls ) == 0 )
+      {
+        # min(boolean_vector) == 0 means there was at least one FALSE result
+        ## Catch common differences in factor levels
+        if ( ColName == "Pos" && min(Pos_old_lvls %in% levels(data[[ColName]])) == 1 ) 
         {
-          # min(boolean_vector) == 0 means there was at least on FALSE result
-          ## Catch common differences in factor levels
-          if ( ColName == "Pos" && (levels(data[[ColName]]) %in% Pos_old_lvls) ) 
-          {
-            # rename factor levels from old to new; 'new'='old'
-            # (omitted levels are dropped and replaced with empty strings)
-            levels(data[[ColName]]) <- list(
-              'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0'
-            )
-          }
-          # Anything else?  Automatically re-map other factor levels?
-        }
-        if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 )
-        {
-          stop( 
-            paste( "Column \'", ColName, "\' in data frame:", DataName,
-                   "Has non-standard levels. \n", 
-                   "      Auto-correction failed.  This File needs Special Attention."
-                 )
+          # rename factor levels from old to new; 'new'='old'
+          # (omitted levels are dropped and replaced with empty strings)
+          levels(data[[ColName]]) <- list(
+            'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0'
           )
         }
+        # Anything else?  Automatically re-map other factor levels?
       }
-      ##--------------------------------
+      ## If factor levels still do not match, this file needs Special Attention?
+#**    # OTOH, extra factor levels may not be a problem with the correct merge settings:
+       # - un-matched rows can simply be omitted from the merge result.
+#     if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 )
+#     {
+#       print("Standard Levels")
+#       print(Col_lvls)
+#       print(paste(ColName, "levels"))
+#       print(levels(data[[ColName]]))
+#       stop( 
+#         paste( "Non-standard levels in column \'", ColName, "\' of data frame: ",
+#                DataName,
+#                "\nAuto-correction failed.  This File needs Special Attention.",
+#                sep=""
+#              )
+#       )
+#     }
     }
-  
-  ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)
-  # Check number of rows - data files may only be a subset
-  if ( dim(data)[1] != dim(SECC.base)[1] )
-  {
-    # If fewer rows, are they a subset: can missing rows be replaced with NA's?
-      if ( min( data[["SampleID"]] %in% SECC.base[["SampleID"]]) == 0 )
-      {
-        # If IDs still do not match, throw an Error message:
-        # this file needs Special Attention.
-        stop( 
-          paste( "Non-standard IDs in data frame:", DataName,
-                 "\nThis File needs Special Attention."
-               )
-        )
-      }
+    ## Check that the standard column is at least not empty (NAs or '' )
+    EmptyStrings <- ifelse( class(data[[ColName]]) %in% c("factor", "character"),
+                           min( data[[ColName]][!is.na(data[[ColName]])] == '' ),
+                           FALSE
+                           )
+    NAcolumn <- min( is.na(data[[ColName]]) )
+    if ( NAcolumn == 1 || EmptyStrings == 1 )
+    {
+      print("Standard Levels:")
+      print(unique(SECC.base[[ColName]]))
+      print(paste("Values in:", ColName))
+      print(unique(data[[ColName]]))
+      stop( 
+        paste( "Column \'", ColName, "\' of data frame: ",
+               DataName, " is EMPTY.",
+               "\nAuto-correction failed.  This File needs Special Attention.",
+               sep=""
+             )
+      )
+    }
+    ##--------------------------------
   }
+  
+  ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)?
+  ## Un-matched rows will just be omitted from merge *****
+  # Check number of rows - data files may only be a subset (this is true in most cases)
+# if ( dim(data)[1] != dim(SECC.base)[1] )
+# {
+#   # If fewer rows, are they a subset: can missing rows be replaced with NA's?
+#     if ( min( data[["SampleID"]] %in% SECC.base[["SampleID"]]) == 0 )
+#     {
+#       # If IDs still do not match, throw an Error message:
+#       # this file needs Special Attention.
+#       stop( 
+#         paste( "Non-standard IDs in data frame:", DataName,
+#                "\nThis File needs Special Attention."
+#              )
+#       )
+#     }
+# }
   
   # If all checks pass, continue.  
   # Otherwise, throw an Error message: this file needs Special Attention.
@@ -151,11 +228,12 @@ checkSECCdata <- function (data=NULL, DataName="data") {
   )
 
   ## RETURN cleaned version if there are no problems.
-  return data
+  return(data)
 }
 
-##
-function recodeSECC (data=NULL)
+##==================================================
+## Recode standardized factors to standard values prior to merging
+recodeSECC <- function(data=NULL)
 {
   data.recoded <- within( data, {
     ## Rename columns / convert to standard informative names for the rest of this script
@@ -170,7 +248,7 @@ function recodeSECC (data=NULL)
       levels=c( "Ambient", "Partial Chamber", "Full Chamber" ),
       as.factor.result=TRUE
     )
-    levels(Frag) <- list( 'Continuous'=1, 'Full Corridors'=2, 'Pseudo-Corridors'=3, 'Isolated'=4 )
+    levels(Frag) <- list( 'Continuous'='1', 'Full Corridors'='2', 'Pseudo-Corridors'='3', 'Isolated'='4' )
   #  Position <- factor(Pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
   #  levels(Position) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings).
     # New factor with simplified recoded values for Patch Position
@@ -180,5 +258,9 @@ function recodeSECC (data=NULL)
       as.factor.result=TRUE
     )
   })
-  return data.recoded
+  return(data.recoded)
 }
+
+## Check data frames for matching columns and append them together / merge?
+ # to combine matching data from different time-points.
+

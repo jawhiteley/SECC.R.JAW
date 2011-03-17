@@ -41,19 +41,19 @@ X  T.pt
 
 ________________________________________________________________________________
 Chamber treatment (code)
-  Chamber
+* Chamber
   Climate
   Warming
 
 ________________________________________________________________________________
 Fragmentation treatment (code)
   Fragmentation
-  Frag
+* Frag
   Frag.trt
 ________________________________________________________________________________
 Patch Position (code)
   Position
-  Pos
+* Pos
   pos
   Patch
 
@@ -81,10 +81,11 @@ FINAL DATA STRUCTURE
 ## ID columns
    SampleID                         Block & Time & Chamber - Fragmentation . Position
    Block                            1-8
-   Time                             1-4 (not 3)
+   Time                             1-4 (3 is empty)
    Chamber                          A (Ambient), B (Partial), C (Full)
-   Fragmentation                    1 (Cont.), 2 (Corr.), 3 (pseudo-corr.), 4 (isolated)
-   Position                         I(nner), O(uter), N(orth)/S(outh), E(ast)/W(est)
+   Frag(mentation)                  1 (Cont.), 2 (Corr.), 3 (pseudo-corr.), 4 (isolated)
+   Pos                              I(nner), O(uter), N(orth)/S(outh), E(ast)/W(est)
+>  Position                         Inner,   Outer,   other
 ## Environmental Data               SECC.env
    UTM.E            metres          UTM coordinates East  (x)
    UTM.N            metres          UTM coordinates North (y)
