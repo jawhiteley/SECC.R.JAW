@@ -37,6 +37,20 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   
 })
 
+
+##================================================
+## Assign Attributes
+##================================================
+# "SECC columns" determines which response variable columns will be merged into final data frame.
+
+attr(SECC.cyanobacteria, "SECC columns") <- c("Total.Dry.wt", "Dry.wt",
+                                              "Nostoc", "Nostoc.h",
+                                              "Stigonema", "Stigonema.h",
+                                              "Other.cells", "Cells", "H.cells")
+attr(SECC.cyanobacteria, "labels") <- list("Cells"="Cyanobacterial Cell Density")
+attr(SECC.cyanobacteria, "units")  <- list("Cells"="cells/g dwt")
+
+
 ##################################################
 ## CHECK DATA
 ##################################################

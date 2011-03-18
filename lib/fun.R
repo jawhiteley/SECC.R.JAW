@@ -249,15 +249,22 @@ recodeSECC <- function(data=NULL)
       as.factor.result=TRUE
     )
     levels(Frag) <- list( 'Continuous'='1', 'Full Corridors'='2', 'Pseudo-Corridors'='3', 'Isolated'='4' )
-  #  Position <- factor(Pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
-  #  levels(Position) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings).
+    # recode Time to approximate dates
+    Time <- recode( Time, 
+      "'1'='2008-08'; '2'='2009-06'; '4'='2009-08", 
+      levels=c( "2008-08", "2009-06", "2009-08" ),
+      as.factor.result=TRUE
+    )
+#   Position <- factor(Pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
+#   levels(Position) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings).
     # New factor with simplified recoded values for Patch Position
-    position <- recode( Pos, 
+    Position <- recode( Pos, 
       "'I'='Inner'; 'O'='Outer'; else='other'", 
       levels=c( "Inner", "other", "Outer" ),
       as.factor.result=TRUE
     )
   })
+
   return(data.recoded)
 }
 

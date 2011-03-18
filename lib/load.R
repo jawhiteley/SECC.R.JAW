@@ -70,6 +70,7 @@ head(SECC.base)
 ##================================================
 # If files need Special Attention (individual cleaning), 
 # that goes here; or in a separate script that is source()'d here.
+#   Specify which columns are to be merged with attribute "SECC columns"
 
 source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
 
@@ -98,25 +99,44 @@ for (DataObject in merge.SECC)
 ##================================================
 SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
+attr(SECC, "labels") <- list("Time" = "Sample Time",
+                             "Chamber" = "Chamber Treatment",
+                             "Frag" = "Fragmentation Treatment",
+                             "Pos" = "Patch Position"
+                             )
+
 SECC.by <- names(SECC.base)
-merge.mark <- "SECC."  # column name prefix marking which columns to include in the merge.
-mark.pattern <- paste("\\b", merge.prefix, sep="")
 for (ObjectName in merge.SECC)
 {
   DataObject <- get(ObjectName)
   # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
-  KeepCols <- names(DataObject)[substr(names(DataObject), 1, 5) == merge.mark]
-  KeepCols <- gsub(mark.pattern, "", KeepCols, perl=TRUE)  # strip markers
+  KeepCols <- attr(DataObject, "SECC columns") # extract list of column names from attributes (set manually during load).
   KeepCols <- c(SECC.by, KeepCols)
-  names(DataObject) <- gsub(mark.pattern, "", names(DataObject), perl=TRUE)  # strip markers
   DataObject <- DataObject[,KeepCols]
-  # Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
+  ## Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
   SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
+  # merge attributes: labels, units.
+  attr(SECC, "labels") <- c( attr(SECC, "labels"), attr(DataObject, "labels") )
+  attr(SECC, "units" ) <- c( attr(SECC, "units" ), attr(DataObject, "units" ) )
 }
 # Proper sort order
-SECC <- sort_df( SECC, 
-  vars=c(Trt_sort_order, "Pos") 
-)
+SECC <- within( SECC, {
+  # levels in sort order.  The Position column will be replaced with recoded values later anyway.
+  Position <- factor(Pos, levels=Pos_all_sort)
+})
+SECC <- sort_df( SECC, vars=c(Trt_sort_order, "Position") )
+
+##================================================
+## Calculate columns across source data frames in new object
+##================================================
+ARA.Nfix.ratio <- 1/3  # ratio of N-fixation : ARA.
+
+SECC <- within( SECC, {
+  # ARA per gram dry weight of sample.
+# ARAg <- ARA / ARA.dwt
+# Nfix <- ARA * ARA.Nfix.ratio
+})
+
 
 ##================================================
 ## Generate factor columns, re-order factor levels, etc.

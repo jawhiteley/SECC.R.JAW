@@ -21,6 +21,7 @@ library(reshape)	# sort_df (sort data frame) wrapper for order
 
 Block_lvls    <- as.integer( seq(1, 8) )
 Time_lvls     <- as.integer( seq(1, 4) )
+Time_labels   <- c("2008-08", "2009-06", "2009-08")
 Chamber_lvls  <- c("A", "B", "C")
 Chamber_labels<- c("Ambient", "Partial Chamber", "Full Chamber")
 Chamber.Heat  <- c("Ambient", "Warm", "Hot")
@@ -43,7 +44,7 @@ Trt_sort_order <- c("Time", "Block", "Chamber", "Frag") # not including "Pos" or
 # Make a list of objects to be saved at the end.
 save.ls <- c(
   'Block_lvls',
-  'Time_lvls',
+  'Time_lvls', 'Time_labels',
   'Chamber_lvls', 'Chamber_labels', 'Chamber.Heat',
   'Frag_lvls', 'Frag_labels',
   'Pos_old_lvls', 'Pos_all_lvls', 'Pos_all_sort', 
