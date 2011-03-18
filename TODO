@@ -1,1 +1,4 @@
-[ ] Finish load script for ARA & cyanobacteria data, at least.
+- Finish load script for ARA & cyanobacteria data, at least.
+- Add check for mismatched positions (compare SampleID columns in data & SECC.base?)
+  - Use a sub-string method to ignore controls: substr(data$SampleID, 1, 7)
+    -  If length(data$SampleID) < 7, also ignore?

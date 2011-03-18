@@ -107,6 +107,11 @@ attr(SECC, "labels") <- list("Time" = "Sample Time",
 ##================================================
 
 SECC.by <- names(SECC.base)
+  # [-1] - drop first row (SampleID is not re-coded or checked?)
+  # I need SampleID to store extra information about samples:
+  # especially duplicate IDs for controls.
+  # In theory, this could be the *only* column I need to use to merge,
+  # but I fiure it's safer to use all the main ID columns.
 for (ObjectName in merge.SECC) {
   DataObject <- get(ObjectName)
   # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
@@ -120,9 +125,9 @@ for (ObjectName in merge.SECC) {
   attr(SECC, "units" ) <- c( attr(SECC, "units" ), attr(DataObject, "units" ) )
 }
 
-# Proper sort order
+# Preferred sort order
 SECC <- within( SECC, {
-  # levels in sort order.  The Position column will be replaced with recoded values later anyway.
+  # Levels in sort order: The Position column will be replaced with recoded values later anyway.
   Position <- factor(Pos, levels=Pos_all_sort)
 })
 SECC <- sort_df( SECC, vars=c(Trt_sort_order, "Position") )
@@ -138,7 +143,8 @@ patch.to.m2 <- (100*100/patchA)   # scale patch sample area, in cm^2 to m^2
 
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
-# ARA.g <- ARA / ARA.dwt
+  # Dry weights are only available for samples with cyanobacteria data :(
+  ARA.g <- ARA / ARA.dwt  
   Nfix <- ARA * ARA.Nfix.ratio
 })
 
@@ -173,13 +179,13 @@ str(SECC)		# check structure: are the appropriate variables factors, numeric, et
 # + SECC.fauna - Microarthropod community data corresponding to SECC.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
-load_export <- c( 'SECC', 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+load_export <- c( 'SECC')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
 save( list=load_export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
 for (DataFrame in load_export)
 {
-  filename <- gsub('.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
+  filename <- gsub('\\.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
   write.csv( get(DataFrame), 
     file = paste("./save/", filename, ".csv", sep=""), 
     row.names=FALSE

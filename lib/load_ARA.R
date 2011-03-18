@@ -11,14 +11,27 @@ require(car)		# load external package 'car', for recode()
 ##================================================
 # str(SECC.ARA.t1)  # Should already be in memory.    str() produces output on source().
 
-SECC.ARA.t1 <- SECCcolumnNames(SECC.ARA.t1)  # Standardize ID column names (but not values)
+# Standardize ID column names (but not values) 
+SECC.ARA.t1 <- SECCcolumnNames(SECC.ARA.t1)
+# Store Current IDs for re-coding controls later
+SampleID.t1 <- SECC.ARA.t1[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
+# Standardize ID column values
+SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1)
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
 # Manually clean & prepare data for automatic checking.
+Blank.code   <- "G"  # code for Gas Blanks (gass with no moss)
+control.code <- "c"  # code for moss controls (moss with no gas)
 
 SECC.ARA.t1 <- within( SECC.ARA.t1, {
+  ## Re-calculate SampleID to indicate controls?
+  SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
+  SampleID[SampleControl=="Control2"] <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="Control2"]
+                                         #'G' for gas Blanks?
+  SampleID[SampleControl=="control1"] <- paste(SampleID, control.code, sep="")[SampleControl=="control1"]
+
   # Some Fragmentation entries are '-' and need to be recoded as 'NA'
 # Frag <- recode(Frag,
 #                "'1'='1' ; '2'='2' ; '3'='3' ; '4'='4' ; else=''",
@@ -35,7 +48,9 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
 GAS.CONSTANT <- 8.314472 / 100000  # gas constant J / mol K -> umol
 Vol.injection <- 1/1000000  # 1 ml injection in m^3
 
-sampleA      <- 6	# sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
+sampleA      <- 6	# sample Area, in cm^2
+              # 6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
+              # or 6.4 for 20 shoots, based on density survey: 31440 shoots /m^2.
 sample_to_m2 <- (100*100/sampleA)	# scale sample area, in cm^2 to m^2
 sample_ml    <- 50  # 50 ml sample
 
@@ -51,9 +66,9 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   {
     Sample.id <- SampleID[i]
     ## GET CONTROL
-    Control.id <- paste( substr(Sample.id, 1, 3), "-C", sep="" )   # try for an exact match for ID
+    Control.id <- paste( substr(Sample.id, 1, 3), "-", Blank.code, sep="" )   # try for an exact match for ID
     if (Control.id %in% SampleID == FALSE)
-      Control.id <- paste( substr(Sample.id, 1, 2), ".-C", sep="" ) # try a control from any chamber in the corresponding block & time.
+      Control.id <- paste( substr(Sample.id, 1, 2), ".-", Blank.code, sep="" ) # try a control from any chamber in the corresponding block & time.
     # get metching values of SampleID
     ID.control   <- grep( Control.id, SampleID , perl = TRUE, value = TRUE)
     # get values of C2H4 / umol
@@ -66,9 +81,9 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
     ## Store Value
     Control[i] <- Control.umol
     ## GET BLANK
-    Blank.id <- paste( substr(Sample.id, 1, 7), "c", sep="" )   # try for an exact match for ID
+    Blank.id <- paste( substr(Sample.id, 1, 7), control.code, sep="" )   # try for an exact match for ID
     if (Blank.id %in% SampleID == FALSE)
-      Blank.id <- paste( substr(Sample.id, 1, 6), ".c", sep="" ) # try a from any patch in the corresponding fragmentation treatment.
+      Blank.id <- paste( substr(Sample.id, 1, 6), ".", control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
     # get metching values of SampleID
     ID.blank   <- grep( Blank.id, SampleID , perl = TRUE, value = TRUE)
     # get values of C2H4 / umol
@@ -131,5 +146,6 @@ head(SECC.ARA)  # have a peek at the first 6 rows & columns: is this what you ex
 ## SAVE DATA
 ##################################################
 # leave in memory
+ARA.full <- SECC.ARA
 # only rows for samples, exclude controls
-# SECC.ARA.t1 <- SECC.ARA.t1[SECC.ARA.t1$SampleControl=="Sample",]
+# SECC.ARA <- SECC.ARA[SECC.ARA$SampleControl=="Sample",]

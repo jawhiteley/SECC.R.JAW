@@ -159,7 +159,19 @@ checkSECCdata <- function(data=NULL, DataName="data")
           levels(data[[ColName]]) <- list(
             'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0'
           )
+          ## Re-compute SampleID column based on new values?
+          ## this should be kept for reference & error-checking:
+          ## I don't want to use it in the merge, but I may need it to resolve duplicates
+          ## for things like controls in the source data frames.
+          ## this should really be handled for each data file individually
+          ## if this simple algorithm would create duplicates.
+          data <- within( data,
+                         SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos,
+                                           sep=""
+                                           )
+                         )
         }
+        
         # Anything else?  Automatically re-map other factor levels?
       }
       ## If factor levels still do not match, this file needs Special Attention?
@@ -202,7 +214,7 @@ checkSECCdata <- function(data=NULL, DataName="data")
     }
     ##--------------------------------
   }
-  
+
   ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)?
   ## Un-matched rows will just be omitted from merge *****
   # Check number of rows - data files may only be a subset (this is true in most cases)
@@ -220,6 +232,9 @@ checkSECCdata <- function(data=NULL, DataName="data")
 #       )
 #     }
 # }
+  
+  ## If unmatched rows are to be discarded,
+  ## it would be good to check any mismatches for Position, which would otherwise be lost.
   
   # If all checks pass, continue.  
   # Otherwise, throw an Error message: this file needs Special Attention.
