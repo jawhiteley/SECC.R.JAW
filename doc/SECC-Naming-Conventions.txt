@@ -91,7 +91,7 @@ FINAL DATA STRUCTURE
    UTM.N            metres          UTM coordinates North (y)
    Sample.dwt        g              Dry Weight of entire sample (pi*12.5^2 = 490.87 cm^2)
    ARA.dwt          mg              Dry Weight of ARA sample (20 shoots)
-   CB.dwt           mg              Dry Weight of Cyanobacteria samples (2 shoots)
+   Cells.dwt        mg              Dry Weight of Cyanobacteria samples (2 shoots)
    H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
    Growth           mm              Moss Growth (total?)*
                                     * These were all in t4 samples, 
@@ -111,8 +111,8 @@ FINAL DATA STRUCTURE
    Cells            #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
 >  H.cells          #/g dwt         Heterocyst cell density
    ARA              umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
-   ARAm             umol/m^2/day    Acetylene-Reduction-Assay rates (Ethylene)
-   ARAg             umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
+   ARA.m            umol/m^2/day    Acetylene-Reduction-Assay rates (Ethylene)
+   ARA.g            umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
 >  Nfix             umol/g/day      Nitrogen-fixation rates (ARA /3)
 ## Microarthropod Community data    SECC.fauna [separate data frame?]
    [1 column/taxa]  #/g dwt         Microarthropod community data

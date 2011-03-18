@@ -84,7 +84,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   ARA  <- X_mol - ( (Blank + Control) * umol.ml )  # umol C2H4 in sample
           #     - (% from Blank and Control) * Total umol
   ARA[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
-  ARAm <- ARA * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
+  ARA.m <- ARA * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
 
   rm(list=c('i', 'Sample.id', 'Control.id', 'ID.control', 'Control.umol',
             'Blank.id', 'ID.blank', 'Blank.umol'))  # housecleaning
@@ -108,16 +108,16 @@ Data_objects <- c( Data_objects[Data_objects!=rm.objects] , 'SECC.ARA' )
 ##================================================
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.ARA, "SECC columns") <- c('ARA', 'ARAm')
+attr(SECC.ARA, "SECC columns") <- c('ARA', 'ARA.m')
 attr(SECC.ARA, "labels") <- list(
                                  "ARA" ="Acetylene Reduction Assay",
-                                 "ARAm"="Acetylene Reduction Assay",
-                                 "ARAg"="Acetylene Reduction Assay"
+                                 "ARA.m"="Acetylene Reduction Assay",
+                                 "ARA.g"="Acetylene Reduction Assay"
                                  )
 attr(SECC.ARA, "units")  <- list(
                                  "ARA" =expression(mu * "mol " * ml^-1* d^-1),
-                                 "ARAm"=expression(mu * "mol " * g^-1 * d^-1),
-                                 "ARAg"=expression(mu * "mol " * m^-2 * d^-1)
+                                 "ARA.m"=expression(mu * "mol " * g^-1 * d^-1),
+                                 "ARA.g"=expression(mu * "mol " * m^-2 * d^-1)
                                  )
 
 ##################################################

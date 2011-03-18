@@ -106,7 +106,7 @@ checkSECCdata <- function(data=NULL, DataName="data")
   data <- data[is.na(data[1])==FALSE,]
   data <- data[data[1]!='',]
 
-  if ( min( ColNames_std %in% colnames(DataObject) ) == 0 )
+  if ( min( ColNames_std %in% colnames(data) ) == 0 )
   {
     # min(boolean_vector) == 0 means there was at least one FALSE result
     data <- SECCcolumnNames(data, DataName)  # standardize column names.
@@ -152,8 +152,8 @@ checkSECCdata <- function(data=NULL, DataName="data")
       {
         # min(boolean_vector) == 0 means there was at least one FALSE result
         ## Catch common differences in factor levels
-        if ( ColName == "Pos" && min(Pos_old_lvls %in% levels(data[[ColName]])) == 1 ) 
-        {
+        if ( ColName == "Pos" && min( c("0", "1") %in% levels(data[[ColName]])) == 1 ) {
+          ## could also check for Pos_all_lvls, but the most important is to recode 1s & 0s
           # rename factor levels from old to new; 'new'='old'
           # (omitted levels are dropped and replaced with empty strings)
           levels(data[[ColName]]) <- list(
@@ -251,7 +251,7 @@ recodeSECC <- function(data=NULL)
     levels(Frag) <- list( 'Continuous'='1', 'Full Corridors'='2', 'Pseudo-Corridors'='3', 'Isolated'='4' )
     # recode Time to approximate dates
     Time <- recode( Time, 
-      "'1'='2008-08'; '2'='2009-06'; '4'='2009-08", 
+      "'1'='2008-08' ; '2'='2009-06'; '4'='2009-08'", 
       levels=c( "2008-08", "2009-06", "2009-08" ),
       as.factor.result=TRUE
     )

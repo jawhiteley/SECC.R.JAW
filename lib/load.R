@@ -20,7 +20,7 @@
 ##   are checked and merged as a Time Series.
 ##   -> SECC.TRH : Temperature & Relative Humidity Time Series.
 ##################################################
-
+# rm(list=ls())       # house-keeping
 # setwd('./ SECC/')   # project directory
 getwd()             # check current wd
 
@@ -55,11 +55,11 @@ rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 ##================================================
 ## CHECK DATA
 ##================================================
-str(SECC.raw)
-head(SECC.raw)
+# str(SECC.raw)
+# head(SECC.raw)
 
-str(SECC.base)
-head(SECC.base)
+# str(SECC.base)
+# head(SECC.base)
 
 
 ##################################################
@@ -73,15 +73,14 @@ head(SECC.base)
 #   Specify which columns are to be merged with attribute "SECC columns"
 
 source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
+source("./lib/load_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
 
 ##================================================
 ## AUTOMATICALLY CHECK & CLEAN DATA
 ##================================================
 # Check & merge only objects beginning with "SECC."
 merge.SECC <- Data_objects[substr(Data_objects, 1, 5)=="SECC."]  
-
-for (DataObject in merge.SECC)
-{
+for (DataObject in merge.SECC) {
   assign( DataObject, checkSECCdata( get(DataObject), DataObject ) )
     # Returns an updated clean version of data object.
     # It will fail with an error message if the object is unsuitable for merging.
@@ -94,9 +93,7 @@ for (DataObject in merge.SECC)
 ##################################################
 ## PROCESS DATA
 ##################################################
-##================================================
-## Merge all main response variables into a single data frame: SECC
-##================================================
+## Prepare base data frame to merge others into
 SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
 attr(SECC, "labels") <- list("Time" = "Sample Time",
@@ -105,9 +102,12 @@ attr(SECC, "labels") <- list("Time" = "Sample Time",
                              "Pos" = "Patch Position"
                              )
 
+##================================================
+## Merge all main response variables into a single data frame: SECC
+##================================================
+
 SECC.by <- names(SECC.base)
-for (ObjectName in merge.SECC)
-{
+for (ObjectName in merge.SECC) {
   DataObject <- get(ObjectName)
   # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
   KeepCols <- attr(DataObject, "SECC columns") # extract list of column names from attributes (set manually during load).
@@ -119,6 +119,7 @@ for (ObjectName in merge.SECC)
   attr(SECC, "labels") <- c( attr(SECC, "labels"), attr(DataObject, "labels") )
   attr(SECC, "units" ) <- c( attr(SECC, "units" ), attr(DataObject, "units" ) )
 }
+
 # Proper sort order
 SECC <- within( SECC, {
   # levels in sort order.  The Position column will be replaced with recoded values later anyway.
@@ -130,11 +131,15 @@ SECC <- sort_df( SECC, vars=c(Trt_sort_order, "Position") )
 ## Calculate columns across source data frames in new object
 ##================================================
 ARA.Nfix.ratio <- 1/3  # ratio of N-fixation : ARA.
+sampleA     <- 6  # sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
+ARA.to.m2	<- (100*100/sampleA)  # scale ARA sample area, in cm^2 to m^2
+patchA      <- pi * (12.5^2)      # patch area
+patch.to.m2 <- (100*100/patchA)   # scale patch sample area, in cm^2 to m^2
 
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
-# ARAg <- ARA / ARA.dwt
-# Nfix <- ARA * ARA.Nfix.ratio
+# ARA.g <- ARA / ARA.dwt
+  Nfix <- ARA * ARA.Nfix.ratio
 })
 
 
