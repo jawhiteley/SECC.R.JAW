@@ -1,6 +1,6 @@
 - Finish load script for ARA & cyanobacteria data, at least.
-- Add check for mismatched positions (compare SampleID columns in data & SECC.base?)
-  - Use a sub-string method to ignore controls: substr(data$SampleID, 1, 7)
-    -  If length(data$SampleID) < 7, also ignore?
+- Summary information on SECC data-frame
+  - # of values of each factor level, for each response variable: check for inconsistencies, missing values.
+  - not including NAs
 
 - Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.

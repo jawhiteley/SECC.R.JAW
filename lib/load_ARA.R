@@ -13,7 +13,7 @@ require(car)		# load external package 'car', for recode()
 
 # Standardize ID column names (but not values) 
 SECC.ARA.t1 <- SECCcolumnNames(SECC.ARA.t1)
-# Store Current IDs for re-coding controls later
+# Store Current (non-standard, but accurate) IDs for reference later
 SampleID.t1 <- SECC.ARA.t1[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
 # Standardize ID column values
 SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1)
@@ -26,11 +26,16 @@ Blank.code   <- "G"  # code for Gas Blanks (gass with no moss)
 control.code <- "c"  # code for moss controls (moss with no gas)
 
 SECC.ARA.t1 <- within( SECC.ARA.t1, {
-  ## Re-calculate SampleID to indicate controls?
+  ## Re-name "Controls" to be less confusing
+  levels(SampleControl)[levels(SampleControl)=="Control2"] <- "blank"
+  levels(SampleControl)[levels(SampleControl)=="control1"] <- "control"
+  ## re-order factor levels.
+  SampleControl <- factor(SampleControl, levels=c("blank", "control", "Sample")) 
+  ## Re-calculate SampleID to indicate controls
   SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-  SampleID[SampleControl=="Control2"] <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="Control2"]
+  SampleID[SampleControl=="blank"] <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]
                                          #'G' for gas Blanks?
-  SampleID[SampleControl=="control1"] <- paste(SampleID, control.code, sep="")[SampleControl=="control1"]
+  SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
 
   # Some Fragmentation entries are '-' and need to be recoded as 'NA'
 # Frag <- recode(Frag,
@@ -62,7 +67,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   Eth.umol <- X_mol / umol.ml  # % umol C2H4 / umol in 1ml injection.
   Control <- 0  # Control % umol C2H4 corresponding to sample. 
   Blank   <- 0  # Blank   % umol C2H4 corresponding to sample.
-  for (i in 1:dim(SECC.ARA.t1)[1])
+  for (i in 1:NROW(SECC.ARA.t1))
   {
     Sample.id <- SampleID[i]
     ## GET CONTROL
@@ -96,13 +101,13 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
     ## Store Value
     Blank[i] <- Blank.umol
   }
-  ARA  <- X_mol - ( (Blank + Control) * umol.ml )  # umol C2H4 in sample
-          #     - (% from Blank and Control) * Total umol
-  ARA[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
-  ARA.m <- ARA * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
-
   rm(list=c('i', 'Sample.id', 'Control.id', 'ID.control', 'Control.umol',
             'Blank.id', 'ID.blank', 'Blank.umol'))  # housecleaning
+
+  ARA.ml <- X_mol - ( (Blank + Control) * umol.ml )  # umol C2H4 in 1 ml sample
+          #       - (% from Blank and Control) * Total umol
+  ARA.ml[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
+  ARA.m <- ARA.ml * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
 })
 
 ##################################################
@@ -123,16 +128,16 @@ Data_objects <- c( Data_objects[Data_objects!=rm.objects] , 'SECC.ARA' )
 ##================================================
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.ARA, "SECC columns") <- c('ARA', 'ARA.m')
+attr(SECC.ARA, "SECC columns") <- c('ARA.ml', 'ARA.m')
 attr(SECC.ARA, "labels") <- list(
-                                 "ARA" ="Acetylene Reduction Assay",
+                                 "ARA.ml" ="Acetylene Reduction Assay",
                                  "ARA.m"="Acetylene Reduction Assay",
                                  "ARA.g"="Acetylene Reduction Assay"
                                  )
 attr(SECC.ARA, "units")  <- list(
-                                 "ARA" =expression(mu * "mol " * ml^-1* d^-1),
-                                 "ARA.m"=expression(mu * "mol " * g^-1 * d^-1),
-                                 "ARA.g"=expression(mu * "mol " * m^-2 * d^-1)
+                                 "ARA.ml" =expression(mu * "mol " * ml^-1* d^-1),
+                                 "ARA.g"=expression(mu * "mol " * g^-1 * d^-1),
+                                 "ARA.m"=expression(mu * "mol " * m^-2 * d^-1)
                                  )
 
 ##################################################

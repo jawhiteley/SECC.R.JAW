@@ -110,10 +110,12 @@ FINAL DATA STRUCTURE
    Other.cells      #/g dwt         Other cyanobacteria cells
    Cells            #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
 >  H.cells          #/g dwt         Heterocyst cell density
-   ARA              umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
+   ARA              ...             value of another ARA column,
+                                      assigned in analysis script?
+   ARA.ml           umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
    ARA.m            umol/m^2/day    Acetylene-Reduction-Assay rates (Ethylene)
    ARA.g            umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
->  Nfix             umol/g/day      Nitrogen-fixation rates (ARA /3)
+>  Nfix             ...             Nitrogen-fixation rates (ARA /3)
 ## Microarthropod Community data    SECC.fauna [separate data frame?]
    [1 column/taxa]  #/g dwt         Microarthropod community data
 

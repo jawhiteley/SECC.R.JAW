@@ -217,16 +217,16 @@ checkSECCdata <- function(data=NULL, DataName="data") {
   ## Un-matched rows will be omitted from merge *****
   ## But, I want to check for mismatched IDs (especially Position), that would lead to a row being mistakenly excluded.
   # Are rows at least a subset of Template: missing rows can be replaced with NA's?
-  dataIDs <- with( data, paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="" ) )
-  std.ids <- dataIDs %in% SECC.base[["SampleID"]]
-  controls <- grep( "[1-8][1-4][ABC]-NA\\.NA", dataIDs, perl=TRUE )
-  std.ids[controls] <- TRUE # ok
+  DataIDs <- with( data, paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="" ) )
+  Std.IDs <- DataIDs %in% SECC.base[["SampleID"]]
+  GasBlanks <- grep( "[1-8][1-4][ABC]-NA\\.NA", DataIDs, perl=TRUE )  # ARA Gas Controls will have BOTH Fragmentation & Position as 'NA'
+  Std.IDs[GasBlanks] <- TRUE # ok
   # If I trust the Position data in SECC.base, I could use it to correct values in data automatically (then re-calculate SampleIDs & re-check).
-  if ( min( std.ids ) == 0 ) {
+  if ( min( Std.IDs ) == 0 ) {
     # If IDs still do not match, throw an Error message:
     # this file needs Special Attention.
     print("Non-Standard IDs:")
-    print(dataIDs[!std.ids])
+    print(DataIDs[!Std.IDs])
     stop( paste( "Non-standard IDs in data frame:", DataName,
                 "\nThis File needs Special Attention."
                 )
