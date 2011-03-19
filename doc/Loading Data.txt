@@ -1,0 +1,40 @@
+Algorithm for Loading Data
+Schefferville Experiment on Climate Change (and Fragmentation).
+Jonathan Whiteley    2011-03-18
+
+# Checking Data
+
+Checking data happens in 4 basic steps
+
+1. Standardize Column Names
+2. Manual processing, cleaning, calculations
+3. Standardize ID values
+[Merge]
+4. Re-coding ID values to informative labels.
+
+## ID Column Names
+
+SECCcolumns() function matches columns in the data frame to expected synonyms, and re-names them to a common standard, ensuring consistency across all imported data.
+
+## Manual Processing
+
+Cleaning data, removing extra ID factor levels.  In the load.R script, or a separate load_data.R script specific to each file or type of data.
+
+## Standard ID Values (factor levels)
+
+checkSECCdata()
+
+Do I care more about missing standard levels (subset), [No] or extra non-standard levels? *****
+Some factors I expect to have missing levels (e.g. Time, Position), whereas others might have extra levels specific to the data (e.g. ARA controls).
+Controls are specified by extra information in SampleID.
+Extra factor levels may not be a problem with the correct merge settings: un-matched rows can simply be omitted from the merge result.
+
+Actual Factors should contain *ONLY* standard levels. Otherwise, it is too difficult to automatically check for errors.
+
+
+## Re-coding IDs to informative labels.
+
+recodeSECC() function
+I'm not sure if this needs to be done in the load phase, but it is useful for meaningful plot labels, and avoiding cryptic codes in the final output.
+I am definitely used to thinking in terms of the treatment codes, so it might actually be easier to keep the codes for writing analysis scripts.
+Nevertheless, re-coding the main data frames also ensures consistent labels across all analyses.

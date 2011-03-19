@@ -11,14 +11,18 @@ require(car)		# load external package 'car', for recode()
 ##================================================
 # str(SECC.cyanobacteria)  # Should already be in memory.  str() produces output on source().
 
-# SECC.cyanobacteria <- SECCcolumnNames(SECC.cyanobacteria)  # Standardize ID column names (but not values)
-SECC.cyanobacteria <- checkSECCdata(SECC.cyanobacteria)  # Standardize column names & types (needed for aggregate & other processing based on column types).
+# Standardize ID column names (but not values)
+SECC.cyanobacteria <- SECCcolumnNames(SECC.cyanobacteria)
+# Strip empty rows (before checking values).
+SECC.cyanobacteria <- SECC.cyanobacteria[!is.na(SECC.cyanobacteria$Time),]
+# Standardize column types (needed for aggregate & other processing based on column types).
+SECC.cyanobacteria <- checkSECCdata(SECC.cyanobacteria)
+
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
 # Manually clean & prepare data for automatic checking.
-SECC.cyanobacteria <- SECC.cyanobacteria[!is.na(SECC.cyanobacteria$Time),]  # strip empty rows.
 names(SECC.cyanobacteria)[names(SECC.cyanobacteria)=="Count.."] <- "Count"  # rename column
 SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   # Count should really be a factor

@@ -18,8 +18,7 @@ source('./lib/jaw.misc_functions.R')
 ## CHECK DATA
 ##================================================
 
-SECCcolumnNames <- function(data=NULL, DataName="data")
-{
+SECCcolumnNames <- function(data=NULL, DataName="data") {
   ## Standardize column names
   # Check if first argument is actually a data frame.
   if ('data.frame' %in% class(data) == FALSE) stop(
@@ -41,8 +40,7 @@ SECCcolumnNames <- function(data=NULL, DataName="data")
   Frag.synonyms    <- c("Frag", "Fragmentation", "Frag.trt", "fragmentation", "frag", "frag.trt")
   Pos.synonyms     <- c("Pos", "Position", "position", "pos")
 
-  for (ColName in ColNames_std) 
-  {
+  for (ColName in ColNames_std) {
     ## Check for presence of standard ID columns.--------------------------------  
     ## Check for most likely non-standard names (synonyms)
     col.synonyms <- get(paste(ColName, ".synonyms", sep=""))
@@ -53,8 +51,7 @@ SECCcolumnNames <- function(data=NULL, DataName="data")
     colnames(data)[colnames.std==TRUE] <- col.synonyms[1]
       
     # If column name still does not match, throw an Error message: this file needs Special Attention.
-    if ( ColName %in% colnames(data) == FALSE )
-    {
+    if ( ColName %in% colnames(data) == FALSE ) {
       Data_Check <- FALSE
       print('column synonyms:')
       print(col.synonyms)
@@ -76,8 +73,7 @@ SECCcolumnNames <- function(data=NULL, DataName="data")
 }
 
 
-checkSECCdata <- function(data=NULL, DataName="data")
-{
+checkSECCdata <- function(data=NULL, DataName="data") {
   ## Checks a data frame argument to make sure that 
   ## it conforms to the standards for the 
   ## Schefferville Experiment on Climate Change (SEC-C).
@@ -106,15 +102,13 @@ checkSECCdata <- function(data=NULL, DataName="data")
   data <- data[is.na(data[1])==FALSE,]
   data <- data[data[1]!='',]
 
-  if ( min( ColNames_std %in% colnames(data) ) == 0 )
-  {
+  if ( min( ColNames_std %in% colnames(data) ) == 0 ) {
     # min(boolean_vector) == 0 means there was at least one FALSE result
     data <- SECCcolumnNames(data, DataName)  # standardize column names.
   }
   ## Strip rows with no valid time points?  Need standard column names first!
 #  data <- data[(data$Time %in% levels(SECC.base$Time) ),]
-  for (ColName in ColNames_std) 
-  {
+  for (ColName in ColNames_std) {
     ## Strip rows with no valid levels?  Need standard column names first!
      # This does not remove factor levels that are no longer present:
      #   removing unused levels would require recoding or re-definition of factor column.
@@ -122,13 +116,11 @@ checkSECCdata <- function(data=NULL, DataName="data")
 
     ## Standardize ID column types & values (levels) ---------------- 
      # Check that column types & values (levels) match template
-    if ( class(data[[ColName]]) != class(SECC.base[[ColName]]) )
-    {
+    if ( class(data[[ColName]]) != class(SECC.base[[ColName]]) ) {
       # Attempt to convert column class if necessary
       if (is.factor(SECC.base[[ColName]]))
         data[[ColName]] <- factor(data[[ColName]])  # Convert to a factor.
-      else
-      {
+      else {
         # as() will not remove extraneous factor levels.
         # as() will wipe out integer values when converting to a factor :(
         data[[ColName]] <- as( data[[ColName]], class(SECC.base[[ColName]]) )
@@ -137,19 +129,16 @@ checkSECCdata <- function(data=NULL, DataName="data")
       # Unexpected Warnings means this file needs Special Attention.
     } 
 
-    if ( class(data[[ColName]]) == "factor" )
-    {
+    if ( class(data[[ColName]]) == "factor" ) {
       ## Standardize factor levels
        # Unused factor levels may still be present after filtering.
        # It might be more reliable to check for unique() values
        # and leave the factor levels to recoding after the merge.
-      # Do I care more about missing standard levels (subset), or extra non-standard levels?
-      # Some factors I expect to have missing levels (e.g. Time, Position),
-      # whereas others might have extra levels specific to the data (e.g. ARA controls).
+      # Actual Factors should contain *ONLY* standard levels.
+      # Otherwise, it is too difficult to automatically check for errors.
       data[[ColName]] <- factor(data[[ColName]])  # to remove unused factor levels
       Col_lvls <- levels( SECC.base[[ColName]] )
-      if ( min( levels(data[[ColName]]) %in% Col_lvls ) == 0 )
-      {
+      if ( min( unique(data[[ColName]]) %in% Col_lvls ) == 0 ) {
         # min(boolean_vector) == 0 means there was at least one FALSE result
         ## Catch common differences in factor levels
         if ( ColName == "Pos" && min( c("0", "1") %in% levels(data[[ColName]])) == 1 ) {
@@ -160,10 +149,11 @@ checkSECCdata <- function(data=NULL, DataName="data")
             'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0'
           )
           ## Re-compute SampleID column based on new values?
-          ## this should be kept for reference & error-checking:
-          ## I don't want to use it in the merge, but I may need it to resolve duplicates
+          ## Original SampleID should be kept for reference & error-checking:
+          ## I don't want to have to use it in the merge,
+          ## but I may need it to resolve duplicates
           ## for things like controls in the source data frames.
-          ## this should really be handled for each data file individually
+          ## This should really be handled for each data file individually
           ## if this simple algorithm would create duplicates.
           data <- within( data,
                          SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos,
@@ -171,35 +161,43 @@ checkSECCdata <- function(data=NULL, DataName="data")
                                            )
                          )
         }
-        
-        # Anything else?  Automatically re-map other factor levels?
+        else {
+          # Automatically re-map other factor levels to standard values?
+
+          # Automatically purge non-standard levels (replace with NA)?
+#         non.std.values <- data[[ColName]] %in%  Col_lvls
+          data[[ColName]] <- factor( data[[ColName]], levels = Col_lvls )
+#         , exclude = non.std.values
+          # Values not in levels are replaced with NA.  This is exactly what I want.
+        }
+        # Anything else?
       }
-      ## If factor levels still do not match, this file needs Special Attention?
-#**    # OTOH, extra factor levels may not be a problem with the correct merge settings:
+
+      ## If factor levels still do not match, this file needs Special Attention
+       # Extra factor levels may not be a problem with the correct merge settings:
        # - un-matched rows can simply be omitted from the merge result.
-#     if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 )
-#     {
-#       print("Standard Levels")
-#       print(Col_lvls)
-#       print(paste(ColName, "levels"))
-#       print(levels(data[[ColName]]))
-#       stop( 
-#         paste( "Non-standard levels in column \'", ColName, "\' of data frame: ",
-#                DataName,
-#                "\nAuto-correction failed.  This File needs Special Attention.",
-#                sep=""
-#              )
-#       )
-#     }
+       # Nevertheless, I need this to be able to check for mismatches in the combinations of all ID columns.
+      if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 ) {
+        print("Standard Levels")
+        print(Col_lvls)
+        print(paste(ColName, "levels"))
+        print(levels(data[[ColName]]))
+        stop( 
+          paste( "Non-standard levels in column \'", ColName, "\' of data frame: ",
+                 DataName,
+                 "\nAuto-correction failed.  This File needs Special Attention.",
+                 sep=""
+               )
+        )
+      }
     }
-    ## Check that the standard column is at least not empty (NAs or '' )
+    ## Check that the standard column is at least not empty (only NAs or '' )
     EmptyStrings <- ifelse( class(data[[ColName]]) %in% c("factor", "character"),
                            min( data[[ColName]][!is.na(data[[ColName]])] == '' ),
                            FALSE
                            )
     NAcolumn <- min( is.na(data[[ColName]]) )
-    if ( NAcolumn == 1 || EmptyStrings == 1 )
-    {
+    if ( NAcolumn == 1 || EmptyStrings == 1 ) {
       print("Standard Levels:")
       print(unique(SECC.base[[ColName]]))
       print(paste("Values in:", ColName))
@@ -215,48 +213,45 @@ checkSECCdata <- function(data=NULL, DataName="data")
     ##--------------------------------
   }
 
-  ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)?
-  ## Un-matched rows will just be omitted from merge *****
-  # Check number of rows - data files may only be a subset (this is true in most cases)
-# if ( dim(data)[1] != dim(SECC.base)[1] )
-# {
-#   # If fewer rows, are they a subset: can missing rows be replaced with NA's?
-#     if ( min( data[["SampleID"]] %in% SECC.base[["SampleID"]]) == 0 )
-#     {
-#       # If IDs still do not match, throw an Error message:
-#       # this file needs Special Attention.
-#       stop( 
-#         paste( "Non-standard IDs in data frame:", DataName,
-#                "\nThis File needs Special Attention."
-#              )
-#       )
-#     }
-# }
-  
-  ## If unmatched rows are to be discarded,
-  ## it would be good to check any mismatches for Position, which would otherwise be lost.
+  ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)
+  ## Un-matched rows will be omitted from merge *****
+  ## But, I want to check for mismatched IDs (especially Position), that would lead to a row being mistakenly excluded.
+  # Are rows at least a subset of Template: missing rows can be replaced with NA's?
+  dataIDs <- with( data, paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="" ) )
+  std.ids <- dataIDs %in% SECC.base[["SampleID"]]
+  controls <- grep( "[1-8][1-4][ABC]-NA\\.NA", dataIDs, perl=TRUE )
+  std.ids[controls] <- TRUE # ok
+  # If I trust the Position data in SECC.base, I could use it to correct values in data automatically (then re-calculate SampleIDs & re-check).
+  if ( min( std.ids ) == 0 ) {
+    # If IDs still do not match, throw an Error message:
+    # this file needs Special Attention.
+    print("Non-Standard IDs:")
+    print(dataIDs[!std.ids])
+    stop( paste( "Non-standard IDs in data frame:", DataName,
+                "\nThis File needs Special Attention."
+                )
+         )
+  }
   
   # If all checks pass, continue.  
   # Otherwise, throw an Error message: this file needs Special Attention.
-  if (Data_Check == FALSE) stop(
-    paste("There is an unknown problem with data frame:", DataName)
-  )
-
-  ## RETURN cleaned version if there are no problems.
-  return(data)
+  if (Data_Check == FALSE)
+    stop( paste("There is an unknown problem with data frame:", DataName) )
+  else ## RETURN cleaned version if there are no problems.
+    return(data)
 }
 
 ##==================================================
 ## Recode standardized factors to standard values prior to merging
-recodeSECC <- function(data=NULL)
-{
+recodeSECC <- function(data=NULL) {
   data.recoded <- within( data, {
-    ## Rename columns / convert to standard informative names for the rest of this script
+    ## Rename columns / convert to standard informative names (already handled in SECCcolumns).
     Block   <- factor(Block)
     Time    <- factor(Time)
     Chamber <- factor(Chamber)
     Frag    <- factor(Frag)
     Pos     <- factor(Pos)
+    ## Rather than re-coding the factor levels, can I still get informative labels using the 'labels' argument of factor()?
     ## rename and reorder factor levels the easy way - maintains empty values if empty factor specified, otherwise converts to 'NA'.  Requires package 'car'
     Chamber <- recode( Chamber, 
       "'A'='Ambient'; 'B'='Partial Chamber'; 'C'='Full Chamber'; else=''", 

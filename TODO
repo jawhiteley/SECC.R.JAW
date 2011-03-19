@@ -2,3 +2,5 @@
 - Add check for mismatched positions (compare SampleID columns in data & SECC.base?)
   - Use a sub-string method to ignore controls: substr(data$SampleID, 1, 7)
     -  If length(data$SampleID) < 7, also ignore?
+
+- Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
