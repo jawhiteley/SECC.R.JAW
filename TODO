@@ -8,14 +8,19 @@ X combine attributes into SECC data frame
 Current Changes:
 ================
 
+load.R ready for Cyanobacteria & ARA t1
+
 Load data for:
 + Cyanobacteria
   + t1, t2, t4
   + A, C (a few B's)
   + I, O (a few others in t1)
 + ARA t1
-Check Data, Merge, save Export.
+Check Data, perform Calculations, Merge, save Export.
 t1 is ready for analysis.
+
+
+
 
 
 Change Notes
