@@ -115,18 +115,18 @@ SECC.by <- names(SECC.base)
   # I need SampleID to store extra information about samples:
   # especially duplicate IDs for controls.
   # In theory, this could be the *only* column I need to use to merge,
-  # but I fiure it's safer to use all the main ID columns.
+  # but I figure it's safer to use all the main ID columns.
 for (ObjectName in merge.SECC) {
-  DataObject <- get(ObjectName)
-  # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
-  KeepCols <- attr(DataObject, "SECC columns") # extract list of column names from attributes (set manually during load).
-  KeepCols <- c(SECC.by, KeepCols)
-  DataObject <- DataObject[,KeepCols]
-  ## Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
-  SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
+  DataObject  <- get(ObjectName)
   # merge attributes: labels, units.
   SECC.labels <- c( SECC.labels, attr(DataObject, "labels") )
   SECC.units  <- c( SECC.units , attr(DataObject, "units" ) )
+  # Keep only columns for respons variables, denoted by 'SECC' prefix in column name
+  KeepCols <- attr(DataObject, "SECC columns") # extract list of column names from attributes (set manually during load).
+  KeepCols <- c(SECC.by, KeepCols)
+  DataObject <- DataObject[,KeepCols]  # attributes lost?
+  ## Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
+  SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
 }
 
 ## Preferred sort order

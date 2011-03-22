@@ -1,8 +1,23 @@
-X Check unbalanced and missing data rows in SECC.
+X combine attributes into SECC data frame
+
 - Check Block 6 Cyanobacteria thread data
 
 - Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
 
+
+Current Changes:
+================
+- Attributes of SECC data frame are now aggregated correctly
+  I'm still not sure at what point in the merge loop attributes
+  are lost, I just know that it works if I extract and combine
+  attributes near the beginning.
+
+
+
+
+
+Change Notes
+____________
 * ARA ID changes (to match template):
   31A-3.E
 
@@ -10,18 +25,3 @@ X Check unbalanced and missing data rows in SECC.
   11A-4.W
   21C-4.N
   31A-1.E
-
-Current Changes:
-================
-Cyanobacteria & t1 ARA load properly.
-  * Cyanobacteria data loading works (numbers check out as far as I can tell).
-  * ARA t1 loads properly
-  * ARA t1 was missing several values, due to NAs in the Controls & Blanks 
-    (especially Pos=N/S/E/W in certain Blocks?), leading to NAs in the calculated columns.
-  * Fixed bugs in calculations for ARA.  
-  * ARA t1 Block 4 has a Blank with 0, which is strange.
-    The Excel spreadsheet referenced the wrong cell for blanks in t4, 
-    leading to mismatch between calculated values in R vs. Excel for block 4
-
-- Attributes of SECC data frame are not being combined properly :-(
-
