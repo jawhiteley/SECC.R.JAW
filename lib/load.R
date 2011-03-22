@@ -198,7 +198,7 @@ SECCstr(SECC[SECC.coded$Time!=3 &
 # + SECC.fauna - Microarthropod community data corresponding to SECC.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
-Load.export <- c( 'SECC')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+Load.export <- c( 'SECC', 'SECC.coded')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.

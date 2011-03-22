@@ -7,13 +7,15 @@ X combine attributes into SECC data frame
 
 Current Changes:
 ================
-- Attributes of SECC data frame are now aggregated correctly
-  I'm still not sure at what point in the merge loop attributes
-  are lost, I just know that it works if I extract and combine
-  attributes near the beginning.
 
-
-
+Load data for:
++ Cyanobacteria
+  + t1, t2, t4
+  + A, C (a few B's)
+  + I, O (a few others in t1)
++ ARA t1
+Check Data, Merge, save Export.
+t1 is ready for analysis.
 
 
 Change Notes
