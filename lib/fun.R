@@ -53,12 +53,12 @@ SECCcolumnNames <- function(data=NULL, DataName="data") {
     # If column name still does not match, throw an Error message: this file needs Special Attention.
     if ( ColName %in% colnames(data) == FALSE ) {
       Data_Check <- FALSE
-      print('column synonyms:')
-      print(col.synonyms)
-      print('column names:')
-      print(colnames(data))
-      print('columns present:')
-      print(colnames.std)
+      print('column synonyms:', quote = FALSE)
+      print(col.synonyms, quote = FALSE)
+      print('column names:', quote = FALSE)
+      print(colnames(data), quote = FALSE)
+      print('columns present:', quote = FALSE)
+      print(colnames.std, quote = FALSE)
       stop(
         paste( "Column \'", ColName, "\' is missing from data frame: ", DataName, "\n",
                "Automatic search & re-naming based on common synonyms failed.\n", 
@@ -73,11 +73,16 @@ SECCcolumnNames <- function(data=NULL, DataName="data") {
 }
 
 
-checkSECCdata <- function(data=NULL, DataName="data") {
+checkSECCdata <- function(data=NULL, DataName="data", CheckValues = TRUE, CheckDuplicates = TRUE) {
   ## Checks a data frame argument to make sure that 
   ## it conforms to the standards for the 
   ## Schefferville Experiment on Climate Change (SEC-C).
   ## - If possible, it also tries to fix or convert common deviations from the standard.
+
+  ## CheckValues = TRUE argument means the function will also check factor levels,
+  ## and standard IDs.  Set to FALSE to skip these steps.
+
+  ## CheckDuplicates = TRUE checks for duplicate SampleIDs.  This is independent of CheckValues.
 
   # Check if first argument is actually a data frame.
   if ('data.frame' %in% class(data) == FALSE) stop(
@@ -129,7 +134,7 @@ checkSECCdata <- function(data=NULL, DataName="data") {
       # Unexpected Warnings means this file needs Special Attention.
     } 
 
-    if ( class(data[[ColName]]) == "factor" ) {
+    if ( CheckValues && class(data[[ColName]]) == "factor" ) {
       ## Standardize factor levels
        # Unused factor levels may still be present after filtering.
        # It might be more reliable to check for unique() values
@@ -178,10 +183,10 @@ checkSECCdata <- function(data=NULL, DataName="data") {
        # - un-matched rows can simply be omitted from the merge result.
        # Nevertheless, I need this to be able to check for mismatches in the combinations of all ID columns.
       if ( min( levels(data[[ColName]]) %in% Col_lvls) == 0 ) {
-        print("Standard Levels")
-        print(Col_lvls)
-        print(paste(ColName, "levels"))
-        print(levels(data[[ColName]]))
+        print("Standard Levels", quote = FALSE)
+        print(Col_lvls, quote = FALSE)
+        print(paste(ColName, "levels"), quote = FALSE)
+        print(levels(data[[ColName]]), quote = FALSE)
         stop( 
           paste( "Non-standard levels in column \'", ColName, "\' of data frame: ",
                  DataName,
@@ -198,10 +203,10 @@ checkSECCdata <- function(data=NULL, DataName="data") {
                            )
     NAcolumn <- min( is.na(data[[ColName]]) )
     if ( NAcolumn == 1 || EmptyStrings == 1 ) {
-      print("Standard Levels:")
-      print(unique(SECC.base[[ColName]]))
-      print(paste("Values in:", ColName))
-      print(unique(data[[ColName]]))
+      print("Standard Levels:", quote = FALSE)
+      print(unique(SECC.base[[ColName]]), quote = FALSE)
+      print(paste("Values in:", ColName), quote = FALSE)
+      print(unique(data[[ColName]]), quote = FALSE)
       stop( 
         paste( "Column \'", ColName, "\' of data frame: ",
                DataName, " is EMPTY.",
@@ -216,21 +221,42 @@ checkSECCdata <- function(data=NULL, DataName="data") {
   ## Check that all IDs match EXACTLY with Template (or that all rows in data are represented in the template)
   ## Un-matched rows will be omitted from merge *****
   ## But, I want to check for mismatched IDs (especially Position), that would lead to a row being mistakenly excluded.
-  # Are rows at least a subset of Template: missing rows can be replaced with NA's?
-  DataIDs <- with( data, paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="" ) )
-  Std.IDs <- DataIDs %in% SECC.base[["SampleID"]]
-  GasBlanks <- grep( "[1-8][1-4][ABC]-NA\\.NA", DataIDs, perl=TRUE )  # ARA Gas Controls will have BOTH Fragmentation & Position as 'NA'
-  Std.IDs[GasBlanks] <- TRUE # ok
+  if (CheckValues) {
+    # Are rows at least a subset of Template: missing rows can be replaced with NA's?
+    DataIDs <- with( data, paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="" ) )
+    Std.IDs <- DataIDs %in% SECC.base[["SampleID"]]
+    GasBlanks <- grep( "[1-8][1-4][ABC]-NA\\.NA", DataIDs, perl=TRUE )  # ARA Gas Controls will have BOTH Fragmentation & Position as 'NA'
+    Std.IDs[GasBlanks] <- TRUE # ok
   # If I trust the Position data in SECC.base, I could use it to correct values in data automatically (then re-calculate SampleIDs & re-check).
-  if ( min( Std.IDs ) == 0 ) {
-    # If IDs still do not match, throw an Error message:
-    # this file needs Special Attention.
-    print("Non-Standard IDs:")
-    print(DataIDs[!Std.IDs])
-    stop( paste( "Non-standard IDs in data frame:", DataName,
-                "\nThis File needs Special Attention."
-                )
-         )
+    if ( min( Std.IDs ) == 0 ) {
+      # If IDs still do not match, throw an Error message:
+      # this file needs Special Attention.
+      Pblm.msg <- paste("\nNon-Standard IDs:\n",
+                        paste(DataIDs[!Std.IDs], collapse ="\n"),
+                        sep=""
+                        )
+      stop( paste( "Non-standard IDs in data frame:", DataName,
+                  "\nThis File needs Special Attention.",
+                  Pblm.msg
+                  )
+           )
+    }
+  }
+
+  if (CheckDuplicates) {
+    SampleID.counts <- table(data$SampleID)  # Counts of each 'factor level'
+    SampleID.wrong   <- SampleID.counts[SampleID.counts!=1] # IDs with counts other than 1
+    if( length(SampleID.wrong)>0 ) {
+      # Duplicates <- SampleID.counts[SampleID.counts>1]
+      # Missing    <- SampleID.counts[SampleID.counts<1]
+      Pblm.msg <- paste("\nDuplicates:\n",
+                        paste(names(SampleID.counts[SampleID.counts>1]), collapse="\n"),
+                        "\nMissing:\n",
+                        paste(names(SampleID.counts[SampleID.counts<1]), collapse="\n")
+                        )
+      stop( paste("There are duplicate or missing IDs",
+                  Pblm.msg, sep='') )
+    }
   }
   
   # If all checks pass, continue.  
@@ -238,7 +264,31 @@ checkSECCdata <- function(data=NULL, DataName="data") {
   if (Data_Check == FALSE)
     stop( paste("There is an unknown problem with data frame:", DataName) )
   else ## RETURN cleaned version if there are no problems.
+    print(paste("All checks passed for Data Object:", DataName), quote = FALSE)
     return(data)
+}
+
+SECCdata_summary <- function (data) {
+  # Check if first argument is actually a data frame.
+  if ('data.frame' %in% class(data) == FALSE)
+    stop( "The first argument must be a \'data.frame\'." )
+  ## REQUIRES:
+  load('./save/SECC_factors.R')	# includes SECC.base data.frame, 
+    # and other vectors of standard column names and levels.
+
+  SECC.summary <- list()  # empty list to add to.
+  
+  ## Assemble a table of counts for all levels of each standard ID column
+  ID_cols <- colnames(SECC.base)
+  ID_cols <- c( ID_cols, "Position" )  # include re-coded Positions.
+
+  for (ID.col in ID_cols) {
+    Col.lvls <- levels(data[[ID.col]])
+    # get counts of values of each level (excluding NAs)
+    Col.summary <- table()  # summary of this column
+    SECC.summary[[ID.col]] <- Col.summary  # add column summary to summary object.
+  }
+  return(SECC.summary)
 }
 
 ##==================================================

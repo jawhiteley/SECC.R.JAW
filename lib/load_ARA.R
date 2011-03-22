@@ -16,7 +16,7 @@ SECC.ARA.t1 <- SECCcolumnNames(SECC.ARA.t1)
 # Store Current (non-standard, but accurate) IDs for reference later
 SampleID.t1 <- SECC.ARA.t1[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
 # Standardize ID column values
-SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1)
+SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1, CheckDuplicates = FALSE)
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA

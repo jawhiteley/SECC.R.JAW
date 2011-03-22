@@ -41,7 +41,7 @@ Data_files <- dir('./data/')  # get list of file names.
 Data_objects <- NULL          # empty object to hold vector of object names.
 for (File_name in Data_files) {
   File_path <- paste("./data/", File_name, sep="")
-  temp <- read.csv(File_path)
+  temp <- read.csv(File_path)  # na.strings = c("NA", "-", "", ".")
   Object_name <- cleanVarName(File_name)
   # remove file extension from the object name  
   Object_name <- gsub("\\.csv\\b", "", Object_name, perl=TRUE ) 
@@ -144,14 +144,15 @@ patch.to.m2 <- (100*100/patchA)   # scale patch sample area, in cm^2 to m^2
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
   # Dry weights are only available for samples with cyanobacteria data :(
-  ARA.g <- ARA / ARA.dwt  
-  Nfix <- ARA * ARA.Nfix.ratio
+  ARA.g <- ARA.ml / ARA.dwt  
+  Nfix <- ARA.m * ARA.Nfix.ratio
 })
 
 
 ##================================================
 ## Generate factor columns, re-order factor levels, etc.
 ##================================================
+SECC.coded <- SECC          # keep a copy, just in case
 SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`  
 
 ### Summarize data by means across different (or all) Positions to prevent unbalanced effects?
@@ -179,11 +180,11 @@ str(SECC)		# check structure: are the appropriate variables factors, numeric, et
 # + SECC.fauna - Microarthropod community data corresponding to SECC.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
-load_export <- c( 'SECC')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
-save( list=load_export, file="./save/SECC_data.R" )
+Load.export <- c( 'SECC')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
-for (DataFrame in load_export)
+for (DataFrame in Load.export)
 {
   filename <- gsub('\\.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
   write.csv( get(DataFrame), 

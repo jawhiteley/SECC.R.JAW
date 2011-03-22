@@ -16,8 +16,27 @@ SECC.cyanobacteria <- SECCcolumnNames(SECC.cyanobacteria)
 # Strip empty rows (before checking values).
 SECC.cyanobacteria <- SECC.cyanobacteria[!is.na(SECC.cyanobacteria$Time),]
 # Standardize column types (needed for aggregate & other processing based on column types).
-SECC.cyanobacteria <- checkSECCdata(SECC.cyanobacteria)
+SECC.cyanobacteria <- checkSECCdata(SECC.cyanobacteria, "SECC.cyanobacteria", CheckDuplicates = FALSE)
 
+SampleID.length <- length(SECC.cyanobacteria$SampleID)
+SampleID.unique <- length(unique(SECC.cyanobacteria$SampleID))
+SampleID.first  <- match(unique(SECC.cyanobacteria$SampleID),
+                        SECC.cyanobacteria$SampleID)
+SampleID.counts <- table(SECC.cyanobacteria$SampleID)  # Counts of each 'factor level'
+SampleID.wrong  <- SampleID.counts[SampleID.counts!=2] # IDs with counts other than 2
+if( length(SampleID.wrong)>0 ) {
+  Pblm.msg <- paste("Duplicates:\n",
+                    paste(names(SampleID.counts[SampleID.counts>2]), collapse=", "),
+                    "\nMissing Counts:\n",
+                    paste(names(SampleID.counts[SampleID.counts<2]), collapse=", ")
+                    )
+  ## This is downgraded to a warning, because the calculations can handle it:
+  ##   they are all averaged together, and I'm not sure it's that big a deal.
+  ## Ideally, I'd have an explicit way of including all replicates,
+  ##   or keeping only the first 2, but I haven't figured out an easy / elegant way to do this yet.
+  warning( paste("There are not exactly 2 subsamples of each Cyanobacteria sample.\n",
+              Pblm.msg, sep='') )
+}
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
@@ -27,39 +46,18 @@ names(SECC.cyanobacteria)[names(SECC.cyanobacteria)=="Count.."] <- "Count"  # re
 SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   # Count should really be a factor
   Count <- factor(Count, levels = c(1, 2) )
+  ## Prepare for pooling
+  ARA.dwt   <- Total.Dry.wt  # Dry weight (mg) of tube moss sample used for ARA (N-fixation)
+  Cells.dwt <- CB.Dry.wt     # Dry weight (mg) of 2 moss shoots used for cyanobacteria counts.
+  # Discard data from second count (keep count 1).  I need values in both, for the calculations!
+  ARA.dwt[Count==2]   <- ARA.dwt[Count==1]  
+  Cells.dwt[Count==2] <- Cells.dwt[Count==1]
 })
 
 
 ##################################################
 ## CALCULATIONS
 ##################################################
-## Prepare for pooling
-SECC.cyanobacteria <- within( SECC.cyanobacteria, {
-  ARA.dwt   <- Total.Dry.wt  # Dry weight (mg) of tube moss sample used for ARA (N-fixation)
-  Cells.dwt <- Dry.wt        # Dry weight (mg) of 2 moss shoots used for cyanobacteria counts.
-  ARA.dwt[Count==2]   <- NA  # discard data from second count (keep count 1)
-  Cells.dwt[Count==2] <- NA  # discard data from second count (keep count 1)
-})
-Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
-## Pool patch data across subsamples.
-col.types <- lapply(SECC.cyanobacteria, class)
-aggregate.columns <- names(SECC.cyanobacteria)[(col.types!="factor" & col.types!="character")]  # a single '&' performs element-wise 'AND' **
-SECC.cyanobacteria <- with(SECC.cyanobacteria,
-                           aggregate(SECC.cyanobacteria[, aggregate.columns], 
-                                     by = list( SampleID = SampleID,
-                                       Block   = Block,
-                                       Time    = Time,
-                                       Chamber = Chamber,
-                                       Frag    = Frag,
-                                       Pos     = Pos
-                                       ),
-                                     FUN = 'sum', na.rm = TRUE
-                                     )
-                           )  # 2 counts / sample
-## NAs in data lead to NAs in the result, rather than being omitted -- without 'na.rm = TRUE' **
-SECC.cyanobacteria[["Date"]] <- Cyanobacteria.full[Cyanobacteria.full$Count==1, "Date"]
-
-## Additional calculations
 sampleA <- 6	# sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
 sample.to.m2 <- (100*100/sampleA)  # scale sample area, in cm^2 to m^2
 sample.ul <- 1000	          # volume of water added to sample, in ul.
@@ -78,6 +76,46 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Cells.m <- Cells * ARA.dwt/1000 * sample.to.m2
           # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^2
   H.cells <- (Total.h / X..lg.squares) * sample.sq / Cells.dwt * 1000
+})
+
+Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
+SampleID.date      <- Cyanobacteria.full[SampleID.first, c('SampleID', 'Date')]  # first date
+SampleID.counts    <- as.data.frame(SampleID.counts)  # counts per unique SampleID
+names(SampleID.counts) <- c("SampleID", "Counts")
+## Dry weight (mg) of tube moss sample used for ARA (N-fixation) (assuming same sort order)
+# ARA.dwt     <- Cyanobacteria.full[SampleID.first, "Total.Dry.wt"]  # first occurence
+## Dry weight (mg) of 2 moss shoots used for cyanobacteria counts. (assuming same sort order)
+# Cells.dwt   <- Cyanobacteria.full[SampleID.first, "CB.Dry.wt"]     # first occurence
+
+
+## Pool patch data across subsamples.
+col.types <- lapply(SECC.cyanobacteria, class)
+aggregate.columns <- names(SECC.cyanobacteria)[(col.types!="factor" & col.types!="character")]  # a single '&' performs element-wise 'AND' **
+## aggregate data: means after calcs might be more appropriate than pooling by sum before calcs?
+SECC.cyanobacteria <- with(SECC.cyanobacteria,
+                           aggregate(SECC.cyanobacteria[, aggregate.columns], 
+                                     by = list( SampleID = SampleID,
+                                       Block   = Block,
+                                       Time    = Time,
+                                       Chamber = Chamber,
+                                       Frag    = Frag,
+                                       Pos     = Pos
+                                       ),
+                                     FUN = 'mean', na.rm = TRUE
+                                     )
+                           )  # 2 counts / sample
+## NAs in data lead to NAs in the result, rather than being omitted -- without 'na.rm = TRUE' **
+
+## aggregate **re-sorts** results
+# Re-producible sort
+SECC.cyanobacteria  <- sort_df( SECC.cyanobacteria,  vars=c('SampleID') )
+SampleID.date       <- sort_df( SampleID.date, vars=c('SampleID') )
+SampleID.counts     <- sort_df( SampleID.counts,     vars=c('SampleID') )
+
+## Additional calculations & clean-up
+SECC.cyanobacteria <- within( SECC.cyanobacteria, {
+  Counts <- SampleID.counts$Counts  # Counts for each SampleID
+  Date   <- SampleID.date$Date    # First Date in data frame
 })
 
 
@@ -106,8 +144,8 @@ head(SECC.cyanobacteria)  # have a peek at the first 6 rows & columns: is this w
 ##################################################
 # leave in memory
 ## Remove old objects from memory
-# rm.objects <- c()
-# rm(list=rm.objects)
+rm.objects <- c('SampleID.length', 'SampleID.unique', 'SampleID.first', 'SampleID.counts', 'SampleID.wrong', 'SampleID.date')
+rm(list=rm.objects)
 ## Update list of Data_objects for importing
 # Data_objects <- c( Data_objects[Data_objects!=rm.objects] , 'SECC.cyanobacteria' )
 

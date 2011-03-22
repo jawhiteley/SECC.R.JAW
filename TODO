@@ -4,3 +4,35 @@
   - not including NAs
 
 - Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
+
+* ARA ID changes (to match template):
+  31A-3.E
+
+* Cyanobacteria ID changes (to match template):
+  11A-4.W
+  21C-4.N
+  31A-1.E
+
+Current Changes:
+================
+* ARA ID changed (to match template):  31A-3.E
+* Cyanobacteria ID changes (to match template):
+  11A-4.W
+  21C-4.N
+  31A-1.E
++ Added `quote = FALSE` to print() statements in error messages of checkSECCdata(),
+  to stop strings from being printed with quotes around them.
++ Added options to checkSECCdata() to control whether to:
+  * check actual values, and change to match standards
+  * check for duplicates.
+  Both options are useful to skip during individual file processing, but are still
+  used in final check before merge.
++ Started `SECCdata_summary` function, to provide summary data (counts) 
+  for each response variable, at each level of ID factors.
+- There are still some bugs in the merge / calculations to fix.
+
++ Added check to load script for cyanobacteria, for the fact that
+  there should be exactly 2 of each ID: 
+  otherwise, there may be duplicates or missing pairs.
++ Cyanobacteria calculations now occur *BEFORE* aggregating (the mean of f() != f(mean))
+

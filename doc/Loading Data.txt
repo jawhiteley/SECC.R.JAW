@@ -23,7 +23,6 @@ Cleaning data, removing extra ID factor levels.  In the load.R script, or a sepa
 ## Standard ID Values (factor levels)
 
 checkSECCdata()
-
 Do I care more about missing standard levels (subset), [No] or extra non-standard levels? *****
 Some factors I expect to have missing levels (e.g. Time, Position), whereas others might have extra levels specific to the data (e.g. ARA controls).
 Controls are specified by extra information in SampleID.
