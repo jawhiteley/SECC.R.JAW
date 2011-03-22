@@ -268,7 +268,8 @@ checkSECCdata <- function(data=NULL, DataName="data", CheckValues = TRUE, CheckD
     return(data)
 }
 
-SECCdata_summary <- function (data) {
+
+SECCstr <- function (data) {
   # Check if first argument is actually a data frame.
   if ('data.frame' %in% class(data) == FALSE)
     stop( "The first argument must be a \'data.frame\'." )
@@ -280,26 +281,30 @@ SECCdata_summary <- function (data) {
   
   ## Assemble a table of counts for all levels of each standard ID column
   ID_cols <- colnames(SECC.base)
-  ID_cols <- c( ID_cols, "Position" )  # include re-coded Positions.
+  ID_cols <- c( ID_cols, "Position" )     # include re-coded Positions.
+  ID_cols <- ID_cols[ID_cols!="SampleID"] # drop SampleID column!! (Loops crash with this insanely long vector).
   Data_cols <- colnames(data)
   Data_cols <- Data_cols[!(Data_cols %in% ID_cols)]
 
+  ## Get counts of values of each level (excluding NAs)
+  ## Essentially: length( na.omit( data[ data[[ID.col]] == ID.lvl, Data.col ] ) )
   for (ID.col in ID_cols) {
     Col.lvls <- levels(data[[ID.col]])
-    # get counts of values of each level (excluding NAs)
-    Col.summary <- table(data[, Data_cols], exclude = NULL)  # summary of this column
-    Col.summary <- data.frame(Levels = Col.lvls, Total = Col.summary)
+    Col.totals  <- as.vector( table(data[[ID.col]]) )  # summary of this column
+    Col.summary <- data.frame(Levels = Col.lvls, Total = Col.totals)
     for (Data.col in Data_cols) {
-        Col.data <- data[[Data.col]]
-        Col.data <- split( Col.data, data[[ID.col]] )  #re-sorts levels
-        Col.data <- lapply( Col.data, na.omit ) # drop NAs
-        Col.data <- lapply( Col.data, length )  # Count of non-NA values
-        Col.summary[[Data.col]] <- unlist( Col.data )
+      Col.summary[[Data.col]] <- NA  # initialize column
+      for (ID.lvl in Col.lvls) {
+        Col.data <- data[data[[ID.col]]==ID.lvl, Data.col]
+        Col.data <- na.omit(Col.data)
+        Col.summary[Col.lvls == ID.lvl, Data.col] <- length( Col.data )
+      }
     }
     SECC.summary[[ID.col]] <- Col.summary  # add ID column summary to summary object.
   }
   return(SECC.summary)
 }
+
 
 ##==================================================
 ## Recode standardized factors to standard values prior to merging
