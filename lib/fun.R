@@ -73,7 +73,7 @@ SECCcolumnNames <- function(data=NULL, DataName="data") {
 }
 
 
-checkSECCdata <- function(data=NULL, DataName="data", CheckValues = TRUE, CheckDuplicates = TRUE) {
+checkSECCdata <- function(data=NULL, DataName="-", CheckValues = TRUE, CheckDuplicates = TRUE) {
   ## Checks a data frame argument to make sure that 
   ## it conforms to the standards for the 
   ## Schefferville Experiment on Climate Change (SEC-C).
@@ -281,7 +281,8 @@ SECCstr <- function (data) {
   
   ## Assemble a table of counts for all levels of each standard ID column
   ID_cols <- colnames(SECC.base)
-  ID_cols <- c( ID_cols, "Position" )     # include re-coded Positions.
+  if("Position" %in% names(data))
+     ID_cols <- c( ID_cols, "Position" )     # include re-coded Positions.
   ID_cols <- ID_cols[ID_cols!="SampleID"] # drop SampleID column!! (Loops crash with this insanely long vector).
   Data_cols <- colnames(data)
   Data_cols <- Data_cols[!(Data_cols %in% ID_cols)]

@@ -2,7 +2,7 @@ Algorithm for Loading Data
 Schefferville Experiment on Climate Change (and Fragmentation).
 Jonathan Whiteley    2011-03-18
 
-# Checking Data
+# Checking Input Data
 
 Checking data happens in 4 basic steps
 
@@ -37,3 +37,15 @@ recodeSECC() function
 I'm not sure if this needs to be done in the load phase, but it is useful for meaningful plot labels, and avoiding cryptic codes in the final output.
 I am definitely used to thinking in terms of the treatment codes, so it might actually be easier to keep the codes for writing analysis scripts.
 Nevertheless, re-coding the main data frames also ensures consistent labels across all analyses.
+
+# Checking Output Data for analysis
+
+The `SECCstr()` function provides a breakdown of the number of samples with data
+(not NA) in each factor level.  It is useful for checking for extra, unbalanced,
+or missing values, if you know what the numbers *should* be.
+
+## Cyanobacteria
+
+The basic data is all samples from: (I)nner, (O)uter ; Ambient (A), Full Chamber (C).
+There are a few extra samples in t1, particularly from Blocks 1 - 3,
+including 3 from Partial Chambers (B).

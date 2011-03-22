@@ -138,6 +138,10 @@ attr(SECC.cyanobacteria, "units")  <- list("Cells"="cells/g dwt")
 
 head(SECC.cyanobacteria)  # have a peek at the first 6 rows & columns: is this what you expected?
 # str(SECC.cyanobacteria)   # check structure: are the appropriate variables factors, numeric, etc.?
+## Check data structure of main data for analysis: I, O; A, C
+SECCstr(SECC.cyanobacteria[SECC.cyanobacteria$Chamber %in% c("A", "C") &
+                           SECC.cyanobacteria$Pos     %in% c("I", "O"),
+                           ])
 
 ##################################################
 ## SAVE DATA

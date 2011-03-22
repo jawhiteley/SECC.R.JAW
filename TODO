@@ -1,8 +1,5 @@
-- Finish load script for ARA & cyanobacteria data, at least.
-X Summary information on SECC data-frame
-  - # of values of each factor level, for each response variable: check for inconsistencies, missing values.
-  - not including NAs
-- Check unbalanced and missing data rows in SECC.
+X Check unbalanced and missing data rows in SECC.
+- Check Block 6 Cyanobacteria thread data
 
 - Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
 
@@ -16,6 +13,15 @@ X Summary information on SECC data-frame
 
 Current Changes:
 ================
-* Re-encoded data files (non UTF-8 encodings causing errors when loading in R-Mac-GUI).
-* Changed `SECCdata_summary()` function to `SECCstr`.
-  + SECCstr now works: removed 'SampleID' from ID columns to process, which made loops insanely long.
+Cyanobacteria & t1 ARA load properly.
+  * Cyanobacteria data loading works (numbers check out as far as I can tell).
+  * ARA t1 loads properly
+  * ARA t1 was missing several values, due to NAs in the Controls & Blanks 
+    (especially Pos=N/S/E/W in certain Blocks?), leading to NAs in the calculated columns.
+  * Fixed bugs in calculations for ARA.  
+  * ARA t1 Block 4 has a Blank with 0, which is strange.
+    The Excel spreadsheet referenced the wrong cell for blanks in t4, 
+    leading to mismatch between calculated values in R vs. Excel for block 4
+
+- Attributes of SECC data frame are not being combined properly :-(
+

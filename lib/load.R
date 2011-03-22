@@ -72,8 +72,8 @@ rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 # that goes here; or in a separate script that is source()'d here.
 #   Specify which columns are to be merged with attribute "SECC columns"
 
-source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
 source("./lib/load_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
+source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
 
 ##================================================
 ## AUTOMATICALLY CHECK & CLEAN DATA
@@ -96,11 +96,15 @@ for (DataObject in merge.SECC) {
 ## Prepare base data frame to merge others into
 SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
-attr(SECC, "labels") <- list("Time" = "Sample Time",
-                             "Chamber" = "Chamber Treatment",
-                             "Frag" = "Fragmentation Treatment",
-                             "Pos" = "Patch Position"
-                             )
+## Create containers for attributes.
+ # attributes are lost after every merge,
+ # so they are accumulated in a separate object to be added later.
+SECC.labels <- list("Time" = "Sample Time",
+                    "Chamber" = "Chamber Treatment",
+                    "Frag" = "Fragmentation Treatment",
+                    "Pos" = "Patch Position"
+                    )
+SECC.units  <- list()
 
 ##================================================
 ## Merge all main response variables into a single data frame: SECC
@@ -121,16 +125,24 @@ for (ObjectName in merge.SECC) {
   ## Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
   SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
   # merge attributes: labels, units.
-  attr(SECC, "labels") <- c( attr(SECC, "labels"), attr(DataObject, "labels") )
-  attr(SECC, "units" ) <- c( attr(SECC, "units" ), attr(DataObject, "units" ) )
+  SECC.labels <- c( SECC.labels, attr(DataObject, "labels") )
+  SECC.units  <- c( SECC.units , attr(DataObject, "units" ) )
 }
 
-# Preferred sort order
+## Preferred sort order
 SECC <- within( SECC, {
   # Levels in sort order: The Position column will be replaced with recoded values later anyway.
   Position <- factor(Pos, levels=Pos_all_sort)
 })
-SECC <- sort_df( SECC, vars=c(Trt_sort_order, "Position") )
+# Sort, but also drops attributes :-(
+SECC.sorted <- sort_df( SECC, vars=c(Trt_sort_order, "Position") )
+
+## Re-build SECC data frame properties
+SECC <- SECC.sorted
+row.names(SECC) <- SECC$SampleID  # Change row.names to at least something meaningful.
+attr(SECC, "labels") <- SECC.labels
+attr(SECC, "units" ) <- SECC.units
+
 
 ##================================================
 ## Calculate columns across source data frames in new object
@@ -165,7 +177,13 @@ SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`
 ##################################################
 ## Patch-level data
 head(SECC)		# have a peek at the first 6 rows & columns: is this what you expected?
-str(SECC)		# check structure: are the appropriate variables factors, numeric, etc.?
+# str(SECC)		# check structure: are the appropriate variables factors, numeric, etc.?
+SECCstr(SECC)
+SECCstr(SECC[!is.na(SECC$Time), ])  # For a more accurate summary, excluding unsampled Time Points.
+SECCstr(SECC[SECC.coded$Time!=3 &
+             SECC.coded$Chamber %in% c("A", "C") &
+             SECC.coded$Pos     %in% c("I", "O"),
+             ])  # For a more accurate summary, excluding t3, B's & Other Pos's
 
 # ## Regional data
 # head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?
