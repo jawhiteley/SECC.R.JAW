@@ -164,7 +164,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
   ARA.Ac   <- C2H2._mol / ARA.umol   # % C2H2 of ARA gases (not used).
   Control <- NA  # Control % umol C2H4 corresponding to sample. 
   Blank   <- NA  # Blank   % umol C2H4 corresponding to sample.
-  for (i in 1:NROW(SECC.ARA.t1)) {
+  for (i in 1:nrow(SECC.ARA.t2)) {
     Sample.id <- SampleID[i]
     ## GET BLANK
     Blank.id <- paste( substr(Sample.id, 1, 3), "-", Blank.code, sep="" )   # try for an exact match for ID
@@ -212,7 +212,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
   rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA',
                  'Control.id', 'ID.control', 'Control.ARA', 'Control.Blank' ))  # housecleaning
 
-  ## Calculate ARA
+  ## CALCULATE ARA
   ARA.control <- C2H4._mol - (Control * umol.ml)  # umol C2H4 after removing Control
   ARA.ml <- ARA.control - (Blank * (C2H2._mol + ARA.control))  # umol C2H4 / 1 ml sample
           # umol C2H4 without Control (by volume)
