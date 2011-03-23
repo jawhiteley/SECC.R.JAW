@@ -1,4 +1,6 @@
 - Load ARA data from t2 & t4
+  - match appropriate Blanks in t4 calculations (based on Frag levels in raw data)
+  - Merge all ARA time-points.
 
 - Check Block 6 Cyanobacteria thread data
 

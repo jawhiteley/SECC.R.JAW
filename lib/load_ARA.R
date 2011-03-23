@@ -15,7 +15,7 @@ require(car)		# load external package 'car', for recode()
 SECC.ARA.t1 <- SECCcolumnNames(SECC.ARA.t1)
 SECC.ARA.t2 <- SECCcolumnNames(SECC.ARA.t2)
 SECC.ARA.t4 <- SECCcolumnNames(SECC.ARA.t4)
-## Store Current (non-standard, but accurate) IDs for reference later
+## Store Raw (non-standard, but accurate) IDs for reference later
 SampleID.t1 <- SECC.ARA.t1[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
 SampleID.t2 <- SECC.ARA.t2[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
 SampleID.t4 <- SECC.ARA.t4[,c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
@@ -191,7 +191,9 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
     # get metching values of SampleID
     ID.control   <- grep( Control.id, SampleID , perl = TRUE )
     # get values of C2H4 / umol: %C2H4 of (Total umol of gas in 1ml injection)
-    Control.ARA   <- Eth.umol[ID.control]  # cheap approximation
+    Control.ARA <- Eth.umol[ID.control]  # cheap approximation by volume
+                   # using this for t2 instead of formulas below
+                   # increases # net values < 0 from 95 to 99.
     # umol C2H4 in Control from contamination (Blank):
     Control.Blank <- (Blank.ARA * C2H2._mol[ID.control]) / (1 - Blank.ARA)
     # umol C2H4 in Control from non-ARA sources:
@@ -223,17 +225,96 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
 
 
 ###  T4 ARA calculations
+SECC.ARA.t4 <- within( SECC.ARA.t4, {
+  umol.ml <- ( (Pressure..kPa..lab * 1000)*Vol.injection ) /
+             ( GAS.CONSTANT * (Temperature...C..lab + 273) )
+             # Pressure in pa (*1000)
+             # Temperature in C -> K (+273)
+  Eth.umol <- C2H4._mol / umol.ml  # % umol C2H4 / umol in 1ml injection.
+  Ac.umol  <- C2H2._mol / umol.ml  # % umol C2H2 / umol in 1ml injection.
+  ARA.umol <- C2H2._mol + C2H4._mol  # Total umol of ARA gas in injection.
+  ARA.Eth  <- C2H4._mol / ARA.umol   # % C2H4 of ARA gases. *****
+  ARA.Ac   <- C2H2._mol / ARA.umol   # % C2H2 of ARA gases (not used).
+  Control <- NA  # Control % umol C2H4 corresponding to sample. 
+  Blank   <- NA  # Blank   % umol C2H4 corresponding to sample.
+  for (i in 1:nrow(SECC.ARA.t4)) {
+    Sample.id <- SampleID[i]
+    ## GET BLANK
+    Blank.id <- paste( substr(Sample.id, 1, 3), "-", Blank.code, sep="" )   # try for an exact match for ID
+    if (Blank.id %in% SampleID == FALSE)
+      Blank.id <- paste( substr(Sample.id, 1, 2), ".-", Blank.code, sep="" ) # try a control from any chamber in the corresponding block & time.
+    # get metching values of SampleID
+    ID.blank   <- grep( Blank.id, SampleID , perl = TRUE )  # get indices
+    # get values of [ C2H4 / (C2H4+C2H2) ] in Blank: %C2H4 of (C2H4+C2H2)
+    Blank.ARA <- ARA.Eth[ID.blank]
+    # take the mean if there is more than one.
+    if (length(Blank.ARA) > 1) {
+      Blank.ARA <- mean(Blank.ARA)
+    } else if (length(Blank.ARA) < 1) {
+      Blank.ARA <- NA
+    } else {
+      Blank.ARA <- Blank.ARA
+    }
+    ## Store Value
+    Blank[i] <- Blank.ARA
+    ## CALCULATE CONTROL
+    Control.id <- paste( substr(Sample.id, 1, 7), control.code, sep="" )   # try for an exact match for ID
+    if (Control.id %in% SampleID == FALSE)
+      Control.id <- paste( substr(Sample.id, 1, 6), ".", control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
+    # get metching values of SampleID
+    ID.control   <- grep( Control.id, SampleID , perl = TRUE )
+    # get values of C2H4 / umol: %C2H4 of (Total umol of gas in 1ml injection)
+    Control.ARA   <- Eth.umol[ID.control]  # cheap approximation by volume
+    # umol C2H4 in Control from contamination (Blank):
+    Control.Blank <- (Blank.ARA * C2H2._mol[ID.control]) / (1 - Blank.ARA)
+    # umol C2H4 in Control from non-ARA sources:
+    Control.ARA   <- C2H4._mol[ID.control] - Control.Blank
+    # % C2H4 in Total umol of gas in Control
+    Control.ARA   <- Control.ARA / umol.ml[ID.control]
+    # take the mean if there is more than one.
+    if (length(Control.ARA) > 1) {
+      Control.ARA <- mean(Control.ARA)
+    } else if (length(Control.ARA) < 1) {
+      Control.ARA <- NA
+    } else {
+      Control.ARA <- Control.ARA
+    }
+    ## Store Value
+    Control[i] <- Control.ARA
+  }
+  rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA',
+                 'Control.id', 'ID.control', 'Control.ARA', 'Control.Blank' ))  # housecleaning
 
+  ## CALCULATE ARA
+  ARA.control <- C2H4._mol - (Control * umol.ml)  # umol C2H4 after removing Control
+  ARA.ml <- ARA.control - (Blank * (C2H2._mol + ARA.control))  # umol C2H4 / 1 ml sample
+          # umol C2H4 without Control (by volume)
+          # - (% Blank * (Total ARA umol without Control))
+  ARA.ml[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
+  ARA.m <- ARA.ml * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
+})
 
 
 
 ##================================================
 ## CHECK Calculations
+# Histograms
+hist(SECC.ARA.t1$ARA.ml)
+hist(SECC.ARA.t2$ARA.ml)
+hist(SECC.ARA.t4$ARA.ml)
+
+# Number of values > 0?
+length(na.omit(SECC.ARA.t1$ARA.ml[SECC.ARA.t1$ARA.ml>0]))
+length(na.omit(SECC.ARA.t2$ARA.ml[SECC.ARA.t2$ARA.ml>0]))  # very low
+length(na.omit(SECC.ARA.t4$ARA.ml[SECC.ARA.t4$ARA.ml>0]))
+
 ARAcalc.cols <- c("SampleID", "Block", "Time", "Chamber", "Frag", "Pos",
                   "SampleControl", "Eth.umol", "Control", "Blank",
                   "ARA.ml", "umol.ml", "ARA.._mol.ml.")
 ARA.calcs <- SECC.ARA.t1[ , ARAcalc.cols]
 # invisible(edit(ARA.calcs))
+
+
 
 ##################################################
 ## MERGE TIME POINTS
