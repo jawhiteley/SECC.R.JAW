@@ -2,6 +2,10 @@ X Load ARA data from t2 & t4
   X match appropriate Blanks in t4 calculations (based on Frag levels in raw data)
   X Merge all ARA time-points.
 
+- Check ARA calculation formulas -- How do the final values compare:
+  * standardizing blanks by C2H2 (+ C2H4)
+  * standardizing blanks & controls by umol / volume?
+  * using 'raw' umol amounts?
 - Check Block 6 Cyanobacteria thread data
 - Check Blanks with values of 0 for C2H4.
 

@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2011-01-26
+# Jonathan Whiteley		R v2.12		2011-03-23
 ##================================================
 ## All Data files in './data' are loaded into memory.
 ## Load scripts for manual processing are source()'d
@@ -73,7 +73,7 @@ rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 #   Specify which columns are to be merged with attribute "SECC columns"
 
 source("./lib/load_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
-source("./lib/load_ARA.R", echo=FALSE)  # Process ARA N-fixation data ; hide output?
+source("./lib/load_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
 
 ##================================================
 ## AUTOMATICALLY CHECK & CLEAN DATA
@@ -181,6 +181,8 @@ SECCstr(SECC[SECC.coded$Time!=3 &
              SECC.coded$Chamber %in% c("A", "C") &
              SECC.coded$Pos     %in% c("I", "O"),
              ])  # For a more accurate summary, excluding t3, B's & Other Pos's
+
+# invisible(edit(SECC.coded))
 
 # ## Regional data
 # head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?

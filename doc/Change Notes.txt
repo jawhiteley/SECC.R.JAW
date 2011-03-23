@@ -29,5 +29,11 @@ Updated the way Blank SampleIDs are calculated in t4 to avoid duplicates
   for samples in that Chamber.
   + 0 for first (initial) blank
   + 9 for last  (final)   blank
-- Minor formatting changes to other scripts (comments & output).
+Checked & CORRECTED ARA Calculations 
+  (I forgot a decimal place in one of the unit conversions)
+  Fortunately, this had only a minimal (unnoticeable) effect, as the Total umol
+  was only used to standardize values for Controls (& Blanks in t1).
+Minor formatting changes to other scripts (comments & output).
 
+SECC data frame merges all Cyanobacteria & ARA data 
+- they are ready to go for analyses!

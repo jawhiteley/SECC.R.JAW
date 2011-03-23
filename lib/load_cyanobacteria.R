@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
-# Load, clean & process ARA data loaded from "./data/"
-# Jonathan Whiteley		R v2.12		2011-03-15
+# Load, clean & process Cyanobacteria data loaded from "./data/"
+# Jonathan Whiteley		R v2.12		2011-03-23
 ##################################################
 ## This script is run as part of `./lib/load.R`
 require(car)		# load external package 'car', for recode()

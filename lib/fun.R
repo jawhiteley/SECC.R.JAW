@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Functions
-# Jonathan Whiteley		R v2.12		2011-01-26
+# Jonathan Whiteley		R v2.12		2011-03-23
 ##################################################
 source('./lib/SECC.functions.R')
 source('./lib/jaw.graph_functions.R')
