@@ -14,26 +14,12 @@ ____________
 
 Current Changes:
 ================
+init.R + file encodings
 
-Load ARA data t1, 2, 4
+Checked encodings of input data files (especially ARA .csv's)
+UTF-8 with LF (Unix)
 
-Merge ARA data from 3 time points.
-- using `all = TRUE` to keep all rows & columns from all tables.
-  Columns in common will be merged.  
-  Unused columns will get dropped when merging into SECC anyway.
-Updated the way Blank SampleIDs are calculated in t4 to avoid duplicates
-(which cause errors in the data checking).
-- This also allowed me to improve the way Blanks are fetched in the calculations.
-- I had to add fake Frag values for 34C-G blanks, to avoid duplicates
-  in a way that would still allow the two value to be averaged together
-  for samples in that Chamber.
-  + 0 for first (initial) blank
-  + 9 for last  (final)   blank
-Checked & CORRECTED ARA Calculations 
-  (I forgot a decimal place in one of the unit conversions)
-  Fortunately, this had only a minimal (unnoticeable) effect, as the Total umol
-  was only used to standardize values for Controls (& Blanks in t1).
-Minor formatting changes to other scripts (comments & output).
+Updated init.R to reflect operating load.R file & output.
 
-SECC data frame merges all Cyanobacteria & ARA data 
-- they are ready to go for analyses!
+Project should be ready for Cyanobacteria & ARA analysis,
+maybe after some final checks of odd data values & calculations.
