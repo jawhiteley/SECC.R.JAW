@@ -1,23 +1,20 @@
-X combine attributes into SECC data frame
+- Load ARA data from t2 & t4
 
 - Check Block 6 Cyanobacteria thread data
 
 - Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
 
+- ANOVA analyses for Cyanobacteria & ARA
+
+
+
+
 
 Current Changes:
 ================
 
-load.R ready for Cyanobacteria & ARA t1
+Load ARA t2-4 data
 
-Load data for:
-+ Cyanobacteria
-  + t1, t2, t4
-  + A, C (a few B's)
-  + I, O (a few others in t1)
-+ ARA t1
-Check Data, perform Calculations, Merge, save Export.
-t1 is ready for analysis.
 
 
 
