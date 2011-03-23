@@ -95,6 +95,7 @@ sample_ml    <- 50  # 50 ml sample
 
 ###  T1 ARA calculations
 SECC.ARA.t1 <- within( SECC.ARA.t1, {
+  C2H4._mol <- X_mol  # for compatibility with data from other time points.
   umol.ml <- ( (Pressure..kPa..lab * 1000)*Vol.injection ) /
              ( GAS.CONSTANT * (Temperature...C..lab + 273) )
              # Pressure in pa (*1000)
@@ -114,7 +115,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
     Blank.umol <- Eth.umol[ID.blank]
     # take the mean if there is more than one.
     if (length(Blank.umol) > 1) {
-      Blank.umol <- mean(Blank.umol)
+      Blank.umol <- mean(Blank.umol, na.rm = TRUE)
     } else if (length(Blank.umol) < 1) {
       Blank.umol <- NA
     } else {
@@ -132,7 +133,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
     Control.umol <- Eth.umol[ID.control]
     # take the mean if there is more than one.
     if (length(Control.umol) > 1) {
-      Control.umol <- mean(Control.umol)
+      Control.umol <- mean(Control.umol, na.rm = TRUE)
     } else if (length(Control.umol) < 1) {
       Control.umol <- NA
     } else {
@@ -176,7 +177,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
     Blank.ARA <- ARA.Eth[ID.blank]
     # take the mean if there is more than one.
     if (length(Blank.ARA) > 1) {
-      Blank.ARA <- mean(Blank.ARA)
+      Blank.ARA <- mean(Blank.ARA, na.rm = TRUE)
     } else if (length(Blank.ARA) < 1) {
       Blank.ARA <- NA
     } else {
@@ -202,7 +203,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
     Control.ARA   <- Control.ARA / umol.ml[ID.control]
     # take the mean if there is more than one.
     if (length(Control.ARA) > 1) {
-      Control.ARA <- mean(Control.ARA)
+      Control.ARA <- mean(Control.ARA, na.rm = TRUE)
     } else if (length(Control.ARA) < 1) {
       Control.ARA <- NA
     } else {
@@ -247,9 +248,26 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     ID.blank   <- grep( Blank.id, SampleID , perl = TRUE )  # get indices
     # get values of [ C2H4 / (C2H4+C2H2) ] in Blank: %C2H4 of (C2H4+C2H2)
     Blank.ARA <- ARA.Eth[ID.blank]
-    # take the mean if there is more than one.
+    # further matching or take the mean if there is more than one.
     if (length(Blank.ARA) > 1) {
-      Blank.ARA <- mean(Blank.ARA)
+      Sample.Frag <- Frag[i]
+      RawID.blank <- grep( Blank.id, SampleID.t4$SampleID , perl = TRUE )  # get indices
+      ## comma-delimited list of Frag treatments included in Blank:
+      Blank.Frag  <- SampleID.t4[RawID.blank, "Frag"]
+      # remove NAs
+      Blank.Frag  <- na.omit(Blank.Frag)
+      Blank.Frag  <- strsplit(as.character(Blank.Frag), ",\\s?")  # split by commas
+      for ( blank in 1:length(Blank.Frag) ) {
+        if  (Sample.Frag %in% unlist(Blank.Frag[blank]) ) {
+          # This is the correct blank for this sample.
+          Blank.ARA <- Blank.ARA[blank]
+                    # assumes blanks are in same relative order as returned by grep()
+        }
+      }
+      ## Take the mean if there is still more than 1
+      if (length(Blank.ARA) > 1) {
+        Blank.ARA <- mean(Blank.ARA, na.rm = TRUE)
+      }
     } else if (length(Blank.ARA) < 1) {
       Blank.ARA <- NA
     } else {
@@ -273,7 +291,7 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     Control.ARA   <- Control.ARA / umol.ml[ID.control]
     # take the mean if there is more than one.
     if (length(Control.ARA) > 1) {
-      Control.ARA <- mean(Control.ARA)
+      Control.ARA <- mean(Control.ARA, na.rm = TRUE)
     } else if (length(Control.ARA) < 1) {
       Control.ARA <- NA
     } else {
@@ -282,8 +300,11 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     ## Store Value
     Control[i] <- Control.ARA
   }
-  rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA',
-                 'Control.id', 'ID.control', 'Control.ARA', 'Control.Blank' ))  # housecleaning
+  # housecleaning
+  rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA', 'Blank.Frag',
+                 'Control.id', 'ID.control', 'Control.ARA', 'Control.Blank' ))
+  Blank[SampleControl == "blank"] <- NA  # no values for blanks (they would be meaningless).
+  Control[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
 
   ## CALCULATE ARA
   ARA.control <- C2H4._mol - (Control * umol.ml)  # umol C2H4 after removing Control
@@ -309,11 +330,13 @@ length(na.omit(SECC.ARA.t2$ARA.ml[SECC.ARA.t2$ARA.ml>0]))  # very low
 length(na.omit(SECC.ARA.t4$ARA.ml[SECC.ARA.t4$ARA.ml>0]))
 
 ARAcalc.cols <- c("SampleID", "Block", "Time", "Chamber", "Frag", "Pos",
-                  "SampleControl", "Eth.umol", "Control", "Blank",
+                  "SampleControl", "C2H4._mol", "Eth.umol", "Control", "Blank",
                   "ARA.ml", "umol.ml", "ARA.._mol.ml.")
-ARA.calcs <- SECC.ARA.t1[ , ARAcalc.cols]
+ARA.calcs <- SECC.ARA.t4[ , ARAcalc.cols]
 # invisible(edit(ARA.calcs))
 
+### t4 Control & Blank were empty, therefore 'calculated' ARA values
+### (`ARA.._mol.ml.`) are simply unadjusted total C2H4 in sample.
 
 
 ##################################################
