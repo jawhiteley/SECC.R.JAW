@@ -25,17 +25,21 @@ SampleID.first  <- match(unique(SECC.cyanobacteria$SampleID),
 SampleID.counts <- table(SECC.cyanobacteria$SampleID)  # Counts of each 'factor level'
 SampleID.wrong  <- SampleID.counts[SampleID.counts!=2] # IDs with counts other than 2
 if( length(SampleID.wrong)>0 ) {
-  Pblm.msg <- paste("Duplicates:\n",
-                    paste(names(SampleID.counts[SampleID.counts>2]), collapse=", "),
-                    "\nMissing Counts:\n",
-                    paste(names(SampleID.counts[SampleID.counts<2]), collapse=", ")
+  Duplicates <- paste(names(SampleID.counts[SampleID.counts>2]), collapse=", ")
+  Missing    <- paste(names(SampleID.counts[SampleID.counts<2]), collapse=", ")
+  text.empty <- "<none>"
+  Pblm.msg <- paste("\nDuplicates: ",
+                    ifelse(Duplicates=="", text.empty, Duplicates),
+                    "\nMissing:    ",
+                    ifelse(Missing==""   , text.empty, Missing   ),
+                    sep = ''
                     )
   ## This is downgraded to a warning, because the calculations can handle it:
   ##   they are all averaged together, and I'm not sure it's that big a deal.
   ## Ideally, I'd have an explicit way of including all replicates,
   ##   or keeping only the first 2, but I haven't figured out an easy / elegant way to do this yet.
-  warning( paste("There are not exactly 2 subsamples of each Cyanobacteria sample.\n",
-              Pblm.msg, sep='') )
+  warning( paste("There are not exactly 2 subsamples of each Cyanobacteria sample.",
+                 Pblm.msg, sep='' ) )
 }
 
 ##================================================
@@ -147,6 +151,10 @@ SECCstr(SECC.cyanobacteria[SECC.cyanobacteria$Chamber %in% c("A", "C") &
 ## SAVE DATA
 ##################################################
 # leave in memory
+
+##================================================
+## Housekeeping
+##================================================
 ## Remove old objects from memory
 rm.objects <- c('SampleID.length', 'SampleID.unique', 'SampleID.first', 'SampleID.counts', 'SampleID.wrong', 'SampleID.date')
 rm(list=rm.objects)

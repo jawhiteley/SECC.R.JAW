@@ -247,12 +247,14 @@ checkSECCdata <- function(data=NULL, DataName="-", CheckValues = TRUE, CheckDupl
     SampleID.counts <- table(data$SampleID)  # Counts of each 'factor level'
     SampleID.wrong   <- SampleID.counts[SampleID.counts!=1] # IDs with counts other than 1
     if( length(SampleID.wrong)>0 ) {
-      # Duplicates <- SampleID.counts[SampleID.counts>1]
-      # Missing    <- SampleID.counts[SampleID.counts<1]
+      Duplicates <- paste(names(SampleID.counts[SampleID.counts>1]), collapse="\n")
+      Missing    <- paste(names(SampleID.counts[SampleID.counts<1]), collapse="\n")
+      text.empty <- "<none>"
       Pblm.msg <- paste("\nDuplicates:\n",
-                        paste(names(SampleID.counts[SampleID.counts>1]), collapse="\n"),
+                        ifelse(Duplicates=="", text.empty, Duplicates),
                         "\nMissing:\n",
-                        paste(names(SampleID.counts[SampleID.counts<1]), collapse="\n")
+                        ifelse(Missing==""   , text.empty, Missing   ),
+                        sep = ''
                         )
       stop( paste("There are duplicate or missing IDs",
                   Pblm.msg, sep='') )
@@ -289,6 +291,7 @@ SECCstr <- function (data) {
 
   ## Get counts of values of each level (excluding NAs)
   ## Essentially: length( na.omit( data[ data[[ID.col]] == ID.lvl, Data.col ] ) )
+   # More efficient to use a version of apply() or by() instead?
   for (ID.col in ID_cols) {
     Col.lvls <- levels(data[[ID.col]])
     Col.totals  <- as.vector( table(data[[ID.col]]) )  # summary of this column

@@ -26,9 +26,9 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
    # fragmentation treatments are included in the blank from that particular Chamber.
 })
 ## Standardize ID column values
-SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1, CheckDuplicates = FALSE)
-SECC.ARA.t2 <- checkSECCdata(SECC.ARA.t2, CheckDuplicates = FALSE)
-SECC.ARA.t4 <- checkSECCdata(SECC.ARA.t4, CheckDuplicates = FALSE)
+SECC.ARA.t1 <- checkSECCdata(SECC.ARA.t1, 'SECC.ARA.t1', CheckDuplicates = FALSE)
+SECC.ARA.t2 <- checkSECCdata(SECC.ARA.t2, 'SECC.ARA.t2', CheckDuplicates = FALSE)
+SECC.ARA.t4 <- checkSECCdata(SECC.ARA.t4, 'SECC.ARA.t4', CheckDuplicates = FALSE)
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
@@ -48,13 +48,6 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   SampleID[SampleControl=="blank"] <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]
                                          #'G' for gas Blanks?
   SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
-
-  # Some Fragmentation entries are '-' and need to be recoded as 'NA'
-# Frag <- recode(Frag,
-#                "'1'='1' ; '2'='2' ; '3'='3' ; '4'='4' ; else=''",
-#                as.factor.result = TRUE,
-#                levels = c('1', '2', '3', '4')
-#               )
 })
 
 SECC.ARA.t2 <- within( SECC.ARA.t2, {
@@ -72,8 +65,15 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
   SampleControl <- factor(SampleControl, levels=c("blank", "control", "Sample")) 
   ## Re-calculate SampleID to indicate controls
   SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-  SampleID[SampleControl=="blank"]   <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]
   SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
+  SampleID[SampleControl=="blank"]   <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]  # not unique: need to append Frag treatments to make them unique.
+  Raw.blanks <- grep( "G\\d\\b" , SampleID.t4$SampleID, perl = TRUE)  # indices of RAW blank SampleIDs
+  Blank.ids <- SampleID[SampleControl=="blank"]  # temporary container
+  Blank.Frags <- SampleID.t4$Frag[Raw.blanks]    # Frag levels: comma-delimited list
+  Blank.Frags <- gsub( ",\\s?", "", Blank.Frags )# remove commas
+  Blank.ids <- paste( Blank.ids, Blank.Frags, sep = '' )  # append Frag labels
+  SampleID[SampleControl=="blank"] <- Blank.ids  # update ID values
+  rm(list=c( 'Raw.blanks', 'Blank.Frags', 'Blank.ids' ))  # housekeeping
 })
 
 
@@ -300,8 +300,9 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     ## Store Value
     Control[i] <- Control.ARA
   }
-  # housecleaning
-  rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA', 'Blank.Frag',
+  # housekeeping
+  rm(list=c('i', 'Sample.id', 'Blank.id', 'ID.blank', 'Blank.ARA',
+                 'Blank.Frag', 'RawID.blank', 'Sample.Frag', 'blank',
                  'Control.id', 'ID.control', 'Control.ARA', 'Control.Blank' ))
   Blank[SampleControl == "blank"] <- NA  # no values for blanks (they would be meaningless).
   Control[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
@@ -342,15 +343,16 @@ ARA.calcs <- SECC.ARA.t4[ , ARAcalc.cols]
 ##################################################
 ## MERGE TIME POINTS
 ##################################################
-## 
+## merge(), or rbind() on common columns?
 
 SECC.ARA <- SECC.ARA.t1
+SECC.ARA <- merge( SECC.ARA, SECC.ARA.t2, all=TRUE, suffixes = c(".t1", ".t2") )
+SECC.ARA <- merge( SECC.ARA, SECC.ARA.t4, all=TRUE, suffixes = c(".12", ".t4"), sort = TRUE )
 
-## Remove old objects from memory
-rm.objects <- c('SECC.ARA.t1', 'ARA.calcs')
-rm(list=rm.objects)
-## Update list of Data_objects for importing
-Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.ARA' )
+##================================================
+## Check Results
+nrow(SECC.ARA)  # 1780
+nrow(SECC.ARA.t1) + nrow(SECC.ARA.t2) + nrow(SECC.ARA.t4)  # 1780
 
 ##================================================
 ## Assign Attributes
@@ -374,9 +376,10 @@ attr(SECC.ARA, "units")  <- list(
 ##################################################
 
 head(SECC.ARA)  # have a peek at the first 6 rows & columns: is this what you expected?
-# str(SECC.ARA.t1)   # check structure: are the appropriate variables factors, numeric, etc.?
+# str(SECC.ARA)   # check structure: are the appropriate variables factors, numeric, etc.?
 ## Check structure
-SECCstr(SECC.ARA[SECC.ARA$SampleControl=="Sample", ])
+SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ARAcalc.cols])
+SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ])
 
 ##################################################
 ## SAVE DATA
@@ -385,3 +388,13 @@ SECCstr(SECC.ARA[SECC.ARA$SampleControl=="Sample", ])
 ARA.full <- SECC.ARA
 # only rows for samples, exclude controls
 # SECC.ARA <- SECC.ARA[SECC.ARA$SampleControl=="Sample",]
+
+##================================================
+## Housekeeping
+##================================================
+## Remove old objects from memory
+rm.objects <- c('SECC.ARA.t1', 'SECC.ARA.t2', 'SECC.ARA.t4', 'ARA.calcs')
+# rm(list=rm.objects)
+## Update list of Data_objects for importing
+Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.ARA' )
+

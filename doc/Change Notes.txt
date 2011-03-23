@@ -15,6 +15,19 @@ ____________
 Current Changes:
 ================
 
-Load ARA t2-4 data
+Load ARA data t1, 2, 4
 
+Merge ARA data from 3 time points.
+- using `all = TRUE` to keep all rows & columns from all tables.
+  Columns in common will be merged.  
+  Unused columns will get dropped when merging into SECC anyway.
+Updated the way Blank SampleIDs are calculated in t4 to avoid duplicates
+(which cause errors in the data checking).
+- This also allowed me to improve the way Blanks are fetched in the calculations.
+- I had to add fake Frag values for 34C-G blanks, to avoid duplicates
+  in a way that would still allow the two value to be averaged together
+  for samples in that Chamber.
+  + 0 for first (initial) blank
+  + 9 for last  (final)   blank
+- Minor formatting changes to other scripts (comments & output).
 

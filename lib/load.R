@@ -85,10 +85,7 @@ for (DataObject in merge.SECC) {
     # Returns an updated clean version of data object.
     # It will fail with an error message if the object is unsuitable for merging.
 }
-# What does this warning mean exactly?
-#   In min(levels(data[[ColName]]) %in% Col_lvls) :
-#   no non-missing arguments to min; returning Inf
-# It might result from a column of NAs being compared?
+
 
 ##################################################
 ## PROCESS DATA
