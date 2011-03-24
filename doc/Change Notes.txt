@@ -8,18 +8,21 @@ ____________
   21C-4.N
   31A-1.E
 
+ARA Calculation formulas: standardize by umol/ml or umol of ARA gases (C2H2 + C2H4)?
+================================
+ARA calculation formulas -- How do the final values compare:
 
+  * standardizing blanks by C2H2 (+ C2H4)
+  * standardizing blanks & controls by umol / volume?
+  * using 'raw' umol amounts?
 
+The difference appears to be very minor: 4th+ decimal place.
 
+  - There are 4 more values >0 in t2 using volumetric standardization, 
+    but I strongly suspect these are extremely small values anyway.  
+    I wouldn't worry about it.
+  - The difference in t4 is not noticeable.
 
-Current Changes:
-================
-init.R + file encodings
+The large number of values < 0 has more to do with extremely small values
+  that are smaller than the Controls / Blanks (especially the Controls).
 
-Checked encodings of input data files (especially ARA .csv's)
-UTF-8 with LF (Unix)
-
-Updated init.R to reflect operating load.R file & output.
-
-Project should be ready for Cyanobacteria & ARA analysis,
-maybe after some final checks of odd data values & calculations.

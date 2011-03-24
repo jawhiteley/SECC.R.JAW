@@ -266,7 +266,7 @@ checkSECCdata <- function(data=NULL, DataName="-", CheckValues = TRUE, CheckDupl
   if (Data_Check == FALSE)
     stop( paste("There is an unknown problem with data frame:", DataName) )
   else ## RETURN cleaned version if there are no problems.
-    print(paste("All checks passed for Data Object:", DataName), quote = FALSE)
+    cat(paste("All checks passed for Data Object:", DataName, "\n"))
     return(data)
 }
 

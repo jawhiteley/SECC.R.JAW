@@ -21,7 +21,7 @@ SECC.cyanobacteria <- checkSECCdata(SECC.cyanobacteria, "SECC.cyanobacteria", Ch
 SampleID.length <- length(SECC.cyanobacteria$SampleID)
 SampleID.unique <- length(unique(SECC.cyanobacteria$SampleID))
 SampleID.first  <- match(unique(SECC.cyanobacteria$SampleID),
-                        SECC.cyanobacteria$SampleID)
+                         SECC.cyanobacteria$SampleID)
 SampleID.counts <- table(SECC.cyanobacteria$SampleID)  # Counts of each 'factor level'
 SampleID.wrong  <- SampleID.counts[SampleID.counts!=2] # IDs with counts other than 2
 if( length(SampleID.wrong)>0 ) {
@@ -51,6 +51,11 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   # Count should really be a factor
   Count <- factor(Count, levels = c(1, 2) )
   ## Prepare for pooling
+    # t4:  Total Dry Weight of moss sample in tube
+    #      = Total weight - thread weight (if present)
+    #      thread weight is ignored (treated as 0) if missing (NA).
+    #      This is currently calculated in Excel.  R would replace values with 'NA'
+    #      If there was any NA involved in the calculation :-(
   ARA.dwt   <- Total.Dry.wt  # Dry weight (mg) of tube moss sample used for ARA (N-fixation)
   Cells.dwt <- CB.Dry.wt     # Dry weight (mg) of 2 moss shoots used for cyanobacteria counts.
   # Discard data from second count (keep count 1).  I need values in both, for the calculations!
@@ -62,10 +67,12 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
 ##################################################
 ## CALCULATIONS
 ##################################################
-sampleA <- 6	# sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
-sample.to.m2 <- (100*100/sampleA)  # scale sample area, in cm^2 to m^2
-sample.ul <- 1000	          # volume of water added to sample, in ul.
-sample.sq <- sample.ul / 0.1  # 1 lg hemacytometer square = 0.1 ul.
+sampleA <- 6	# sample Area, in cm^2:
+      #    6 for rough estimate of inner tube diameter (as used in ARA excel file),
+      # or 6.4 for 20 shoots, based on density survey.
+sample.m2 <- sampleA/(100*100)  # sample area in (cm^2 to) m^2
+sample.ul <- 1000	            # volume of water added to sample: 1 ml in ul.
+sample.sq <- sample.ul / 0.1    # 1 lg hemacytometer square = 0.1 ul.
 
 SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Calothrix   <- Calothrix.V + Calothrix.H
@@ -74,16 +81,17 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Other.cells <- single.cells..spp.. + Other
   Total.cells <- Calothrix + Nostoc + Stigonema + Other.cells # Total cell counts
   Total.h     <- Calothrix.H + Nostoc.H + Stigonema.H         # Heterocysts
-  Cells   <- (Total.cells / X..lg.squares) * sample.sq / Cells.dwt * 1000
+  Cells   <- (Total.cells / X..lg.squares) * sample.sq / (Cells.dwt / 1000)
           # Total Count / # hemacytometer squares * squares/sample
-          # / Dry Weight (mg) * 1000 mg/g -> cells / g
-  Cells.m <- Cells * ARA.dwt/1000 * sample.to.m2
-          # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^2
-  H.cells <- (Total.h / X..lg.squares) * sample.sq / Cells.dwt * 1000
+          # / ( Dry Weight mg / 1000 mg/g ) -> cells / g
+  Cells.m <- (Cells / 1000) * ARA.dwt / sample.m2
+          # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^-2
+          # could also take # cells /2 shoots and scale up to 20 in sample (*20)?
+  H.cells <- (Total.h / X..lg.squares) * sample.sq / (Cells.dwt / 1000)
 })
 
 Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
-SampleID.date      <- Cyanobacteria.full[SampleID.first, c('SampleID', 'Date')]  # first date
+SampleID.date      <- SECC.cyanobacteria[SampleID.first, c('SampleID', 'Date')]  # first date
 SampleID.counts    <- as.data.frame(SampleID.counts)  # counts per unique SampleID
 names(SampleID.counts) <- c("SampleID", "Counts")
 ## Dry weight (mg) of tube moss sample used for ARA (N-fixation) (assuming same sort order)
@@ -108,19 +116,19 @@ SECC.cyanobacteria <- with(SECC.cyanobacteria,
                                      FUN = 'mean', na.rm = TRUE
                                      )
                            )  # 2 counts / sample
-## NAs in data lead to NAs in the result, rather than being omitted -- without 'na.rm = TRUE' **
+## Values are averaged together (FUN = 'mean'): mean(f(x)) != f(mean(x))
+## This also means that, if values are the same for counts 1 & 2, the net result will be the same ( mean(2x) == x ).
+## NAs in data lead to NAs in the result, rather than being ignored -- without 'na.rm = TRUE' **
+
+## Merge in single values for Dates & Counts, which can not be aggregated as numerics.
+SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.date, by = c("SampleID"), all = TRUE)
+SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.counts, by = c("SampleID"), all = TRUE)
 
 ## aggregate **re-sorts** results
 # Re-producible sort
-SECC.cyanobacteria  <- sort_df( SECC.cyanobacteria,  vars=c('SampleID') )
-SampleID.date       <- sort_df( SampleID.date, vars=c('SampleID') )
-SampleID.counts     <- sort_df( SampleID.counts,     vars=c('SampleID') )
-
-## Additional calculations & clean-up
-SECC.cyanobacteria <- within( SECC.cyanobacteria, {
-  Counts <- SampleID.counts$Counts  # Counts for each SampleID
-  Date   <- SampleID.date$Date    # First Date in data frame
-})
+SECC.cyanobacteria  <- sort_df( SECC.cyanobacteria, vars=c('SampleID') )
+SampleID.date       <- sort_df( SampleID.date,      vars=c('SampleID') )  # deprecated
+SampleID.counts     <- sort_df( SampleID.counts,    vars=c('SampleID') )  # deprecated
 
 
 ##================================================
@@ -131,7 +139,8 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
 attr(SECC.cyanobacteria, "SECC columns") <- c("ARA.dwt", "Cells.dwt",
                                               "Nostoc", "Nostoc.H",
                                               "Stigonema", "Stigonema.H",
-                                              "Other.cells", "Cells", "H.cells")
+                                              "Other.cells", "H.cells",
+                                              "Cells", "Cells.m")
 attr(SECC.cyanobacteria, "labels") <- list("Cells"="Cyanobacteria Cell Density")
 attr(SECC.cyanobacteria, "units")  <- list("Cells"="cells/g dwt")
 
@@ -139,13 +148,31 @@ attr(SECC.cyanobacteria, "units")  <- list("Cells"="cells/g dwt")
 ##################################################
 ## CHECK DATA
 ##################################################
+if (FALSE) {  # do not run when source()'d
+  head(SECC.cyanobacteria)  # have a peek at the first 6 rows & columns: is this what you expected?
+  str(SECC.cyanobacteria)   # check structure: are the appropriate variables factors, numeric, etc.?
 
-head(SECC.cyanobacteria)  # have a peek at the first 6 rows & columns: is this what you expected?
-# str(SECC.cyanobacteria)   # check structure: are the appropriate variables factors, numeric, etc.?
-## Check data structure of main data for analysis: I, O; A, C
-SECCstr(SECC.cyanobacteria[SECC.cyanobacteria$Chamber %in% c("A", "C") &
-                           SECC.cyanobacteria$Pos     %in% c("I", "O"),
-                           ])
+  ## Check data structure of main data for analysis: I, O; A, C
+  SECCstr(SECC.cyanobacteria[SECC.cyanobacteria$Chamber %in% c("A", "C") &
+                             SECC.cyanobacteria$Pos     %in% c("I", "O"),
+                             ])
+
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, "ARA.dwt"])
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, "ARA.dwt"])
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, "ARA.dwt"])
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, "Cells.dwt"])
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, "Cells.dwt"])
+  hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, "Cells.dwt"])
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells.dwt", "ARA.dwt")])
+  abline(0, 10, lty = 3, col="#444444")
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells.dwt", "ARA.dwt")])
+  abline(0, 10, lty = 3, col="#444444")
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells.dwt", "ARA.dwt")])
+  abline(0, 10, lty = 3, col="#444444")
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells", "H.cells")])
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells", "H.cells")])
+  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells", "H.cells")])
+}
 
 ##################################################
 ## SAVE DATA

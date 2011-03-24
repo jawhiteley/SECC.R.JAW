@@ -26,12 +26,13 @@ getwd()             # check current wd
 
 ## LOAD LIBRARIES
 source("./lib/fun.R")   # define functions
-require(car)		# load external package 'car', for recode()
-require(reshape)	# sort_df (sort data frame) wrapper for order
+require(car)            # load external package 'car', for recode()
+require(reshape)        # sort_df (sort data frame) wrapper for order
 
 ##################################################
 ## LOAD DATA FILES
 ##################################################
+cat('- Loading data files.\n')
 load('./save/SECC_factors.R')	# includes SECC.base data.frame, 
   # and other vectors of standard column names and levels.
 SECC.raw <- read.csv("./save/SECC_base.csv") # just to check how it is imported.  
@@ -65,6 +66,7 @@ rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 ##################################################
 ## CHECK & CLEAN DATA
 ##################################################
+cat('- Processing individual data objects.\n')
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
@@ -72,12 +74,13 @@ rm( list=c('File_name', 'File_path','temp','Object_name') ) # clean-up
 # that goes here; or in a separate script that is source()'d here.
 #   Specify which columns are to be merged with attribute "SECC columns"
 
-source("./lib/load_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
-source("./lib/load_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
+source("./lib/clean_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
+source("./lib/clean_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
 
 ##================================================
 ## AUTOMATICALLY CHECK & CLEAN DATA
 ##================================================
+cat('- Auto-checking data.\n')
 # Check & merge only objects beginning with "SECC."
 merge.SECC <- Data_objects[substr(Data_objects, 1, 5)=="SECC."]  
 for (DataObject in merge.SECC) {
@@ -90,6 +93,7 @@ for (DataObject in merge.SECC) {
 ##################################################
 ## PROCESS DATA
 ##################################################
+cat('- Merging data.\n')
 ## Prepare base data frame to merge others into
 SECC <- SECC.base  # Base template into which relevant frames will be merged.
 
@@ -144,6 +148,7 @@ attr(SECC, "units" ) <- SECC.units
 ##================================================
 ## Calculate columns across source data frames in new object
 ##================================================
+cat('- Final calculations.\n')
 ARA.Nfix.ratio <- 1/3  # ratio of N-fixation : ARA.
 sampleA     <- 6  # sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
 ARA.to.m2	<- (100*100/sampleA)  # scale ARA sample area, in cm^2 to m^2
@@ -200,6 +205,8 @@ SECCstr(SECC[SECC.coded$Time!=3 &
 # + SECC.fauna - Microarthropod community data corresponding to SECC.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
+cat('- Saving data & cleaning up.\n')
+
 Load.export <- c( 'SECC', 'SECC.coded')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
 save( list=Load.export, file="./save/SECC_data.R" )
 

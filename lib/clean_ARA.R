@@ -4,7 +4,7 @@
 # Jonathan Whiteley		R v2.12		2011-03-23
 ##################################################
 ## This script is run as part of `./lib/load.R`
-require(car)		# load external package 'car', for recode()
+# require(car)		# load external package 'car', for recode()
 
 ##================================================
 ## CHECK DATA
@@ -319,29 +319,6 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
 
 
 
-##================================================
-## CHECK Calculations
-# Histograms
-hist(SECC.ARA.t1$ARA.ml)
-hist(SECC.ARA.t2$ARA.ml)
-hist(SECC.ARA.t4$ARA.ml)
-
-# Number of values > 0?
-length(na.omit(SECC.ARA.t1$ARA.ml[SECC.ARA.t1$ARA.ml>0]))
-length(na.omit(SECC.ARA.t2$ARA.ml[SECC.ARA.t2$ARA.ml>0]))  # very low
-length(na.omit(SECC.ARA.t4$ARA.ml[SECC.ARA.t4$ARA.ml>0]))
-
-ARAcalc.cols <- c("SampleID", "Block", "Time", "Chamber", "Frag", "Pos",
-                  "SampleControl", "C2H4._mol", "Eth.umol", "Control", "Blank",
-                  "ARA.ml", "umol.ml", "ARA.._mol.ml.")
-ARA.calcs <- SECC.ARA.t4[ , ARAcalc.cols]
-# invisible(edit(ARA.calcs))
-
-### t4 Control & Blank were empty in Excel spreadsheet,
-### therefore 'calculated' ARA values (`ARA.._mol.ml.`)
-### are simply unadjusted total C2H4 in sample.
-
-
 ##################################################
 ## MERGE TIME POINTS
 ##################################################
@@ -376,14 +353,45 @@ attr(SECC.ARA, "units")  <- list(
 ##################################################
 ## CHECK DATA
 ##################################################
+if (FALSE) {  # do not run when source()'d
+  head(SECC.ARA)  # have a peek at the first 6 rows & columns: is this what you expected?
+  str(SECC.ARA)   # check structure: are the appropriate variables factors, numeric, etc.?
+  ## Check structure
+  SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ARAcalc.cols])
+  SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ])
 
-head(SECC.ARA)  # have a peek at the first 6 rows & columns: is this what you expected?
-# str(SECC.ARA)   # check structure: are the appropriate variables factors, numeric, etc.?
-## Check structure
-SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ARAcalc.cols])
-SECCstr(SECC.ARA[SECC.ARA$SampleControl == "Sample", ])
+###===============================================
+### CHECK Calculations
+  # Histograms
+  hist(SECC.ARA[SECC.ARA$Time == 1, "ARA.ml"])
+  hist(SECC.ARA[SECC.ARA$Time == 2, "ARA.ml"])
+  # compare to calculations using standardization by total umol (in Excel file).
+  hist(SECC.ARA[SECC.ARA$Time == 2, "ARA.._mol.ml."])
+  hist(SECC.ARA[SECC.ARA$Time == 4, "ARA.ml"])
+  hist(SECC.ARA[SECC.ARA$Time == 4, "ARA.._mol.ml."])
 
-# invisible(edit(SECC.ARA[, ARAcalc.cols]))
+  # Number of values > 0?
+  length(na.omit(SECC.ARA[SECC.ARA$Time == 1 & SECC.ARA$ARA.ml > 0, "ARA.ml"]))
+  length(na.omit(SECC.ARA[SECC.ARA$Time == 2 & SECC.ARA$ARA.ml > 0, "ARA.ml"]))  # low
+  length(na.omit(SECC.ARA[SECC.ARA$Time == 4 & SECC.ARA$ARA.ml > 0, "ARA.ml"]))
+  # compare to calculations using standardization by total umol (in Excel file).
+  length(na.omit(SECC.ARA[SECC.ARA$Time == 2 & SECC.ARA$ARA.._mol.ml. > 0, "ARA.._mol.ml."]))
+  length(na.omit(SECC.ARA[SECC.ARA$Time == 4 & SECC.ARA$ARA.._mol.ml. > 0, "ARA.._mol.ml."]))
+
+  # Compare raw values, blanks & controls
+  hist(SECC.ARA[SECC.ARA$SampleControl == "Sample",  "C2H4._mol"])
+  hist(SECC.ARA[SECC.ARA$SampleControl == "control", "C2H4._mol"])
+  hist(SECC.ARA[SECC.ARA$SampleControl == "blank",   "C2H4._mol"])
+
+
+  ARA.calcs <- c("SampleID", # "Block", "Time", "Chamber", "Frag", "Pos",
+                 "SampleControl", "C2H4._mol", "umol.ml", "Eth.umol", "C2H4.ARA", 
+                 "Control", "Blank", "ARA.ml", "ARA.._mol.ml.")
+  invisible(edit(SECC.ARA[, ARA.calcs]))
+
+### t4 Control & Blank in Excel spreadsheet are incorrect approximations
+### (used to be empty)
+}
 
 ##################################################
 ## SAVE DATA
@@ -397,7 +405,7 @@ ARA.full <- SECC.ARA
 ## Housekeeping
 ##================================================
 ## Remove old objects from memory
-rm.objects <- c('SECC.ARA.t1', 'SECC.ARA.t2', 'SECC.ARA.t4', 'ARA.calcs')
+rm.objects <- c('SECC.ARA.t1', 'SECC.ARA.t2', 'SECC.ARA.t4')
 rm(list=rm.objects)
 ## Update list of Data_objects for importing
 Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.ARA' )
