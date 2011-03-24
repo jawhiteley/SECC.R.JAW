@@ -88,9 +88,9 @@ GAS.CONSTANT <- 8.314472 / 1e+06  # gas constant J / mol K -> umol
 Vol.injection <- 1e-06  # 1 ml injection in m^3 : 1/(1000*1000)
 
 sampleA      <- 6	# sample Area, in cm^2
-              # 6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
-              # or 6.4 for 20 shoots, based on density survey: 31440 shoots /m^2.
-sample_to_m2 <- (100*100/sampleA)	# scale sample area, in cm^2 to m^2
+           #    6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
+           # or 6.4 for 20 shoots, based on density survey: 31440 shoots /m^2.
+sample.to.m2 <- (100*100)/sampleA	# scale sample area, in cm^2 to m^2
 sample_ml    <- 50  # 50 ml sample
 
 ###  T1 ARA calculations
@@ -148,7 +148,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   ARA.ml <- X_mol - ( (Blank + Control) * umol.ml )  # umol C2H4 in 1 ml sample
           #       - (% from Blank and Control) * Total umol
   ARA.ml[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
-  ARA.m <- ARA.ml * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
+  ARA.m <- ARA.ml * sample_ml * sample.to.m2  # ARA in umol / m^2 / day
 })
 
 
@@ -221,7 +221,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
           # umol C2H4 without Control (by volume)
           # - (% Blank * (Total ARA umol without Control))
   ARA.ml[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
-  ARA.m <- ARA.ml * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
+  ARA.m <- ARA.ml * sample_ml * sample.to.m2  # ARA in umol / m^2 / day
 })
 
 
@@ -314,7 +314,7 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
           # umol C2H4 without Control (by volume)
           # - (% Blank * (Total ARA umol without Control))
   ARA.ml[SampleControl != "Sample"] <- NA  # no values for non-samples (they would be meaningless).
-  ARA.m <- ARA.ml * sample_ml * sample_to_m2  # ARA in umol / m^2 / day
+  ARA.m <- ARA.ml * sample_ml * sample.to.m2  # ARA in umol / m^2 / day
 })
 
 
@@ -388,6 +388,10 @@ if (FALSE) {  # do not run when source()'d
                  "SampleControl", "C2H4._mol", "umol.ml", "Eth.umol", "C2H4.ARA", 
                  "Control", "Blank", "ARA.ml", "ARA.._mol.ml.")
   invisible(edit(SECC.ARA[, ARA.calcs]))
+
+  ## largest ARA values (are they really outliers?)
+  ARA.big <- na.omit( SECC.ARA$SampleID[SECC.ARA$ARA.ml > 0.01] )
+  SECC.ARA[SECC.ARA$SampleID %in% ARA.big, ARA.calcs]
 
 ### t4 Control & Blank in Excel spreadsheet are incorrect approximations
 ### (used to be empty)

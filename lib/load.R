@@ -149,17 +149,19 @@ attr(SECC, "units" ) <- SECC.units
 ## Calculate columns across source data frames in new object
 ##================================================
 cat('- Final calculations.\n')
-ARA.Nfix.ratio <- 1/3  # ratio of N-fixation : ARA.
-sampleA     <- 6  # sample Area, in cm^2: 6 for rough estimate of inner tube diameter (as used in ARA excel file), or 6.4 for 20 shoots, based on density survey.
-ARA.to.m2	<- (100*100/sampleA)  # scale ARA sample area, in cm^2 to m^2
-patchA      <- pi * (12.5^2)      # patch area
-patch.to.m2 <- (100*100/patchA)   # scale patch sample area, in cm^2 to m^2
+Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
+sampleA  <- 6	# sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
+      #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
+      #  or 6.4 for 20 shoots, based on density survey.
+ARA.m2	 <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
+patchA   <- pi * (12.5^2)      # patch area
+patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
   # Dry weights are only available for samples with cyanobacteria data :(
   ARA.g <- ARA.ml / ARA.dwt  
-  Nfix <- ARA.m * ARA.Nfix.ratio
+  Nfix  <- ARA.m * Nfix.ARA.ratio
 })
 
 
@@ -219,3 +221,5 @@ for (DataFrame in Load.export)
     row.names=FALSE
   ) 
 }
+
+cat('= FINISHED Loading data. =\n')

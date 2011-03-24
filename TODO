@@ -1,15 +1,10 @@
-X Check Block 6 Cyanobacteria thread data
-X Check Blanks with values of 0 for C2H4.
-
-- Check cyanobacteria data for outliers?
-- Check ARA data for outliers?
-
-X Change names of "load_...R" files to "clean_...R"?
-~ Tweak ARA calculations (of Controls & Blanks) in t2 & t4 to match Excel values as much as possible. 
+X Check cyanobacteria data for outliers?
+X Check ARA data for outliers?
 
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
-- Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
+~ Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
+  - labels replace the factor levels (as new level labels .. go figure!)
 
 - ANOVA analyses for Cyanobacteria & ARA
 
@@ -20,32 +15,14 @@ X Change names of "load_...R" files to "clean_...R"?
 
 Current Changes:
 ================
-Checked calculations, clean-up
+Checked data, final prep & checks.
 
-+ Added a calculated column in Excel ARA spreadsheet for 
-  '%C2H4 ARA' (C2H4 as % of C2H4 + C2H2)
-  - Changed details of "ARA.calcs" to make it easier to verify calculations.
-+ Checked ARA values of 0: they are, in fact, too small to detect / measure.
-+ Verified & tweaked Cyanobacteria calculations: they should be easier to follow (for me, anyway).
+Checked Cyanobacteria data for outliers and data entry errors (caught a few)
+Checked Cyanobacteria calculations
+Checked ARA data for outliers (nothing really stood out)
+Checked ARA calculations
 
-ARA Calculation formulas: standardize by umol/ml or umol of ARA gases (C2H2 + C2H4)?
-================================
-ARA calculation formulas -- How do the final values compare:
-
-  * standardizing blanks by C2H2 (+ C2H4)
-  * standardizing blanks & controls by umol / volume?
-  * using 'raw' umol amounts?
-
-The difference appears to be very minor: 4th+ decimal place.
-
-  - There are 4 more values >0 in t2 using volumetric standardization, 
-    but I strongly suspect these are extremely small values anyway.  
-    I wouldn't worry about it.
-  - The difference in t4 is not noticeable.
-
-The large number of values < 0 has more to do with extremely small values
-  that are smaller than the Controls / Blanks (especially the Controls).
-
+Tweaked final calculations in load.R (easier to follow?)
 
 Project should be ready for Cyanobacteria & ARA analysis.
 

@@ -63,12 +63,11 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Cells.dwt[Count==2] <- Cells.dwt[Count==1]
 })
 
-
 ##################################################
 ## CALCULATIONS
 ##################################################
-sampleA <- 6	# sample Area, in cm^2:
-      #    6 for rough estimate of inner tube diameter (as used in ARA excel file),
+sampleA <- 6	# sample Area, in cm^2
+      #    6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
       # or 6.4 for 20 shoots, based on density survey.
 sample.m2 <- sampleA/(100*100)  # sample area in (cm^2 to) m^2
 sample.ul <- 1000	            # volume of water added to sample: 1 ml in ul.
@@ -86,6 +85,7 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
           # / ( Dry Weight mg / 1000 mg/g ) -> cells / g
   Cells.m <- (Cells / 1000) * ARA.dwt / sample.m2
           # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^-2
+          # OR: scale to Total Patch Dry Weight (available in SECC, not here) before scaling to m^-2 based on patch Area.
           # could also take # cells /2 shoots and scale up to 20 in sample (*20)?
   H.cells <- (Total.h / X..lg.squares) * sample.sq / (Cells.dwt / 1000)
 })
@@ -152,6 +152,18 @@ if (FALSE) {  # do not run when source()'d
   head(SECC.cyanobacteria)  # have a peek at the first 6 rows & columns: is this what you expected?
   str(SECC.cyanobacteria)   # check structure: are the appropriate variables factors, numeric, etc.?
 
+  # Check for rows where dry weight data does not match between counts
+  wt.cols <- c("SampleID", "Total.Dry.wt", "CB.Dry.wt")
+  CB.c1   <- Cyanobacteria.full[Cyanobacteria.full$Count == 1, wt.cols]
+  CB.c2   <- Cyanobacteria.full[Cyanobacteria.full$Count == 2, wt.cols]
+  CB.wts  <- merge( CB.c1, CB.c2, by = c("SampleID"), all = TRUE, suffixes = c(".1", ".2") )
+  CB.wts[CB.wts$Total.Dry.wt.1 != CB.wts$Total.Dry.wt.2, ]
+  CB.wts[CB.wts$CB.Dry.wt.1    != CB.wts$CB.Dry.wt.2   , ]
+  # could also just check for rows in SECC.cyanobacteria where Total.Dry.wt != ARA.dwt, etc.
+  SECC.cyanobacteria[SECC.cyanobacteria$Total.Dry.wt != SECC.cyanobacteria$ARA.dwt,   ]
+  SECC.cyanobacteria[SECC.cyanobacteria$CB.Dry.wt    != SECC.cyanobacteria$Cells.dwt, ]
+
+
   ## Check data structure of main data for analysis: I, O; A, C
   SECCstr(SECC.cyanobacteria[SECC.cyanobacteria$Chamber %in% c("A", "C") &
                              SECC.cyanobacteria$Pos     %in% c("I", "O"),
@@ -163,15 +175,46 @@ if (FALSE) {  # do not run when source()'d
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, "Cells.dwt"])
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, "Cells.dwt"])
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, "Cells.dwt"])
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells.dwt", "ARA.dwt")])
+
+  ## Plots: use identify() to id rows of interest.
+  t1.dwt <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells.dwt", "ARA.dwt")]
+  plot(t1.dwt)
   abline(0, 10, lty = 3, col="#444444")
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells.dwt", "ARA.dwt")])
+  rows.id <- identify(t1.dwt)
+  SECC.cyanobacteria[as.numeric(row.names(t1.dwt)[rows.id]), ]
+
+  t2.dwt <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells.dwt", "ARA.dwt")]
+  plot(t2.dwt)
   abline(0, 10, lty = 3, col="#444444")
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells.dwt", "ARA.dwt")])
+  rows.id <- identify(t2.dwt)
+  SECC.cyanobacteria[as.numeric(row.names(t2.dwt)[rows.id]), ]
+
+  t4.dwt <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells.dwt", "ARA.dwt")]
+  plot(t4.dwt)
   abline(0, 10, lty = 3, col="#444444")
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells", "H.cells")])
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells", "H.cells")])
-  plot(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells", "H.cells")])
+  rows.id <- identify(t4.dwt)
+  SECC.cyanobacteria[as.numeric(row.names(t4.dwt)[rows.id]), ]
+
+  t1.cells <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells", "H.cells")]
+  plot(t1.cells)
+  rows.id <- identify(t1.cells)
+  SECC.cyanobacteria[as.numeric(row.names(t1.cells)[rows.id]), ]
+
+  t2.cells <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, c("Cells", "H.cells")]
+  plot(t2.cells)
+  rows.id <- identify(t2.cells)
+  SECC.cyanobacteria[as.numeric(row.names(t2.cells)[rows.id]), ]
+
+  t4.cells <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, c("Cells", "H.cells")]
+  plot(t4.cells)
+  rows.id <- identify(t4.cells)
+  SECC.cyanobacteria[as.numeric(row.names(t4.cells)[rows.id]), ]
+
+### Potential Outliers:
+  ## 31C-3.N  too many Heterocysts?
+  ## 11A-1.E  too few  Heterocysts?
+  ## 24C-2.O  no heterocysts?
+  ## 84C-2.O  too few  Heterocysts?
 }
 
 ##################################################
