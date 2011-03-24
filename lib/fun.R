@@ -147,12 +147,18 @@ checkSECCdata <- function(data=NULL, DataName="-", CheckValues = TRUE, CheckDupl
         # min(boolean_vector) == 0 means there was at least one FALSE result
         ## Catch common differences in factor levels
         if ( ColName == "Pos" && min( c("0", "1") %in% levels(data[[ColName]])) == 1 ) {
-          ## could also check for Pos_all_lvls, but the most important is to recode 1s & 0s
-          # rename factor levels from old to new; 'new'='old'
-          # (omitted levels are dropped and replaced with empty strings)
-          levels(data[[ColName]]) <- list(
-            'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0'
-          )
+          ## could also check for Pos_all_lvls,
+          ## but the most important thing is to recode 1s & 0s
+          # Rename factor levels from old to new: 'new'='old'
+          # non-existent levels are ignored; unspecified levels are replaced with NA
+          #  - levels with no 'new' value would be replaced with empty strings.
+          levels(data[[ColName]]) <- list('I'='1',
+                                          'S'='S',
+                                          'W'='W',
+                                          'E'='E',
+                                          'N'='N',
+                                          'O'='0'
+                                          )
           ## Re-compute SampleID column based on new values?
           ## Original SampleID should be kept for reference & error-checking:
           ## I don't want to have to use it in the merge,
@@ -315,38 +321,43 @@ SECCstr <- function (data) {
 recodeSECC <- function(data=NULL) {
   data.recoded <- within( data, {
     ## Rename columns / convert to standard informative names (already handled in SECCcolumns).
+    ## Ensure columns that should be factors are, and drop unused levels.
     Block   <- factor(Block)
     Time    <- factor(Time)
     Chamber <- factor(Chamber)
     Frag    <- factor(Frag)
     Pos     <- factor(Pos)
-    ## Rather than re-coding the factor levels, can I still get informative labels using the 'labels' argument of factor()?
-    ## rename and reorder factor levels the easy way - maintains empty values if empty factor specified, otherwise converts to 'NA'.  Requires package 'car'
-    Chamber <- recode( Chamber, 
-      "'A'='Ambient'; 'B'='Partial Chamber'; 'C'='Full Chamber'; else=''", 
-      levels=c( "Ambient", "Partial Chamber", "Full Chamber" ),
-      as.factor.result=TRUE
-    )
-    levels(Frag) <- list( 'Continuous'='1', 'Full Corridors'='2', 'Pseudo-Corridors'='3', 'Isolated'='4' )
-    # recode Time to approximate dates
-    Time <- recode( Time, 
-      "'1'='2008-08' ; '2'='2009-06'; '4'='2009-08'", 
-      levels=c( "2008-08", "2009-06", "2009-08" ),
-      as.factor.result=TRUE
-    )
-#   Position <- factor(Pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
-#   levels(Position) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings).
-    # New factor with simplified recoded values for Patch Position
-    Position <- recode( Pos, 
-      "'I'='Inner'; 'O'='Outer'; else='other'", 
-      levels=c( "Inner", "other", "Outer" ),
-      as.factor.result=TRUE
-    )
+    ## I can also get informative labels using the 'labels' argument of factor(),
+    ## rather than use recode() in package 'car'.
+    Chamber  <- factor(Chamber,
+                      levels = c("A", "B", "C"),
+                      labels = c("Ambient", "Partial Chamber", "Full Chamber")
+                      )
+
+    ## Rename Fragmentation codes
+    Frag     <- factor(Frag,
+                       levels = 1:4,
+                       labels = c("Continuous", "Full Corridors",
+                                  "Pseudo-Corridors", "Isolated")
+                       )
+    ## Recode Time to approximate dates: replace t3 with NA, since it has no date (yet)
+    Time     <- factor(Time,
+                       levels = c(1, 2, 4),  # Drop t3, replace with NA
+                       labels = c( "2008-08", "2009-06", "2009-08" )
+                       )
+    ## New factor with simplified recoded values for Patch Position
+    ## Rename and reorder factor levels using recode()
+     # - maintains empty values if empty factor specified,
+     # otherwise converts to 'NA'.
+     # Requires package 'car'
+    Position <- recode(Pos, 
+                       "'I'='Inner'; 'O'='Outer'; else='other'", 
+                       levels=c( "Inner", "other", "Outer" ),
+                       as.factor.result=TRUE
+                       )
   })
 
   return(data.recoded)
 }
 
-## Check data frames for matching columns and append them together / merge?
- # to combine matching data from different time-points.
 

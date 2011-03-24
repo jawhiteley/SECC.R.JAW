@@ -179,24 +179,25 @@ SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`
 ##################################################
 ## CHECK DATA
 ##################################################
-## Patch-level data
-head(SECC)		# have a peek at the first 6 rows & columns: is this what you expected?
-# str(SECC)		# check structure: are the appropriate variables factors, numeric, etc.?
-SECCstr(SECC)
-## For a more accurate summary, excluding unsampled Time Points:
-SECCstr(SECC[!is.na(SECC$Time), ])
-## For a more accurate summary, excluding t3, B's & Other Pos's
-## ALL Column counts here should be equal to the 'Total' counts
-SECCstr(SECC[SECC.coded$Time!=3 &
-             SECC.coded$Chamber %in% c("A", "C") &
-             SECC.coded$Pos     %in% c("I", "O"),
-             ])
+if (FALSE) {  # do not run when source()'d
+  head(SECC)		# have a peek at the first 6 rows & columns: is this what you expected?
+  str(SECC)		# check structure: are the appropriate variables factors, numeric, etc.?
+  SECCstr(SECC)
+  ## For a more accurate summary, excluding unsampled Time Points:
+  SECCstr(SECC[!is.na(SECC$Time), ])
+  ## For a more accurate summary, excluding t3, B's & Other Pos's
+  ## ALL Column counts here should be equal to the 'Total' counts
+  SECCstr(SECC[SECC.coded$Time!=3 &
+               SECC.coded$Chamber %in% c("A", "C") &
+               SECC.coded$Pos     %in% c("I", "O"),
+               ])
 
-# invisible(edit(SECC.coded))
+  invisible(edit(SECC.coded))
 
 # ## Regional data
 # head(SECCr)		# have a peek at the first 6 rows & columns: is this what you expected?
 # str(SECCr)		# check structure: are the appropriate variables factors, numeric, etc.?
+}
 
 ##################################################
 ## SAVE DATA

@@ -15,14 +15,11 @@ X Check ARA data for outliers?
 
 Current Changes:
 ================
-Checked data, final prep & checks.
+Neater factor recoding?
 
-Checked Cyanobacteria data for outliers and data entry errors (caught a few)
-Checked Cyanobacteria calculations
-Checked ARA data for outliers (nothing really stood out)
-Checked ARA calculations
-
-Tweaked final calculations in load.R (easier to follow?)
+Changed the methods used to recode factor levels 
+using `levels` and `labels` arguments to factor()
+Should be more consistent, easier to read?
 
 Project should be ready for Cyanobacteria & ARA analysis.
 
