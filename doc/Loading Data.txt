@@ -49,3 +49,15 @@ or missing values, if you know what the numbers *should* be.
 The basic data is all samples from: (I)nner, (O)uter ; Ambient (A), Full Chamber (C).
 There are a few extra samples in t1, particularly from Blocks 1 - 3,
 including 3 from Partial Chambers (B).
+
+## Acetylene Reduction Assay data (ARA)
+
+I have ARA data from EVERY patch in the experiment, plus:
++ moss-only controls in all (I)nner & (O)uter patches,
++  gas-only blanks: at least one per block, 4 per block in t4: 
+   t4 has a blank sample at the start & end of each jar.
+   There were 2 jars per block: each jar covered one full chamber treatment, 
+   and half of the third.  The fragmentation treatments for the blanks within
+   the split chamber are specified in the "Frag" column of the original
+   spreadsheet, and incorporated into the new SampleIDs in the R script.
+

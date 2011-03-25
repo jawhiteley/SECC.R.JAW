@@ -1,29 +1,27 @@
 ##################################################
-# Schefferville Experiment on Climate Change (SEC-C)
-# Template for basic analyses of experimental data
-# Response Variable(s) @ time #s
-# R v2.10.1		;	2010-05-04
+### Schefferville Experiment on Climate Change (SEC-C)
+### Template for basic analyses of experimental data
+### Response Variable(s)  @ time #s
+### Jonathan Whiteley     R v2.10.1     2011-03-25
 ##################################################
 ## INITIALISE
 ##################################################
-rm(list=ls())	# clear memory
-# setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis")	# Set Working Directory: replace with a path in quotes "".	# iMac@McGill
-# setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis")	# JAW-MBP
-library(car)		# load external package 'car', for recode()
+## Set Working Directory: path in quotes "".
+# setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")		    # iMac@McGill
+# setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")	# JAW-MBP
+getwd()  # Check that we're in the right place
+
+## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
+source('./lib/init.R')
 library(lattice)	# mostly for xyplot
-library(nlme)		# mixed-effect models
-#=================================================
-## DEFINE FUNCTIONS
-#=================================================
-source("SECC.functions.R")	#2010-04-14
+library(ggplot2)    # grammar of graphics
 
 ##################################################
 ## LOAD DATA
 ##################################################
-SECC.full <- read.csv("SECC.csv", na.string=".")	# specify missing values with na.string=""
 
 ## Define Labels
-Y.label <- "Response Variable"	# response variable label for this script.
+Y.label <- attr(SECC, "labels")["ColName"]	# response variable label for this script.
 Chamber.label = "Chamber"
 Frag.label = "Fragmentation Treatment"
 pos.label = "patch position"
@@ -36,41 +34,17 @@ dataset.labels <- c( "patch scale", "Regional scale" )
 # str(SECC.full)
 ## Generate factor columns, re-order factor levels, etc.  Creating new columns does not work inside with().
 SECC.full <- within( SECC.full, {	## instead of attach, this places focus within the indicated data frame / object, and returns object with changes applied (in reverse order...)
-	# Generic Response Variable (used in remainder of script)
-	Y <- as.numeric(Y)
-	## Rename columns /convert to standard informative names for the rest of this script
-	Block 	<- as.factor(Block)
-	TimePt	<- TimePt
-	Warming <- as.factor(Warming)
-	Frag 	<- as.factor(Frag)
-	pos 	<- as.factor(pos)
-	# new factor column with meaningful values
-	Chamber <- as.factor(Warming)
-	levels(Chamber) <- list( 'Ambient'='A', 'Partial Chamber'='B', 'Full Chamber'='C' )	# rename and reorder factor levels to informative names.  Unspecified values converted to 'NA'.
-	## rename and reorder factor levels the easy way - maintains empty values if empty factor specified, otherwise converts to 'NA'.  Requires package 'car'
-	Chamber <- recode( Warming, 
-		"'A'='Ambient'; 'B'='Partial Chamber'; 'C'='Full Chamber'; else=''", 
-		as.factor.result=TRUE, 
-		levels=c( "Ambient", "Partial Chamber", "Full Chamber" ) 
-	)
-	levels(Frag) <- list( 'Continuous'=1, 'Full Corridors'=2, 'Pseudo-Corridors'=3, 'Isolated'=4 )
-	pos <- factor(pos, levels=c('1', 'S', 'W', 'E', 'N', '0'))	# safely reorder factor levels
-	levels(pos) <- list( 'I'='1', 'S'='S', 'W'='W', 'E'='E', 'N'='N', 'O'='0' )	# rename some factor levels (omitted levels are dropped and replaced with empty strings)
-	# new factor column with simplified values for patch position
-	pos1 <- recode( pos, 
-		"'I'='Inner'; 'O'='Outer'; else='other'", 
-		as.factor.result=TRUE, 
-		levels=c( "Inner", "other", "Outer" ) 
-	)
+  ## Generic Response Variable (used in remainder of script)
+  Y <- as.numeric(Y)
+  
 })
 
 ## Filter data for analysis.  If no filter is desired, retain assignment to new object for consistent naming & reference for the rest of this script.
 SECC.full <- SECC.full[SECC.full$TimePt==1, ]	# only one time point at a time (not repeated measures)
-SECC <- SECC.full[SECC.full$SampleControl=="Sample",]	# only rows for samples, exclude controls
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
-SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, TimePt=TimePt, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring position)
-SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, TimePt=TimePt, Chamber=Chamber, Frag=Frag, pos1=pos1), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
+SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring position)
+SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
 
 #=================================================
 # PROCESS DATA: unplanned?

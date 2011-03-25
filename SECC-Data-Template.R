@@ -35,7 +35,7 @@ Pos_sort      <- c("O", "I", "S/N", "W/E")	# S/N is for alphabetical sorting.  D
 Pos_labels    <- c("Inner", "other", "Outer")
 Pos.Precip    <- c("Wet", "mesic", "Dry")
 
-Trt_nest_order <- c("Block", "Time","Chamber", "Frag", "Pos")
+Trt_nest_order <- c("Time", "Block", "Chamber", "Frag", "Pos")  # Time is higher than Block?
 Trt_sort_order <- c("Time", "Block", "Chamber", "Frag") # not including "Pos" or "Position"
   # The nesting structure puts "Block" first (largest experimental unit).
   # I tend to sort by Time first, however,

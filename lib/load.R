@@ -223,6 +223,10 @@ for (DataFrame in Load.export)
     row.names=FALSE
   ) 
 }
-rm(list=c('SECC.sorted', 'DataFrame', 'Filename', 'rm.objects')) # house-keeping
+
+## House-keeping
+rm(list=c('SECC.sorted', 'DataFrame', 'Filename', 'rm.objects'))
+try( detach('package:car',     character.only = TRUE) )
+try( detach('package:reshape', character.only = TRUE) )
 
 cat('= FINISHED Loading data. =\n')

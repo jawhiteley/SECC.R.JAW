@@ -1,5 +1,6 @@
 ### INITIALIZE
 rm(list=ls())       # house-keeping
+cat('Memory Cleared.\n')
 
 ## Load Functions and Libraries
 cat('Loading functions.\n')
@@ -14,3 +15,5 @@ if (FALSE) {
   ## OR if output file is produced instead:
   load("./save/SECC_data.R") # load data
 }
+
+cat('== SECC Project Initialized ==\n')

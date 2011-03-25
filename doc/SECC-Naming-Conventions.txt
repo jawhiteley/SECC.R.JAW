@@ -103,13 +103,15 @@ FINAL DATA STRUCTURE
    Decomposition    %mass loss      Decomposition rates.
    N.avail          ?               Available Nitrogen Compounds (Ion resin)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
-   Nostoc           #/g dwt         Nostoc cyanobacteria cells
->  Nostoc.h         #/g dwt         Nostoc heterocysts
-   Stigonema        #/g dwt         Stigonema cyanobacteria cells
->  Stigonema.h      #/g dwt         Stigonema heterocysts
-   Other.cells      #/g dwt         Other cyanobacteria cells
-   Cells            #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
->  H.cells          #/g dwt         Heterocyst cell density
+   Nostoc           #/sample        Nostoc cyanobacteria cells
+>  Nostoc.h         #/sample        Nostoc heterocysts
+   Stigonema        #/sample        Stigonema cyanobacteria cells
+>  Stigonema.h      #/sample        Stigonema heterocysts
+   Other.cells      #/sample        Other cyanobacteria cells
+   Cells            cells/shoot     Total cyanobacteria cell density (pooled sub-samples)
+   Cells.g          #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
+   Cells.m          #/m^2           Total cyanobacteria cell density (pooled sub-samples)
+>  H.cells          cells/shoot     Heterocyst cell density
    ARA              ...             value of another ARA column,
                                       assigned in analysis script?
    ARA.ml           umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
