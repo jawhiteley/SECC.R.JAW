@@ -129,6 +129,7 @@ for (ObjectName in merge.SECC) {
   ## Merge data frame into SECC, keeping all rows of SECC, but NOT rows in target that do not match SECC.
   SECC <- merge( SECC, DataObject, by=SECC.by, all.x=TRUE, all.y=FALSE, sort=TRUE )
 }
+rm(list=c('SECC.by', 'ObjectName', 'KeepCols', 'DataObject')) # house-keeping
 
 ## Preferred sort order
 SECC <- within( SECC, {
@@ -216,11 +217,12 @@ save( list=Load.export, file="./save/SECC_data.R" )
 # Export data frames to csv, just in case.
 for (DataFrame in Load.export)
 {
-  filename <- gsub('\\.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
+  Filename <- gsub('\\.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
   write.csv( get(DataFrame), 
-    file = paste("./save/", filename, ".csv", sep=""), 
+    file = paste("./save/", Filename, ".csv", sep=""), 
     row.names=FALSE
   ) 
 }
+rm(list=c('SECC.sorted', 'DataFrame', 'Filename', 'rm.objects')) # house-keeping
 
 cat('= FINISHED Loading data. =\n')

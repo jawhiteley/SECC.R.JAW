@@ -41,6 +41,7 @@ if( length(SampleID.wrong)>0 ) {
   warning( paste("There are not exactly 2 subsamples of each Cyanobacteria sample.",
                  Pblm.msg, sep='' ) )
 }
+rm(list=c('Duplicates', 'Missing', 'text.empty', 'Pblm.msg'))
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
@@ -80,14 +81,17 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Other.cells <- single.cells..spp.. + Other
   Total.cells <- Calothrix + Nostoc + Stigonema + Other.cells # Total cell counts
   Total.h     <- Calothrix.H + Nostoc.H + Stigonema.H         # Heterocysts
-  Cells   <- (Total.cells / X..lg.squares) * sample.sq / (Cells.dwt / 1000)
+  Cells   <- (Total.cells / X..lg.squares) * sample.sq / 2
           # Total Count / # hemacytometer squares * squares/sample
+          # / 2 shoots/sample = Cells/shoot
+  Cells.g <- Cells * 2 / (Cells.dwt / 1000)
+          # Cells/shoot * 2 shoots/sample
           # / ( Dry Weight mg / 1000 mg/g ) -> cells / g
-  Cells.m <- (Cells / 1000) * ARA.dwt / sample.m2
+  Cells.m <- (Cells.g / 1000) * ARA.dwt / sample.m2
           # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^-2
           # OR: scale to Total Patch Dry Weight (available in SECC, not here) before scaling to m^-2 based on patch Area.
           # could also take # cells /2 shoots and scale up to 20 in sample (*20)?
-  H.cells <- (Total.h / X..lg.squares) * sample.sq / (Cells.dwt / 1000)
+  H.cells <- (Total.h / X..lg.squares) * sample.sq / 2
 })
 
 Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
@@ -121,8 +125,10 @@ SECC.cyanobacteria <- with(SECC.cyanobacteria,
 ## NAs in data lead to NAs in the result, rather than being ignored -- without 'na.rm = TRUE' **
 
 ## Merge in single values for Dates & Counts, which can not be aggregated as numerics.
-SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.date, by = c("SampleID"), all = TRUE)
-SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.counts, by = c("SampleID"), all = TRUE)
+ # Although I find merge() a little confusing,
+ # I prefer matching by SampleID rather than relying on a common sort order.
+SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.date,   by = c("SampleID"), all.x = TRUE )
+SECC.cyanobacteria <- merge( SECC.cyanobacteria, SampleID.counts, by = c("SampleID"), all.x = TRUE )
 
 ## aggregate **re-sorts** results
 # Re-producible sort
@@ -140,9 +146,13 @@ attr(SECC.cyanobacteria, "SECC columns") <- c("ARA.dwt", "Cells.dwt",
                                               "Nostoc", "Nostoc.H",
                                               "Stigonema", "Stigonema.H",
                                               "Other.cells", "H.cells",
-                                              "Cells", "Cells.m")
+                                              "Cells", "Cells.g", "Cells.m")
 attr(SECC.cyanobacteria, "labels") <- list("Cells"="Cyanobacteria Cell Density")
-attr(SECC.cyanobacteria, "units")  <- list("Cells"="cells/g dwt")
+attr(SECC.cyanobacteria, "units")  <- list("Cells"  ="cells/shoot",
+                                           "Cells.g"="cells*g^-1 dwt",
+                                           "Cells.m"="cells*m^-2",
+                                           "H.cells"="cells/shoot"
+                                           )
 
 
 ##################################################
@@ -175,6 +185,30 @@ if (FALSE) {  # do not run when source()'d
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, "Cells.dwt"])
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, "Cells.dwt"])
   hist(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, "Cells.dwt"])
+
+  ## Are calculated values in the right ballpark?
+  ## Early results (t1):     0 ~ 5.6e+07 cells m^-2  (56,000,000) mean
+  ## DeLuca et al. (2007):   0 ~ 80,000  cells / shoot 
+  ## * 20 shoots / 6.4 cm^2    = 2.5e+09 cells m^-2  (2,500,000,000)
+  hist(       SECC.cyanobacteria[, "Cells"])  # Cells / shoot 
+  boxplot(    SECC.cyanobacteria[, "Cells"])
+  boxplot(log(SECC.cyanobacteria[, "Cells"] +1))
+  boxplot( list("t1"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, "Cells"] +1),
+                "t2"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time == 2, "Cells"] +1),
+                "t4"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time == 4, "Cells"] +1)
+                )
+          )
+  mean(SECC.cyanobacteria[, "Cells"], na.rm = TRUE) 
+
+  hist(       SECC.cyanobacteria[, "Cells.m"])
+  boxplot(    SECC.cyanobacteria[, "Cells.m"])
+  boxplot(log(SECC.cyanobacteria[, "Cells.m"] +1))
+  boxplot( list("t1"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time==1, "Cells.m"] +1),
+                "t2"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time==2, "Cells.m"] +1),
+                "t4"=log(SECC.cyanobacteria[SECC.cyanobacteria$Time==4, "Cells.m"] +1)
+                )
+          )
+  mean(SECC.cyanobacteria[, "Cells.m"], na.rm = TRUE) 
 
   ## Plots: use identify() to id rows of interest.
   t1.dwt <- SECC.cyanobacteria[SECC.cyanobacteria$Time == 1, c("Cells.dwt", "ARA.dwt")]
@@ -226,7 +260,9 @@ if (FALSE) {  # do not run when source()'d
 ## Housekeeping
 ##================================================
 ## Remove old objects from memory
-rm.objects <- c('SampleID.length', 'SampleID.unique', 'SampleID.first', 'SampleID.counts', 'SampleID.wrong', 'SampleID.date')
+rm.objects <- c('SampleID.length', 'SampleID.unique', 'SampleID.first',
+                'SampleID.counts', 'SampleID.wrong', 'SampleID.date',
+                'sample.ul', 'sample.sq', 'col.types', 'aggregate.columns')
 rm(list=rm.objects)
 ## Update list of Data_objects for importing
 # Data_objects <- c( Data_objects[Data_objects!=rm.objects] , 'SECC.cyanobacteria' )

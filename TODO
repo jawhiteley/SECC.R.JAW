@@ -1,13 +1,22 @@
 X Check cyanobacteria data for outliers?
 X Check ARA data for outliers?
-
-- Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
-  - Or, concatenate all output together to include in the stop() message.
-~ Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
-  - labels replace the factor levels (as new level labels .. go figure!)
+X Check Cyanobacteria calculated values are in the right ball-park (compare to lit. values)
+X Check ARA calculated values are in the right ball-park (compare to lit. values)
 
 - ANOVA analyses for Cyanobacteria & ARA
 
+- Get Mean differences of Temperature & RH
+  between Chamber Treatments (HOBO Data)
+- Imort   Moisture Data
+- Analyze Moisture Data
+- Imort   Moss Growth Data
+- Analyze Moss Growth Data
+
+
+- Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
+  - Or, concatenate all output together to include in the stop() message.
+X Try using the labels argument of factor() to add informative labels without re-coding all the ID factors.
+  - labels replace the factor levels (as new level labels .. go figure!)
 
 
 
@@ -15,11 +24,20 @@ X Check ARA data for outliers?
 
 Current Changes:
 ================
-Neater factor recoding?
+Check range of calculated values
 
-Changed the methods used to recode factor levels 
-using `levels` and `labels` arguments to factor()
-Should be more consistent, easier to read?
+Checked Cyanobacteria & ARA calculated values to make sure they are in the right ballpark,
+compared to other values in the literature.
+- added some exploratory plots (histograms & boxplots) to load files to check distributions & ranges.
+- ARA values ok
+- Cyanobacteria values seem high, by a couple orders of magnitude!
+  - The median values are actually in about the same range, but the few big values are really big!
+    This is to be expected with such a skewed distribution.
+Added Cells/shoot ("Cells") and Cells/g ("Cells.g") columns to cyanobacteria data.
+- More natural demarcation of units, Easier to compare with some published values, 
+  and more consistent with ARA conventions
+  (H.cells: Heterocysts are now cells/shoot)
+House-keeping & general clean-up of code
 
-Project should be ready for Cyanobacteria & ARA analysis.
+Project is ready for Cyanobacteria & ARA analysis.
 

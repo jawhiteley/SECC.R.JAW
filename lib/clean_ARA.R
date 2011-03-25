@@ -35,7 +35,7 @@ SECC.ARA.t4 <- checkSECCdata(SECC.ARA.t4, 'SECC.ARA.t4', CheckDuplicates = FALSE
 ##================================================
 ## Manually clean & prepare data for automatic checking.
 Blank.code   <- "G"  # code for Gas Blanks (gass with no moss)
-control.code <- "c"  # code for moss controls (moss with no gas)
+Control.code <- "c"  # code for moss controls (moss with no gas)
 
 SECC.ARA.t1 <- within( SECC.ARA.t1, {
   ## Re-name "Controls" to be less confusing
@@ -47,7 +47,7 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
   SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
   SampleID[SampleControl=="blank"] <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]
                                          #'G' for gas Blanks?
-  SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
+  SampleID[SampleControl=="control"] <- paste(SampleID, Control.code, sep="")[SampleControl=="control"]
 })
 
 SECC.ARA.t2 <- within( SECC.ARA.t2, {
@@ -56,7 +56,7 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
   ## Re-calculate SampleID to indicate controls
   SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
   SampleID[SampleControl=="blank"]   <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]
-  SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
+  SampleID[SampleControl=="control"] <- paste(SampleID, Control.code, sep="")[SampleControl=="control"]
 })
 
 
@@ -65,7 +65,7 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
   SampleControl <- factor(SampleControl, levels=c("blank", "control", "Sample")) 
   ## Re-calculate SampleID to indicate controls
   SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-  SampleID[SampleControl=="control"] <- paste(SampleID, control.code, sep="")[SampleControl=="control"]
+  SampleID[SampleControl=="control"] <- paste(SampleID, Control.code, sep="")[SampleControl=="control"]
   SampleID[SampleControl=="blank"]   <- paste(Block, Time, Chamber, "-", Blank.code, sep="")[SampleControl=="blank"]  # not unique: need to append Frag treatments to make them unique.
   Raw.blanks <- grep( "G\\d\\b" , SampleID.t4$SampleID, perl = TRUE)  # indices of RAW blank SampleIDs
   Blank.ids <- SampleID[SampleControl=="blank"]  # temporary container
@@ -124,9 +124,9 @@ SECC.ARA.t1 <- within( SECC.ARA.t1, {
     ## Store Value
     Blank[i] <- Blank.umol
     ## GET CONTROL
-    Control.id <- paste( substr(Sample.id, 1, 7), control.code, sep="" )   # try for an exact match for ID
+    Control.id <- paste( substr(Sample.id, 1, 7), Control.code, sep="" )   # try for an exact match for ID
     if (Control.id %in% SampleID == FALSE)
-      Control.id <- paste( substr(Sample.id, 1, 6), ".", control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
+      Control.id <- paste( substr(Sample.id, 1, 6), ".", Control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
     # get metching values of SampleID
     ID.control   <- grep( Control.id, SampleID , perl = TRUE )
     # get values of C2H4 / umol
@@ -186,9 +186,9 @@ SECC.ARA.t2 <- within( SECC.ARA.t2, {
     ## Store Value
     Blank[i] <- Blank.ARA
     ## CALCULATE CONTROL
-    Control.id <- paste( substr(Sample.id, 1, 7), control.code, sep="" )   # try for an exact match for ID
+    Control.id <- paste( substr(Sample.id, 1, 7), Control.code, sep="" )   # try for an exact match for ID
     if (Control.id %in% SampleID == FALSE)
-      Control.id <- paste( substr(Sample.id, 1, 6), ".", control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
+      Control.id <- paste( substr(Sample.id, 1, 6), ".", Control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
     # get metching values of SampleID
     ID.control   <- grep( Control.id, SampleID , perl = TRUE )
     # get values of C2H4 / umol: %C2H4 of (Total umol of gas in 1ml injection)
@@ -276,9 +276,9 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     ## Store Value
     Blank[i] <- Blank.ARA
     ## CALCULATE CONTROL
-    Control.id <- paste( substr(Sample.id, 1, 7), control.code, sep="" )   # try for an exact match for ID
+    Control.id <- paste( substr(Sample.id, 1, 7), Control.code, sep="" )   # try for an exact match for ID
     if (Control.id %in% SampleID == FALSE)
-      Control.id <- paste( substr(Sample.id, 1, 6), ".", control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
+      Control.id <- paste( substr(Sample.id, 1, 6), ".", Control.code, sep="" ) # try a from any patch in the corresponding fragmentation treatment.
     # get metching values of SampleID
     ID.control   <- grep( Control.id, SampleID , perl = TRUE )
     # get values of C2H4 / umol: %C2H4 of (Total umol of gas in 1ml injection)
@@ -370,6 +370,20 @@ if (FALSE) {  # do not run when source()'d
   hist(SECC.ARA[SECC.ARA$Time == 4, "ARA.ml"])
   hist(SECC.ARA[SECC.ARA$Time == 4, "ARA.._mol.ml."])
 
+  ## Are calculated values in the right ballpark?
+  ## Early results (t1):       0 ~  300 umol m^-2 day^-1 ARA
+  ## DeLuca et al. (2002):     0 ~  700 umol m^-2 day^-1 ARA
+  ## Zackrisson et al. (2004): 0 ~  400 umol m^-2 day^-1 ARA
+  ## DeLuca et al. (2007):     0 ~ 1000 umol m^-2 day^-1 ARA
+  ## Gentili et al. (2005):    0 ~ 3500 umol g^-1 day^-1 ARA (dwt Moss)
+  hist(SECC.ARA[, "ARA.m"])
+  boxplot( list("t1"=SECC.ARA[SECC.ARA$Time == 1, "ARA.m"],
+                "t2"=SECC.ARA[SECC.ARA$Time == 2, "ARA.m"],
+                "t4"=SECC.ARA[SECC.ARA$Time == 4, "ARA.m"]
+                )
+          )
+  mean(SECC.ARA[, "ARA.m"], na.rm = TRUE)
+
   # Number of values > 0?
   length(na.omit(SECC.ARA[SECC.ARA$Time == 1 & SECC.ARA$ARA.ml > 0, "ARA.ml"]))
   length(na.omit(SECC.ARA[SECC.ARA$Time == 2 & SECC.ARA$ARA.ml > 0, "ARA.ml"]))  # low
@@ -409,7 +423,11 @@ ARA.full <- SECC.ARA
 ## Housekeeping
 ##================================================
 ## Remove old objects from memory
-rm.objects <- c('SECC.ARA.t1', 'SECC.ARA.t2', 'SECC.ARA.t4')
+rm.objects <- c('SECC.ARA.t1', 'SECC.ARA.t2', 'SECC.ARA.t4',
+                'SampleID.t1', 'SampleID.t2', 'SampleID.t4',
+                'Blank.code', 'Control.code',
+                'GAS.CONSTANT', 'Vol.injection', 'sample_ml'
+                )
 rm(list=rm.objects)
 ## Update list of Data_objects for importing
 Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.ARA' )
