@@ -1,5 +1,10 @@
 - ANOVA analyses for Cyanobacteria & ARA
 
+- Extract settings from Template:
+  - individual analysis scripts would consist of the initial settings part,
+    followed by a source() call to the template to do the rest.
+  - Or, can I turn major steps into functions?
+
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
 - Load    Moisture Data
@@ -11,7 +16,7 @@
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
-- Figure out how to store units in SECC attributes in a way that can be combined with text labels.
+- Figure out how to  combine store units in SECC attributes in a way that can be combined with text labels.
   - expression( paste() )
   - bquote( paste( .(TextVariable), ) )
 
@@ -19,26 +24,11 @@
 
 Current Changes:
 ================
-ARA analysis - building template and standard functions
+ARA analysis - building and debugging ANOVA template
 
-+ ARA analysis for all time points
-- ARA results differ very slightly (at 2+ decimal points) from original results
-  - Partly because old results did not include Controls (I had ignored them because of all the -ve values)
-  - also, the formula mistakes in block 4 (incorrect cell referenced in old Excel file for blanks in Block 4).
-  - The new calcs have a higher precision (?) I am attributing minor differences in results to these 'rounding errors'.
-  - The final graphs look nearly identical, however (once corrected for different inputs).
-+ Nested ANOVA template
-  + Flexible enough to handle most univariate analyses at this point.
-    Just change the settings near the top, and let fly!
-+ adjusted LSD() function to be a little more robust
-+ added attributes to SECC output data fram for "Nfix" column
-- trying ways of formatting units in final output graphs
-  - can only combine text variables and raw math in-line (not as variables).
-- R keeps prompting to "Hit <Return> to see next plot:", despite par(ask = TRUE).
-  - This also causes R to hang, waiting for input that will never come,
-    Whenever I send a whole region / file to be evaluated :(
-  - C-g to interrupt & escape.
-  - Try: options("device.ask.default") or devAskNewPage() instead?
-
-I keep forgetting to delete the extra columns in SECC_ARA_t1.csv!
-  Fortunately, they don't have much of an effect on importing & processing.
++ Adjustments to ANOVA template:
+  + fixed a couple of bugs, should be easier to set up now.
+- Identified plot calls that keep triggering a prompt
+  - multi-panel plots involving a formula (inside with())
+  - This does NOT happen in the R GUI,
+    but it DOES happen in R running in Terminal (as a shell process)**

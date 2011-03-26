@@ -16,6 +16,7 @@ source('./lib/init.R')
 library(lattice)	# mostly for xyplot
 library(ggplot2)    # grammar of graphics
 par(ask = FALSE)    # Stop asking me to hit <Return> to see next plot!
+options(device.ask.default = FALSE) # same as above: does this work?
 
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
@@ -24,7 +25,7 @@ par(ask = FALSE)    # Stop asking me to hit <Return> to see next plot!
 ## most univariate analyses?
 
 ##================================================
-## SETTINGS
+## SETTINGS - edit
 ##================================================
 
 ## Specify which treatment levels to include (by index is probably easiest)
@@ -50,7 +51,19 @@ Trt.nested <- c('Time', 'Block', 'Chamber', 'Frag', 'Position')
 
 
 ##================================================
-## PREPARE DATA (CALCULATIONS)
+## PREPARE DATA - do not edit
+##================================================
+## strip empty rows (rows with only NAs)?
+empty.rows <- which( apply( SECC[, lapply(SECC, class) == "numeric"], 1,
+                           function(x) all(is.na(x))
+                           )
+                    )
+SECC.use <- SECC[-empty.rows, ]  # !is.na(SECC$Time) ; NAs in factors are annoying
+## SECC.use <- SECC                 # make a copy, for further processing (save the original for reference).
+
+
+##================================================
+## CALCULATIONS - edit
 ##================================================
 # str(SECC.use)
 sampleA  <- 6	# sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
@@ -76,15 +89,13 @@ SECC.use <- within( SECC.use, {
 ##################################################
 ## PROCESS DATA: planned
 ##################################################
-SECC     <- SECC[!is.na(SECC$Time), ]  # NAs in factors are annoying
-SECC.use <- SECC                       # make a copy, for further processing (save the original for reference).
 
 ## Filter data for analysis, according to settings above.
-SECC.use <- SECC[SECC$Time     %in% Time.use     &
-                 SECC$Chamber  %in% Chamber.use  &
-                 SECC$Frag     %in% Frag.use     &
-                 SECC$Position %in% Position.use 
-                 , ]
+SECC.use <- SECC.use[SECC.use$Time     %in% Time.use     &
+                     SECC.use$Chamber  %in% Chamber.use  &
+                     SECC.use$Frag     %in% Frag.use     &
+                     SECC.use$Position %in% Position.use 
+                     , ]
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
 ## Meta-community (regional) -level analyses (ignoring position):
@@ -96,6 +107,7 @@ SECCp  <- SECC_aggregate( SECC.use, trt = 'Position' )
 
 ##=================================================
 ## PROCESS DATA: unplanned?
+##=================================================
 ## Which response variable is being used (for labels)? ****
 Y.use <- "Y.sqrt"
 ## plot label for transformed data.
@@ -139,10 +151,11 @@ summary(SECCmc)	# summary statistics
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 ## Patch analyses
-with( SECCp, plot(Y.trans ~ Chamber*Frag*Position, 
+with( SECCp, plot(Y.trans ~ Chamber * Frag * Position, 
                   main=Dataset.labels[1], ylab = Y.tlabel
                   )
      )	# fixed effects only, no nesting
+##* PROMPT *##
 plot.new()	# empty panel
 plot.new()	# empty panel
 par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
@@ -198,6 +211,7 @@ xyplot(Y.trans ~ Block | Frag + Chamber, data=SECCp,
 par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 ## homogeneity of variances?
 with( SECCp, plot(Y.trans ~ Chamber*Frag*Position) )	# fixed effects only, no nesting
+##* PROMPT *##
 plot.new()  # put next plot in empty panel?
 ## normal distribution?
 Yp.residuals <- resid(Yp.aov$Within)
@@ -217,6 +231,7 @@ par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 # homogeneity of variances?
 with( SECCmc, plot(Y.trans ~ Chamber*Frag) )	# fixed effects only, no nesting
 # normal distribution?
+##* PROMPT *##
 plot.new()  # for stupid "Hit <Return> ..." prompt when going line-by-line :(
 Ymc.residuals <- resid(Ymc.aov$"Block:Chamber:Frag")
 with(SECCmc, qqnorm( Ymc.residuals, main="Residuals", sub=Dataset.labels[2] ) )	# are residuals normally distributed?
