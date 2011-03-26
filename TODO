@@ -16,17 +16,20 @@
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
-- Figure out how to  combine store units in SECC attributes in a way that can be combined with text labels.
-  - expression( paste() )
-  - bquote( paste( .(TextVariable), ) )
+X Figure out how to  combine store units in SECC attributes in a way that can be combined with text labels.
+  X expression( paste() )
+  * bquote( .(TextVariable) * " (" * .(quotedExpression) * ")" )
 
 
 
 Current Changes:
 ================
-ARA & cyanobacteria nested ANOVA - Output Results
+Concatenate Units as quoted expressions
 
-+ Output results to files
-  + minor changes to output format.
-+ added check for factor levels to LSD() function
-  + should be slightly more robust.
++ Units stored in attributes as `quote(expression)`
+  + They can be concatenated with text, or even other quoted expressions
+    within `bquote()`
+  * bquote( .(TextVariable) * " (" * .(quotedExpression) * ")" )
++ Units have been changed in cleaning scripts
++ This has been implemented in the Template, but not ARA or CB analysis scripts.
+

@@ -345,9 +345,9 @@ attr(SECC.ARA, "labels") <- list(
                                  "ARA.g"  = "Acetylene Reduction"
                                  )
 attr(SECC.ARA, "units")  <- list(
-                                 "ARA.ml" = expression(mu*"mol" %*% ml^-1 %*% d^-1),
-                                 "ARA.g"  = expression(mu*"mol" %*% g^-1  %*% d^-1),
-                                 "ARA.m"  = expression(mu*"mol" %*% m^-2  %*% d^-1)
+                                 "ARA.ml" = quote(mu*"mol" %.% ml^-1 %.% d^-1),
+                                 "ARA.g"  = quote(mu*"mol" %.% g^-1  %.% d^-1),
+                                 "ARA.m"  = quote(mu*"mol" %.% m^-2  %.% d^-1)
                                  )
 
 ##################################################

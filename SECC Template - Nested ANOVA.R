@@ -37,27 +37,27 @@ Y.col        <- 'Nfix'                    # Column to use for response variable.
 
 ## Define Labels
 ## Which response variable is being used (for labels)? ****
-Y.use <- "Y.4rt"
+Y.use <- "Y.sqrt"
 Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label for this script.
-Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units for this script.
-Y.units <- bquote( paste( .(Y.label), " (", 
-                         sqrt(mu*"mol" %.% m^-2 %.% d^-1),  # manually (for now)
-                         ")",
-                         sep=""
-                         )
+Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units: quote(expression).
+Y.labun <- bquote( .(Y.label) * " (" * 
+                  sqrt(.(Y.units)) *  # store as quote(expression)
+                  ")"
                   )
-Dataset.list <- c("SECCp", "SECCmc")
+
 Dataset.labels <- c( "Patch scale data", "Meta-Community scale data" )
-ID.cols <- c('SampleID', 'Time', 'Block', 'Chamber', 'Frag', 'Pos', 'Position')
+Dataset.list   <- c("SECCp", "SECCmc")
+ID.cols    <- c('SampleID', 'Time', 'Block', 'Chamber', 'Frag', 'Pos', 'Position')
 Trt.nested <- c('Time', 'Block', 'Chamber', 'Frag', 'Position')
 
 ## Output Files - set to NULL to prevent output.
+Out.results   <- TRUE  # Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
 Out.filename  <- paste("Results - ", Y.col, " - ",
                    which(levels(SECC$Time) == Time.use), sep = ""
                    )
-Out.text  <- paste("./output/", Out.filename, ".txt", sep = "")
-Out.plots <- paste("./graphs/", Out.filename, ".pdf", sep = "")
-Out.final <- Out.plots              # Destination for final plots.
+Out.text   <- paste("./output/", Out.filename, ".txt", sep = "")
+Out.plots  <- paste("./graphs/", Out.filename, ".pdf", sep = "")
+Out.final  <- Out.plots              # Destination for final plots.
 Out.header <- paste(  "Nested ANOVA Results for:", Y.label, "(", Y.col, ")",
                     "\nTransformation used:     ", Y.use,
                     "\nSample Time:  ", paste(Time.use,     collapse = ", "),
@@ -136,8 +136,7 @@ SECCp  <- SECC_aggregate( SECC.use, trt = 'Position' )
 ## PROCESS DATA: unplanned?
 ##=================================================
 ## plot label for transformed data.
-Y.tlabel <-      paste( Y.use, ": ", Y.label, sep=""  )  # label for transformation plots
-Y.plabel <- expression( paste(Y.label) * " ("* paste(Y.units) * ")" )  # plot label?
+Y.tlabel <- paste( Y.use, ": ", Y.label, sep=""  )  # label for transformation plots
 
 ## Transformations, calculated columns, etc.  May depend on the results of exploratory graphs (& assumptions), below.
 for ( dataset in Dataset.list ){
@@ -175,7 +174,7 @@ summary(SECCmc) # summary statistics
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 
-if (is.null(Out.plots) == FALSE) pdf( file = Out.plots )
+if (Out.results == TRUE && is.null(Out.plots) == FALSE) pdf( file = Out.plots )
 
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Patch analyses
@@ -272,7 +271,7 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## ANALYSIS: GET RESULTS
 ##################################################
-if (is.null(Out.text) == FALSE) {
+if (Out.results == TRUE && is.null(Out.text) == FALSE) {
   sink( file = Out.text, split = TRUE, type = "output" )
   cat(Out.header,
       "================  Patch scale Results  ================\n\n",
@@ -304,7 +303,7 @@ with( SECCp, interaction.plot(Position, Frag, Y.trans,
 ##________________________________________________
 ## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
 # Chamber x Pos Interaction
-lsd <- LSD( Yp.aov$Within, Yp.model, data=SECCp, alpha=0.05, mode="pairwise" )  # compute LSDs based on a 5% error rate (alpha), 2-tailed.  Manual, due to unbalanced data (this is an estimate).
+lsd <- LSD( Yp.aov$Within, Yp.model, data=SECCp, alpha=0.05, mode="pairwise" )  # compute LSDs based on a 5% error rate (alpha), 2-tailed.  mode="manual" if unbalanced data ( provide n as an estimate).
 lsd.CxP <- lsd["Chamber:Position"]
 lsd.FxP <- lsd["Frag:Position"]
 lsd.CxFxP <- lsd["Chamber:Frag:Position"]
@@ -345,20 +344,20 @@ cat("\n95% Least Significant Differences (LSD):\n")
 lsd.mc
 
 
-if (is.null(Out.text) == FALSE) {
+if (Out.results == TRUE && is.null(Out.text) == FALSE) {
   cat("\n", "<============================= END ============================>",
       sep = "\n"
       )
   sink()
 }
 
-if (is.null(Out.plots) == FALSE && Out.plots != Out.final) dev.off()
+if (Out.results == TRUE && is.null(Out.plots) == FALSE && Out.plots != Out.final) dev.off()
 
 
 ##################################################
 ## FINAL GRAPHICS
 ##################################################
-if (is.null(Out.final) == FALSE && Out.plots != Out.final) pdf( file = Out.final )
+if (Out.results == TRUE && is.null(Out.final) == FALSE && Out.plots != Out.final) pdf( file = Out.final )
 
 
 Chamber.map <- data.frame( label = levels(SECC$Chamber),
@@ -381,6 +380,7 @@ Frag.map    <- data.frame( label = levels(SECCp$Frag),
     ## Full Corridors     =  grey, filled squares with dashed line ; 
     ## Pseudo-Corridors   = blue, open squares with dotted line.
     ## Isolated           =  red, open circles with dotted line.
+Plot.Title <- bquote(.(Time.use) * ": Patch means " %+-% "95% LSD")
 
 ## Patch results: Chamber x Position
 plot.means <- with( SECCp, 
@@ -401,10 +401,10 @@ with( plot.means, {
             lty = Chamber.map$lty, pch = Chamber.map$pch,
             col = as.character(Chamber.map$col),
             bg  = as.character(Chamber.map$bg),
-            main = bquote(paste(.(Time.use), ": Patch means " %+-% "95% LSD", sep="")),
+            main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Pos"]],
-            ylab = Y.units
+            ylab = Y.labun
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -427,16 +427,18 @@ with( plot.means, {
             lty = Frag.map$lty, pch = Frag.map$pch,
             col = as.character(Frag.map$col),
             bg  = as.character(Frag.map$bg),
-            main = bquote(paste(.(Time.use), ": Patch means " %+-% "95% LSD", sep="")),
+            main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Pos"]],
-            ylab = Y.units
+            ylab = Y.labun
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
 
 ##================================================
 ## META-COMMUNITY results
+Plot.Title <- bquote(.(Time.use) * ": Meta-Community means " %+-% "95% LSD")
+
 plot.means <- with( SECCmc, 
                    aggregate( cbind( Y.trans ), 
                              list(Frag=Frag, Chamber=Chamber), 
@@ -455,13 +457,10 @@ with( plot.means, {
             lty=Chamber.map$lty, pch=Chamber.map$pch,
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
-            main = bquote(paste(.(Time.use),
-              ": Meta-Community means " %+-% "95% LSD",
-              sep=""
-              ) ),
+            main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.units
+            ylab = Y.labun
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -481,13 +480,10 @@ with( plot.means, {
             lty=1, pch=Chamber.map$pch,
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
-            main = bquote(paste(.(Time.use),
-              ": Meta-Community means " %+-% "95% LSD",
-              sep=""
-              ) ),
+            main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Chamber"]],
-            ylab = Y.units
+            ylab = Y.labun
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -507,14 +503,11 @@ with( plot.means, {
             lty=1, pch=Frag.map$pch,
             col=as.character(Frag.map$col),
             bg=as.character(Frag.map$bg),
-            main = bquote(paste(.(Time.use),
-              ": Meta-Community means " %+-% "95% LSD",
-              sep=""
-              ) ),
+            main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.units
+            ylab = Y.labun
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
-if (is.null(Out.plots) == FALSE) dev.off()
+if (Out.results == TRUE && is.null(Out.plots) == FALSE) dev.off()

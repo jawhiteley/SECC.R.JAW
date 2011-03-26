@@ -147,15 +147,15 @@ attr(SECC.cyanobacteria, "SECC columns") <- c("ARA.dwt", "Cells.dwt",
                                               "Stigonema", "Stigonema.H",
                                               "Other.cells", "H.cells",
                                               "Cells", "Cells.g", "Cells.m")
-attr(SECC.cyanobacteria, "labels") <- list("Cells"  ="Cyanobacteria Cell Density",
-                                           "Cells.g"="Cyanobacteria Cell Density",
-                                           "Cells.m"="Cyanobacteria Cell Density",
-                                           "H.cells"="Heterocyst Cell Density"
+attr(SECC.cyanobacteria, "labels") <- list("Cells"   = "Cyanobacteria Cell Density",
+                                           "Cells.g" = "Cyanobacteria Cell Density",
+                                           "Cells.m" = "Cyanobacteria Cell Density",
+                                           "H.cells" = "Heterocyst Cell Density"
                                            )
-attr(SECC.cyanobacteria, "units")  <- list("Cells"  ="cells/shoot",
-                                           "Cells.g"="cells %*% g^-1 dwt",
-                                           "Cells.m"="cells %*% m^-2",
-                                           "H.cells"="cells/shoot"
+attr(SECC.cyanobacteria, "units")  <- list("Cells"   = "cells/shoot",
+                                           "Cells.g" = quote("cells" %.% (g^-1) * "dwt"),
+                                           "Cells.m" = quote("cells" %.% (m^-1)),
+                                           "H.cells" = "cells/shoot"
                                            )
 
 

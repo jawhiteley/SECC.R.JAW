@@ -1,10 +1,11 @@
 Nested ANOVA Results for: N-fixation rate ( Nfix ) 
+Transformation used:      Y.sqrt 
 Sample Time:   2008-08 
 Chamber:       Ambient, Partial Chamber, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
- Sat Mar 26 01:54:14 2011 
+ Sat Mar 26 13:15:15 2011 
 
 ================================================================
 ================  Patch scale Results  ================
@@ -20,7 +21,7 @@ Error: Block:Chamber
 Chamber    2 340.08 170.039  6.4979 0.01009 *
 Residuals 14 366.35  26.168                  
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Block:Chamber:Frag
              Df  Sum Sq Mean Sq F value Pr(>F)
@@ -36,7 +37,7 @@ Frag:Position           6   34.86   5.810  0.5991 0.7308138
 Chamber:Frag:Position  12   89.00   7.416  0.7646 0.6860279    
 Residuals             168 1629.45   9.699                      
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 
 Tables of means
@@ -108,12 +109,10 @@ Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
 
 
 95% Least Significant Differences (LSD):
-              Chamber                  Frag              Position 
-             0.886683              1.026076              0.886683 
-         Chamber:Frag      Chamber:Position         Frag:Position 
-             1.809658              1.556368              1.809658 
-Chamber:Frag:Position 
-             3.339796 
+              Chamber                  Frag              Position          Chamber:Frag 
+             0.886683              1.026076              0.886683              1.809658 
+     Chamber:Position         Frag:Position Chamber:Frag:Position 
+             1.556368              1.809658              3.339796 
 
 
 ================================================================
@@ -131,7 +130,7 @@ Error: Block:Chamber
 Chamber    2 98.760  49.380  6.9315 0.008085 **
 Residuals 14 99.735   7.124                    
 ---
-Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Block:Chamber:Frag
              Df Sum Sq Mean Sq F value Pr(>F)
