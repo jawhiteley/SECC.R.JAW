@@ -117,7 +117,7 @@ FINAL DATA STRUCTURE
    ARA.ml           umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
    ARA.m            umol/m^2/day    Acetylene-Reduction-Assay rates (Ethylene)
    ARA.g            umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
->  Nfix             ...             Nitrogen-fixation rates (ARA /3)
+>  Nfix             umol/m^2/day    Nitrogen-fixation rates (ARA /3)
 ## Microarthropod Community data    SECC.fauna [separate data frame?]
    [1 column/taxa]  #/g dwt         Microarthropod community data
 

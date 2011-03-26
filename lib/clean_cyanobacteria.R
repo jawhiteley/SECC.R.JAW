@@ -153,8 +153,8 @@ attr(SECC.cyanobacteria, "labels") <- list("Cells"  ="Cyanobacteria Cell Density
                                            "H.cells"="Heterocyst Cell Density"
                                            )
 attr(SECC.cyanobacteria, "units")  <- list("Cells"  ="cells/shoot",
-                                           "Cells.g"="cells*g^-1 dwt",
-                                           "Cells.m"="cells*m^-2",
+                                           "Cells.g"="cells %*% g^-1 dwt",
+                                           "Cells.m"="cells %*% m^-2",
                                            "H.cells"="cells/shoot"
                                            )
 

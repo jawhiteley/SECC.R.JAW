@@ -244,11 +244,11 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
     Blank.id <- paste( substr(Sample.id, 1, 3), "-", Blank.code, sep="" )   # try for an exact match for ID
 #   if (Blank.id %in% SampleID == FALSE)
 #     Blank.id <- paste( substr(Sample.id, 1, 2), ".-", Blank.code, sep="" ) # try a control from any chamber in the corresponding block & time.
-    # get metching values of SampleID
+    ## get metching values of SampleID
     ID.blank   <- grep( Blank.id, SampleID , perl = TRUE )  # get indices
-    # get values of [ C2H4 / (C2H4+C2H2) ] in Blank: %C2H4 of (C2H4+C2H2)
+    ## get values of [ C2H4 / (C2H4+C2H2) ] in Blank: %C2H4 of (C2H4+C2H2)
     Blank.ARA <- C2H4.ARA[ID.blank]
-    # further matching or take the mean if there is more than one.
+    ## further matching or take the mean if there is more than one.
     if (length(Blank.ARA) > 1) {
       ## browser()  # debug
       Sample.Frag <- Frag[i]
@@ -257,7 +257,7 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
       Blank.Frag  <- lapply( Blank.Frag, function (x) x[-(1:5)] )  # drop first 5 code digits, leaving only Frag codes.
       for ( blank in 1:length(Blank.Frag) ) {
         if  (Sample.Frag %in% unlist(Blank.Frag[blank]) ) {
-          # This is the correct blank for this sample.
+          ## This is the correct blank for this sample.
           Blank.ARA <- C2H4.ARA[SampleID == Blank.id[blank]]
                     # assumes blanks are in same relative order as returned by grep()
         }
@@ -340,14 +340,14 @@ nrow(SECC.ARA.t1) + nrow(SECC.ARA.t2) + nrow(SECC.ARA.t4)  # 1780
 
 attr(SECC.ARA, "SECC columns") <- c('ARA.ml', 'ARA.m')
 attr(SECC.ARA, "labels") <- list(
-                                 "ARA.ml" ="Acetylene Reduction Assay",
-                                 "ARA.m"="Acetylene Reduction Assay",
-                                 "ARA.g"="Acetylene Reduction Assay"
+                                 "ARA.ml" = "Acetylene Reduction",
+                                 "ARA.m"  = "Acetylene Reduction",
+                                 "ARA.g"  = "Acetylene Reduction"
                                  )
 attr(SECC.ARA, "units")  <- list(
-                                 "ARA.ml" =expression(mu * "mol " * ml^-1* d^-1),
-                                 "ARA.g"=expression(mu * "mol " * g^-1 * d^-1),
-                                 "ARA.m"=expression(mu * "mol " * m^-2 * d^-1)
+                                 "ARA.ml" = expression(mu*"mol" %*% ml^-1 %*% d^-1),
+                                 "ARA.g"  = expression(mu*"mol" %*% g^-1  %*% d^-1),
+                                 "ARA.m"  = expression(mu*"mol" %*% m^-2  %*% d^-1)
                                  )
 
 ##################################################
@@ -400,12 +400,20 @@ if (FALSE) {  # do not run when source()'d
 
   ARA.calcs <- c("SampleID", # "Block", "Time", "Chamber", "Frag", "Pos",
                  "SampleControl", "C2H4._mol", "umol.ml", "Eth.umol", "C2H4.ARA", 
-                 "Control", "Blank", "ARA.ml", "ARA.._mol.ml.")
+                 "Control", "Blank", "ARA.ml", "ARA.._mol.ml.",
+                 "ARA.m", "ARA.._mol..m.2..d.1.")
   invisible(edit(SECC.ARA[, ARA.calcs]))
 
   ## largest ARA values (are they really outliers?)
   ARA.big <- na.omit( SECC.ARA$SampleID[SECC.ARA$ARA.ml > 0.01] )
   SECC.ARA[SECC.ARA$SampleID %in% ARA.big, ARA.calcs]
+
+  ## major differences between calcualted values here, and Excel Spreadsheet?
+  Big.diffs <- with( SECC.ARA, SampleID[abs(ARA.m - ARA.._mol..m.2..d.1.) > 1])
+  length(na.omit(Big.diffs))  # check here before proceeding with next line.
+  SECC.ARA[SECC.ARA$SampleID %in% Big.diffs, ARA.calcs]
+  invisible(edit(SECC.ARA[SECC.ARA$SampleID %in% Big.diffs, ARA.calcs]))
+  
 
 ### t4 Control & Blank in Excel spreadsheet are incorrect approximations
 ### (used to be empty)

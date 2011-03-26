@@ -165,6 +165,9 @@ SECC <- within( SECC, {
   Nfix  <- ARA.m * Nfix.ARA.ratio
 })
 
+attr(SECC, "labels")[["Nfix"]] <- "N-fixation rate"
+attr(SECC, "units" )[["Nfix"]] <- expression(mu*"mol" %*% m^-2 %*% d^-1)
+## attr(SECC, "units" )[["Nfix"]] <- expression(mu*"mol" %*% g^-1 %*% d^-1)
 
 ##================================================
 ## Generate factor columns, re-order factor levels, etc.
