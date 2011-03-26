@@ -28,6 +28,8 @@ ARA analysis - building and debugging ANOVA template
 
 + Adjustments to ANOVA template:
   + fixed a couple of bugs, should be easier to set up now.
+  + output results & plots to files
+    - this also avoids the prompt issue below:
 - Identified plot calls that keep triggering a prompt
   - multi-panel plots involving a formula (inside with())
   - This does NOT happen in the R GUI,

@@ -49,6 +49,23 @@ Dataset.labels <- c( "Patch scale data", "Meta-Community scale data" )
 ID.cols <- c('SampleID', 'Time', 'Block', 'Chamber', 'Frag', 'Pos', 'Position')
 Trt.nested <- c('Time', 'Block', 'Chamber', 'Frag', 'Position')
 
+## Output Files - set to NULL to prevent output.
+Out.filename  <- paste("Results - ", Y.col, " - ",
+                   which(levels(SECC$Time) == Time.use), sep = ""
+                   )
+Out.text  <- paste("./output/", Out.filename, ".txt", sep = "")
+Out.plots <- paste("./graphs/", Out.filename, ".pdf", sep = "")
+Out.final <- Out.plots              # Destination for final plots.
+Out.header <- paste("Nested ANOVA Results for:", Y.label, "(", Y.col, ")",
+                    "\nSample Time:  ", paste(Time.use,     collapse = ", "),
+                    "\nChamber:      ", paste(Chamber.use,  collapse = ", "),
+                    "\nFragmentation:", paste(Frag.use,     collapse = ", "),
+                    "\nPatches:      ", paste(Position.use, collapse = ", "),
+                    "\n\n",
+                    date(),
+                    "\n\n================================================================\n"
+                    )
+
 
 ##================================================
 ## PREPARE DATA - do not edit
@@ -149,6 +166,9 @@ summary(SECCmc)	# summary statistics
 ## EXPLORE: PLOTS
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
+
+if (is.null(Out.plots) == FALSE) pdf( file = Out.plots )
+
 par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 ## Patch analyses
 with( SECCp, plot(Y.trans ~ Chamber * Frag * Position, 
@@ -156,7 +176,7 @@ with( SECCp, plot(Y.trans ~ Chamber * Frag * Position,
                   )
      )	# fixed effects only, no nesting
 ##* PROMPT *##
-plot.new()	# empty panel
+## plot.new()	# empty panel
 plot.new()	# empty panel
 par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 ## Is the response variable normally-distributed? Check skew in histograms, eyeball linearity on QQ-plots
@@ -212,7 +232,7 @@ par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 ## homogeneity of variances?
 with( SECCp, plot(Y.trans ~ Chamber*Frag*Position) )	# fixed effects only, no nesting
 ##* PROMPT *##
-plot.new()  # put next plot in empty panel?
+## plot.new()  # put next plot in empty panel?
 ## normal distribution?
 Yp.residuals <- resid(Yp.aov$Within)
 with(SECCp, qqnorm( Yp.residuals, main="Residuals", sub=Dataset.labels[1] ) )	# are residuals normally distributed?
@@ -232,7 +252,7 @@ par( mfrow=c(2,2), cex=0.8)	# panel of figures: 2 rows & 2 columns
 with( SECCmc, plot(Y.trans ~ Chamber*Frag) )	# fixed effects only, no nesting
 # normal distribution?
 ##* PROMPT *##
-plot.new()  # for stupid "Hit <Return> ..." prompt when going line-by-line :(
+## plot.new()  # for stupid "Hit <Return> ..." prompt when going line-by-line :(
 Ymc.residuals <- resid(Ymc.aov$"Block:Chamber:Frag")
 with(SECCmc, qqnorm( Ymc.residuals, main="Residuals", sub=Dataset.labels[2] ) )	# are residuals normally distributed?
 qqline(Ymc.residuals,  col="grey50")
@@ -244,6 +264,12 @@ hist(Ymc.residuals)	# plot residuals
 ##################################################
 ## ANALYSIS: GET RESULTS
 ##################################################
+if (is.null(Out.text) == FALSE) {
+  sink( file = Out.text, split = TRUE, type = "output" )
+  cat( Out.header )
+  cat( "================  Patch scale Results  ================\n" )
+}
+
 ## Patch analyses
 # names(Yp.aov)
 summary(Yp.aov)                 # summary statistics
@@ -273,7 +299,11 @@ lsd.CxFxP <- lsd["Chamber:Frag:Position"]
 
 ##================================================
 ## Regional analyses
-# names(Ymc.aov)
+cat( "\n\n================================================================\n" )
+cat(   "================  Meta-Community scale Results  ================\n"   )
+cat(   "================================================================\n"   )
+
+## names(Ymc.aov)
 summary(Ymc.aov)        # summary statistics
 model.tables(Ymc.aov, "means")  # effect sizes
 # Interaction Plots
@@ -291,9 +321,20 @@ lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode
 lsd.mc.C <- lsd.mc["Chamber"]
 
 
+if (is.null(Out.text) == FALSE) {
+  cat( "\n\n========================= END =========================\n" )
+  sink()
+}
+
+if (is.null(Out.plots) == FALSE && Out.plots != Out.final) dev.off()
+
+
 ##################################################
 ## FINAL GRAPHICS
 ##################################################
+if (is.null(Out.final) == FALSE && Out.plots != Out.final) pdf( file = Out.final )
+
+
 Chamber.map <- data.frame( label = levels(SECCp$Chamber),
                           col = c("#000000", "#000099", "#990000"),
                           bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF"),
@@ -416,3 +457,5 @@ with( plot.means, {
             ylab = Y.units
             )	# as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
+
+if (is.null(Out.plots) == FALSE) dev.off()

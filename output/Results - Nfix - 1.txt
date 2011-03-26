@@ -1,0 +1,150 @@
+Nested ANOVA Results for: N-fixation rate ( Nfix ) 
+Sample Time:   2008-08 
+Chamber:       Ambient, Partial Chamber, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, other, Outer 
+
+ Sat Mar 26 00:14:36 2011 
+
+================================================================
+================  Patch scale Results  ================
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7 1618.7  231.24               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value  Pr(>F)  
+Chamber    2 340.08 170.039  6.4979 0.01009 *
+Residuals 14 366.35  26.168                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Error: Block:Chamber:Frag
+             Df  Sum Sq Mean Sq F value Pr(>F)
+Frag          3   25.96   8.653  0.3411 0.7957
+Chamber:Frag  6   86.85  14.475  0.5706 0.7522
+Residuals    63 1598.19  25.368               
+
+Error: Within
+                       Df  Sum Sq Mean Sq F value    Pr(>F)    
+Position                2  242.09 121.046 12.4802 8.844e-06 ***
+Chamber:Position        4  196.24  49.059  5.0581 0.0007127 ***
+Frag:Position           6   34.86   5.810  0.5991 0.7308138    
+Chamber:Frag:Position  12   89.00   7.416  0.7646 0.6860279    
+Residuals             168 1629.45   9.699                      
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+Tables of means
+Grand mean
+         
+4.124273 
+
+ Chamber 
+Chamber
+        Ambient Partial Chamber    Full Chamber 
+          5.656           3.464           3.253 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           3.635            4.362            4.379            4.122 
+
+ Position 
+Position
+Inner other Outer 
+5.056 4.439 2.878 
+
+ Chamber:Frag 
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         4.803      6.959          5.367            5.496   
+  Partial Chamber 3.064      2.887          4.657            3.248   
+  Full Chamber    3.038      3.238          3.112            3.623   
+
+ Chamber:Position 
+                 Position
+Chamber           Inner other Outer
+  Ambient         5.549 6.119 5.301
+  Partial Chamber 4.182 3.425 2.785
+  Full Chamber    5.438 3.773 0.547
+
+ Frag:Position 
+                  Position
+Frag               Inner other Outer
+  Continuous       4.378 3.765 2.762
+  Full Corridors   5.324 4.993 2.768
+  Pseudo-Corridors 5.573 4.062 3.501
+  Isolated         4.950 4.937 2.479
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         4.741      7.109          5.299            5.047   
+  Partial Chamber 4.473      3.699          4.697            3.858   
+  Full Chamber    3.921      5.163          6.724            5.944   
+
+, , Position = other
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         5.133      6.810          5.455            7.077   
+  Partial Chamber 2.751      3.618          4.117            3.214   
+  Full Chamber    3.409      4.551          2.613            4.521   
+
+, , Position = Outer
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         4.534      6.959          5.347            4.364   
+  Partial Chamber 1.967      1.346          5.156            2.671   
+  Full Chamber    1.784      0.000          0.000            0.403   
+
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7 652.96   93.28               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value   Pr(>F)   
+Chamber    2 98.760  49.380  6.9315 0.008085 **
+Residuals 14 99.735   7.124                    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+Error: Block:Chamber:Frag
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3   8.21  2.7383  0.2924 0.8307
+Chamber:Frag  6  20.40  3.3996  0.3631 0.8995
+Residuals    63 589.93  9.3639               
+Tables of means
+Grand mean
+         
+4.850456 
+
+ Chamber 
+Chamber
+        Ambient Partial Chamber    Full Chamber 
+          6.280           4.038           4.233 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           4.371            5.093            5.081            4.857 
+
+ Chamber:Frag 
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         5.607      7.183          5.984            6.347   
+  Partial Chamber 3.895      3.659          5.088            3.508   
+  Full Chamber    3.610      4.437          4.170            4.716   
+
+
+========================= END =========================

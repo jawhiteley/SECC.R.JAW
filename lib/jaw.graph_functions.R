@@ -43,6 +43,24 @@ LSD <- function( model, formula, data=NULL, alpha=0.05, mode=c("pairwise", "MSE"
 ##================================================
 ## PLOTS & GRAPHS
 ##================================================
+##________________________________________________
+## text_to_plot: mtext() wrapper.  Outputs text to a plotting device.
+## useful for getting some text output into a pdf
+## file with graphs.
+
+text_to_plot <- function( txt = "", auto.size = TRUE,
+                         cex = 0.6, family = "mono" , ... ) {
+  ## can fit about 60 (56) letters @ cex = 1
+  ## auto-word-wrap?  Insert "\n" every X characters, depending on cex?
+  plot.new()
+  mtext(txt,
+        adj = 0, side = 3, line = 0,
+        cex = cex, family = family, col = "black",
+        ...
+        )
+}
+
+
 
 ##________________________________________________
 ## plotMeans: modified version from 'R commander' package (Rcmdr).  I just hate loading the entire package & GUI, just for this one convenient function.  
