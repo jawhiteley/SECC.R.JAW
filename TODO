@@ -24,13 +24,9 @@
 
 Current Changes:
 ================
-ARA analysis - building and debugging ANOVA template
+ARA & cyanobacteria nested ANOVA - Output Results
 
-+ Adjustments to ANOVA template:
-  + fixed a couple of bugs, should be easier to set up now.
-  + output results & plots to files
-    - this also avoids the prompt issue below:
-- Identified plot calls that keep triggering a prompt
-  - multi-panel plots involving a formula (inside with())
-  - This does NOT happen in the R GUI,
-    but it DOES happen in R running in Terminal (as a shell process)**
++ Output results to files
+  + minor changes to output format.
++ added check for factor levels to LSD() function
+  + should be slightly more robust.

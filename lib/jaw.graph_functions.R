@@ -17,6 +17,12 @@ LSD <- function( model, formula, data=NULL, alpha=0.05, mode=c("pairwise", "MSE"
 
   vars <- attr( attr(model$terms, "factors"), "dimnames")[[1]]  # dig in for the variable names ...
   data <- data[, vars]  # keep only relevant columns
+  ## re-factor columns to drop unused levels.
+  for( col in names(data) ) {
+    if (class(data[[col]]) == "factor") {
+      data[[col]] <- factor(data[[col]])
+    }
+  }
   mode <- match.arg(mode)
   if(mode == "manual"){
     lsd.n <- as.numeric(n)	# relevant group ? : 

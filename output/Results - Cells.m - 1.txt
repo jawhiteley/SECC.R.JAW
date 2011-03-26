@@ -1,0 +1,154 @@
+Nested ANOVA Results for: Cyanobacteria Cell Density ( Cells.m ) 
+Transformation used:    Y.4rt 
+Sample Time:   2008-08 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+ Sat Mar 26 02:47:54 2011 
+
+================================================================
+================  Patch scale Results  ================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  73640   10520               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    1    298   297.6  0.0561 0.8196
+Residuals  7  37152  5307.4               
+
+Error: Block:Chamber:Frag
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3  11759  3919.6  1.0059 0.3997
+Chamber:Frag  3   7120  2373.3  0.6090 0.6129
+Residuals    42 163665  3896.8               
+
+Error: Within
+                      Df Sum Sq Mean Sq F value  Pr(>F)  
+Position               1  11333 11333.1  2.8624 0.09623 .
+Chamber:Position       1   1054  1053.6  0.2661 0.60798  
+Frag:Position          3   3412  1137.5  0.2873 0.83437  
+Chamber:Frag:Position  3   8741  2913.7  0.7359 0.53501  
+Residuals             56 221721  3959.3                  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+
+Tables of means
+Grand mean
+         
+118.5282 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+      117.00       120.05 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+          102.58           126.92           119.64           124.98 
+
+ Position 
+Position
+ Inner  Outer 
+127.94 109.12 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      101.15     127.79         106.53           132.54  
+  Full Chamber 104.02     126.04         132.74           117.41  
+
+ Chamber:Position 
+              Position
+Chamber        Inner  Outer 
+  Ambient      123.54 110.46
+  Full Chamber 132.33 107.77
+
+ Frag:Position 
+                  Position
+Frag               Inner  Outer 
+  Continuous       116.17  88.99
+  Full Corridors   131.09 122.74
+  Pseudo-Corridors 124.04 115.23
+  Isolated         140.45 109.51
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      123.80     131.47          97.53           141.37  
+  Full Chamber 108.54     130.72         150.55           139.52  
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient       78.50     124.11         115.53           123.72  
+  Full Chamber  99.49     121.37         114.94            95.30  
+
+
+95% Least Significant Differences (LSD):
+              Chamber                  Frag              Position 
+             22.01271              31.44531              22.01271 
+         Chamber:Frag      Chamber:Position         Frag:Position 
+             45.43368              31.44531              45.43368 
+Chamber:Frag:Position 
+             67.47817 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+
+Y.trans ~ Chamber * Frag + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  38680  5525.7               
+
+Error: Block:Chamber
+          Df  Sum Sq Mean Sq F value Pr(>F)
+Chamber    1  1935.5  1935.5   0.655  0.445
+Residuals  7 20685.4  2955.1               
+
+Error: Block:Chamber:Frag
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3   2892   964.1  0.3921 0.7593
+Chamber:Frag  3   4959  1653.2  0.6723 0.5738
+Residuals    42 103273  2458.9               
+
+
+Tables of means
+Grand mean
+         
+133.8295 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+      128.33       139.33 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+          123.51           140.70           132.31           138.80 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      109.81     142.94         117.48           143.09  
+  Full Chamber 137.21     138.46         147.13           134.51  
+
+95% Least Significant Differences (LSD):
+     Chamber         Frag Chamber:Frag 
+    27.16624     39.25108     58.29576 
+
+
+<============================= END ============================>

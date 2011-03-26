@@ -29,11 +29,11 @@ options(device.ask.default = FALSE) # same as above: does this work?
 ##================================================
 
 ## Specify which treatment levels to include (by index is probably easiest)
-Time.use     <- levels(SECC$Time)[1]      # Time (index: 1-3) to include in this run
-Chamber.use  <- levels(SECC$Chamber)      # Chamber treatments to include
+Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
+Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]      # Chamber treatments to include
 Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
-Position.use <- levels(SECC$Position)     # Patch Positions to include
-Y.col        <- 'Nfix'                    # Column to use for response variable.
+Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
+Y.col        <- 'Cells.m'                    # Column to use for response variable.
 
 ## Define Labels
 ## Which response variable is being used (for labels)? ****
@@ -41,7 +41,7 @@ Y.use <- "Y.4rt"
 Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label for this script.
 Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units for this script.
 Y.units <- bquote( paste( .(Y.label), " (", 
-                         sqrt(mu*"mol" %.% m^-2 %.% d^-1),  # manually (for now)
+                         sqrt("cells" %.% m^-2, 4),  # manually (for now)
                          ")",
                          sep=""
                          )

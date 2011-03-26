@@ -4,10 +4,12 @@ Chamber:       Ambient, Partial Chamber, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
- Sat Mar 26 00:14:36 2011 
+ Sat Mar 26 01:54:14 2011 
 
 ================================================================
 ================  Patch scale Results  ================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
@@ -35,6 +37,8 @@ Chamber:Frag:Position  12   89.00   7.416  0.7646 0.6860279
 Residuals             168 1629.45   9.699                      
 ---
 Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1 
+
+
 Tables of means
 Grand mean
          
@@ -103,10 +107,20 @@ Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
   Full Chamber    1.784      0.000          0.000            0.403   
 
 
+95% Least Significant Differences (LSD):
+              Chamber                  Frag              Position 
+             0.886683              1.026076              0.886683 
+         Chamber:Frag      Chamber:Position         Frag:Position 
+             1.809658              1.556368              1.809658 
+Chamber:Frag:Position 
+             3.339796 
+
 
 ================================================================
 ================  Meta-Community scale Results  ================
 ================================================================
+
+Y.trans ~ Chamber * Frag + Error(Block/Chamber/Frag)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
@@ -124,6 +138,8 @@ Error: Block:Chamber:Frag
 Frag          3   8.21  2.7383  0.2924 0.8307
 Chamber:Frag  6  20.40  3.3996  0.3631 0.8995
 Residuals    63 589.93  9.3639               
+
+
 Tables of means
 Grand mean
          
@@ -146,5 +162,9 @@ Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
   Partial Chamber 3.895      3.659          5.088            3.508   
   Full Chamber    3.610      4.437          4.170            4.716   
 
+95% Least Significant Differences (LSD):
+     Chamber         Frag Chamber:Frag 
+    1.333850     1.550925     2.862295 
 
-========================= END =========================
+
+<============================= END ============================>
