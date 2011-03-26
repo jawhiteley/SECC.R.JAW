@@ -1,9 +1,9 @@
-- ANOVA analyses for Cyanobacteria & ARA
+X ANOVA analyses for Cyanobacteria & ARA
 
 - Extract settings from Template:
-  - individual analysis scripts would consist of the initial settings part,
+  X individual analysis scripts would consist of the initial settings part,
     followed by a source() call to the template to do the rest.
-  - Or, can I turn major steps into functions?
+  - can I turn major operations into functions?
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
@@ -16,20 +16,28 @@
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
-X Figure out how to  combine store units in SECC attributes in a way that can be combined with text labels.
-  X expression( paste() )
-  * bquote( .(TextVariable) * " (" * .(quotedExpression) * ")" )
-
-
 
 Current Changes:
 ================
-Concatenate Units as quoted expressions
+Standardized Nested ANOVA template
 
-+ Units stored in attributes as `quote(expression)`
-  + They can be concatenated with text, or even other quoted expressions
-    within `bquote()`
-  * bquote( .(TextVariable) * " (" * .(quotedExpression) * ")" )
-+ Units have been changed in cleaning scripts
-+ This has been implemented in the Template, but not ARA or CB analysis scripts.
++ Split Template File into modular files within the 'SECCanova' directory:
+  + SECC Template - ANOVA.R
+	- Starting Point: copy this file, and make desired changes
+	- delete lines to use the default (loaded from the template).
+    - Careful: this file source()'s itself (if the condition is switched on)!
+	  - This is silly: just make a separate file of default settings.
+	    I already have one for default labels, that has to be loaded after custom settings.
+  + SECC - ANOVA settings.R
+    - default settings for nested ANOVA
+	- source()'d in template & main scripts
+  + SECC - ANOVA labels.R
+    - default text & labels for nested ANOVA
+	- source()'d in template & main scripts
+  + SECC - nested ANOVA.R
+    - Main workhorse script
+	- This file is source()'d after initial settings, to carry out the standardized analysis.
+	- I'm still working on converting some of this to functions.
+	  - Eventually, the bulk of this script can be moved to the individual purpose scripts,
+		which will consist of calls to functions to carry out main operations.
 

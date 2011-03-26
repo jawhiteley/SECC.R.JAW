@@ -21,10 +21,8 @@ source('./lib/jaw.misc_functions.R')
 SECCcolumnNames <- function(data=NULL, DataName="data") {
   ## Standardize column names
   # Check if first argument is actually a data frame.
-  if ('data.frame' %in% class(data) == FALSE) stop(
-      paste("The first argument of the SECCcolumns() function", 
-          "must be an object of class \"data.frame\"."
-         )
+  if (is.data.frame(data) == FALSE) stop(
+      "The first argument of the SECCcolumns() function must be a \"data.frame\"."
      )
 
   ## REQUIRES:

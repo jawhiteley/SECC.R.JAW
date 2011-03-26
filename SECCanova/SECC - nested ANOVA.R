@@ -1,114 +1,42 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
-### Template for basic analyses of experimental data
+### Standard Nested ANOVA of experimental data
 ### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-25
+### Jonathan Whiteley     R v2.12     2011-03-26
+##################################################
+##
+##  This script is used to carry out standard
+##  nested analysis of variance, according to
+##  the structure of the SECC Experiment.
+##  Calling scripts should configure settings
+##  before source()'ing this file.
+##
 ##################################################
 ## INITIALISE
 ##################################################
-## Set Working Directory: path in quotes "".
-# setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")    # iMac@McGill
-# setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-getwd()  # Check that we're in the right place
-
-## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-source('./lib/init.R')
 library(lattice)    # mostly for xyplot
 library(ggplot2)    # grammar of graphics
-par(ask = FALSE)    # Stop asking me to hit <Return> to see next plot!
-options(device.ask.default = FALSE) # same as above: does this work?
 
-##################################################
-## CONFIGURE BASIC ANALYSIS
-##################################################
-## Can this script be used in a generic way for
-## most univariate analyses?
-
-##================================================
-## SETTINGS - edit
-##================================================
-
-## Specify which treatment levels to include (by index is probably easiest)
-Time.use     <- levels(SECC$Time)[1]      # Time (index: 1-3) to include in this run
-Chamber.use  <- levels(SECC$Chamber)      # Chamber treatments to include
-Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
-Position.use <- levels(SECC$Position)     # Patch Positions to include
-Y.col        <- 'Nfix'                    # Column to use for response variable.
-
-## Define Labels
-## Which response variable is being used (for labels)? ****
-Y.use <- "Y.sqrt"
-Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label for this script.
-Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units: quote(expression).
-Y.labun <- bquote( .(Y.label) * " (" * 
-                  sqrt(.(Y.units)) *  # store as quote(expression)
-                  ")"
-                  )
-
-Dataset.labels <- c( "Patch scale data", "Meta-Community scale data" )
-Dataset.list   <- c("SECCp", "SECCmc")
-ID.cols    <- c('SampleID', 'Time', 'Block', 'Chamber', 'Frag', 'Pos', 'Position')
-Trt.nested <- c('Time', 'Block', 'Chamber', 'Frag', 'Position')
-
-## Output Files - set to NULL to prevent output.
-Out.results   <- TRUE  # Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Out.filename  <- paste("Results - ", Y.col, " - ",
-                   which(levels(SECC$Time) == Time.use), sep = ""
-                   )
-Out.text   <- paste("./output/", Out.filename, ".txt", sep = "")
-Out.plots  <- paste("./graphs/", Out.filename, ".pdf", sep = "")
-Out.final  <- Out.plots              # Destination for final plots.
-Out.header <- paste(  "Nested ANOVA Results for:", Y.label, "(", Y.col, ")",
-                    "\nTransformation used:     ", Y.use,
-                    "\nSample Time:  ", paste(Time.use,     collapse = ", "),
-                    "\nChamber:      ", paste(Chamber.use,  collapse = ", "),
-                    "\nFragmentation:", paste(Frag.use,     collapse = ", "),
-                    "\nPatches:      ", paste(Position.use, collapse = ", "),
-                    "\n\n",
-                    date(),
-                    "\n\n================================================================\n"
-                    )
-
+if ( exists('SECC') == FALSE ) stop(
+	"No SECC data found to analyze!  Don't forget to source(./lib/init.R)"
+  )
+if ( exists('Y.col') == FALSE ) stop(
+	"Please specify a data column to analyze (Y.col)."
+  )
 
 ##================================================
-## PREPARE DATA - do not edit
+## Standard Labels
 ##================================================
-## strip empty rows (rows with only NAs)?
-empty.rows <- which( apply( SECC[, lapply(SECC, class) == "numeric"], 1,
-                           function(x) all(is.na(x))
-                           )
-                    )
-SECC.use <- SECC[-empty.rows, ]  # !is.na(SECC$Time) ; NAs in factors are annoying
-## SECC.use <- SECC                 # make a copy, for further processing (save the original for reference).
 
-
-##================================================
-## CALCULATIONS - edit
-##================================================
-# str(SECC.use)
-sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
-      #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
-      #  or 6.4 for 20 shoots, based on density survey.
-sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
-sample_ml    <- 50  # 50 ml sample
-ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
-patchA   <- pi * (12.5^2)      # patch area
-patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
-Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
-
-SECC.use <- within( SECC.use, { 
-  ## Generic Response Variable (used in remainder of script)
-  Nfix  <- ARA.m * Nfix.ARA.ratio
-  Y <- as.numeric( get(Y.col) )  # do not need to edit this
-  Y[Y < 0] <- 0    ## negative values cause problems for transformations: replace with 0
-  ## change negative ARA values to 0 - should I wait until after aggregation?
-})
-
+if(!exists('Y.plotlab')) Y.plotlab <- bquote( .(Y.label) * " (" * .(Y.units) *  ")" )
+  ## do not overwrite if it already exists.
 
 
 ##################################################
 ## PROCESS DATA: planned
 ##################################################
+## strip empty rows (rows with only NAs)
+SECC.use <- strip_empty_dims( SECC, dim = 1, col.class = "numeric" )  
 
 ## Filter data for analysis, according to settings above.
 SECC.use <- SECC.use[SECC.use$Time     %in% Time.use     &
@@ -142,13 +70,17 @@ Y.tlabel <- paste( Y.use, ": ", Y.label, sep=""  )  # label for transformation p
 for ( dataset in Dataset.list ){
   DataObject <- get(dataset)
   DataObject <- within( DataObject, {
+	## Generic Response Variable (used in remainder of script)
+	Y <- as.numeric( get(Y.col) )
+
     Y.trans  <- Y                # temporary, for transformations.
-    Y.trans[Y.trans < 0] <- 0        # negative values are problematic for log and other transformations :-(
-    Y.sqrt   <- sqrt( Y.trans ) # useful for Poisson-distributed data (mean prop. to variance).
+    Y.trans[Y.trans < 0] <- 0    # negative values are problematic for log and other transformations :-(
+    Y.sqrt   <- sqrt( Y.trans )  # useful for Poisson-distributed data (mean prop. to variance).
     Y.4rt    <- Y.trans^(0.25)   # fourth-root
     Y.ln     <- log(Y.trans +1)  # defaults to base e=exp(1).
     Y.log    <- log(Y.trans +1, 10 )    # base 10. (stdev prop to mean).
-    Y.trans  <- get(Y.use)      # assign which column to work with for analyses ****
+    
+	Y.trans  <- get(Y.use)      # assign which column to work with for analyses ****
   })    
   ## attach relevant info to object attributes.
   attr(DataObject, "response variable") <- Y.col
@@ -274,7 +206,7 @@ hist(Ymc.residuals) # plot residuals
 if (Out.results == TRUE && is.null(Out.text) == FALSE) {
   sink( file = Out.text, split = TRUE, type = "output" )
   cat(Out.header,
-      "================  Patch scale Results  ================\n\n",
+      Out.patch.header,
       sep=""
       )
 }
@@ -314,12 +246,7 @@ lsd
 
 ##================================================
 ## Regional analyses
-cat("\n",
-    "================================================================", 
-    "================  Meta-Community scale Results  ================",
-    "================================================================\n",
-    sep = "\n"
-    )
+cat(Out.mc.header)
 
 ## names(Ymc.aov)
 Ymc.model
@@ -345,9 +272,7 @@ lsd.mc
 
 
 if (Out.results == TRUE && is.null(Out.text) == FALSE) {
-  cat("\n", "<============================= END ============================>",
-      sep = "\n"
-      )
+  cat(Out.end)
   sink()
 }
 
@@ -404,7 +329,7 @@ with( plot.means, {
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Pos"]],
-            ylab = Y.labun
+            ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -430,7 +355,7 @@ with( plot.means, {
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Pos"]],
-            ylab = Y.labun
+            ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -460,7 +385,7 @@ with( plot.means, {
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.labun
+            ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -483,7 +408,7 @@ with( plot.means, {
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Chamber"]],
-            ylab = Y.labun
+            ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
@@ -506,7 +431,7 @@ with( plot.means, {
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.labun
+            ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 

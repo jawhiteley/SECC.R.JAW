@@ -8,6 +8,7 @@ txt <- "Hello World ±\n123456789 123456789 123456789 123456789 123456789 123456
 txt <- paste(txt, width = 24)
 
 x1 <- quote( mu*"mol" %.% m^-2 )
+x1 <- bquote(sqrt(.(x1)))
 x2 <- eval("d^-1")
 x3 <- expression(chi^2)
 x.text <- "Label Text"
@@ -23,7 +24,7 @@ txt3 <- bquote( paste( .(x.text), " (",
 
 plot.new()
 # plot.window(c(0, 100), c(0, 100))
-mtext( txt3 ,
+mtext( txt2 ,
        adj = 0, side = 3, line = 0, 
        family = "mono", cex = 1, col = "black"
       )
