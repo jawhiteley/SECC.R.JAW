@@ -108,7 +108,7 @@ summary(SECCmc) # summary statistics
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 
-if (Out.results == TRUE && is.null(Out.plots) == FALSE) pdf( file = Out.plots )
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Patch analyses
@@ -209,10 +209,10 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## ANALYSIS: GET RESULTS
 ##################################################
-if (Out.results == TRUE && is.null(Out.text) == FALSE) {
-  sink( file = Out.text, split = TRUE, type = "output" )
-  cat(Out.header,
-      Out.patch.header,
+if (Save.results == TRUE && is.null(Save.text) == FALSE) {
+  sink( file = Save.text, type = "output", split = FALSE )
+  cat(Save.header,
+      Save.patch.header,
       sep=""
       )
 }
@@ -252,7 +252,7 @@ lsd
 
 ##================================================
 ## Regional analyses
-if (Out.results == TRUE && is.null(Out.text) == FALSE) cat(Out.mc.header)
+if (Save.results == TRUE && is.null(Save.text) == FALSE) cat(Save.mc.header)
 
 ## names(Ymc.aov)
 Ymc.model
@@ -273,23 +273,23 @@ lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
 lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.C <- lsd.mc["Chamber"]
 
-if (Out.results == TRUE && is.null(Out.text) == FALSE) cat(Header.lsd)
+if (Save.results == TRUE && is.null(Save.text) == FALSE) cat(Header.lsd)
 lsd.mc
 
 
-if (Out.results == TRUE && is.null(Out.text) == FALSE) {
-  cat(Out.end)
+if (Save.results == TRUE && is.null(Save.text) == FALSE) {
+  cat(Save.end)
   sink()
 }
 
-if (Out.results == TRUE && is.null(Out.plots) == FALSE && Out.plots != Out.final) dev.off()
+if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.final) dev.off()
 
 
 
 ##################################################
 ## FINAL GRAPHICS
 ##################################################
-if (Out.results == TRUE && is.null(Out.final) == FALSE && Out.plots != Out.final) pdf( file = Out.final )
+if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 
 Chamber.map <- data.frame( label = levels(SECC$Chamber),
@@ -442,4 +442,4 @@ with( plot.means, {
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
-if (Out.results == TRUE && is.null(Out.plots) == FALSE) dev.off()
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()

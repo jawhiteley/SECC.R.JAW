@@ -1,9 +1,7 @@
-X ANOVA analyses for Cyanobacteria & ARA
+- replace clunky sink() process with a more elegant 
+  capture.output() in standard anova script
 
-- Extract settings from Template:
-  X individual analysis scripts would consist of the initial settings part,
-    followed by a source() call to the template to do the rest.
-  - can I turn major operations into functions?
+- can I turn major operations into functions?
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
@@ -19,29 +17,19 @@ X ANOVA analyses for Cyanobacteria & ARA
 Stop prompts to "Hit <Return> to see next plot:" !!
 
 
+
 Current Changes:
 ================
-Standardized Nested ANOVA template (ready, but not applied)
+Standardized Nested ANOVA template - application in process
 
-+ Split Template File into modular files within the 'SECCanova' directory:
-  + SECC Template - ANOVA.R
-	- Starting Point: copy this file, and make desired changes
-	- delete lines to use the default (loaded from the template).
-  + SECC - ANOVA settings.R
-    - default settings for nested ANOVA
-	- source()'d in template & main scripts
-  + SECC - ANOVA labels.R
-    - default text & labels for nested ANOVA
-	- source()'d in template & main scripts
-  + SECC - nested ANOVA.R
-    - Main workhorse script
-	- This file is source()'d after initial settings, 
-	  to carry out the standardized analysis.
-	- I'm still working on converting some of this to functions.
-	  - Eventually, the bulk of this script can be moved to 
-	    the individual purpose scripts, which will consist of calls 
-		to functions to carry out main operations.
-	- annoying prompts after plots are back :(
-+ strip_empty_dims() function to strip rows and/or columns that are empty
-  (all NA).  Fixed.
+Results match separate analysis files.  Now I can fix all bugs,
+and standardize things in one place!
+
+- annoying prompts after plots are back :(
+  - in R GUI console - when source()'d??!
+- input commands are being sent to output file ?!
+  - a file being source()'d has very different output
+	than when being run directly.
+	- if echo = TRUE, all commands are output.
+	- if echo - FALSE, there is not output!
 
