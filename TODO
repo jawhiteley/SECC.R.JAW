@@ -1,7 +1,5 @@
-X replace clunky sink() process with a more elegant 
-  capture.output() in standard anova script
 
-- can I turn major operations into functions?
+- can I turn major operations of Nested ANOVA script into functions?
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
@@ -18,11 +16,7 @@ X replace clunky sink() process with a more elegant
 
 Current Changes:
 ================
-Standardized Nested ANOVA  - capture.output() instead of sink()
+Standardized Nested ANOVA scripts
 
-Results match separate analysis files.  
-Now I can fix all bugs, and standardize things in one place!
-
-+ Replaced sink() with more elegant capture.output() all in one place.
-+ The prompts for plots have also disappeared - was this related?
-
+Now I can fix all bugs, and standardize univariate analyses in one place!
+- Deleted old scripts & output files.
