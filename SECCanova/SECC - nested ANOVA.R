@@ -209,19 +209,9 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## ANALYSIS: GET RESULTS
 ##################################################
-if (Save.results == TRUE && is.null(Save.text) == FALSE) {
-  sink( file = Save.text, type = "output", split = FALSE )
-  cat(Save.header,
-      Save.patch.header,
-      sep=""
-      )
-}
-
 ## Patch analyses
 # names(Yp.aov)
-Yp.model                        # for output
 summary(Yp.aov)                 # summary statistics
-cat("\n\n")                     # for output
 model.tables(Yp.aov, "means")   # effect sizes
 # Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
@@ -246,18 +236,11 @@ lsd.CxP <- lsd["Chamber:Position"]
 lsd.FxP <- lsd["Frag:Position"]
 lsd.CxFxP <- lsd["Chamber:Frag:Position"]
 
-cat(Header.lsd)
-lsd
-
 
 ##================================================
 ## Regional analyses
-if (Save.results == TRUE && is.null(Save.text) == FALSE) cat(Save.mc.header)
-
 ## names(Ymc.aov)
-Ymc.model
 summary(Ymc.aov)        # summary statistics
-cat("\n\n")
 model.tables(Ymc.aov, "means")  # effect sizes
 # Interaction Plots
 par(mfrow=c(1,1))   # panel of figures: 1 rows & 1 columns
@@ -273,13 +256,29 @@ lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
 lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.C <- lsd.mc["Chamber"]
 
-if (Save.results == TRUE && is.null(Save.text) == FALSE) cat(Header.lsd)
-lsd.mc
 
 
+##################################################
+## SAVE OUTPUT
+##################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
-  cat(Save.end)
-  sink()
+  capture.output(cat(Save.header, Save.patch.header, sep=""),
+				 print(Yp.model),                 # model
+				 summary(Yp.aov),                 # model summary
+				 cat("\n\n"),                     # for output
+				 model.tables(Yp.aov, "means"),   # effect sizes
+				 cat(Header.lsd),
+				 print(lsd),
+				 cat(Save.mc.header),             # Meta-Community Results #
+				 print(Ymc.model),                # model
+				 summary(Ymc.aov),                # model summary
+				 cat("\n\n"),                     # for output
+				 model.tables(Ymc.aov, "means"),  # effect sizes
+				 cat(Header.lsd),
+				 print(lsd.mc),
+				 cat(Save.end),                   # END OUTPUT #
+				 file = Save.text
+				)
 }
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.final) dev.off()

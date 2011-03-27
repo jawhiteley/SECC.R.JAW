@@ -1,4 +1,4 @@
-- replace clunky sink() process with a more elegant 
+X replace clunky sink() process with a more elegant 
   capture.output() in standard anova script
 
 - can I turn major operations into functions?
@@ -14,22 +14,15 @@
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
-Stop prompts to "Hit <Return> to see next plot:" !!
-
 
 
 Current Changes:
 ================
-Standardized Nested ANOVA template - application in process
+Standardized Nested ANOVA  - capture.output() instead of sink()
 
-Results match separate analysis files.  Now I can fix all bugs,
-and standardize things in one place!
+Results match separate analysis files.  
+Now I can fix all bugs, and standardize things in one place!
 
-- annoying prompts after plots are back :(
-  - in R GUI console - when source()'d??!
-- input commands are being sent to output file ?!
-  - a file being source()'d has very different output
-	than when being run directly.
-	- if echo = TRUE, all commands are output.
-	- if echo - FALSE, there is not output!
++ Replaced sink() with more elegant capture.output() all in one place.
++ The prompts for plots have also disappeared - was this related?
 

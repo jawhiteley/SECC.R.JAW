@@ -42,7 +42,7 @@ Y.units <- bquote( sqrt(.(Y.units)) )     # store as quote(expression)  *****
 
 ## Output Results?
 ## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Save.results  <- FALSE  
+Save.results  <- TRUE  
 
 
 ### Load default Labels - dependent on above settings. *****
