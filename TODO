@@ -16,18 +16,17 @@ X ANOVA analyses for Cyanobacteria & ARA
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
+Stop prompts to "Hit <Return> to see next plot:" !!
+
 
 Current Changes:
 ================
-Standardized Nested ANOVA template
+Standardized Nested ANOVA template (ready, but not applied)
 
 + Split Template File into modular files within the 'SECCanova' directory:
   + SECC Template - ANOVA.R
 	- Starting Point: copy this file, and make desired changes
 	- delete lines to use the default (loaded from the template).
-    - Careful: this file source()'s itself (if the condition is switched on)!
-	  - This is silly: just make a separate file of default settings.
-	    I already have one for default labels, that has to be loaded after custom settings.
   + SECC - ANOVA settings.R
     - default settings for nested ANOVA
 	- source()'d in template & main scripts
@@ -36,8 +35,13 @@ Standardized Nested ANOVA template
 	- source()'d in template & main scripts
   + SECC - nested ANOVA.R
     - Main workhorse script
-	- This file is source()'d after initial settings, to carry out the standardized analysis.
+	- This file is source()'d after initial settings, 
+	  to carry out the standardized analysis.
 	- I'm still working on converting some of this to functions.
-	  - Eventually, the bulk of this script can be moved to the individual purpose scripts,
-		which will consist of calls to functions to carry out main operations.
+	  - Eventually, the bulk of this script can be moved to 
+	    the individual purpose scripts, which will consist of calls 
+		to functions to carry out main operations.
+	- annoying prompts after plots are back :(
++ strip_empty_dims() function to strip rows and/or columns that are empty
+  (all NA).  Fixed.
 

@@ -21,17 +21,18 @@ source('./lib/init.R')
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
 ##################################################
-### Load default settings *****
-source("SECC - ANOVA settings.R") 
-
-##================================================
-## SETTINGS - edit
-##================================================
-## delete lines to use the defaults.
 
 ### Response Variable *****
-Y.col <- 'Nfix'      # Column to analyze as response variable           *****
+Y.col <- 'ARA.m'     # Column to analyze as response variable           *****
 Y.use <- 'Y.sqrt'    # Which transformation is being used (for labels)? ****
+
+### Load default settings (based on response variable) *****
+source("./SECCanova/SECC - ANOVA settings.R", echo = TRUE) 
+
+##================================================
+## CUSTOM SETTINGS 
+##================================================
+## delete lines to use the defaults.
 
 ## Specify which treatment levels to include (by index is probably easiest)
 Time.use     <- levels(SECC$Time)[1]      # Time (index: 1-3) to include in this run
@@ -40,19 +41,19 @@ Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
 Position.use <- levels(SECC$Position)     # Patch Positions to include
 
 ## Define Labels
-Y.units <- bquote( .(Y.units) )  # sqrt(.(Y.units), 4)  # store as quote(expression)
+Y.units <- bquote( sqrt(.(Y.units)) )  # sqrt(.(Y.units), 4)  # store as quote(expression)
 
 ## Output Results?
 ## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Out.results  <- TRUE  
+Out.results  <- FALSE  
 
 
 ### Load default Labels - dependent on above settings. *****
-source("SECC - ANOVA labels.R") 
+source("./SECCanova/SECC - ANOVA labels.R", echo = TRUE) 
 
 
 ##================================================
-## CALCULATIONS - edit
+## CUSTOM CALCULATIONS 
 ##================================================
 ## !is.na(SECC$Time) ; NAs in factors are annoying
 SECC.prime <- SECC    # save a copy of the original for reference.
@@ -79,8 +80,8 @@ SECC <- within( SECC, {
 
 
 ##################################################
-### RUN STANDARD ANALYSIS
+### RUN STANDARD nested ANOVA
 ##################################################
 
-source("SECC - ANOVA.R")
+source("./SECCanova/SECC - nested ANOVA.R", echo = TRUE)
 

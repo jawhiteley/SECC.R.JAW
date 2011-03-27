@@ -94,7 +94,6 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 	  "The first argument must be a \"data.frame\" or \"matrix\"."
      )
 
-  dim = match.args(dim)
   cols <- as.vector(cols)
   if ( is.null(cols) ) {
 	cols <-  1:ncol(data)
@@ -111,7 +110,7 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
   }  
   
   empty.rows <- which( apply( data[, check.cols], 1, function(x) all(is.na(x)) ) )
-  empty.cols <- which( apply( data[check.rows, ], 2, function(x) all(is.na(x)) ) )
+  empty.cols <- which( apply( data[rows,       ], 2, function(x) all(is.na(x)) ) )
 
   if (all(dim == 1)) {
 	data <- data[-empty.rows, ]

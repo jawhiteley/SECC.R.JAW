@@ -16,9 +16,9 @@ par(ask = FALSE)    # Stop asking me to hit <Return> to see next plot!
 ##================================================
 
 ### Response Variable *****
-## This had better be set in the parent script.
-Y.col <- 'Nfix'      # Column to analyze as response variable           *****
-Y.use <- 'Y.sqrt'    # Which transformation is being used (for labels)? ****
+## This had better be set first in the parent script.  Only set them here if necessary.
+if (!exists('Y.col')) Y.col <- 'Nfix' # Column to analyze as response variable           *****
+if (!exists('Y.use')) Y.use <- 'Y'    # Which transformation is being used (for labels)? ****
 
 
 ## Specify which treatment levels to include (by index is probably easiest)

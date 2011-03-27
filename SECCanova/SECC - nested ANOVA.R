@@ -28,8 +28,10 @@ if ( exists('Y.col') == FALSE ) stop(
 ## Standard Labels
 ##================================================
 
-if(!exists('Y.plotlab')) Y.plotlab <- bquote( .(Y.label) * " (" * .(Y.units) *  ")" )
+## if(!exists('Y.plotlab')) Y.plotlab <- bquote( .(Y.label) * "  (" * .(Y.units) *  ")" )
   ## do not overwrite if it already exists.
+
+Header.lsd  <- "\n95% Least Significant Differences (LSD):\n"
 
 
 ##################################################
@@ -138,13 +140,15 @@ for( i in 1:length(Dataset.list) ){
 }
 
 
+
 ##################################################
 ## DEFINE MODEL FORMULA
 ##################################################
-# Nested Fixed Effects, with error term for ANOVA using aov() 
+## Nested Fixed Effects, with error term for ANOVA using aov() 
 Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
-# ignoring effect of position: 'regional' effects only
+## ignoring effect of position: 'regional' effects only
 Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber/Frag)
+
 
 
 ##################################################
@@ -158,9 +162,9 @@ Ymc.aov <- aov( Ymc.model, data=SECCmc )    # regional effects only.
 ## CHECK ASSUMPTIONS: analyse residuals, standard diagnostic plots
 ##################################################
 ## anova
-# independence?
-    # experimental design: random position of Frag within Chambers.
-    # possibility of Block gradient (7&8 SW -> 1-6 E:N), which also corresponds roughly to order of samples.
+## independence?
+    ## experimental design: random position of Frag within Chambers.
+    ## possibility of Block gradient (7&8 SW -> 1-6 E:N), which also corresponds roughly to order of samples.
 ## Patch analyses
 ## trellis plots: any pattern across blocks, within frag & chambers?
 xyplot(Y.trans ~ Block | Frag + Chamber, data=SECCp, 
@@ -180,6 +184,7 @@ par( mfrow=c(1,1) )
 hist(Yp.residuals)  # plot residuals
 # with(SECCp, shapiro.test( Yp.residuals ) )    # normality?
 
+
 ##================================================
 ## REGIONAL analyses
 xyplot( Y.trans ~ Block | Frag + Chamber, data=SECCmc, 
@@ -197,7 +202,8 @@ with(SECCmc, qqnorm( Ymc.residuals, main="Residuals", sub=Dataset.labels[2] ) ) 
 qqline(Ymc.residuals,  col="grey50")
 par( mfrow=c(1,1) )
 hist(Ymc.residuals) # plot residuals
-# with(SECCmc, shapiro.test( Ymc.residuals ) )  # normality?
+## with(SECCmc, shapiro.test( Ymc.residuals ) )  # normality?
+
 
 
 ##################################################
@@ -240,13 +246,13 @@ lsd.CxP <- lsd["Chamber:Position"]
 lsd.FxP <- lsd["Frag:Position"]
 lsd.CxFxP <- lsd["Chamber:Frag:Position"]
 
-cat("\n95% Least Significant Differences (LSD):\n")
+cat(Header.lsd)
 lsd
 
 
 ##================================================
 ## Regional analyses
-cat(Out.mc.header)
+if (Out.results == TRUE && is.null(Out.text) == FALSE) cat(Out.mc.header)
 
 ## names(Ymc.aov)
 Ymc.model
@@ -267,7 +273,7 @@ lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
 lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.C <- lsd.mc["Chamber"]
 
-cat("\n95% Least Significant Differences (LSD):\n")
+if (Out.results == TRUE && is.null(Out.text) == FALSE) cat(Header.lsd)
 lsd.mc
 
 
@@ -277,6 +283,7 @@ if (Out.results == TRUE && is.null(Out.text) == FALSE) {
 }
 
 if (Out.results == TRUE && is.null(Out.plots) == FALSE && Out.plots != Out.final) dev.off()
+
 
 
 ##################################################
