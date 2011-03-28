@@ -22,7 +22,7 @@ source('./lib/init.R')
 ##################################################
 
 ### Response Variable *****
-Y.col <- 'Hcells.m'     # Column to analyze as response variable           *****
+Y.col <- 'Cells.m'     # Column to analyze as response variable           *****
 Y.use <- 'Y.4rt'       # Which transformation is being used (for labels)? ****
 
 ### Load default settings (based on response variable) *****

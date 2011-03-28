@@ -1,13 +1,14 @@
-- Add the option to include Time as a factor in nested ANOVA
-- can I turn major operations of Nested ANOVA script into functions?
+- Check LSD calculations
+- allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
+
 
 - Add plotMap for Position
 - Change interaction plots to put designed treatment along x-axis instead of position.
+- Load    Moisture Data
+- Analyze Moisture Data
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
-- Load    Moisture Data
-- Analyze Moisture Data
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
@@ -15,24 +16,20 @@
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
 
+- Separate Patch & Meta-Community scale analyses
+  - inside a for loop to do the same thing on each scale of data...
+    - collect results for output?
+- can I turn major operations of Nested ANOVA script into functions?
+
+
 
 
 Current Changes:
 ================
-Time as a treatment in Nested ANOVA
+Dropped Partial Chambers, re-arranged output plots
 
-+ Added Time as a treatment in Nested ANOVA
-  + only if there is more than one Time level selected.
-  + no special graphs or other output (yet).
-+ re-did results for ARA, Cyanobacteria, and added analysis of Heterocysts (Hcells)
-+ moved loading of labels to *after* calculations.
-  + I realized this made more sense, in case new columns & properties needed to be added, they are now accessible in the label-making script.
-+ Added calculations & attributes for heterocysts (Hcells)
-- Removed old(!) results for "Nfix".  I'd rather use ARA, I think.
-  Easy to re-generate if desired.
-
-* These new steps are pretty standard - they could be in a separate file, except for the need to allow for custom labels (really?)
-  - could be a function, but I'd need to include 'code' (another function) to calculate *each* label.
-
-* Removed Frag from nested error terms in Meta-Community-level analyses.  
-  It should not be there? (see Crawley, pp. 469-470)
++ Changed interaction plots to put designed factors along x-axis, with position as a second factor (with plotmap).
+  - Had to change order in plotMeans call, *AND* error matrix creation.
++ Dropped Partial Chambers from ARA & cyanobacteria analyses (not default settings, however).
++ Position PlotMap
++ Combined plotMap functions, with factor argument to choose which one to return. :P

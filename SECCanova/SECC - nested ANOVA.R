@@ -306,9 +306,13 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 
-Chamber.map <- plotMap_Chamber( labels = levels(SECC$Chamber) )
+Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
-Frag.map    <- plotMap_Frag( labels = levels(SECCp$Frag) )
+Frag.map <- plotMap( factor = "Frag", labels = levels(SECC$Frag) )
+Frag.map <- Frag.map[ levels(SECC$Frag) %in% Frag.use, ]
+Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+
 if (length(Time.use) > 1) {
   Time.label <- ""
 } else {
@@ -316,28 +320,30 @@ if (length(Time.use) > 1) {
 }
 Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% LSD")
 
+par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
+
+
 ## Patch results: Chamber x Position
 plot.means <- with( SECCp, 
                    aggregate( cbind( Y.trans ), 
-                             list(Pos = Position, Chamber = Chamber), 
+                             list(Position = Position, Chamber = Chamber), 
                              mean 
                              ) 
                    )
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd.CxP/2),
-                       nrow = length(levels(Pos)),
-                       ncol = length(levels(Chamber))
+  plot.error <- matrix( as.numeric(lsd["Chamber:Position"]/2),
+                       nrow = length(levels(Chamber)),
+                       ncol = length(levels(Position))
                        )
-  plotMeans( Y.trans , Pos , Chamber, 
+  plotMeans( Y.trans, Chamber, Position, 
             error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
-            lty = Chamber.map$lty, pch = Chamber.map$pch,
-            col = as.character(Chamber.map$col),
-            bg  = as.character(Chamber.map$bg),
+            lty = Position.map$lty, pch = Position.map$pch,
+            col = as.character(Position.map$col),
+            bg  = as.character(Position.map$bg),
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
-            xlab = attr(SECC, "labels")[["Pos"]],
+            xlab = attr(SECC, "labels")[["Chamber"]],
             ylab = Y.plotlab
             )   
   ## as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
@@ -350,31 +356,26 @@ plot.means <- with( SECCp,
                              mean 
                              ) 
                    )
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plot.error <- matrix( as.numeric(lsd.FxP/2),
-                       nrow = length(levels(Pos)),
-                       ncol = length(levels(Frag))
+                       nrow = length(levels(Frag)),
+                       ncol = length(levels(Pos))
                        )
-  plotMeans( Y.trans , Pos , Frag, 
+  plotMeans( Y.trans, Frag, Pos, 
             error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
-            lty = Frag.map$lty, pch = Frag.map$pch,
-            col = as.character(Frag.map$col),
-            bg  = as.character(Frag.map$bg),
+            lty = Position.map$lty, pch = Position.map$pch,
+            col = as.character(Position.map$col),
+            bg  = as.character(Position.map$bg),
             main = Plot.Title,
             sub  = "95% comparison intervals (LSD)",
-            xlab = attr(SECC, "labels")[["Pos"]],
+            xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
-            )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
+            )
 })
 
-
-##================================================
-## META-COMMUNITY results
-Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% LSD")
-
-plot.means <- with( SECCmc, 
+## Patch results: Chamber x Frag
+plot.means <- with( SECCp, 
                    aggregate( cbind( Y.trans ), 
                              list(Frag=Frag, Chamber=Chamber), 
                              mean 
@@ -383,7 +384,7 @@ plot.means <- with( SECCmc,
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd.mc.FxC/2),
+  plot.error <- matrix( as.numeric(lsd["Chamber:Frag"]/2),
                        nrow = length(levels(Frag)),
                        ncol = length(levels(Chamber))
                        )
@@ -396,8 +397,14 @@ with( plot.means, {
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
-            )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
+            )   
 })
+
+
+
+##================================================
+## META-COMMUNITY results
+Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% LSD")
 
 ## Chamber Main Effects
 plot.means <- with( SECCmc, 
@@ -443,6 +450,32 @@ with( plot.means, {
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
+})
+
+## Interaction: Chamber x Frag
+plot.means <- with( SECCmc, 
+                   aggregate( cbind( Y.trans ), 
+                             list(Frag=Frag, Chamber=Chamber), 
+                             mean 
+                             ) 
+                   )
+par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
+with( plot.means, {
+  ## using custom plotMeans function, with custom error bars (LSD)
+  plot.error <- matrix( as.numeric(lsd.mc.FxC/2),
+                       nrow = length(levels(Frag)),
+                       ncol = length(levels(Chamber))
+                       )
+  plotMeans( Y.trans , Frag , Chamber, 
+            error.bars="custom", level=plot.error, cex=2, lwd=2,
+            lty=Chamber.map$lty, pch=Chamber.map$pch,
+            col=as.character(Chamber.map$col),
+            bg=as.character(Chamber.map$bg),
+            main = Plot.Title,
+            sub  = "95% comparison intervals (LSD)",
+            xlab = attr(SECC, "labels")[["Frag"]],
+            ylab = Y.plotlab
+            )
 })
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
