@@ -158,15 +158,35 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 ##================================================
 ## PLOTS & GRAPHS
 ##================================================
-chamberMap <- function ( labels=c("A", "B", "C") ) {
-  Chamber.map <- data.frame( label=labels, 
-    col = c("#000000","#000099","#990000"), 
-    bg  = c("#FFFFFF","#FFFFFF","#FFFFFF"), 
-    pch = c(21,23,18), lty = c(3,2,1) 
-  )
-    # A) Ambient = black, open circles with dotted line ; 
-    # B) Partial = blue, open diamonds with dashed line ; 
-    # C) Full    = red, solid diamond with solid line.
+plotMap_Chamber <- function ( labels=c("A", "B", "C") ) {
+  Chamber.map <- 
+    data.frame(label=labels, 
+               col = c("#000000","#000099","#990000"), 
+               bg  = c("#FFFFFF","#FFFFFF","#FFFFFF"), 
+               pch = c(21,23,18), lty = c(3,2,1) 
+                            )
+
+    ## A) Ambient = black, open circles with dotted line ; 
+    ## B) Partial = blue, open diamonds with dashed line ; 
+    ## C) Full    = red, solid diamond with solid line.
+
+  return(Chamber.map)
 }
 
+plotMap_Frag <- function ( labels=c("1", "2", "3". "4") ) {
+  Frag.map <- 
+    data.frame(label=labels, 
+               col = c("#000000", "#666666", "#000099", "#990000"), 
+               bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"), 
+               pch = c(19, 15, 22, 21),
+               lty = c(1, 2, 3, 3)
+               )
+    
+    ## 1) Continuous         = black, filled circles with solid line ; 
+    ## 2) Full Corridors     =  grey, filled squares with dashed line ; 
+    ## 3) Pseudo-Corridors   = blue, open squares with dotted line.
+    ## 4) Isolated           =  red, open circles with dotted line.
+
+  return(Chamber.map)
+}
 

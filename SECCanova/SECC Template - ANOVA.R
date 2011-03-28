@@ -69,11 +69,11 @@ patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
 
 SECC <- within( SECC, { 
-  ## change negative ARA values to 0 - should I wait until after aggregation?
-  ARA.ml[ARA.ml < 0] <- 0
-  ARA.m[ ARA.m  < 0] <- 0
-  ARA.g[ ARA.g  < 0] <- 0
-  Nfix <- ARA.m * Nfix.ARA.ratio
+			   ## change negative ARA values to 0 - should I wait until after aggregation?
+			   ARA.ml[ARA.ml < 0] <- 0
+			   ARA.m[ ARA.m  < 0] <- 0
+               ARA.g[ ARA.g  < 0] <- 0
+			   Nfix <- ARA.m * Nfix.ARA.ratio
 })
 
 

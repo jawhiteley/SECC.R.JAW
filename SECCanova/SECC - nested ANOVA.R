@@ -291,26 +291,9 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 
-Chamber.map <- data.frame( label = levels(SECC$Chamber),
-                          col = c("#000000", "#000099", "#990000"),
-                          bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF"),
-                          pch = c(21, 23, 18),
-                          lty = c(3, 2, 1)
-                          )
-    ## Ambient = black, open circles with dotted line ; 
-    ## Partial = blue, open diamonds with dashed line ; 
-    ## Full   = red, solid diamond with solid line.
+Chamber.map <- plotMap_Chamber( labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
-Frag.map    <- data.frame( label = levels(SECCp$Frag),
-                          col = c("#000000", "#666666", "#000099", "#990000"), 
-                          bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"), 
-                          pch = c(19, 15, 22, 21),
-                          lty = c(1, 2, 3, 3)
-                          )
-    ## Continuous         = black, filled circles with solid line ; 
-    ## Full Corridors     =  grey, filled squares with dashed line ; 
-    ## Pseudo-Corridors   = blue, open squares with dotted line.
-    ## Isolated           =  red, open circles with dotted line.
+Frag.map    <- plotMap_Frag( labels = levels(SECCp$Frag)
 Plot.Title <- bquote(.(Time.use) * ": Patch means " %+-% "95% LSD")
 
 ## Patch results: Chamber x Position
@@ -336,7 +319,8 @@ with( plot.means, {
             sub  = "95% comparison intervals (LSD)",
             xlab = attr(SECC, "labels")[["Pos"]],
             ylab = Y.plotlab
-            )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
+            )   
+  ## as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
 })
 
 ## Patch results: Frag x Position (significant in t4)

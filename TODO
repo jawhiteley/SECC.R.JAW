@@ -1,4 +1,4 @@
-
+- Add the option to include Time as a factor in nested ANOVA
 - can I turn major operations of Nested ANOVA script into functions?
 
 - Get Mean differences of Temperature & RH
@@ -6,7 +6,7 @@
 - Load    Moisture Data
 - Analyze Moisture Data
 - Load    Moss Growth Data
-- Analyze Moss Growth Data
+- Analyze Moss Growth Data (repeated measures in time)
 
 
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
@@ -16,7 +16,11 @@
 
 Current Changes:
 ================
-Standardized Nested ANOVA scripts
+Map of plotting styles for Chamber & Frag treatments.
 
-Now I can fix all bugs, and standardize univariate analyses in one place!
-- Deleted old scripts & output files.
++ Added functions to generate standard plot maps (color, shape, line type, etc.) 
+  for Chamber & Frag treatments.
+  + They are very basic and not robust.  
+    They could be improved by checking for lengths of input levels, and cherry-picking appropriate rows...
+  + these are applied in the generic ANOVA script.
+

@@ -15,18 +15,19 @@ x.text <- "Label Text"
 
 txt2 <- bquote( .(x.text) * " (" * .(x1) %.% .(x2) %*% quote(.(x3)) * ")" )
 txt3 <- bquote( paste( .(x.text), " (", 
-					  .( bquote(.(x1) %.% .(x2) %*% quote(.(x3)) ) ),
-					  ")" 
-					  )
-			  )
+                      .( bquote(.(x1) %.% .(x2) %*% quote(.(x3)) ) ),
+                      ")" 
+                      )
+              )
 
 ## pdf( file = "~/Desktop/test.pdf" )
 
 plot.new()
 # plot.window(c(0, 100), c(0, 100))
 mtext( txt2 ,
-       adj = 0, side = 3, line = 0, 
-       family = "mono", cex = 1, col = "black"
+      adj = 0, side = 3, line = 0, 
+      ##
+      family = "mono", cex = 1, col = "black"
       )
 plot( rep(1, 25), 1:25, pch = 1:25 )
 
