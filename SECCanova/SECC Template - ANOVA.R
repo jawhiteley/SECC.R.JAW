@@ -82,5 +82,17 @@ SECC <- within( SECC, {
 ### RUN STANDARD nested ANOVA
 ##################################################
 
-source("./SECCanova/SECC - nested ANOVA.R", echo = TRUE)
+### Run analysis on each Time point in sequence.
+for ( Time.i in 1:length(levels(SECC$Time)) ) {
+  ## Specify which treatment levels to include (by index is probably easiest)
+  Time.use     <- levels(SECC$Time)[Time.i]      # Time (index: 1-3) to include in this run
+  cat("\n\n\nProcessing Time:", Time.use, "\n")
+
+  ## Load default Labels - dependent on above settings. *****
+  source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+  ## RUN STANDARD nested ANOVA
+  source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+  
+}
 

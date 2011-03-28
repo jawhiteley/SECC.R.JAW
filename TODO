@@ -16,11 +16,11 @@
 
 Current Changes:
 ================
-Map of plotting styles for Chamber & Frag treatments.
+Loop through each Time point in univariate (ANOVA) scripts.
 
-+ Added functions to generate standard plot maps (color, shape, line type, etc.) 
-  for Chamber & Frag treatments.
-  + They are very basic and not robust.  
-    They could be improved by checking for lengths of input levels, and cherry-picking appropriate rows...
-  + these are applied in the generic ANOVA script.
-
++ ARA script now loops through all Time points to run analysis on each in sequence.
+  + applied to template.
++ Fixed minor coding errors in Nested ANOVA script and new plotMap functions.
+  + cleaner output of results when source()d with echo = FALSE
+- plot prompts are back (even when source()'d with echo = FALSE).  WTF?!
+  - Fortunately, there are no prompts when graphs are being sent to pdf device.

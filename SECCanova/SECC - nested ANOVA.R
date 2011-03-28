@@ -94,14 +94,15 @@ for ( dataset in Dataset.list ){
 ##################################################
 ## CHECK DATA
 ##################################################
-head(SECCp)     # have a peek at the first 6 rows & columns: is this what you expected?
-str( SECCp)     # check structure: are the appropriate variables factors, numeric, etc.?
-summary(SECCp)  # summary statistics
-## Regional analyses
-head(SECCmc)    # have a peek at the first 6 rows & columns: is this what you expected?
-str( SECCmc)    # check structure: are the appropriate variables factors, numeric, etc.?
-summary(SECCmc) # summary statistics
-
+if (FALSE) {  # do not run if source()d
+  head(SECCp)     # have a peek at the first 6 rows & columns: is this what you expected?
+  str( SECCp)     # check structure: are the appropriate variables factors, numeric, etc.?
+  summary(SECCp)  # summary statistics
+  ## Regional analyses
+  head(SECCmc)    # have a peek at the first 6 rows & columns: is this what you expected?
+  str( SECCmc)    # check structure: are the appropriate variables factors, numeric, etc.?
+  summary(SECCmc) # summary statistics
+}
 
 ##################################################
 ## EXPLORE: PLOTS
@@ -211,7 +212,9 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## Patch analyses
 # names(Yp.aov)
-summary(Yp.aov)                 # summary statistics
+cat("\n\n")
+print(Yp.model)                 # for output
+print( summary(Yp.aov) )        # summary statistics
 model.tables(Yp.aov, "means")   # effect sizes
 # Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
@@ -240,7 +243,9 @@ lsd.CxFxP <- lsd["Chamber:Frag:Position"]
 ##================================================
 ## Regional analyses
 ## names(Ymc.aov)
-summary(Ymc.aov)        # summary statistics
+cat("\n\n")
+print(Ymc.model)                # for output
+print( summary(Ymc.aov) )       # summary statistics
 model.tables(Ymc.aov, "means")  # effect sizes
 # Interaction Plots
 par(mfrow=c(1,1))   # panel of figures: 1 rows & 1 columns
@@ -293,7 +298,7 @@ if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.f
 
 Chamber.map <- plotMap_Chamber( labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
-Frag.map    <- plotMap_Frag( labels = levels(SECCp$Frag)
+Frag.map    <- plotMap_Frag( labels = levels(SECCp$Frag) )
 Plot.Title <- bquote(.(Time.use) * ": Patch means " %+-% "95% LSD")
 
 ## Patch results: Chamber x Position

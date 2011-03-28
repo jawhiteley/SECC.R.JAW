@@ -159,7 +159,7 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 ## PLOTS & GRAPHS
 ##================================================
 plotMap_Chamber <- function ( labels=c("A", "B", "C") ) {
-  Chamber.map <- 
+  PlotMap <- 
     data.frame(label=labels, 
                col = c("#000000","#000099","#990000"), 
                bg  = c("#FFFFFF","#FFFFFF","#FFFFFF"), 
@@ -170,11 +170,11 @@ plotMap_Chamber <- function ( labels=c("A", "B", "C") ) {
     ## B) Partial = blue, open diamonds with dashed line ; 
     ## C) Full    = red, solid diamond with solid line.
 
-  return(Chamber.map)
+  return(PlotMap)
 }
 
-plotMap_Frag <- function ( labels=c("1", "2", "3". "4") ) {
-  Frag.map <- 
+plotMap_Frag <- function ( labels=c("1", "2", "3", "4") ) {
+  PlotMap <- 
     data.frame(label=labels, 
                col = c("#000000", "#666666", "#000099", "#990000"), 
                bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"), 
@@ -187,6 +187,6 @@ plotMap_Frag <- function ( labels=c("1", "2", "3". "4") ) {
     ## 3) Pseudo-Corridors   = blue, open squares with dotted line.
     ## 4) Isolated           =  red, open circles with dotted line.
 
-  return(Chamber.map)
+  return(PlotMap)
 }
 

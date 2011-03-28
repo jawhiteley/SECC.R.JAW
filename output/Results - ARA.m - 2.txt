@@ -1,0 +1,164 @@
+Nested ANOVA Results for: Acetylene Reduction ( ARA.m ) 
+Transformation used:      Y.sqrt 
+Sample Time:   2009-06 
+Chamber:       Ambient, Partial Chamber, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, other, Outer 
+
+Mon Mar 28 10:31:32 2011
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7 920.12  131.45               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    2  74.32  37.161  0.5462  0.591
+Residuals 14 952.49  68.035               
+
+Error: Block:Chamber:Frag
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3  16.04  5.3474  0.8776 0.4576
+Chamber:Frag  6  43.99  7.3315  1.2033 0.3164
+Residuals    63 383.86  6.0930               
+
+Error: Within
+                       Df  Sum Sq Mean Sq F value    Pr(>F)    
+Position                2  132.16  66.082  8.9035 0.0002112 ***
+Chamber:Position        4  116.08  29.020  3.9099 0.0046147 ** 
+Frag:Position           6   25.76   4.293  0.5784 0.7472220    
+Chamber:Frag:Position  12   53.06   4.422  0.5958 0.8435915    
+Residuals             168 1246.90   7.422                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+Tables of means
+Grand mean
+         
+1.690592 
+
+ Chamber 
+Chamber
+        Ambient Partial Chamber    Full Chamber 
+         1.1758          1.5140          2.3820 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+          1.3963           1.8939           1.9491           1.5231 
+
+ Position 
+Position
+ Inner  other  Outer 
+2.4313 1.8465 0.7940 
+
+ Chamber:Frag 
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         0.6140     1.0961         1.8114           1.1819  
+  Partial Chamber 1.1881     2.3287         0.9964           1.5428  
+  Full Chamber    2.3868     2.2568         3.0395           1.8448  
+
+ Chamber:Position 
+                 Position
+Chamber           Inner other Outer
+  Ambient         1.331 1.381 0.816
+  Partial Chamber 1.660 1.809 1.073
+  Full Chamber    4.303 2.350 0.493
+
+ Frag:Position 
+                  Position
+Frag               Inner  other  Outer 
+  Continuous       2.0895 1.5731 0.5262
+  Full Corridors   2.8717 2.4753 0.3347
+  Pseudo-Corridors 2.7507 1.7933 1.3032
+  Isolated         2.0131 1.5442 1.0121
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         0.551      2.066          1.894            0.813   
+  Partial Chamber 0.658      2.843          1.000            2.138   
+  Full Chamber    5.060      3.705          5.358            3.089   
+
+, , Position = other
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         1.128      1.222          1.621            1.551   
+  Partial Chamber 1.491      3.139          0.786            1.821   
+  Full Chamber    2.101      3.065          2.972            1.260   
+
+, , Position = Outer
+
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         0.163      0.000          1.919            1.182   
+  Partial Chamber 1.415      1.004          1.203            0.669   
+  Full Chamber    0.000      0.000          0.788            1.185   
+
+
+95% Least Significant Differences (LSD):
+              Chamber                  Frag              Position          Chamber:Frag 
+            0.7756474             0.8975851             0.7756474             1.5830417 
+     Chamber:Position         Frag:Position Chamber:Frag:Position 
+            1.3614708             1.5830417             2.9215669 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Chamber * Frag + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7 430.95  61.564               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    2  41.03  20.515  0.6583  0.533
+Residuals 14 436.27  31.162               
+
+Error: Block:Chamber:Frag
+             Df  Sum Sq Mean Sq F value Pr(>F)
+Frag          3  12.544  4.1812  1.6130 0.1952
+Chamber:Frag  6  17.390  2.8983  1.1181 0.3621
+Residuals    63 163.309  2.5922               
+
+
+Tables of means
+Grand mean
+         
+2.148633 
+
+ Chamber 
+Chamber
+        Ambient Partial Chamber    Full Chamber 
+         1.4813          1.9281          3.0365 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+          1.7584           2.6791           2.2774           1.8796 
+
+ Chamber:Frag 
+                 Frag
+Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         0.852      1.639          2.010            1.424   
+  Partial Chamber 1.469      3.179          1.234            1.831   
+  Full Chamber    2.954      3.219          3.589            2.383   
+
+95% Least Significant Differences (LSD):
+     Chamber         Frag Chamber:Frag 
+    2.789721     3.243731     5.986436 
+
+
+<============================= END ============================>

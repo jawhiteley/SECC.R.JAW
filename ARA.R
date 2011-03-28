@@ -1,8 +1,8 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
-### Template for basic analyses of experimental data
-### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-25
+### basic analyses of experimental data
+### Acetylene Reduction Assay (ARA: N-fixation)  @ time #s
+### Jonathan Whiteley     R v2.12     2011-03-27
 ##################################################
 ## INITIALISE
 ##################################################
@@ -27,7 +27,7 @@ Y.col <- 'ARA.m'     # Column to analyze as response variable           *****
 Y.use <- 'Y.sqrt'    # Which transformation is being used (for labels)? *****
 
 ### Load default settings (based on response variable) *****
-source("./SECCanova/SECC - ANOVA settings.R", echo = TRUE) 
+source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
 
 ##================================================
 ## CUSTOM SETTINGS 
@@ -46,7 +46,7 @@ Save.results  <- TRUE
 
 
 ### Load default Labels - dependent on above settings. *****
-source("./SECCanova/SECC - ANOVA labels.R", echo = TRUE) 
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
 
 
 ##================================================
@@ -80,5 +80,16 @@ SECC <- within( SECC, {
 ### RUN STANDARD nested ANOVA
 ##################################################
 
-source("./SECCanova/SECC - nested ANOVA.R", echo = TRUE)
+### Run analysis on each Time point in sequence.
+for ( Time.i in 1:length(levels(SECC$Time)) ) {
+  ## Specify which treatment levels to include (by index is probably easiest)
+  Time.use     <- levels(SECC$Time)[Time.i]      # Time (index: 1-3) to include in this run
+  cat("Processing Time:", Time.use, "\n")
 
+  ## Load default Labels - dependent on above settings. *****
+  source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+  ## RUN STANDARD nested ANOVA
+  source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+
+}
