@@ -1,9 +1,6 @@
 - Check LSD calculations
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
 
-
-- Add plotMap for Position
-- Change interaction plots to put designed treatment along x-axis instead of position.
 - Load    Moisture Data
 - Analyze Moisture Data
 
@@ -26,10 +23,6 @@
 
 Current Changes:
 ================
-Dropped Partial Chambers, re-arranged output plots
 
-+ Changed interaction plots to put designed factors along x-axis, with position as a second factor (with plotmap).
-  - Had to change order in plotMeans call, *AND* error matrix creation.
-+ Dropped Partial Chambers from ARA & cyanobacteria analyses (not default settings, however).
-+ Position PlotMap
-+ Combined plotMap functions, with factor argument to choose which one to return. :P
+
+

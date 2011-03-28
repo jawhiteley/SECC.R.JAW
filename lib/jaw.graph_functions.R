@@ -38,7 +38,7 @@ LSD <- function( model, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual
     lsd.df <- (2*lsd.n)-2	# for group differences. or for MSE from fitted model?
   }
   lsd.mse <- sum(resid(model)^2)/model$df	# MSE from model ( SS / df )
-  lsd.se <- sqrt(2*lsd.mse/lsd.n)	# se of a difference
+  lsd.se <- sqrt(2*lsd.mse/lsd.n)	# se of a difference (Crawley 2007, pg.465)
   ## unbalanced: sqrt( (var[1]/n[1]) + (var[2]/n[2]) )
   pvalue <- 1 - (alpha/2)	# for a 2-tailed test
   lsd.width <- qt(pvalue, lsd.df)*lsd.se	# LSD based on error rate (alpha).
