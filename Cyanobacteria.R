@@ -7,12 +7,11 @@
 ## INITIALISE
 ##################################################
 ## This script is used in a generic way for most univariate analyses
-
-## Set Working Directory: path in quotes "".
-## setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")    # iMac@McGill
-## setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-## setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-getwd()  # Check that we're in the right place
+## Working Directory: see lib/init.R below
+if (FALSE) {  # do not run automatically
+  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
+  getwd()  # Check that we're in the right place
+}
 
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
 source('./lib/init.R')
@@ -23,11 +22,11 @@ source('./lib/init.R')
 ##################################################
 
 ### Response Variable *****
-Y.col <- 'Cells.m'     # Column to analyze as response variable           *****
+Y.col <- 'Hcells.m'     # Column to analyze as response variable           *****
 Y.use <- 'Y.4rt'       # Which transformation is being used (for labels)? ****
 
 ### Load default settings (based on response variable) *****
-source("./SECCanova/SECC - ANOVA settings.R", echo = TRUE) 
+source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
 
 ##================================================
 ## CUSTOM SETTINGS 
@@ -44,12 +43,7 @@ Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include
 Y.units <- bquote( sqrt(.(Y.units), 4) )  # store as quote(expression) *****
 
 ## Output Results?
-## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Save.results  <- FALSE  
-
-
-### Load default Labels - dependent on above settings. *****
-source("./SECCanova/SECC - ANOVA labels.R", echo = TRUE) 
+Save.results  <- TRUE  
 
 
 ##================================================
@@ -68,8 +62,17 @@ patchA   <- pi * (12.5^2)      # patch area
 patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 
 SECC <- within( SECC, { 
-  ## Calculations
+    ## Calculations
 })
+
+
+### Load default Labels - dependent on above settings. *****
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+##================================================
+## CUSTOM LABELS
+##================================================
+
 
 
 
@@ -90,4 +93,15 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
   source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
   
 }
+
+
+###===============================================
+### Include Time as a factor in nested ANOVA
+###===============================================
+## Note that Samples at different times are actually independent
+## in this design, due to destructive sampling.
+
+Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) # Load default Labels. *****
+source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested ANOVA
 

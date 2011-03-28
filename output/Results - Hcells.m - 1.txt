@@ -1,11 +1,11 @@
-Nested ANOVA Results for: Cyanobacteria Cell Density ( Cells.m ) 
+Nested ANOVA Results for: Heterocyst Cell Density ( Hcells.m ) 
 Transformation used:      Y.4rt 
 Sample Time:   2008-08 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Mon Mar 28 16:47:18 2011
+Mon Mar 28 16:48:38 2011
 
 ================================================================
 ================  Patch scale Results  =========================

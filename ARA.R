@@ -7,12 +7,11 @@
 ## INITIALISE
 ##################################################
 ## This script is used in a generic way for most univariate analyses
-
-## Set Working Directory: path in quotes "".
-## setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")    # iMac@McGill
-## setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-## setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-getwd()  # Check that we're in the right place
+## Working Directory: see lib/init.R below
+if (FALSE) {  # do not run automatically
+  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
+  getwd()  # Check that we're in the right place
+}
 
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
 source('./lib/init.R')
@@ -41,12 +40,7 @@ Time.use     <- levels(SECC$Time)[1]      # Time (index: 1-3) to include in this
 Y.units <- bquote( sqrt(.(Y.units)) )     # store as quote(expression)  *****
 
 ## Output Results?
-## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
 Save.results  <- TRUE  
-
-
-### Load default Labels - dependent on above settings. *****
-source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
 
 
 ##================================================
@@ -75,6 +69,15 @@ SECC <- within( SECC, {
 })
 
 
+### Load default Labels - dependent on above settings. *****
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+##================================================
+## CUSTOM LABELS
+##================================================
+
+
+
 
 ##################################################
 ### RUN STANDARD nested ANOVA
@@ -84,7 +87,7 @@ SECC <- within( SECC, {
 for ( Time.i in 1:length(levels(SECC$Time)) ) {
   ## Specify which treatment levels to include (by index is probably easiest)
   Time.use     <- levels(SECC$Time)[Time.i]      # Time (index: 1-3) to include in this run
-  cat("Processing Time:", Time.use, "\n")
+  cat("\n\n\nProcessing Time:", Time.use, "\n")
 
   ## Load default Labels - dependent on above settings. *****
   source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 

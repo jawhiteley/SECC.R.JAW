@@ -13,8 +13,8 @@ Trt.nested <- c('Time', 'Block', 'Chamber', 'Frag', 'Position')
 
 ## Save Output to Files - set to NULL to prevent output.
 Save.filename <- paste("Results - ", Y.col, " - ",
-                       paste(which(levels(SECC$Time) == Time.use), collapse="")
-                       , sep = ""
+                       paste(which(levels(SECC$Time) == Time.use), collapse=""),
+                       sep = ""
                    )
 Save.text  <- paste("./output/", Save.filename, ".txt", sep = "")
 Save.plots <- paste("./graphs/", Save.filename, ".pdf", sep = "")

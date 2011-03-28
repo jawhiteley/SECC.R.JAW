@@ -91,7 +91,9 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
           # scale cells/mg to cells/ARA sample -> scale ARA sample up to m^-2
           # OR: scale to Total Patch Dry Weight (available in SECC, not here) before scaling to m^-2 based on patch Area.
           # could also take # cells /2 shoots and scale up to 20 in sample (*20)?
-  H.cells <- (Total.h / X..lg.squares) * sample.sq / 2
+  Hcells   <- (Total.h / X..lg.squares) * sample.sq / 2
+  Hcells.g <- Cells * 2 / (Cells.dwt / 1000)
+  Hcells.m <- (Cells.g / 1000) * ARA.dwt / sample.m2
 })
 
 Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
@@ -142,21 +144,27 @@ SampleID.counts     <- sort_df( SampleID.counts,    vars=c('SampleID') )  # depr
 ##================================================
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.cyanobacteria, "SECC columns") <- c("ARA.dwt", "Cells.dwt",
-                                              "Nostoc", "Nostoc.H",
-                                              "Stigonema", "Stigonema.H",
-                                              "Other.cells", "H.cells",
-                                              "Cells", "Cells.g", "Cells.m")
-attr(SECC.cyanobacteria, "labels") <- list("Cells"   = "Cyanobacteria Cell Density",
-                                           "Cells.g" = "Cyanobacteria Cell Density",
-                                           "Cells.m" = "Cyanobacteria Cell Density",
-                                           "H.cells" = "Heterocyst Cell Density"
-                                           )
-attr(SECC.cyanobacteria, "units")  <- list("Cells"   = "cells/shoot",
-                                           "Cells.g" = quote("cells" %.% (g^-1) * "dwt"),
-                                           "Cells.m" = quote("cells" %.% (m^-2)),
-                                           "H.cells" = "cells/shoot"
-                                           )
+attr(SECC.cyanobacteria, "SECC columns") <- 
+    c("ARA.dwt", "Cells.dwt",
+      "Nostoc", "Nostoc.H", "Stigonema", "Stigonema.H", "Other.cells", 
+      "Cells",  "Cells.g",  "Cells.m", "Hcells", "Hcells.g", "Hcells.m"
+      )
+attr(SECC.cyanobacteria, "labels") <- 
+    list("Cells"    = "Cyanobacteria Cell Density",
+         "Cells.g"  = "Cyanobacteria Cell Density",
+         "Cells.m"  = "Cyanobacteria Cell Density",
+         "Hcells"   = "Heterocyst Cell Density", 
+         "Hcells.g" = "Heterocyst Cell Density", 
+         "Hcells.m" = "Heterocyst Cell Density" 
+         )
+attr(SECC.cyanobacteria, "units")  <- 
+    list("Cells"    = "cells/shoot",
+         "Cells.g"  = quote("cells" %.% (g^-1) * "dwt"),
+         "Cells.m"  = quote("cells" %.% (m^-2)),
+         "Hcells"   = "cells/shoot",
+         "Hcells.g" = quote("cells" %.% (g^-1) * "dwt"),
+         "Hcells.m" = quote("cells" %.% (m^-2))
+         )
 
 
 ##################################################

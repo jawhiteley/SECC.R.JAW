@@ -309,7 +309,12 @@ if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.f
 Chamber.map <- plotMap_Chamber( labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Frag.map    <- plotMap_Frag( labels = levels(SECCp$Frag) )
-Plot.Title <- bquote(.(Time.use) * ": Patch means " %+-% "95% LSD")
+if (length(Time.use) > 1) {
+  Time.label <- ""
+} else {
+  Time.label <- paste(Time.use, ": ", sep="")
+}
+Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% LSD")
 
 ## Patch results: Chamber x Position
 plot.means <- with( SECCp, 
@@ -367,7 +372,7 @@ with( plot.means, {
 
 ##================================================
 ## META-COMMUNITY results
-Plot.Title <- bquote(.(Time.use) * ": Meta-Community means " %+-% "95% LSD")
+Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% LSD")
 
 plot.means <- with( SECCmc, 
                    aggregate( cbind( Y.trans ), 
