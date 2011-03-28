@@ -18,9 +18,8 @@ Current Changes:
 ================
 Loop through each Time point in univariate (ANOVA) scripts.
 
-+ ARA script now loops through all Time points to run analysis on each in sequence.
-  + applied to template.
-+ Fixed minor coding errors in Nested ANOVA script and new plotMap functions.
-  + cleaner output of results when source()d with echo = FALSE
-- plot prompts are back (even when source()'d with echo = FALSE).  WTF?!
-  - Fortunately, there are no prompts when graphs are being sent to pdf device.
++ Cyanobacteria script now loops through all Time points to run analysis on each in sequence.
+
++ Fixed units in clean_cyanobacteria (m^-2)
+- Quick comparison of new Cyanobacteria results to earlier versions.
+  - The new values are actually larger, because I forgot to include a scaling factor in the earlier script to convert # squares to ul (each hemacytometer square is 0.1 ul).

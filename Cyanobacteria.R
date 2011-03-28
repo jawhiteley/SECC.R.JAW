@@ -1,8 +1,8 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
-### Template for basic analyses of experimental data
-### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-25
+### basic analyses of experimental data
+### Cyanobacteria counts  @ time #s
+### Jonathan Whiteley     R v2.12     2011-03-28
 ##################################################
 ## INITIALISE
 ##################################################
@@ -41,7 +41,7 @@ Frag.use     <- levels(SECC$Frag)               # Frag treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include
 
 ## Define Labels
-Y.units <- bquote( sqrt(.(Y.units), 4) )  # store as quote(expression)
+Y.units <- bquote( sqrt(.(Y.units), 4) )  # store as quote(expression) *****
 
 ## Output Results?
 ## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
@@ -66,7 +66,6 @@ sample_ml    <- 50  # 50 ml sample
 ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
 patchA   <- pi * (12.5^2)      # patch area
 patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
-Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
 
 SECC <- within( SECC, { 
   ## Calculations
@@ -78,5 +77,17 @@ SECC <- within( SECC, {
 ### RUN STANDARD nested ANOVA
 ##################################################
 
-source("./SECCanova/SECC - nested ANOVA.R", echo = TRUE)
+### Run analysis on each Time point in sequence.
+for ( Time.i in 1:length(levels(SECC$Time)) ) {
+  ## Specify which treatment levels to include (by index is probably easiest)
+  Time.use     <- levels(SECC$Time)[Time.i]      # Time (index: 1-3) to include in this run
+  cat("\n\n\nProcessing Time:", Time.use, "\n")
+
+  ## Load default Labels - dependent on above settings. *****
+  source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+  ## RUN STANDARD nested ANOVA
+  source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+  
+}
 

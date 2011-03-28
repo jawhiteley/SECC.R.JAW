@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Acetylene Reduction Assay (ARA: N-fixation)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-27
+### Jonathan Whiteley     R v2.12     2011-03-28
 ##################################################
 ## INITIALISE
 ##################################################
@@ -93,3 +93,10 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
   source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
 
 }
+
+
+##################################################
+### Include Time as a factor in nested ANOVA
+##################################################
+
+

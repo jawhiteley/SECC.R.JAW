@@ -154,7 +154,7 @@ attr(SECC.cyanobacteria, "labels") <- list("Cells"   = "Cyanobacteria Cell Densi
                                            )
 attr(SECC.cyanobacteria, "units")  <- list("Cells"   = "cells/shoot",
                                            "Cells.g" = quote("cells" %.% (g^-1) * "dwt"),
-                                           "Cells.m" = quote("cells" %.% (m^-1)),
+                                           "Cells.m" = quote("cells" %.% (m^-2)),
                                            "H.cells" = "cells/shoot"
                                            )
 

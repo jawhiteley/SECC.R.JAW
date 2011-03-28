@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Template for basic analyses of experimental data
 ### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-25
+### Jonathan Whiteley     R v2.12     2011-03-28
 ##################################################
 ## INITIALISE
 ##################################################
