@@ -16,10 +16,8 @@
 
 Current Changes:
 ================
-Loop through each Time point in univariate (ANOVA) scripts.
+LSD extracts formulas
 
-+ Cyanobacteria script now loops through all Time points to run analysis on each in sequence.
-
-+ Fixed units in clean_cyanobacteria (m^-2)
-- Quick comparison of new Cyanobacteria results to earlier versions.
-  - The new values are actually larger, because I forgot to include a scaling factor in the earlier script to convert # squares to ul (each hemacytometer square is 0.1 ul).
++ Adding Time as a factor to neted analysis (not quite working yet).
++ LSD() function can now extract a formula from the passed in model object :P
+  - I need to think a bit more carefully about how to extract n's & df from an aov/aovlist object.  

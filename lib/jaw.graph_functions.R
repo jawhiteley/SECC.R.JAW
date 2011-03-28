@@ -8,7 +8,7 @@
 ##================================================
 ## MULTIPLE COMPARISONS
 ##================================================
-LSD <- function( model, formula, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual"), n=NULL ){
+LSD <- function( model, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual"), n=NULL ){
   ## Planned Multiple Comparisons using Least Significant Differences (LSD)
   ## -> comparison intervals for graphical display.
   ## Expects a model of class 'aov' and/or 'lm'
@@ -28,8 +28,9 @@ LSD <- function( model, formula, data=NULL, alpha=0.05, mode=c("pairwise", "MSE"
     lsd.n <- as.numeric(n)	# relevant group ? : 
   }
   if(mode == "pairwise"){
-    lsd.n <- replications( formula, data )	# sample sizes, according to model structure (formula).  I can't find an easy way to derive this directly from an aov object passed in, so this is the only reason that formula & data are required as arguments.  replications() returns a nasty list if the data are unbalanced :(
-    ## if the item name is a problem, use as.numeric() to convert to a pure number.  If no group specified, a vector is produced with values for all treatment combinations.
+    lsd.n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  I can't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  replications() returns a nasty list if the data are unbalanced :(
+    ### model.tables(model)$n  # does something similar!  Only with *full* model?
+    ## if the item name is a problem, use as.numeric() to convert to a pure number.  If no group specified, a (named) vector is produced with values for all treatment combinations.
   }
   if(mode=="MSE") {
     lsd.df <- model$df	# for MSE from fitted model?

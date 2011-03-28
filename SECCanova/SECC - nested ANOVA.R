@@ -145,11 +145,21 @@ for( i in 1:length(Dataset.list) ){
 ##################################################
 ## DEFINE MODEL FORMULA
 ##################################################
-## Nested Fixed Effects, with error term for ANOVA using aov() 
-Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
-## ignoring effect of position: 'regional' effects only
-Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber/Frag)
+## Nested ANOVA: specify Error terms, with largest unit first
+## in descending order of size (least to most replication).
+## Do not include smallest unit/factor in Error.
+## see Crawley, pp 469-470
 
+## Including Time as a factor?
+if ( length(Time.use) > 1 ) {
+  Yp.model <- Y.trans ~ Time*Chamber*Frag*Position +Error(Time/Block/Chamber/Frag)
+  Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Time/Block/Chamber/Frag)
+} else {
+  ## Nested Fixed Effects, with error term for ANOVA using aov() 
+  Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
+  ## ignoring effect of position: 'regional' effects only
+  Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber/Frag)
+}
 
 
 ##################################################
@@ -234,7 +244,7 @@ with( SECCp, interaction.plot(Position, Frag, Y.trans,
 ##________________________________________________
 ## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
 # Chamber x Pos Interaction
-lsd <- LSD( Yp.aov$Within, Yp.model, data=SECCp, alpha=0.05, mode="pairwise" )  # compute LSDs based on a 5% error rate (alpha), 2-tailed.  mode="manual" if unbalanced data ( provide n as an estimate).
+lsd <- LSD( Yp.aov$Within, data=SECCp, alpha=0.05, mode="pairwise" )  # compute LSDs based on a 5% error rate (alpha), 2-tailed.  mode="manual" if unbalanced data ( provide n as an estimate).
 lsd.CxP <- lsd["Chamber:Position"]
 lsd.FxP <- lsd["Frag:Position"]
 lsd.CxFxP <- lsd["Chamber:Frag:Position"]
@@ -256,7 +266,7 @@ with( SECCmc, interaction.plot( Frag, Chamber, Y.trans,
 
 ##________________________________________________
 ## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
-lsd.mc <- LSD( Ymc.aov$"Block:Chamber:Frag", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
+lsd.mc <- LSD( Ymc.aov$"Block:Chamber:Frag", data=SECCmc, alpha=0.05, mode="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
 lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.C <- lsd.mc["Chamber"]
