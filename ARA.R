@@ -42,7 +42,7 @@ Y.units <- bquote( sqrt(.(Y.units)) )     # store as quote(expression)  *****
 
 ## Output Results?
 ## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Save.results  <- FALSE  
+Save.results  <- TRUE  
 
 
 ### Load default Labels - dependent on above settings. *****
@@ -102,4 +102,5 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 ## in this design, due to destructive sampling.
 
 Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
-source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) # Load default Labels. *****
+source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested ANOVA

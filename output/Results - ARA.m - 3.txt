@@ -5,7 +5,7 @@ Chamber:       Ambient, Partial Chamber, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Mon Mar 28 10:31:32 2011
+Mon Mar 28 13:32:39 2011
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -120,7 +120,7 @@ Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
 ================================================================
 ================  Meta-Community scale Results  ================
 ================================================================
-Y.trans ~ Chamber * Frag + Error(Block/Chamber/Frag)
+Y.trans ~ Chamber * Frag + Error(Block/Chamber)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
@@ -133,7 +133,7 @@ Residuals 14 327.36  23.383
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Error: Block:Chamber:Frag
+Error: Within
              Df Sum Sq Mean Sq F value  Pr(>F)  
 Frag          3 130.91  43.637  3.8137 0.01413 *
 Chamber:Frag  6  57.71   9.619  0.8406 0.54336  
@@ -166,7 +166,7 @@ Chamber           Continuous Full Corridors Pseudo-Corridors Isolated
 
 95% Least Significant Differences (LSD):
      Chamber         Frag Chamber:Frag 
-    2.416544     2.809821     5.185638 
+    1.690438     1.965547     3.627495 
 
 
 <============================= END ============================>

@@ -153,12 +153,12 @@ for( i in 1:length(Dataset.list) ){
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
   Yp.model <- Y.trans ~ Time*Chamber*Frag*Position +Error(Time/Block/Chamber/Frag)
-  Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Time/Block/Chamber/Frag)
+  Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Time/Block/Chamber)
 } else {
   ## Nested Fixed Effects, with error term for ANOVA using aov() 
   Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
   ## ignoring effect of position: 'regional' effects only
-  Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber/Frag)
+  Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber)
 }
 
 
@@ -208,7 +208,7 @@ with( SECCmc, plot(Y.trans ~ Chamber*Frag) )    # fixed effects only, no nesting
 # normal distribution?
 ##* PROMPT *##
 ## plot.new()  # for stupid "Hit <Return> ..." prompt when going line-by-line :(
-Ymc.residuals <- resid(Ymc.aov$"Block:Chamber:Frag")
+Ymc.residuals <- resid(Ymc.aov$Within)
 with(SECCmc, qqnorm( Ymc.residuals, main="Residuals", sub=Dataset.labels[2] ) ) # are residuals normally distributed?
 qqline(Ymc.residuals,  col="grey50")
 par( mfrow=c(1,1) )
@@ -266,9 +266,9 @@ with( SECCmc, interaction.plot( Frag, Chamber, Y.trans,
 
 ##________________________________________________
 ## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
-lsd.mc <- LSD( Ymc.aov$"Block:Chamber:Frag", data=SECCmc, alpha=0.05, mode="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
+lsd.mc <- LSD( Ymc.aov$Within, data=SECCmc, alpha=0.05, mode="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
-lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
+## lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 lsd.mc.C <- lsd.mc["Chamber"]
 
 

@@ -16,8 +16,10 @@
 
 Current Changes:
 ================
-LSD extracts formulas
+Time as a treatment in Nested ANOVA
 
-+ Adding Time as a factor to neted analysis (not quite working yet).
-+ LSD() function can now extract a formula from the passed in model object :P
-  - I need to think a bit more carefully about how to extract n's & df from an aov/aovlist object.  
++ Added Time as a treatment in Nested ANOVA
+  + only if there is more than one Time level selected.
+  + no special graphs or other output (yet).
+* Removed Frag from nested error terms in Meta-Community-level analyses.  
+  It should not be there? (see Crawley, pp. 469-470)
