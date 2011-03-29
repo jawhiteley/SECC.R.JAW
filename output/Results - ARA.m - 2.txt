@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Mon Mar 28 18:47:22 2011
+Tue Mar 29 14:05:00 2011
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -101,11 +101,11 @@ Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
   Full Chamber 0.000      0.000          0.788            1.185   
 
 
-95% Least Significant Differences (LSD):
+95% Minimum Significant Ranges (MSR):
               Chamber                  Frag              Position          Chamber:Frag 
-            0.8067316             1.1484072             0.9912675             1.6464825 
+             3.598753              1.212279              1.316977              1.987461 
      Chamber:Position         Frag:Position Chamber:Frag:Position 
-            1.4160321             2.0459508             3.0386495 
+             2.212159              3.544335              5.544104 
 
 
 ================================================================
@@ -150,9 +150,9 @@ Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
   Ambient      0.852      1.639          2.010            1.424   
   Full Chamber 2.954      3.219          3.589            2.383   
 
-95% Least Significant Differences (LSD):
+95% Minimum Significant Ranges (MSR):
      Chamber         Frag Chamber:Frag 
-   0.6339410    0.9159482    1.3603678 
+    4.186189     1.307767     2.161964 
 
 
 <============================= END ============================>

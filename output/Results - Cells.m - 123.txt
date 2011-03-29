@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Mon Mar 28 18:51:56 2011
+Tue Mar 29 14:05:47 2011
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -269,17 +269,17 @@ Time      Ambient Full Chamber
   2009-08 136.06  114.19      
 
 
-95% Least Significant Differences (LSD):
+95% Minimum Significant Ranges (MSR):
                       Time                    Chamber                       Frag 
-                  15.84932                   12.92019                   18.33078 
+                       NaN                   25.72807                   28.86003 
                   Position               Time:Chamber                  Time:Frag 
-                  12.92019                   22.52385                   32.17548 
+                  14.78693                   35.31531                   56.48460 
               Chamber:Frag              Time:Position           Chamber:Position 
-                  26.09443                   22.52385                   18.33078 
+                  47.24028                   35.31531                   26.32142 
              Frag:Position          Time:Chamber:Frag      Time:Chamber:Position 
-                  26.09443                   46.48866                   32.17548 
+                  43.08489                   88.14176                   56.48460 
         Time:Frag:Position      Chamber:Frag:Position Time:Chamber:Frag:Position 
-                  46.48866                   37.41183                   69.04504 
+                  88.14176                   68.09918                  135.45247 
 
 
 ================================================================
@@ -386,11 +386,11 @@ Time      Ambient Full Chamber
   2009-08 141.72  148.64      
 
 
-95% Least Significant Differences (LSD):
+95% Minimum Significant Ranges (MSR):
              Time           Chamber              Frag      Time:Chamber         Time:Frag 
-         18.63042          15.16215          21.58379          26.61368          38.45271 
+              NaN          25.35604          30.96041          41.57652          66.61416 
      Chamber:Frag Time:Chamber:Frag 
-         30.94489          57.11003 
+         50.75780         104.19890 
 
 
 <============================= END ============================>
