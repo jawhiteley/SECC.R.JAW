@@ -8,64 +8,81 @@
 ##================================================
 ## MULTIPLE COMPARISONS
 ##================================================
-LSD <- function( model, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual"), n=NULL ){
+MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD"), mode.df=c("pairwise", "MSE", "manual"), n=NULL ){
   ## Planned Multiple Comparisons using Least Significant Differences (LSD)
   ## -> comparison intervals for graphical display.
   ## Expects a model of class 'aov' and/or 'lm'? (aovlist)
-  ## for 'aovlist': pass in desired level of nesting (model$Within)
-  ## not just Within for MSE: MSE from the appropriate aov nesting level.
-  ## e.g. for a test of main effects, pass in the nesting level containing that main effect, which may not be 'Within' (the lowest level).
+  ## Design must be balanced (easier for now).
 
-  vars <- attr( attr(model$terms, "factors"), "dimnames")[[1]]  # dig in for the variable names ...
-  data <- data[, vars]  # keep only relevant columns
+  method  <- match.arg(method)      # default "planned"; synonymous with "MSR"
+  mode.df <- match.arg(mode.df)     # default "pairwise"
+  conf.level <- 1 - (alpha/2)	# for a 2-tailed test
+
+  ##   vars <- attr( attr(model$terms, "factors"), "dimnames")[[1]]  # dig in for the variable names ...
+  ##   data <- data[, vars]  # keep only relevant columns
   ## re-factor columns to drop unused levels.
-  for( col in names(data) ) {
-    if (class(data[[col]]) == "factor") {
-      data[[col]] <- factor(data[[col]])
-    }
+  ##   for( col in names(data) ) {
+  ##     if (class(data[[col]]) == "factor") {
+  ##       data[[col]] <- factor(data[[col]])
+  ##     }
+  ##   }
+
+  if(mode.df == "manual"){
+    n <- as.numeric(n)	# relevant group ?
   }
-  mode <- match.arg(mode)
-  if(mode == "manual"){
-    lsd.n <- as.numeric(n)	# relevant group ?
-  }
-  if(mode == "pairwise"){
-    ##  lsd.n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  
+  if(mode.df == "pairwise"){
+    ##  n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  
     ## I couldn't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  replications() returns a nasty list if the data are unbalanced :(
-    tables <- model.tables(model)
-    lsd.n <- tables$n	# sample sizes, according to model structure (formula).  
+    tables <- model.tables(model, "means")
+    means <- tables$tables
+    n <- tables$n	# sample sizes, according to model structure (formula).  
     ### model.tables(model)$n  # does what I want!  Only with *full* model
     ## if the item name is a problem, use as.numeric() to convert to a pure number.  If no group specified, a (named) vector is produced with values for all treatment combinations.
   }
 
   model.ls <- model  # in case of aovlist
 
-  lsd.width <- c()  # container variable
-  for (lvl in 1:length(lsd.n)) {  # loop through each treatment combination
+  msd.width <- c()  # container variable
+  for (lvl in 1:length(n)) {  # loop through each treatment combination
     
     if ("aovlist" %in% class(model.ls)) {
-      lsd.lvl <- names(lsd.n)[lvl]
-      model.lvl <- grep(lsd.lvl, names(model.ls))  # find matching name
+      msd.lvl <- names(n)[lvl]
+      model.lvl <- grep(msd.lvl, names(model.ls))  # find matching name
       ## use last level if no match
       if( length(model.lvl) == 0 ) model.lvl <- length(names(model.ls))
       model.lvl <- model.lvl[1]  # keep only first match
       model <- model.ls[[model.lvl]]
     }
 
-    if(mode=="MSE") {
-      lsd.df <- model$df	# for MSE from fitted model?
+    ## Calculate MSE & se for each level of nesting
+    MSE <- sum(resid(model)^2)/model$df.residual	# MSE from model ( SS / df )
+    msd.se <- sqrt(2*MSE/n)	# se of a difference (Crawley 2007, pg.465; Sokal & Rohlf 2003/1995, pg. 243)
+    ## unbalanced: sqrt( (var[1]/n[1]) + (var[2]/n[2]) )
+    
+    ## A Minimum Significant Difference (MSD) = (critical value) * SE
+    ## - Sokal & Rohlf, pg.243-244
+    ## Student's t = a difference / se of the difference
+    ## - Crawley, pg. 464
+    if( method == "unplanned" || method == "MSR") {
+      ngroups <-  length( means[[lvl +1]] )  # skip "Grand Mean"
+      msd.df <- ngroups * (n -1)
+      width <- qtukey(conf.level, ngroups, msd.df) * sqrt(MSE/n) 
+      ## for unplanned comparisons, it should really be Minimum Significant Range
+      ## MSR = Q[alpha,k, v] * sqrt(MSE/n)    (see Sokal & Rohlf, pg.244).
     } else {
-      lsd.df <- (2*lsd.n)-2	# for group differences. or for MSE from fitted model?
+      if(mode.df=="MSE") {
+        msd.df <- model$df	# for MSE from fitted model?  This is probably completely incorrect.
+      } else {
+        msd.df <- (2*n)-2   # for differences between any 2 levels. 
+      }
+
+      width <- qt(conf.level, msd.df)*msd.se  # LSD based on error rate (alpha).
     }
 
-    MSE <- sum(resid(model)^2)/model$df.residual	# MSE from model ( SS / df )
-    lsd.se <- sqrt(2*MSE/lsd.n)	# se of a difference (Crawley 2007, pg.465; Sokal & Rohlf 2003/1995, pg. 243)
-    ## unbalanced: sqrt( (var[1]/n[1]) + (var[2]/n[2]) )
-    conf.level <- 1 - (alpha/2)	# for a 2-tailed test
-    width <- qt(conf.level, lsd.df)*lsd.se	# LSD based on error rate (alpha).
-    lsd.width[lvl] <- width[lvl]
+    msd.width[lvl] <- width[lvl]
   }
-  names(lsd.width) <- names(lsd.n)
-  return(lsd.width)
+  names(msd.width) <- names(n)
+  return(msd.width)
 }
 
 

@@ -25,14 +25,16 @@
 
 Current Changes:
 ================
-LSD for full 'aovlist'
+LSD -> MSD for full 'aovlist'
 
-+ LSD() now computes LSDs for each model term, using the appropriate df and MSE from a nested ANOVA (class 'aovlist').  Matching is performed using grep to match the name of the treatment combination in the model table to the item in aovlist.  If there is no match, the *last* item in aovlist is used.
-  + not applied to results yet.
++ LSD() changed to MSD() to be more generic
+  + specify method = "LSD" or "planned" for LSD
+  + specify method = "MSR" or "unplanned" for MSRs (Tukey HSD)
++ MSD() uses MSE from nested model level for each comparison
+  + but df are calculated according to number of comparisons in each treatment group.
++ new MSD() applied to main ANOVA script.
 - Am I using the correct degrees of freedom and/or n?
-
-Nested ANOVA (Split-plot) structure
-
-- The smallest unit does not *need* to be included in the Error term, but it doesn't seem to make a difference to the results.
-  - The only real difference is that the smallest term in the ANOVA table is named "Within" if the smallest unit is omitted, rather than a full interaction term (Block:Chamber:Frag:Position).
+  Welcome to friggin' nested (i.e. hierarchical) models.  Oy!
+  - n = # of observations in each group, or # of groups?
+  - df depends on whether you think the comparisons are planned (LSD for any 2 comparisons) or unplanned (MSD / Tukey's HSD).
 

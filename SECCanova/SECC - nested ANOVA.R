@@ -29,10 +29,7 @@ if ( exists('Y.col') == FALSE ) stop(
 ## Standard Labels
 ##================================================
 
-## if(!exists('Y.plotlab')) Y.plotlab <- bquote( .(Y.label) * "  (" * .(Y.units) *  ")" )
-  ## do not overwrite if it already exists.
-
-Header.lsd  <- "\n95% Least Significant Differences (LSD):\n"
+Header.msd  <- "\n95% Minimum Significant Ranges (MSR):\n"
 
 
 ##################################################
@@ -251,12 +248,12 @@ if (FALSE) {    # effects package doesn't work with aovlist either :(
 
 
 ##________________________________________________
-## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
+## (un)planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
 # Chamber x Pos Interaction
-lsd <- LSD( Yp.aov$Within, data=SECCp, alpha=0.05, mode="pairwise" )  # compute LSDs based on a 5% error rate (alpha), 2-tailed.  mode="manual" if unbalanced data ( provide n as an estimate).
-lsd.CxP <- lsd["Chamber:Position"]
-lsd.FxP <- lsd["Frag:Position"]
-lsd.CxFxP <- lsd["Chamber:Frag:Position"]
+msd <- MSD( Yp.aov, alpha=0.05, method="unplanned" )  # compute MSRs based on a 5% error rate (alpha), 2-tailed.  mode.df="manual" if unbalanced data ( provide n as an estimate).
+msd.CxP <- msd["Chamber:Position"]
+msd.FxP <- msd["Frag:Position"]
+msd.CxFxP <- msd["Chamber:Frag:Position"]
 
 
 ##================================================
@@ -274,11 +271,10 @@ with( SECCmc, interaction.plot( Frag, Chamber, Y.trans,
      )
 
 ##________________________________________________
-## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
-lsd.mc <- LSD( Ymc.aov$Within, data=SECCmc, alpha=0.05, mode="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
-lsd.mc.FxC <- lsd.mc["Chamber:Frag"]
-## lsd.mc <- LSD( Ymc.aov$"Block:Chamber", Ymc.model, data=SECCmc, alpha=0.05, mode="pairwise" )    # compute LSDs based on a 5% error rate (alpha), 2-tailed.
-lsd.mc.C <- lsd.mc["Chamber"]
+## (un)planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
+msd.mc <- MSD( Ymc.aov, alpha=0.05, mode.df="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
+msd.mc.FxC <- msd.mc["Chamber:Frag"]
+msd.mc.C <- msd.mc["Chamber"]
 
 
 
@@ -291,15 +287,15 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 summary(Yp.aov),                 # model summary
 				 cat("\n\n"),                     # for output
 				 model.tables(Yp.aov, "means"),   # effect sizes
-				 cat(Header.lsd),
-				 print(lsd),
+				 cat(Header.msd),
+				 print(msd),
 				 cat(Save.mc.header),             # Meta-Community Results #
 				 print(Ymc.model),                # model
 				 summary(Ymc.aov),                # model summary
 				 cat("\n\n"),                     # for output
 				 model.tables(Ymc.aov, "means"),  # effect sizes
-				 cat(Header.lsd),
-				 print(lsd.mc),
+				 cat(Header.msd),
+				 print(msd.mc),
 				 cat(Save.end),                   # END OUTPUT #
 				 file = Save.text
 				)
@@ -327,7 +323,8 @@ if (length(Time.use) > 1) {
 } else {
   Time.label <- paste(Time.use, ": ", sep="")
 }
-Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% LSD")
+Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
+Sub.msd <- "95% comparison intervals (MSR)" 
 
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 
@@ -341,7 +338,7 @@ plot.means <- with( SECCp,
                    )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd["Chamber:Position"]/2),
+  plot.error <- matrix( as.numeric(msd["Chamber:Position"]/2),
                        nrow = length(levels(Chamber)),
                        ncol = length(levels(Position))
                        )
@@ -351,7 +348,7 @@ with( plot.means, {
             col = as.character(Position.map$col),
             bg  = as.character(Position.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Chamber"]],
             ylab = Y.plotlab
             )   
@@ -367,7 +364,7 @@ plot.means <- with( SECCp,
                    )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd.FxP/2),
+  plot.error <- matrix( as.numeric(msd.FxP/2),
                        nrow = length(levels(Frag)),
                        ncol = length(levels(Pos))
                        )
@@ -377,7 +374,7 @@ with( plot.means, {
             col = as.character(Position.map$col),
             bg  = as.character(Position.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
             )
@@ -393,7 +390,7 @@ plot.means <- with( SECCp,
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd["Chamber:Frag"]/2),
+  plot.error <- matrix( as.numeric(msd["Chamber:Frag"]/2),
                        nrow = length(levels(Frag)),
                        ncol = length(levels(Chamber))
                        )
@@ -403,7 +400,7 @@ with( plot.means, {
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
             )   
@@ -413,7 +410,7 @@ with( plot.means, {
 
 ##================================================
 ## META-COMMUNITY results
-Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% LSD")
+Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% Comparison Intervals")
 
 ## Chamber Main Effects
 plot.means <- with( SECCmc, 
@@ -422,7 +419,7 @@ plot.means <- with( SECCmc,
                              mean 
                              ) 
                    )
-plot.error <- rep( as.numeric(lsd.mc.C/2), length(levels(plot.means$Chamber)) )
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(plot.means$Chamber)) )
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
@@ -432,7 +429,7 @@ with( plot.means, {
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Chamber"]],
             ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
@@ -445,7 +442,7 @@ plot.means <- with( SECCmc,
                              mean 
                              ) 
                    )
-plot.error <- rep( as.numeric(lsd.mc.C/2), length(levels(plot.means$Frag)) )
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(plot.means$Frag)) )
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
@@ -455,7 +452,7 @@ with( plot.means, {
             col=as.character(Frag.map$col),
             bg=as.character(Frag.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
             )   # as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
@@ -471,7 +468,7 @@ plot.means <- with( SECCmc,
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 with( plot.means, {
   ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(lsd.mc.FxC/2),
+  plot.error <- matrix( as.numeric(msd.mc.FxC/2),
                        nrow = length(levels(Frag)),
                        ncol = length(levels(Chamber))
                        )
@@ -481,7 +478,7 @@ with( plot.means, {
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,
-            sub  = "95% comparison intervals (LSD)",
+            sub  = Sub.msd,
             xlab = attr(SECC, "labels")[["Frag"]],
             ylab = Y.plotlab
             )
