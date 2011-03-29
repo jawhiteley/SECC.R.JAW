@@ -18,11 +18,21 @@
     - collect results for output?
 - can I turn major operations of Nested ANOVA script into functions?
 
+- investigate multcomp package for multiple comparisons
+- investigate gplot plackage for plotmeans function? (see Quick-R).
 
-
+- Build a Main control script to source() individual analysis scripts in one step each.
 
 Current Changes:
 ================
+LSD for full 'aovlist'
 
++ LSD() now computes LSDs for each model term, using the appropriate df and MSE from a nested ANOVA (class 'aovlist').  Matching is performed using grep to match the name of the treatment combination in the model table to the item in aovlist.  If there is no match, the *last* item in aovlist is used.
+  + not applied to results yet.
+- Am I using the correct degrees of freedom and/or n?
 
+Nested ANOVA (Split-plot) structure
+
+- The smallest unit does not *need* to be included in the Error term, but it doesn't seem to make a difference to the results.
+  - The only real difference is that the smallest term in the ANOVA table is named "Within" if the smallest unit is omitted, rather than a full interaction term (Block:Chamber:Frag:Position).
 

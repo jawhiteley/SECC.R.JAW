@@ -11,9 +11,10 @@
 LSD <- function( model, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual"), n=NULL ){
   ## Planned Multiple Comparisons using Least Significant Differences (LSD)
   ## -> comparison intervals for graphical display.
-  ## Expects a model of class 'aov' and/or 'lm'
+  ## Expects a model of class 'aov' and/or 'lm'? (aovlist)
   ## for 'aovlist': pass in desired level of nesting (model$Within)
-  ## (not just Within for MSE: MSE from the appropriate aov object).
+  ## not just Within for MSE: MSE from the appropriate aov nesting level.
+  ## e.g. for a test of main effects, pass in the nesting level containing that main effect, which may not be 'Within' (the lowest level).
 
   vars <- attr( attr(model$terms, "factors"), "dimnames")[[1]]  # dig in for the variable names ...
   data <- data[, vars]  # keep only relevant columns
@@ -25,23 +26,45 @@ LSD <- function( model, data=NULL, alpha=0.05, mode=c("pairwise", "MSE", "manual
   }
   mode <- match.arg(mode)
   if(mode == "manual"){
-    lsd.n <- as.numeric(n)	# relevant group ? : 
+    lsd.n <- as.numeric(n)	# relevant group ?
   }
   if(mode == "pairwise"){
-    lsd.n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  I can't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  replications() returns a nasty list if the data are unbalanced :(
-    ### model.tables(model)$n  # does something similar!  Only with *full* model?
+    ##  lsd.n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  
+    ## I couldn't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  replications() returns a nasty list if the data are unbalanced :(
+    tables <- model.tables(model)
+    lsd.n <- tables$n	# sample sizes, according to model structure (formula).  
+    ### model.tables(model)$n  # does what I want!  Only with *full* model
     ## if the item name is a problem, use as.numeric() to convert to a pure number.  If no group specified, a (named) vector is produced with values for all treatment combinations.
   }
-  if(mode=="MSE") {
-    lsd.df <- model$df	# for MSE from fitted model?
-  } else {
-    lsd.df <- (2*lsd.n)-2	# for group differences. or for MSE from fitted model?
+
+  model.ls <- model  # in case of aovlist
+
+  lsd.width <- c()  # container variable
+  for (lvl in 1:length(lsd.n)) {  # loop through each treatment combination
+    
+    if ("aovlist" %in% class(model.ls)) {
+      lsd.lvl <- names(lsd.n)[lvl]
+      model.lvl <- grep(lsd.lvl, names(model.ls))  # find matching name
+      ## use last level if no match
+      if( length(model.lvl) == 0 ) model.lvl <- length(names(model.ls))
+      model.lvl <- model.lvl[1]  # keep only first match
+      model <- model.ls[[model.lvl]]
+    }
+
+    if(mode=="MSE") {
+      lsd.df <- model$df	# for MSE from fitted model?
+    } else {
+      lsd.df <- (2*lsd.n)-2	# for group differences. or for MSE from fitted model?
+    }
+
+    MSE <- sum(resid(model)^2)/model$df.residual	# MSE from model ( SS / df )
+    lsd.se <- sqrt(2*MSE/lsd.n)	# se of a difference (Crawley 2007, pg.465; Sokal & Rohlf 2003/1995, pg. 243)
+    ## unbalanced: sqrt( (var[1]/n[1]) + (var[2]/n[2]) )
+    conf.level <- 1 - (alpha/2)	# for a 2-tailed test
+    width <- qt(conf.level, lsd.df)*lsd.se	# LSD based on error rate (alpha).
+    lsd.width[lvl] <- width[lvl]
   }
-  lsd.mse <- sum(resid(model)^2)/model$df	# MSE from model ( SS / df )
-  lsd.se <- sqrt(2*lsd.mse/lsd.n)	# se of a difference (Crawley 2007, pg.465)
-  ## unbalanced: sqrt( (var[1]/n[1]) + (var[2]/n[2]) )
-  pvalue <- 1 - (alpha/2)	# for a 2-tailed test
-  lsd.width <- qt(pvalue, lsd.df)*lsd.se	# LSD based on error rate (alpha).
+  names(lsd.width) <- names(lsd.n)
   return(lsd.width)
 }
 

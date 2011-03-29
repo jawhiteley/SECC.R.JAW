@@ -15,7 +15,8 @@
 ## INITIALISE
 ##################################################
 library(lattice)    # mostly for xyplot
-library(ggplot2)    # grammar of graphics
+library(ggplot2)    # grammar of graphics?
+## library(effects)    # attractive interaction plots.  Does not work with aovlist.
 
 if ( exists('SECC') == FALSE ) stop(
 	"No SECC data found to analyze!  Don't forget to source(./lib/init.R)"
@@ -237,9 +238,17 @@ with( SECCp, interaction.plot(Position, Chamber, Y.trans,
                               )
      )
 with( SECCp, interaction.plot(Position, Frag, Y.trans,
-                              ylab=paste("mean of ", Y.use)
+                              ylab=paste("mean of", Y.use)
                               )
      )
+
+if (FALSE) {    # effects package doesn't work with aovlist either :(
+  Yp.effects <- allEffects(Yp.aov)
+  plot(Yp.effect, "Chamber:Frag")
+  plot(Yp.effect, "Chamber:Position")
+  plot(Yp.effect, "Chamber:Frag:Position")
+}
+
 
 ##________________________________________________
 ## Planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
