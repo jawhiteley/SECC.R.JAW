@@ -25,7 +25,7 @@ Save.final <- Save.plots              # Destination for final plots.
 Save.divider <-        "================================================================\n"
 Save.header  <- paste( "Nested ANOVA Results for:", Y.label, "(", Y.col, ")",
                      "\nTransformation used:     ", Y.use,
-                     "\nSample Time:  ", paste(Time.use,     collapse = ", "),
+                     "\nExpt. Time:   ", paste(Time.use,     collapse = ", "),
                      "\nChamber:      ", paste(Chamber.use,  collapse = ", "),
                      "\nFragmentation:", paste(Frag.use,     collapse = ", "),
                      "\nPatches:      ", paste(Position.use, collapse = ", "),

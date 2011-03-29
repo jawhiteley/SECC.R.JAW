@@ -1,11 +1,11 @@
 Nested ANOVA Results for: Acetylene Reduction ( ARA.m ) 
 Transformation used:      Y.sqrt 
-Sample Time:   24 months 
+Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Tue Mar 29 16:36:22 2011
+Tue Mar 29 16:45:17 2011
 
 ================================================================
 ================  Patch scale Results  =========================

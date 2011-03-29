@@ -1,11 +1,11 @@
 Nested ANOVA Results for: Cyanobacteria Cell Density ( Cells.m ) 
 Transformation used:      Y.4rt 
-Sample Time:   12 months, 22 months, 24 months 
+Expt. Time:    12 months, 22 months, 24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Tue Mar 29 16:36:43 2011
+Tue Mar 29 16:45:22 2011
 
 ================================================================
 ================  Patch scale Results  =========================

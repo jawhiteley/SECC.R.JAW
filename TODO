@@ -20,15 +20,11 @@
 - investigate multcomp package for multiple comparisons
 - investigate gplot plackage for plotmeans function? (see Quick-R).
 
-- Build a Main control script to source() individual analysis scripts in one step each.
+
+
 
 Current Changes:
 ================
-Moved Time in Nesting structure
 
-Time is now nested within Block in the nested ANOVA model.
-If Time were the largest experimental unit, I could not test for significant effects among time points.  This allows such tests, which makes sense: in this case, Time is not a random effect -- each time point represents 'time since the start of the experiment'.
-This also matches the nesting layout in the field.
 
-- Change Time labels to 'time since start of experiment'
 
