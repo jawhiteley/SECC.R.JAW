@@ -21,7 +21,9 @@ library(reshape)	# sort_df (sort data frame) wrapper for order
 
 Block_lvls    <- as.integer( seq(1, 8) )
 Time_lvls     <- as.integer( seq(1, 4) )
-Time_labels   <- c("2008-08", "2009-06", "2009-08")
+Time_labels   <- c("12", "22", "24")  # number of months since start of experiment
+Time_dates    <- c("2008-08", "2009-06", "2009-08")
+Time_start    <-   "2007-08"
 Chamber_lvls  <- c("A", "B", "C")
 Chamber_labels<- c("Ambient", "Partial Chamber", "Full Chamber")
 Chamber.Heat  <- c("Ambient", "Warm", "Hot")
@@ -35,7 +37,7 @@ Pos_sort      <- c("O", "I", "S/N", "W/E")	# S/N is for alphabetical sorting.  D
 Pos_labels    <- c("Inner", "other", "Outer")
 Pos.Precip    <- c("Wet", "mesic", "Dry")
 
-Trt_nest_order <- c("Time", "Block", "Chamber", "Frag", "Pos")  # Time is higher than Block?
+Trt_nest_order <- c("Block", "Time", "Chamber", "Frag", "Pos")  # Time is higher than Block?
 Trt_sort_order <- c("Time", "Block", "Chamber", "Frag") # not including "Pos" or "Position"
   # The nesting structure puts "Block" first (largest experimental unit).
   # I tend to sort by Time first, however,

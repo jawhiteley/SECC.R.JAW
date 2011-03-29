@@ -36,7 +36,6 @@ source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE)
 ## Specify which treatment levels to include (by index is probably easiest)
 Time.use     <- levels(SECC$Time)[1]            # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
-Frag.use     <- levels(SECC$Frag)               # Frag treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include
 
 ## Define Labels

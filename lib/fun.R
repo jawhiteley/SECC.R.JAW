@@ -341,7 +341,7 @@ recodeSECC <- function(data=NULL) {
     ## Recode Time to approximate dates: replace t3 with NA, since it has no date (yet)
     Time     <- factor(Time,
                        levels = c(1, 2, 4),  # Drop t3, replace with NA
-                       labels = c( "2008-08", "2009-06", "2009-08" )
+                       labels = c( "12 months", "22 months", "24 months" )
                        )
     ## New factor with simplified recoded values for Patch Position
     ## Rename and reorder factor levels using recode()

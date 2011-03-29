@@ -150,8 +150,8 @@ for( i in 1:length(Dataset.list) ){
 
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Yp.model <- Y.trans ~ Time*Chamber*Frag*Position +Error(Time/Block/Chamber/Frag)
-  Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Time/Block/Chamber)
+  Yp.model <- Y.trans ~ Time*Chamber*Frag*Position +Error(Block/Time/Chamber/Frag)
+  Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Block/Time/Chamber)
 } else {
   ## Nested Fixed Effects, with error term for ANOVA using aov() 
   Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
@@ -272,7 +272,7 @@ with( SECCmc, interaction.plot( Frag, Chamber, Y.trans,
 
 ##________________________________________________
 ## (un)planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
-msd.mc <- MSD( Ymc.aov, alpha=0.05, mode.df="pairwise" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
+msd.mc <- MSD( Ymc.aov, alpha=0.05, method="unplanned" )   # compute LSDs based on a 5% error rate (alpha), 2-tailed.
 msd.mc.FxC <- msd.mc["Chamber:Frag"]
 msd.mc.C <- msd.mc["Chamber"]
 
