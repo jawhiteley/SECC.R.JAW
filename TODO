@@ -29,11 +29,8 @@
 
 Current Changes:
 ================
-Load Moisture (H2O) data
+Moisture (H2O) Analysis & Results
 
-+ data files for moisture contents in t1, t2, t4
-+ clean_H2O.R script, based off clean_ARA.R
++ H2O results 
++ Started a script for Chapter 1: ARA-cyanobacteria (with H2O, etc.)
 
-+ Adjustments to SECC_sampleID() function (error-checking).
-  + I got to use it!  To re-format SampleIDs in H2O data.
-  

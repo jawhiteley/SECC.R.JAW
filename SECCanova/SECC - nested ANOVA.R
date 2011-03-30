@@ -20,10 +20,10 @@ library(ggplot2)    # grammar of graphics?
 
 if ( exists('SECC') == FALSE ) stop(
 	"No SECC data found to analyze!  Don't forget to source(./lib/init.R)"
-  )
+   )
 if ( exists('Y.col') == FALSE ) stop(
 	"Please specify a data column to analyze (Y.col)."
-  )
+   )
 
 ##================================================
 ## Standard Labels
