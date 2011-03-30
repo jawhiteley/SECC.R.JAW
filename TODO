@@ -1,14 +1,21 @@
-- allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
-- Interaction plots at each time point, within full analysis of all time points.
-
-- Load    Moisture Data
-- Analyze Moisture Data
+- Regressions
+  - ARA vs. Cyanobacteria - GLM(M)
+  - Include H2O as a covariate.
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
+
+
+- investigate multcomp package for multiple comparisons
+- investigate gplot plackage for plotmeans function? (see Quick-R).
+
+- allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
+- Interaction plots at each time point, within full analysis of all time points.
+  - Loop through each time point, then make plots.
+  - Allow for Time not being included in the model
 
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
@@ -18,19 +25,11 @@
     - collect results for output?
 - can I turn major operations of Nested ANOVA script into functions?
 
-- investigate multcomp package for multiple comparisons
-- investigate gplot plackage for plotmeans function? (see Quick-R).
-
 - Modify _Main.R script to collect results from each analysis, and produce results for manuscript
-- Each manuscript will have it's own script, which performs all analyses, collect results, and produce output and final plots for publication.
-  - For now, individual 'sub-scripts' clear memory & re-load data with 'init.R'.  
-    Will it be safer to move init.R, or just clear memory, to the higher-order scripts?
 
 
 Current Changes:
 ================
 Moisture (H2O) Analysis & Results
 
-+ H2O results 
-+ Started a script for Chapter 1: ARA-cyanobacteria (with H2O, etc.)
-
++ changed H2O units to % (*100), and labels.

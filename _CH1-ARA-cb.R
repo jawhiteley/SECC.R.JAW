@@ -21,10 +21,10 @@ if (FALSE) {  # do not run automatically
 ## DO
 source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
 
+source("H2O.R")             # Water Contents Analysis
+
 source("ARA.R")             # Acetylene Reduction Assay (N-fixation) Analysis
 source("Cyanobacteria.R")   # Cyanobcateria density Analysis
-
-source("H2O.R")             # Cyanobcateria density Analysis
 
 ## OUTPUT
 source("lib/out.R")   # Produce Outputs: graphs, reports, export.

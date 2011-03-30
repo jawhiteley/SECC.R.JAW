@@ -25,6 +25,22 @@ source('./lib/init.R')
 Y.col <- 'H2O'     # Column to analyze as response variable           *****
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
+##================================================
+## CUSTOM CALCULATIONS 
+##================================================
+
+SECC <- within( SECC, { 
+    H2O.asq <- asin(sqrt(H2O.wwt))
+    H2O     <- H2O     * 100  # convert to %
+    H2O.wwt <- H2O.wwt * 100
+})
+
+attr(SECC, "labels")[["H2O.asq"]] <- ""
+attr(SECC, "units" )[["H2O.asq"]] <- quote(asin(sqrt("% H2O")))
+attr(SECC, "labels")[["H2O"]] <- ""
+attr(SECC, "units" )[["H2O"]] <- quote("% H2O")
+
+
 ### Load default settings (based on response variable) *****
 source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
 
@@ -42,11 +58,6 @@ Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
 Save.results  <- TRUE  
-
-
-##================================================
-## CUSTOM CALCULATIONS 
-##================================================
 
 
 ### Load default Labels - dependent on above settings. *****

@@ -20,6 +20,14 @@ ____________
 
 
 
+Script Plan
+================
+Each manuscript will have it's own script, which performs all analyses, collect results, and produce output and final plots for publication.
+- For now, individual 'sub-scripts' clear memory & re-load data with 'init.R'.  
+  Will it be safer to move init.R, or just clear memory, to the higher-order scripts?
+
+
+
 ARA Calculation formulas: standardize by umol/ml or umol of ARA gases (C2H2 + C2H4)?
 ================================
 ARA calculation formulas -- How do the final values compare:
