@@ -82,7 +82,7 @@ SECC.ARA.t4 <- within( SECC.ARA.t4, {
 ## CALCULATIONS
 ##################################################
 ## Leave the original calculated columns in, to act as an internal reference
-## for missing values in calculations here.
+## for missing values in calculations performed here.
 
 GAS.CONSTANT <- 8.314472 / 1e+06  # gas constant J / mol K -> umol
 Vol.injection <- 1e-06  # 1 ml injection in m^3 : 1/(1000*1000)

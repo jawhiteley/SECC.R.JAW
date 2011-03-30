@@ -1,4 +1,5 @@
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
+- Interaction plots at each time point, within full analysis of all time points.
 
 - Load    Moisture Data
 - Analyze Moisture Data
@@ -20,11 +21,19 @@
 - investigate multcomp package for multiple comparisons
 - investigate gplot plackage for plotmeans function? (see Quick-R).
 
-
+- Modify _Main.R script to collect results from each analysis, and produce results for manuscript
+- Each manuscript will have it's own script, which performs all analyses, collect results, and produce output and final plots for publication.
+  - For now, individual 'sub-scripts' clear memory & re-load data with 'init.R'.  
+    Will it be safer to move init.R, or just clear memory, to the higher-order scripts?
 
 
 Current Changes:
 ================
+Load Moisture (H2O) data
 
++ data files for moisture contents in t1, t2, t4
++ clean_H2O.R script, based off clean_ARA.R
 
-
++ Adjustments to SECC_sampleID() function (error-checking).
+  + I got to use it!  To re-format SampleIDs in H2O data.
+  

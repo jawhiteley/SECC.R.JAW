@@ -31,9 +31,9 @@ SECCcolumnNames <- function(data=NULL, DataName="data") {
   ## Standard ID column names and types (based on template)
    # colnames(SECC.base) includes SampleID ; Trt_nest_order does not
   ColNames_std <- colnames(SECC.base)
-  SampleID.synonyms <- c("SampleID", "PatchID", "ID", "Sample")
+  SampleID.synonyms <- c("SampleID", "PatchID", "ID", "Sample", "Treatment")
   Block.synonyms   <- c("Block", "block")
-  Time.synonyms    <- c("Time", "TimePt", "time.point", "time.pt")
+  Time.synonyms    <- c("Time", "TimePt", "time.point", "time.pt", "t.point")
   Chamber.synonyms <- c("Chamber", "chamber", "Warming", "warming", "warm", "Chamber.trt", "Warming.trt")
   Frag.synonyms    <- c("Frag", "Fragmentation", "Frag.trt", "fragmentation", "frag", "frag.trt")
   Pos.synonyms     <- c("Pos", "Position", "position", "pos")

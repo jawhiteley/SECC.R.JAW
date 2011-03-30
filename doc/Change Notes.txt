@@ -8,6 +8,18 @@ ____________
   21C-4.N
   31A-1.E
 
+* Moisture Contents ID changes (to match template):
+  71A-2.W
+  22A-2.1
+  22A-3.1
+  22C-1.E
+  22C-3.W
+  32B-3.1
+  62A-2.E
+  54A-4.W
+
+
+
 ARA Calculation formulas: standardize by umol/ml or umol of ARA gases (C2H2 + C2H4)?
 ================================
 ARA calculation formulas -- How do the final values compare:
