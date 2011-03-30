@@ -31,6 +31,12 @@
 
 Current Changes:
 ================
-plotMap function creates character columns
 
-updated plotMap() function to create character columns, rather than factors (stringsAsFactors = FALSE).
+
+- Compared results of old & new ARA~Cyanobacteria GLM.
+  - They are very close if I aggregate by "Position", but not identical.
+  - Could it be because of the new ARA calculations 
+    (that include both controls and blanks - the old version excluded controls)?
+  - calculations are performed *before* aggregation in both cases
+
+- Fixed a bug in SECCclean() function: it was not dropping empty rows :(

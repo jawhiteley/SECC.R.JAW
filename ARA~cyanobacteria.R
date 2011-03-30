@@ -16,6 +16,8 @@ if (FALSE) {  # do not run automatically
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
 source('./lib/init.R')
 
+## library(car)
+library(lattice)
 
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
@@ -129,8 +131,9 @@ Save.end      <- paste("\n",
 SECC.use <- SECCclean(SECC, Time.use, Chamber.use, Frag.use, Position.use)
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
-## aggregate 'other' patch Positions
-SECCp  <- SECC.use  # SECC_aggregate( SECC.use, trt = 'Position' )
+## aggregate 'other' patch Positions?
+SECCp  <- if (FALSE)  SECC_aggregate( SECC.use, trt = 'Position' )  else SECC.use
+
 ## Meta-community (regional) -level analyses (ignoring position):
 SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
 
@@ -203,7 +206,7 @@ for(i in 1:length(vars.ls) ){
         cat(var, " ")
         X.var <- get(var)
         X.max  <- max( X.var )
-        cat(X.max, "\n")
+        ##         cat(X.max, "\n")
         freq.max <- length(X.var)/2
         X.maxD <- max( density( X.var )$y )*1.5
         for(Ch.trt in levels(Chamber)){
@@ -216,7 +219,7 @@ for(i in 1:length(vars.ls) ){
                breaks=seq( 0, X.max, length.out=16 ),
                col="#CCCCCC"
                )
-          abline( 5, 0, lty=3, col="#666666" ) # reference line
+          ##           abline( 5, 0, lty=3, col="#666666" ) # reference line
           plot( X.density,
                main=Ch.trt, xlab=label,
                xlim=c(0, X.max),

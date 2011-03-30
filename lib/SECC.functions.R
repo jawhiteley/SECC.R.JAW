@@ -148,12 +148,12 @@ SECCclean <- function(data=NULL,
   ## strip empty rows (rows with only NAs)
   SECC.lvls <- strip_empty_dims( data, dim = 1, col.class = "numeric" )  
 
-  ## Filter data for analysis, according to settings above.
-  SECC.lvls <- data[SECC.lvls$Time     %in% Time.use     &
-                    SECC.lvls$Chamber  %in% Chamber.use  &
-                    SECC.lvls$Frag     %in% Frag.use     &
-                    SECC.lvls$Position %in% Position.use 
-                    , ]
+  ## Filter data by treatment levels.
+  SECC.lvls <- SECC.lvls[SECC.lvls$Time     %in% Time.use     &
+                         SECC.lvls$Chamber  %in% Chamber.use  &
+                         SECC.lvls$Frag     %in% Frag.use     &
+                         SECC.lvls$Position %in% Position.use 
+                         , ]
   ## drop unused factor levels (for plotting)
   SECC.lvls <- within( SECC.lvls, {
                       Time     <- factor(Time,     levels = Time.lvls)
