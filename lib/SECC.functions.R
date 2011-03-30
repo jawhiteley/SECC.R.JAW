@@ -135,6 +135,36 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
   }
 }
 
+
+SECCclean <- function(data=NULL,
+                      Time.lvls     = 1:3,
+                      Chamber.lvls  = c("A", "B", "C"),
+                      Frag.lvls     = 1:4,
+                      Position.lvls = c("Inner", "other", "Outer")
+                      )
+{
+  ## clean empty and unused data from SECC data frame
+
+  ## strip empty rows (rows with only NAs)
+  SECC.lvls <- strip_empty_dims( data, dim = 1, col.class = "numeric" )  
+
+  ## Filter data for analysis, according to settings above.
+  SECC.lvls <- data[SECC.lvls$Time     %in% Time.use     &
+                    SECC.lvls$Chamber  %in% Chamber.use  &
+                    SECC.lvls$Frag     %in% Frag.use     &
+                    SECC.lvls$Position %in% Position.use 
+                    , ]
+  ## drop unused factor levels (for plotting)
+  SECC.lvls <- within( SECC.lvls, {
+                      Time     <- factor(Time,     levels = Time.lvls)
+                      Chamber  <- factor(Chamber,  levels = Chamber.lvls)
+                      Frag     <- factor(Frag,     levels = Frag.lvls)
+                      Position <- factor(Position, levels = Position.lvls)
+                      })
+  return(SECC.lvls)
+}
+
+
 ##================================================
 ## DATA EXPLORATION
 ##================================================
@@ -168,6 +198,8 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 plotMap <- function (factor = c("Chamber", "Frag", "Position"), 
                      labels = c() ) 
 {
+  ##  allow labels to be a subset of factor levels, and auto-drop labels here?
+  
   factor <- match.arg(factor)
 
   if (factor == "Chamber") {
@@ -214,38 +246,4 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   return(PlotMap)
 }
 
-
-
-plotMap_Frag <- function ( labels=c("1", "2", "3", "4") ) {
-  PlotMap <- 
-    data.frame(label=labels, 
-               col = c("#000000", "#666666", "#000099", "#990000"), 
-               bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"), 
-               pch = c(19, 15, 22, 21),
-               lty = c(1, 2, 3, 3)
-               )
-    
-    ## 1) Continuous         = black, filled circles with solid line ; 
-    ## 2) Full Corridors     =  grey, filled squares with dashed line ; 
-    ## 3) Pseudo-Corridors   = blue, open squares with dotted line.
-    ## 4) Isolated           =  red, open circles with dotted line.
-
-  return(PlotMap)
-}
-
-plotMap_Position <- function ( labels=c("I", "*", "O") ) {
-  PlotMap <- 
-    data.frame(label=labels, 
-               col = c("#000000", "#000099", "#990000"), 
-               bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF"), 
-               pch = c(19, 8, 21), lty = c(2, 3, 1) 
-               )
-    
-    ## 1) Continuous         = black, filled circles with solid line ; 
-    ## 2) Full Corridors     =  grey, filled squares with dashed line ; 
-    ## 3) Pseudo-Corridors   = blue, open squares with dotted line.
-    ## 4) Isolated           =  red, open circles with dotted line.
-
-  return(PlotMap)
-}
 

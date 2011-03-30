@@ -16,7 +16,8 @@ if (FALSE) {  # do not run automatically
 }
 
 ## source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
-#source("./lib/load.R")  # (re-)load data
+source("./lib/load.R")  # (re-)load data
+SECC.prime <- SECC    # save a copy of the original for reference.
 
 ## DO
 source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
@@ -25,6 +26,8 @@ source("H2O.R")             # Water Contents Analysis
 
 source("ARA.R")             # Acetylene Reduction Assay (N-fixation) Analysis
 source("Cyanobacteria.R")   # Cyanobcateria density Analysis
+
+source("ARA~cyanobacteria.R")   # ARA ~ cyanobacteria (GLMM)
 
 ## OUTPUT
 source("lib/out.R")   # Produce Outputs: graphs, reports, export.

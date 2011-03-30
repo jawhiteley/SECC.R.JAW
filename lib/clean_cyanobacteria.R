@@ -92,8 +92,8 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
           # OR: scale to Total Patch Dry Weight (available in SECC, not here) before scaling to m^-2 based on patch Area.
           # could also take # cells /2 shoots and scale up to 20 in sample (*20)?
   Hcells   <- (Total.h / X..lg.squares) * sample.sq / 2
-  Hcells.g <- Cells * 2 / (Cells.dwt / 1000)
-  Hcells.m <- (Cells.g / 1000) * ARA.dwt / sample.m2
+  Hcells.g <- Hcells * 2 / (Cells.dwt / 1000)
+  Hcells.m <- (Hcells.g / 1000) * ARA.dwt / sample.m2
 })
 
 Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.

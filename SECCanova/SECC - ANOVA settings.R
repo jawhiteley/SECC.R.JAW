@@ -27,15 +27,6 @@ Chamber.use  <- levels(SECC$Chamber)      # Chamber treatments to include
 Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
 Position.use <- levels(SECC$Position)     # Patch Positions to include
 
-## Define Labels
-Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label for this script.
-Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units: quote(expression).
-Y.units <- bquote( .(Y.units) )  # sqrt(.(Y.units), 4)  # store as quote(expression)
-
-## Output Results?
-## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
-Save.results <- FALSE  
-
 
 ##================================================
 ## CALCULATIONS
@@ -61,4 +52,18 @@ SECC <- within( SECC, {
   ARA.g[ ARA.g  < 0] <- 0
   Nfix <- ARA.m * Nfix.ARA.ratio
 })
+
+
+##================================================
+## Define Labels
+##================================================
+
+Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label for this script.
+Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units: quote(expression).
+Y.units <- bquote( .(Y.units) )  # sqrt(.(Y.units), 4)  # store as quote(expression)
+
+## Output Results?
+## Logical switch determines whether output is saved to files, or left in R.  Easier than setting several values to NULL
+Save.results <- FALSE  
+
 

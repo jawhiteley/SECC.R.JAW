@@ -7,6 +7,7 @@
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
+- fix SECCstr to handle errors with aggregated data sets (line 304)
 
 
 - investigate multcomp package for multiple comparisons
@@ -30,6 +31,14 @@
 
 Current Changes:
 ================
-Moisture (H2O) Analysis & Results
+GLMM draft: ARA vs cyanobacteria
 
-+ changed H2O units to % (*100), and labels.
++ started converting old GLM script to use new project structure.
+  - still need to handle predictions.
+  - Random effects / hierarchical structure?
+
++ SECCclean() function to perfom standard pruning
+  + drop empty rows
+  + drop unused factor levels
+
++ fixed a mistake in calculation of Heterocyst density (Hcells.m was getting same values as Cells).
