@@ -19,6 +19,7 @@ source('./lib/init.R')
 ## library(car)
 library(lattice)
 
+
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
 ##################################################
@@ -241,9 +242,7 @@ coplot( Y ~ X | Frag * Position, data=SECCa,
 coplot( Y ~ X | Chamber * Frag , data=SECCa, 
        pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
 )
-coplot( Y ~ X | Chamber * Frag , data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr	# , bg=SECC$fill
-)
+
 
 ## much the same breakdown, using TRELLIS xyplot over 3 factors.
 xyplot( Y ~ X | Chamber * Frag * Position, data=SECCa, 
@@ -282,8 +281,10 @@ Y.model <- glm( Y.formula, data=SECCa, family="quasipoisson" )
 ## CHECK ASSUMPTIONS
 ##################################################
 ## analyse residuals, standard diagnostic plots
-par(mfrow=c(3,2))	    # panel of figures: 3 rows & 2 columns
+par(mfrow=c(2,2))	    # panel of figures: 3 rows & 2 columns
 plot(Y.model)
+
+par(mfrow=c(1,1))	    # panel of figures: 3 rows & 2 columns
 hist(resid(Y.model))    # plot residuals
 
 
@@ -358,6 +359,40 @@ with( SECCa,{
           )
 	legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
 })
+
+
+## Plotting: Observed and Fitted - from Richard & Zofia's GLMM workshop
+df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
+cc1 <- as.data.frame(coef(Y.model)$Y)
+names(cc1) <- c("A", "B")
+df <- cbind(df, cc1)
+ff <- fixef(Y.model)
+
+print( xyplot( Y ~ X | Chamber * Position, data = SECCa, 
+          aspect = "xy", layout = c(4,3),
+          type = c("g", "p", "r"), coef.list = df[,3:4],
+          panel = function(..., coef.list) {
+            panel.xyplot(...)
+            panel.abline(as.numeric( coef.list[packet.number(),] ), 
+                         col.line = trellis.par.get("superpose.line")$col[2],
+                         lty = trellis.par.get("superpose.line")$lty[2]
+                         )
+            panel.abline(fixef(Y.model), 
+                         col.line = trellis.par.get("superpose.line")$col[4],
+                         lty = trellis.par.get("superpose.line")$lty[4]
+                         )
+          },
+          index.cond = function(x,y) coef(lm(y ~ x))[1],
+          xlab = X.plotlab,
+          ylab = Y.plotlab,
+          key = list(space = "top", columns = 3,
+                text = list(c("Within-subject", "Mixed model", "Population")),
+                lines = list(col = trellis.par.get("superpose.line")$col[c(2:1,4)],
+                             lty = trellis.par.get("superpose.line")$lty[c(2:1,4)]
+                ))
+          )
+)
+
 
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
