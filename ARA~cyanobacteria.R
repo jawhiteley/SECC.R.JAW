@@ -164,15 +164,16 @@ Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
+Chamber.map$pch <- c(21, 16)
 
 SECCa <- within( SECCa,{
 	colr = ifelse( Chamber == Chamber.map$label[1], 
-			as.character(Chamber.map$col[1]), 
-			as.character(Chamber.map$col[2]) 
+			Chamber.map$col[1], 
+			Chamber.map$col[2] 
 		)
 	fill = ifelse( Chamber == Chamber.map$label[1], 
-			as.character(Chamber.map$bg[1]), 
-			as.character(Chamber.map$bg[2]) 
+			Chamber.map$bg[1], 
+			Chamber.map$bg[2] 
 		)
 	pt = ifelse( Chamber == Chamber.map$label[1], 
 			Chamber.map$pch[1], 
@@ -188,7 +189,9 @@ with( SECCa,{
 		ylab=Y.plotlab, xlab=X.plotlab, 
 		pch=pt, col=colr
 	)
-	legend("topright", legend=Chamber.map$label, pch=Chamber.map$pch, col=Chamber.map$col )
+	legend("topright", legend=Chamber.map$label, 
+           pch=Chamber.map$pch, col=Chamber.map$col 
+    )
 })
 
 par(mfcol=c(2,2))
@@ -316,43 +319,41 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 ## generate grid to add predicted values to (X-values in all combinations of factors).
-Y.pred 	<- expand.grid( Chamber=levels(SECC$Chamber) , Frag=levels(SECC$Frag), Position=levels(SECC$Position), cells_m2=seq(0, max(SECC$cells_m2), length.out=100 ) )
-Y.pred$preds  <- predict(cells.model, newdata=cells.pred, type="response" )	# newdata must have same explanatory variable name for predict to work.
+Y.pred 	<- expand.grid( Chamber=levels(SECCa$Chamber) , 
+                        Frag=levels(SECCa$Frag), 
+                        Position=levels(SECCa$Position), 
+                        X=seq(0, max(SECCa$X), length.out=100 ) 
+                        )
+Y.pred$preds  <- predict(Y.model, newdata=Y.pred, type="response" )	# newdata must have same explanatory variable name for predict to work.
 
 
-Chamber.map <- plotMap( "Chamber", labels = levels(SECCa$Chamber) )
+Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
+Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
+Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
 
+
 par(mfrow=c(1,1))
-with( SECC,{
-	colr = ifelse(Chamber=="Ambient", Chamber.map$col[1], Chamber.map$col[2] )
+with( SECCa,{
+	colr = ifelse(Chamber=="Ambient", 
+                  as.character(Chamber.map$col[1]), 
+                  as.character(Chamber.map$col[2]) 
+                  )
 	bg.colr = ifelse(Chamber=="Ambient", Chamber.map$bg[1], Chamber.map$bg[2] )
 	# pred | augpred | ?
-	# Hendry et al. 2006 (Proceedings of the Royal Society) - bimodality in Darwin's finches.  Ask Mark Brewer:  http://www.bioss.ac.uk/staff/markb.html
-	## Total Cells
-	plot(cells_m2, Y.use, type="p",
-		ylab=Nfix.label, xlab=cells.label,
+	plot(X, Y, type="p",
+		ylab=Y.plotlab, xlab=X.plotlab,
 		pch=point, col=colr, bg=bg.colr
-	)
-	lines(preds~cells_m2, data=subset(cells.pred, Chamber=="Ambient"), col= Chamber.map$col[1], lty= Chamber.map$lty[1])
-	lines(preds~cells_m2, data=subset(cells.pred, Chamber=="Full Chamber"), col= Chamber.map$col[2], lty= Chamber.map$lty[2])
-#	linear fit
-#	abline(cells.model$coef[1],cells.model$coef[2], 
-#		col=as.character(Chamber.map$col[1]), lty=Chamber.map$lty[1]
-#	)
-#	abline(cells.model$coef[1] + cells.model$coef[3],
-#		cells.model$coef[2] + cells.model$coef[4], 
-#		col=as.character(Chamber.map$col[2]), lty=Chamber.map$lty[2]
-#	)
+        )
+	lines(preds ~ X, data=subset(Y.pred, Chamber=="Ambient"), 
+          col = as.character(Chamber.map$col[1]), 
+          lty = Chamber.map$lty[1]
+          )
+	lines(preds ~ X, data=subset(Y.pred, Chamber=="Full Chamber"), 
+          col = as.character(Chamber.map$col[2]), 
+          lty = Chamber.map$lty[2]
+          )
 	legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
-	## Heterocysts only
-	plot(h_m2, Y.use, type="p",
-		ylab=Nfix.label, xlab=h.label,
-		pch=point, col=colr, bg=bg.colr
-	)
-	lines(preds~h_m2, data=subset(h.pred, Chamber=="Ambient"), col= Chamber.map$col[1], lty= Chamber.map$lty[1])
-	lines(preds~h_m2, data=subset(h.pred, Chamber=="Full Chamber"), col= Chamber.map$col[2], lty= Chamber.map$lty[2])
-	legend("topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
 })
 
 

@@ -31,14 +31,6 @@
 
 Current Changes:
 ================
-GLMM draft: ARA vs cyanobacteria
+plotMap function creates character columns
 
-+ started converting old GLM script to use new project structure.
-  - still need to handle predictions.
-  - Random effects / hierarchical structure?
-
-+ SECCclean() function to perfom standard pruning
-  + drop empty rows
-  + drop unused factor levels
-
-+ fixed a mistake in calculation of Heterocyst density (Hcells.m was getting same values as Cells).
+updated plotMap() function to create character columns, rather than factors (stringsAsFactors = FALSE).

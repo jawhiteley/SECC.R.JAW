@@ -205,10 +205,11 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   if (factor == "Chamber") {
     if (is.null(labels)) labels <- c("A", "B", "C")
     PlotMap <- 
-      data.frame(label=labels, 
+      data.frame(label = labels, 
                  col = c("#000000","#000099","#990000"), 
                  bg  = c("#FFFFFF","#FFFFFF","#FFFFFF"), 
-                 pch = c(21, 23, 18), lty = c(3, 2, 1) 
+                 pch = c(21, 23, 18), lty = c(3, 2, 1),
+                 stringsAsFactors = FALSE
                  )
     ## A) Ambient = black, open circles with dotted line ; 
     ## B) Partial = blue, open diamonds with dashed line ; 
@@ -218,11 +219,12 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   if (factor == "Frag") {
     if (is.null(labels)) labels <- c("1", "2", "3", "4")
     PlotMap <- 
-      data.frame(label=labels, 
+      data.frame(label = labels, 
                  col = c("#000000", "#666666", "#000099", "#990000"), 
                  bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF", "#FFFFFF"), 
                  pch = c(19, 15, 22, 21),
-                 lty = c(1, 2, 3, 3)
+                 lty = c(1, 2, 3, 3),
+                 stringsAsFactors = FALSE
                  )
     ## 1) Continuous         = black, filled circles with solid line ; 
     ## 2) Full Corridors     =  grey, filled squares with dashed line ; 
@@ -233,10 +235,11 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   if (factor == "Position") {
     if (is.null(labels)) labels <- c("I", "*", "O")
     PlotMap <- 
-      data.frame(label=labels, 
+      data.frame(label = labels, 
                  col = c("#000000", "#000099", "#990000"), 
                  bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF"), 
-                 pch = c(19, 8, 21), lty = c(2, 3, 1) 
+                 pch = c(19, 8, 21), lty = c(2, 3, 1),
+                 stringsAsFactors = FALSE
                  )
     ## 1) Inner   = black filled circles with dotted line ; 
     ## 2) other   = blue           stars with dashed line ; 
