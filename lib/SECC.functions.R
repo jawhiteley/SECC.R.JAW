@@ -198,7 +198,8 @@ SECCclean <- function(data=NULL,
 plotMap <- function (factor = c("Chamber", "Frag", "Position"), 
                      labels = c() ) 
 {
-  ##  allow labels to be a subset of factor levels, and auto-drop labels here?
+  ## allow labels to be a subset of factor levels, and auto-drop labels here?
+  ## strings should *NOT* be stored as factors, or they will not be recognized as strings, and cause problems when trying to use them in graphing functions.  Alternatively, I could probably store these as matrices or tables, rather than data frames, but data frames make more sense to me for this purpose.
   
   factor <- match.arg(factor)
 

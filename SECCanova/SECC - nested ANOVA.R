@@ -330,17 +330,11 @@ par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 
 
 ## Patch results: Chamber x Position
-plot.means <- with( SECCp, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Position = Position, Chamber = Chamber), 
-                             mean 
-                             ) 
-                   )
-with( plot.means, {
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plot.error <- matrix( as.numeric(msd["Chamber:Position"]/2),
-                       nrow = length(levels(Chamber)),
-                       ncol = length(levels(Position))
+                       nrow = length(levels(Chamber)),  # rows: x-axis
+                       ncol = length(levels(Position))  # cols: y-axis
                        )
   plotMeans( Y.trans, Chamber, Position, 
             error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
@@ -352,23 +346,17 @@ with( plot.means, {
             xlab = attr(SECC, "labels")[["Chamber"]],
             ylab = Y.plotlab
             )   
-  ## as.character() is needed for string arguments (color hex strings), but I'm still not entirely sure why.  If it is not used, that argument is essentially ignored, and (ugly) defaults are used instead.
+  ## as.character() is needed for string arguments (color hex strings), if they are stored as factors().
 })
 
 ## Patch results: Frag x Position (significant in t4)
-plot.means <- with( SECCp, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Pos = Position, Frag = Frag), 
-                             mean 
-                             ) 
-                   )
-with( plot.means, {
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plot.error <- matrix( as.numeric(msd.FxP/2),
                        nrow = length(levels(Frag)),
-                       ncol = length(levels(Pos))
+                       ncol = length(levels(Position))
                        )
-  plotMeans( Y.trans, Frag, Pos, 
+  plotMeans( Y.trans, Frag, Position, 
             error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
             lty = Position.map$lty, pch = Position.map$pch,
             col = as.character(Position.map$col),
@@ -381,14 +369,8 @@ with( plot.means, {
 })
 
 ## Patch results: Chamber x Frag
-plot.means <- with( SECCp, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Frag=Frag, Chamber=Chamber), 
-                             mean 
-                             ) 
-                   )
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-with( plot.means, {
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plot.error <- matrix( as.numeric(msd["Chamber:Frag"]/2),
                        nrow = length(levels(Frag)),
@@ -411,17 +393,11 @@ with( plot.means, {
 ##================================================
 ## META-COMMUNITY results
 Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% Comparison Intervals")
+par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 
 ## Chamber Main Effects
-plot.means <- with( SECCmc, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Chamber=Chamber), 
-                             mean 
-                             ) 
-                   )
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(plot.means$Chamber)) )
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-with( plot.means, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Chamber)) )
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Chamber, 
             error.bars="custom", level=plot.error, cex=2, lwd=2,
@@ -436,15 +412,8 @@ with( plot.means, {
 })
 
 ## Fragmentation Main Effects
-plot.means <- with( SECCmc, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Frag=Frag), 
-                             mean 
-                             ) 
-                   )
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(plot.means$Frag)) )
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-with( plot.means, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Frag)) )
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Frag, 
             error.bars="custom", level=plot.error, cex=2, lwd=2,
@@ -459,14 +428,13 @@ with( plot.means, {
 })
 
 ## Interaction: Chamber x Frag
-plot.means <- with( SECCmc, 
-                   aggregate( cbind( Y.trans ), 
-                             list(Frag=Frag, Chamber=Chamber), 
-                             mean 
-                             ) 
-                   )
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-with( plot.means, {
+## plot.means <- with( SECCmc, 
+##                    aggregate( cbind( Y.trans ), 
+##                              list(Frag=Frag, Chamber=Chamber), 
+##                              mean 
+##                              ) 
+##                    )
+with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plot.error <- matrix( as.numeric(msd.mc.FxC/2),
                        nrow = length(levels(Frag)),
