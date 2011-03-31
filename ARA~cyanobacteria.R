@@ -42,7 +42,7 @@ Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
 
 
 ## Output Results?
-Save.results  <- FALSE  
+Save.results  <- TRUE  
 
 
 ##================================================
@@ -263,7 +263,7 @@ xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1
 if ( length(Time.use) > 1 ) {
   Y.formula <- Y ~ X*Time*Chamber*Frag*Position
 } else {
-  Y.formula <- Y ~ X*Chamber*Frag*Position
+  Y.formula <- Y ~ X * Chamber * Frag * Position
 }
 
 ##################################################
@@ -307,7 +307,6 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 anova(Y.model),                # model summary
 				 summary(Y.model),              # model summary
 				 cat("\n\n"),                   # for output
-				 model.tables(Y.model, "means"),# effect sizes
 				 cat(Save.end),                 # END OUTPUT #
 				 file = Save.text
 				)
@@ -378,7 +377,7 @@ SECCa <- within( SECCa,{
 par(mfrow=c(1,1))
 pred.Y <- with( Y.pred, 
                aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
-)  # I should be getting direct predictions, not means of predictions.
+)  # I should be getting direct predictions, not means of predictions. *****
 with( SECCa,{
 	# pred | augpred | ?
 	plot(X, Y, type="p",
@@ -401,9 +400,11 @@ with( SECCa,{
 ##================================================
 ## Plot fitted on observed, by factor?
 ##================================================
-## lattice panels?
+
+## lattice panels
 print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
               pch = SECCa$pt, col = SECCa$colr, 
+              xlab = quote(X.plotlab), ylab = quote(Y.plotlab), 
               panel = function(..., data, subscripts) {
                 panel.xyplot(...)  # regular plot of data points
                 Frag.lvl <- unique(SECCa$Frag[subscripts]) # get current factor levels
