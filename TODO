@@ -1,6 +1,6 @@
 - Regressions
   - ARA vs. Cyanobacteria - GLM(M)
-  - Include H2O as a covariate.
+  - Include H2O as a covariate?
 
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
@@ -26,9 +26,8 @@
     - collect results for output?
 - can I turn major operations of Nested ANOVA script into functions?
 
-- Modify _Main.R script to collect results from each analysis, and produce results for manuscript
-
 
 Current Changes:
 ================
+
 

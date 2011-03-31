@@ -42,7 +42,7 @@ Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
 
 
 ## Output Results?
-Save.results  <- TRUE  
+Save.results  <- FALSE  
 
 
 ##================================================
