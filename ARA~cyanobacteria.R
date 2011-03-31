@@ -402,21 +402,6 @@ with( SECCa,{
 ## Plot fitted on observed, by factor?
 ##================================================
 ## lattice panels?
-pred.Y <- with( Y.pred, 
-               aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
-)
-print( xyplot( Y ~ X | Chamber * Frag * Position , data=SECCa, 
-              pch = SECCa$pt, col = SECCa$colr, 
-              panel = function(...) {
-                panel.xyplot(...)
-                panel.xyplot(Y.pred$X, Y.pred$predicted, 
-                             data = subset(Y.pred, Y.pred$Chamber == Chamber), 
-                             type = 'l'
-                             )
-              }
-              )
-      )
-
 print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
               pch = SECCa$pt, col = SECCa$colr, 
               panel = function(..., data, subscripts) {
@@ -438,17 +423,17 @@ print( xyplot( Y ~ X | Frag * Position , data=SECCa,
               )
 )
 
-## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
-## individual lm's within each panel.  Not exactly what I want.
-coplot( Y ~ X | Frag * Position, data=SECCa, 
-        pch=SECCa$pt, col=SECCa$colr, # , bg=Chamber.map$bg
-        panel = panel.lines2
-)
-
 
 
 
 if (FALSE) {
+  ## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
+  ## individual lm's within each panel.  Not exactly what I want.
+  coplot( Y ~ X | Frag * Position, data=SECCa, 
+         pch=SECCa$pt, col=SECCa$colr, # , bg=Chamber.map$bg
+         panel = panel.lines2
+         )
+
   ## Plotting: Observed and Fitted from GLMM - from Richard & Zofia's GLMM workshop
   df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
   cc1 <- as.data.frame(coef(Y.model)$Y)
