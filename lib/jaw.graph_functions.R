@@ -229,4 +229,19 @@ plotMeans <- function (response, factor1, factor2,
 }
 
 
+##================================================
+## PANEL FUNCTIONS
+##================================================
+
+## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
+panel.lines2 <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
+    cex = 1, ...)
+{
+    points(x, y, pch = pch, col = col, bg = bg, cex = cex)
+    ok <- is.finite(x) & is.finite(y)
+    if (any(ok)){
+        tmp=lm(y[ok]~x[ok])
+        abline(tmp)}
+
+}
 

@@ -18,6 +18,7 @@ source('./lib/init.R')
 
 ## library(car)
 library(lattice)
+## library(lme4)
 
 
 ##################################################
@@ -168,7 +169,7 @@ Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
-Chamber.map$pch <- c(21, 16)
+Chamber.map$pch <- c(21, 16)  # use circles for both treatments
 
 SECCa <- within( SECCa,{
 	colr = ifelse( Chamber == Chamber.map$label[1], 
@@ -204,10 +205,9 @@ for(i in 1:length(vars.ls) ){
   var <- vars.ls[i]
   label <- labels.ls[i]
   with( SECCa,{
-        cat(var, " ")
         X.var <- get(var)
         X.max  <- max( X.var )
-        ##         cat(X.max, "\n")
+        ##         cat(var, " ", X.max, "\n")
         freq.max <- length(X.var)/2
         X.maxD <- max( density( X.var )$y )*1.5
         for(Ch.trt in levels(Chamber)){
@@ -323,37 +323,73 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 ## generate grid to add predicted values to (X-values in all combinations of factors).
-Y.pred 	<- expand.grid( Chamber=levels(SECCa$Chamber) , 
-                        Frag=levels(SECCa$Frag), 
-                        Position=levels(SECCa$Position), 
-                        X=seq(0, max(SECCa$X), length.out=100 ) 
-                        )
-Y.pred$preds  <- predict(Y.model, newdata=Y.pred, type="response" )	# newdata must have same explanatory variable name for predict to work.
+Y.pred <- expand.grid(Chamber  = levels(SECCa$Chamber) , 
+                      Frag     = levels(SECCa$Frag), 
+                      Position = levels(SECCa$Position), 
+                      X=seq(0, max(SECCa$X), length.out=100 ) 
+                      )
+Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdata must have same explanatory variable name for predict to work.
+
+if (FALSE) {
+  pred.Chamber <- expand.grid(Chamber = levels(SECCa$Chamber) , 
+                              X=seq(0, max(SECCa$X), length.out=100 ) 
+  )
+  pred.Chamber$predicted <- predict(Y.model, newdata=pred.Chamber, type="response" )
+  pred.Frag <- expand.grid(Frag = levels(SECCa$Frag) , 
+                           X=seq(0, max(SECCa$X), length.out=100 )
+  )
+  pred.Frag$predicted <- predict(Y.model, newdata=pred.Frag, type="response" )
+  pred.Position <- expand.grid(Position = levels(SECCa$Position) , 
+                               X=seq(0, max(SECCa$X), length.out=100 ) 
+  )
+  pred.Position$predicted <- predict(Y.model, newdata=pred.Position, type="response" )
+  pred.FxP <- expand.grid(Frag     = levels(SECCa$Frag), 
+                          Position = levels(SECCa$Position), 
+                          X=seq(0, max(SECCa$X), length.out=100 ) 
+                          )
+  pred.FxP$predicted <- predict(Y.model, newdata=pred.Position, type="response" )
+}
 
 
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
+Chamber.map$pch <- c(21, 16)  # use circles for both treatments
+
+SECCa <- within( SECCa,{
+	colr = as.character(ifelse(Chamber == Chamber.map$label[1], 
+                               Chamber.map$col[1], 
+                               Chamber.map$col[2] 
+                               )
+    )
+	fill = as.character(ifelse(Chamber == Chamber.map$label[1], 
+                               Chamber.map$bg[1],
+                               Chamber.map$bg[2]
+                               )
+    )
+	pt = ifelse(Chamber == Chamber.map$label[1], 
+			Chamber.map$pch[1], 
+			Chamber.map$pch[2]
+		)
+})
 
 
 par(mfrow=c(1,1))
+pred.Y <- with( Y.pred, 
+               aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
+)  # I should be getting direct predictions, not means of predictions.
 with( SECCa,{
-	colr = ifelse(Chamber=="Ambient", 
-                  as.character(Chamber.map$col[1]), 
-                  as.character(Chamber.map$col[2]) 
-                  )
-	bg.colr = ifelse(Chamber=="Ambient", Chamber.map$bg[1], Chamber.map$bg[2] )
 	# pred | augpred | ?
 	plot(X, Y, type="p",
 		ylab=Y.plotlab, xlab=X.plotlab,
-		pch=point, col=colr, bg=bg.colr
+		pch=pt, col=colr, bg=fill
         )
-	lines(preds ~ X, data=subset(Y.pred, Chamber=="Ambient"), 
-          col = as.character(Chamber.map$col[1]), 
+	lines(predicted ~ X, data=subset(pred.Y, Chamber == "Ambient"), 
+          col = Chamber.map$col[1], 
           lty = Chamber.map$lty[1]
           )
-	lines(preds ~ X, data=subset(Y.pred, Chamber=="Full Chamber"), 
+	lines(predicted ~ X, data=subset(pred.Y, Chamber == "Full Chamber"), 
           col = as.character(Chamber.map$col[2]), 
           lty = Chamber.map$lty[2]
           )
@@ -361,38 +397,90 @@ with( SECCa,{
 })
 
 
-## Plotting: Observed and Fitted - from Richard & Zofia's GLMM workshop
-df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
-cc1 <- as.data.frame(coef(Y.model)$Y)
-names(cc1) <- c("A", "B")
-df <- cbind(df, cc1)
-ff <- fixef(Y.model)
 
-print( xyplot( Y ~ X | Chamber * Position, data = SECCa, 
-          aspect = "xy", layout = c(4,3),
-          type = c("g", "p", "r"), coef.list = df[,3:4],
-          panel = function(..., coef.list) {
-            panel.xyplot(...)
-            panel.abline(as.numeric( coef.list[packet.number(),] ), 
-                         col.line = trellis.par.get("superpose.line")$col[2],
-                         lty = trellis.par.get("superpose.line")$lty[2]
-                         )
-            panel.abline(fixef(Y.model), 
-                         col.line = trellis.par.get("superpose.line")$col[4],
-                         lty = trellis.par.get("superpose.line")$lty[4]
-                         )
-          },
-          index.cond = function(x,y) coef(lm(y ~ x))[1],
-          xlab = X.plotlab,
-          ylab = Y.plotlab,
-          key = list(space = "top", columns = 3,
-                text = list(c("Within-subject", "Mixed model", "Population")),
-                lines = list(col = trellis.par.get("superpose.line")$col[c(2:1,4)],
-                             lty = trellis.par.get("superpose.line")$lty[c(2:1,4)]
-                ))
-          )
+##================================================
+## Plot fitted on observed, by factor?
+##================================================
+## lattice panels?
+pred.Y <- with( Y.pred, 
+               aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
+)
+print( xyplot( Y ~ X | Chamber * Frag * Position , data=SECCa, 
+              pch = SECCa$pt, col = SECCa$colr, 
+              panel = function(...) {
+                panel.xyplot(...)
+                panel.xyplot(Y.pred$X, Y.pred$predicted, 
+                             data = subset(Y.pred, Y.pred$Chamber == Chamber), 
+                             type = 'l'
+                             )
+              }
+              )
+      )
+
+print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
+              pch = SECCa$pt, col = SECCa$colr, 
+              panel = function(..., data, subscripts) {
+                panel.xyplot(...)  # regular plot of data points
+                Frag.lvl <- unique(SECCa$Frag[subscripts]) # get current factor levels
+                Pos.lvl  <- unique(SECCa$Position[subscripts])
+                preds    <- Y.pred[which(Y.pred$Frag %in% Frag.lvl 
+                                       & Y.pred$Position %in% Pos.lvl), ]
+##                  browser()
+                for( lvl in levels(preds$Chamber) ) {
+                  preds.lvl <- subset(preds, preds$Chamber == lvl)
+                  panel.xyplot(preds.lvl$X, preds.lvl$predicted, 
+                               type = 'l', 
+                               col = Chamber.map$col[Chamber.map$label == lvl]
+                               )
+                }
+              },
+              subscripts = T
+              )
 )
 
+## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
+## individual lm's within each panel.  Not exactly what I want.
+coplot( Y ~ X | Frag * Position, data=SECCa, 
+        pch=SECCa$pt, col=SECCa$colr, # , bg=Chamber.map$bg
+        panel = panel.lines2
+)
+
+
+
+
+if (FALSE) {
+  ## Plotting: Observed and Fitted from GLMM - from Richard & Zofia's GLMM workshop
+  df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
+  cc1 <- as.data.frame(coef(Y.model)$Y)
+  names(cc1) <- c("A", "B")
+  df <- cbind(df, cc1)
+  ff <- fixef(Y.model)
+
+  print( xyplot( Y ~ X | Chamber * Position, data = SECCa, 
+                aspect = "xy", layout = c(4,3),
+                type = c("g", "p", "r"), coef.list = df[,3:4],
+                panel = function(..., coef.list) {
+                  panel.xyplot(...)
+                  panel.abline(as.numeric( coef.list[packet.number(),] ), 
+                               col.line = trellis.par.get("superpose.line")$col[2],
+                               lty = trellis.par.get("superpose.line")$lty[2]
+                               )
+                  panel.abline(fixef(Y.model), 
+                               col.line = trellis.par.get("superpose.line")$col[4],
+                               lty = trellis.par.get("superpose.line")$lty[4]
+                               )
+                },
+                index.cond = function(x,y) coef(lm(y ~ x))[1],
+                xlab = X.plotlab,
+                ylab = Y.plotlab,
+                key = list(space = "top", columns = 3,
+                  text = list(c("Within-subject", "Mixed model", "Population")),
+                  lines = list(col = trellis.par.get("superpose.line")$col[c(2:1,4)],
+                  lty = trellis.par.get("superpose.line")$lty[c(2:1,4)]
+                  ))
+                )
+  )
+}
 
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
