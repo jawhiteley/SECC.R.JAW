@@ -281,12 +281,23 @@ Y.model <- glm( Y.formula, data=SECCa, family="quasipoisson" )
 ## CHECK ASSUMPTIONS
 ##################################################
 ## analyse residuals, standard diagnostic plots
-par(mfrow=c(2,2))	    # panel of figures: 3 rows & 2 columns
+par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
 plot(Y.model)
 
-par(mfrow=c(1,1))	    # panel of figures: 3 rows & 2 columns
-hist(resid(Y.model))    # plot residuals
+Model.resid <- resid(Y.model)
+par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
+hist(Model.resid)    # plot residuals
 
+## Plot Residuals: see Zuur et al. 2007, pg. 61-63
+coplot( Model.resid ~ X | Frag * Position, data=SECCa, 
+       pch=SECCa$pt, col=SECCa$colr,
+       ylab = "Residuals"
+)
+## much the same breakdown, using TRELLIS xyplot over 3 factors.
+print( xyplot( Model.resid ~ X | Chamber * Frag * Position, data=SECCa, 
+       pch=point, col=SECCa$colr, bg = SECCa$fill,
+       ylab = "Residuals"
+) )
 
 
 ##################################################
