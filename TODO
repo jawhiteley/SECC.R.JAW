@@ -2,6 +2,10 @@
   - ARA vs. Cyanobacteria - GLM(M)
   - Include H2O as a covariate?
 
+- adjust cyanobacteria counts in rows with 'faint' in the Notes
+  - reduce by 50%?  25 - 75%?
+  - weighting?  Remove from analysis as missing data?
+
 - Get Mean differences of Temperature & RH
   between Chamber Treatments (HOBO Data)
 - Load    Moss Growth Data

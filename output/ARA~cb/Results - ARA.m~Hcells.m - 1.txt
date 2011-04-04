@@ -1,0 +1,128 @@
+GLM Results for: Acetylene Reduction ( ARA.m ) 
+               ~ Heterocyst Cell Density ( Hcells.m ) 
+Expt. Time:    12 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Mon Apr  4 10:16:05 2011
+
+================================================================
+Y ~ log(X + 1) * Chamber * Frag * Position
+Analysis of Deviance Table
+
+Model: quasipoisson, link: log
+
+Response: Y
+
+Terms added sequentially (first to last)
+
+
+                                 Df Deviance Resid. Df Resid. Dev
+NULL                                               127      32867
+log(X + 1)                        1   4664.0       126      28203
+Chamber                           1   1296.2       125      26907
+Frag                              3    467.9       122      26439
+Position                          1   1204.0       121      25235
+log(X + 1):Chamber                1    195.1       120      25040
+log(X + 1):Frag                   3    451.6       117      24589
+Chamber:Frag                      3    705.9       114      23883
+log(X + 1):Position               1    138.4       113      23744
+Chamber:Position                  1   3100.0       112      20644
+Frag:Position                     3    628.6       109      20016
+log(X + 1):Chamber:Frag           3     63.2       106      19953
+log(X + 1):Chamber:Position       1   1941.1       105      18011
+log(X + 1):Frag:Position          3    529.6       102      17482
+Chamber:Frag:Position             3    102.1        99      17380
+log(X + 1):Chamber:Frag:Position  3    189.1        96      17191
+
+Call:
+glm(formula = Y.formula, family = "quasipoisson", data = SECCa)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-25.9518   -9.4969   -0.0135    3.4179   31.0983  
+
+Coefficients:
+                                                                    Estimate Std. Error
+(Intercept)                                                        4.811e+00  1.152e+00
+log(X + 1)                                                         4.729e-04  7.197e-02
+ChamberFull Chamber                                               -5.171e-01  1.375e+00
+FragFull Corridors                                                 7.586e-01  3.812e+00
+FragPseudo-Corridors                                              -1.044e+00  1.507e+00
+FragIsolated                                                       2.481e-02  1.328e+00
+PositionOuter                                                     -1.264e+00  1.705e+00
+log(X + 1):ChamberFull Chamber                                     4.775e-02  8.730e-02
+log(X + 1):FragFull Corridors                                     -7.940e-03  2.337e-01
+log(X + 1):FragPseudo-Corridors                                    1.074e-01  9.413e-02
+log(X + 1):FragIsolated                                            1.035e-02  8.542e-02
+ChamberFull Chamber:FragFull Corridors                            -2.314e+00  4.304e+00
+ChamberFull Chamber:FragPseudo-Corridors                           3.732e-01  2.242e+00
+ChamberFull Chamber:FragIsolated                                  -1.592e+00  2.649e+00
+log(X + 1):PositionOuter                                           1.027e-01  1.116e-01
+ChamberFull Chamber:PositionOuter                                 -1.513e+02  1.616e+02
+FragFull Corridors:PositionOuter                                  -1.240e+00  4.243e+00
+FragPseudo-Corridors:PositionOuter                                 2.175e+00  2.143e+00
+FragIsolated:PositionOuter                                        -1.025e+00  3.080e+00
+log(X + 1):ChamberFull Chamber:FragFull Corridors                  1.061e-01  2.624e-01
+log(X + 1):ChamberFull Chamber:FragPseudo-Corridors               -3.525e-02  1.357e-01
+log(X + 1):ChamberFull Chamber:FragIsolated                        8.364e-02  1.575e-01
+log(X + 1):ChamberFull Chamber:PositionOuter                       8.262e+00  8.808e+00
+log(X + 1):FragFull Corridors:PositionOuter                        7.352e-02  2.609e-01
+log(X + 1):FragPseudo-Corridors:PositionOuter                     -1.796e-01  1.385e-01
+log(X + 1):FragIsolated:PositionOuter                              2.001e-02  1.885e-01
+ChamberFull Chamber:FragFull Corridors:PositionOuter               1.377e+02  5.984e+03
+ChamberFull Chamber:FragPseudo-Corridors:PositionOuter             1.334e+02  4.289e+03
+ChamberFull Chamber:FragIsolated:PositionOuter                     1.405e+02  1.678e+02
+log(X + 1):ChamberFull Chamber:FragFull Corridors:PositionOuter   -8.584e+00  3.904e+02
+log(X + 1):ChamberFull Chamber:FragPseudo-Corridors:PositionOuter -8.305e+00  2.920e+02
+log(X + 1):ChamberFull Chamber:FragIsolated:PositionOuter         -7.808e+00  9.185e+00
+                                                                  t value Pr(>|t|)    
+(Intercept)                                                         4.177  6.5e-05 ***
+log(X + 1)                                                          0.007    0.995    
+ChamberFull Chamber                                                -0.376    0.708    
+FragFull Corridors                                                  0.199    0.843    
+FragPseudo-Corridors                                               -0.693    0.490    
+FragIsolated                                                        0.019    0.985    
+PositionOuter                                                      -0.742    0.460    
+log(X + 1):ChamberFull Chamber                                      0.547    0.586    
+log(X + 1):FragFull Corridors                                      -0.034    0.973    
+log(X + 1):FragPseudo-Corridors                                     1.141    0.257    
+log(X + 1):FragIsolated                                             0.121    0.904    
+ChamberFull Chamber:FragFull Corridors                             -0.538    0.592    
+ChamberFull Chamber:FragPseudo-Corridors                            0.167    0.868    
+ChamberFull Chamber:FragIsolated                                   -0.601    0.549    
+log(X + 1):PositionOuter                                            0.920    0.360    
+ChamberFull Chamber:PositionOuter                                  -0.936    0.352    
+FragFull Corridors:PositionOuter                                   -0.292    0.771    
+FragPseudo-Corridors:PositionOuter                                  1.015    0.313    
+FragIsolated:PositionOuter                                         -0.333    0.740    
+log(X + 1):ChamberFull Chamber:FragFull Corridors                   0.404    0.687    
+log(X + 1):ChamberFull Chamber:FragPseudo-Corridors                -0.260    0.796    
+log(X + 1):ChamberFull Chamber:FragIsolated                         0.531    0.597    
+log(X + 1):ChamberFull Chamber:PositionOuter                        0.938    0.351    
+log(X + 1):FragFull Corridors:PositionOuter                         0.282    0.779    
+log(X + 1):FragPseudo-Corridors:PositionOuter                      -1.297    0.198    
+log(X + 1):FragIsolated:PositionOuter                               0.106    0.916    
+ChamberFull Chamber:FragFull Corridors:PositionOuter                0.023    0.982    
+ChamberFull Chamber:FragPseudo-Corridors:PositionOuter              0.031    0.975    
+ChamberFull Chamber:FragIsolated:PositionOuter                      0.837    0.405    
+log(X + 1):ChamberFull Chamber:FragFull Corridors:PositionOuter    -0.022    0.983    
+log(X + 1):ChamberFull Chamber:FragPseudo-Corridors:PositionOuter  -0.028    0.977    
+log(X + 1):ChamberFull Chamber:FragIsolated:PositionOuter          -0.850    0.397    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+(Dispersion parameter for quasipoisson family taken to be 167.5852)
+
+    Null deviance: 32867  on 127  degrees of freedom
+Residual deviance: 17191  on  96  degrees of freedom
+AIC: NA
+
+Number of Fisher Scoring iterations: 11
+
+
+
+
+
+<============================= END ============================>

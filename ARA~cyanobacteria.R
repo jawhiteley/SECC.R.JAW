@@ -261,9 +261,9 @@ xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1
 
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Y.formula <- Y ~ X*Time*Chamber*Frag*Position
+  Y.formula <- Y ~ log(X+1)*Time*Chamber*Frag*Position
 } else {
-  Y.formula <- Y ~ X * Chamber * Frag * Position
+  Y.formula <- Y ~ log(X+1) * Chamber * Frag * Position
 }
 
 ##################################################

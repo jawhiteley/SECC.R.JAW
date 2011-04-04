@@ -1,0 +1,394 @@
+Nested ANOVA Results for: Heterocyst Cell Density ( Hcells.m ) 
+Transformation used:      Y.4rt 
+Expt. Time:    12 months, 22 months, 24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Mon Apr  4 10:10:20 2011
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Time * Chamber * Frag * Position + Error(Block/Time/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  38996  5570.8               
+
+Error: Block:Time
+          Df Sum Sq Mean Sq F value Pr(>F)
+Time       2  17288  8644.1  1.2514 0.3162
+Residuals 14  96708  6907.7               
+
+Error: Block:Time:Chamber
+             Df Sum Sq Mean Sq F value Pr(>F)
+Chamber       1   4186  4186.4  1.5620 0.2251
+Time:Chamber  2   2829  1414.4  0.5277 0.5976
+Residuals    21  56282  2680.1               
+
+Error: Block:Time:Chamber:Frag
+                   Df Sum Sq Mean Sq F value Pr(>F)
+Frag                3   2155  718.35  0.4631 0.7086
+Time:Frag           6   9742 1623.69  1.0467 0.3985
+Chamber:Frag        3    857  285.81  0.1842 0.9069
+Time:Chamber:Frag   6   5270  878.33  0.5662 0.7566
+Residuals         126 195464 1551.31               
+
+Error: Within
+                            Df Sum Sq Mean Sq F value  Pr(>F)  
+Position                     1   4699  4698.9  3.4961 0.06325 .
+Time:Position                2    262   131.1  0.0975 0.90712  
+Chamber:Position             1     22    21.6  0.0161 0.89924  
+Frag:Position                3    826   275.3  0.2048 0.89296  
+Time:Chamber:Position        2   1635   817.5  0.6083 0.54549  
+Time:Frag:Position           6  11897  1982.9  1.4753 0.18944  
+Chamber:Frag:Position        3    255    85.1  0.0633 0.97914  
+Time:Chamber:Frag:Position   6  11422  1903.7  1.4164 0.21101  
+Residuals                  168 225802  1344.1                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+Tables of means
+Grand mean
+         
+44.09831 
+
+ Time 
+Time
+12 months 22 months 24 months 
+    51.58     35.30     45.42 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+        40.8         47.4 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           43.56            44.90            47.24            40.69 
+
+ Position 
+Position
+Inner Outer 
+ 47.6  40.6 
+
+ Time:Chamber 
+           Chamber
+Time        Ambient Full Chamber
+  12 months 51.41   51.74       
+  22 months 28.51   42.09       
+  24 months 42.47   48.37       
+
+ Time:Frag 
+           Frag
+Time        Continuous Full Corridors Pseudo-Corridors Isolated
+  12 months 45.95      53.69          52.78            53.89   
+  22 months 45.23      30.87          35.02            30.07   
+  24 months 39.50      50.14          53.93            38.11   
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      37.83      42.83          45.17            37.36   
+  Full Chamber 49.29      46.97          49.32            44.02   
+
+ Time:Position 
+           Position
+Time        Inner Outer
+  12 months 55.38 47.77
+  22 months 37.67 32.93
+  24 months 49.74 41.10
+
+ Chamber:Position 
+              Position
+Chamber        Inner Outer
+  Ambient      44.06 37.54
+  Full Chamber 51.14 43.66
+
+ Frag:Position 
+                  Position
+Frag               Inner Outer
+  Continuous       45.83 41.30
+  Full Corridors   49.97 39.83
+  Pseudo-Corridors 52.08 42.40
+  Isolated         42.51 38.87
+
+ Time:Chamber:Frag 
+, , Frag = Continuous
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 47.79   44.11       
+  22 months 31.40   59.07       
+  24 months 34.30   44.70       
+
+, , Frag = Full Corridors
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 56.03   51.35       
+  22 months 22.40   39.34       
+  24 months 50.07   50.21       
+
+, , Frag = Pseudo-Corridors
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 46.36   59.20       
+  22 months 35.26   34.79       
+  24 months 53.88   53.97       
+
+, , Frag = Isolated
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 55.46   52.31       
+  22 months 24.99   35.15       
+  24 months 31.62   44.60       
+
+
+ Time:Chamber:Position 
+, , Position = Inner
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 54.26   56.51       
+  22 months 33.45   41.88       
+  24 months 44.46   55.02       
+
+, , Position = Outer
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 48.56   46.98       
+  22 months 23.57   42.29       
+  24 months 40.47   41.73       
+
+
+ Time:Frag:Position 
+, , Position = Inner
+
+           Frag
+Time        Continuous Full Corridors Pseudo-Corridors Isolated
+  12 months 56.01      55.40          51.34            58.78   
+  22 months 49.54      33.82          43.94            23.38   
+  24 months 31.93      60.69          60.97            45.36   
+
+, , Position = Outer
+
+           Frag
+Time        Continuous Full Corridors Pseudo-Corridors Isolated
+  12 months 35.88      51.99          54.21            48.99   
+  22 months 40.93      27.92          26.11            36.76   
+  24 months 47.08      39.59          46.88            30.85   
+
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      39.47      49.07          49.16            38.54   
+  Full Chamber 52.18      50.87          55.01            46.48   
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      36.19      36.60          41.18            36.17   
+  Full Chamber 46.40      43.07          43.63            41.56   
+
+
+ Time:Chamber:Frag:Position 
+, , Frag = Continuous, Position = Inner
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 64.72   47.30       
+  22 months 30.78   68.30       
+  24 months 22.91   40.95       
+
+, , Frag = Full Corridors, Position = Inner
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 62.20   48.60       
+  22 months 22.80   44.83       
+  24 months 62.20   59.18       
+
+, , Frag = Pseudo-Corridors, Position = Inner
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 36.86   65.82       
+  22 months 52.16   35.71       
+  24 months 58.44   63.50       
+
+, , Frag = Isolated, Position = Inner
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 53.26   64.31       
+  22 months 28.07   18.69       
+  24 months 34.29   56.44       
+
+, , Frag = Continuous, Position = Outer
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 30.86   40.91       
+  22 months 32.02   49.84       
+  24 months 45.70   48.46       
+
+, , Frag = Full Corridors, Position = Outer
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 49.87   54.10       
+  22 months 22.00   33.85       
+  24 months 37.93   41.25       
+
+, , Frag = Pseudo-Corridors, Position = Outer
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 55.85   52.58       
+  22 months 18.36   33.87       
+  24 months 49.33   44.44       
+
+, , Frag = Isolated, Position = Outer
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 57.66   40.32       
+  22 months 21.91   51.61       
+  24 months 28.95   32.76       
+
+
+95% Minimum Significant Ranges (MSR):
+                      Time                    Chamber                       Frag 
+                  27.18131                   11.88985                   16.10199 
+                  Position               Time:Chamber                  Time:Frag 
+                   8.41993                   28.39628                   32.16331 
+              Chamber:Frag              Time:Position           Chamber:Position 
+                  26.35696                   20.10915                   14.98787 
+             Frag:Position          Time:Chamber:Frag      Time:Chamber:Position 
+                  24.53328                   53.92026                   32.16331 
+        Time:Frag:Position      Chamber:Frag:Position Time:Chamber:Frag:Position 
+                  50.18944                   38.77685                   77.12897 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Time * Chamber * Frag + Error(Block/Time/Chamber)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  25244  3606.3               
+
+Error: Block:Time
+          Df Sum Sq Mean Sq F value Pr(>F)
+Time       2  11271  5635.4  1.2339 0.3209
+Residuals 14  63937  4566.9               
+
+Error: Block:Time:Chamber
+             Df  Sum Sq Mean Sq F value Pr(>F)
+Chamber       1  1557.1  1557.0  1.1230 0.3013
+Time:Chamber  2  1254.2   627.1  0.4523 0.6422
+Residuals    21 29116.9  1386.5               
+
+Error: Within
+                   Df Sum Sq Mean Sq F value Pr(>F)
+Frag                3    860  286.61  0.2818 0.8384
+Time:Frag           6   4167  694.52  0.6830 0.6637
+Chamber:Frag        3   1457  485.53  0.4775 0.6985
+Time:Chamber:Frag   6   3363  560.58  0.5513 0.7682
+Residuals         126 128131 1016.91               
+
+
+Tables of means
+Grand mean
+        
+54.4885 
+
+ Time 
+Time
+12 months 22 months 24 months 
+    62.11     44.01     57.35 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+       51.64        57.34 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           52.62            54.63            57.89            52.81 
+
+ Time:Chamber 
+           Chamber
+Time        Ambient Full Chamber
+  12 months 61.39   62.83       
+  22 months 37.57   50.45       
+  24 months 55.96   58.73       
+
+ Time:Frag 
+           Frag
+Time        Continuous Full Corridors Pseudo-Corridors Isolated
+  12 months 59.24      65.02          60.29            63.89   
+  22 months 50.48      37.48          47.84            40.24   
+  24 months 48.15      61.39          65.55            54.29   
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      45.01      53.38          56.51            51.66   
+  Full Chamber 60.24      55.89          59.27            53.95   
+
+ Time:Chamber:Frag 
+, , Frag = Continuous
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 56.41   62.06       
+  22 months 34.13   66.83       
+  24 months 44.48   51.82       
+
+, , Frag = Full Corridors
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 69.50   60.55       
+  22 months 30.44   44.52       
+  24 months 60.20   62.59       
+
+, , Frag = Pseudo-Corridors
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 52.43   68.16       
+  22 months 51.11   44.56       
+  24 months 65.99   65.10       
+
+, , Frag = Isolated
+
+           Chamber
+Time        Ambient Full Chamber
+  12 months 67.23   60.56       
+  22 months 34.58   45.89       
+  24 months 53.18   55.40       
+
+
+95% Minimum Significant Ranges (MSR):
+             Time           Chamber              Frag      Time:Chamber 
+         31.40972          12.14275          18.53914          29.07052 
+        Time:Frag      Chamber:Frag Time:Chamber:Frag 
+         39.88867          30.39386          62.39447 
+
+
+<============================= END ============================>

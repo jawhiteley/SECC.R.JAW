@@ -1,0 +1,149 @@
+Nested ANOVA Results for: Heterocyst Cell Density ( Hcells.m ) 
+Transformation used:      Y.4rt 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Mon Apr  4 10:10:19 2011
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  47388  6769.7               
+
+Error: Block:Chamber
+          Df  Sum Sq Mean Sq F value Pr(>F)
+Chamber    1  1115.2  1115.2   0.528  0.491
+Residuals  7 14784.5  2112.1               
+
+Error: Block:Chamber:Frag
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3   5860 1953.46  1.4647 0.2379
+Chamber:Frag  3   1097  365.82  0.2743 0.8436
+Residuals    42  56017 1333.74               
+
+Error: Within
+                      Df Sum Sq Mean Sq F value Pr(>F)
+Position               1   2388 2387.79  1.4068 0.2406
+Chamber:Position       1    692  692.35  0.4079 0.5256
+Frag:Position          3   6284 2094.70  1.2341 0.3059
+Chamber:Frag:Position  3    725  241.73  0.1424 0.9341
+Residuals             56  95051 1697.33               
+
+
+Tables of means
+Grand mean
+         
+45.41848 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+       42.47        48.37 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           39.50            50.14            53.93            38.11 
+
+ Position 
+Position
+Inner Outer 
+49.74 41.10 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      34.30      50.07          53.88            31.62   
+  Full Chamber 44.70      50.21          53.97            44.60   
+
+ Chamber:Position 
+              Position
+Chamber        Inner Outer
+  Ambient      44.46 40.47
+  Full Chamber 55.02 41.73
+
+ Frag:Position 
+                  Position
+Frag               Inner Outer
+  Continuous       31.93 47.08
+  Full Corridors   60.69 39.59
+  Pseudo-Corridors 60.97 46.88
+  Isolated         45.36 30.85
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      22.91      62.20          58.44            34.29   
+  Full Chamber 40.95      59.18          63.50            56.44   
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      45.70      37.93          49.33            28.95   
+  Full Chamber 48.46      41.25          44.44            32.76   
+
+
+95% Minimum Significant Ranges (MSR):
+              Chamber                  Frag              Position          Chamber:Frag 
+             18.42973              26.15115              16.52145              42.94864 
+     Chamber:Position         Frag:Position Chamber:Frag:Position 
+             29.50115              48.45042              76.91578 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Chamber * Frag + Error(Block/Chamber)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7  37978  5425.4               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    1  122.2  122.25  0.1174  0.742
+Residuals  7 7291.4 1041.63               
+
+Error: Within
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          3   2841  946.89  1.0954 0.3617
+Chamber:Frag  3    139   46.33  0.0536 0.9834
+Residuals    42  36306  864.42               
+
+
+Tables of means
+Grand mean
+         
+57.34521 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+       55.96        58.73 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+           48.15            61.39            65.55            54.29 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      44.48      60.20          65.99            53.18   
+  Full Chamber 51.82      62.59          65.10            55.40   
+
+95% Minimum Significant Ranges (MSR):
+     Chamber         Frag Chamber:Frag 
+    18.53463     30.31038     50.10827 
+
+
+<============================= END ============================>
