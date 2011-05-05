@@ -72,6 +72,7 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ## CUSTOM LABELS
 ##================================================
 
+Y.lim <- c(0, 200) # consistent Y-axis
 
 
 

@@ -310,6 +310,7 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 ##################################################
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
+if (exists("Y.lim") == FALSE) Y.lim <- c( 0, max(SECCp$Y.trans) ) # consistent scale of Y axis
 
 Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
@@ -337,8 +338,8 @@ with( SECCp, {
                        ncol = length(levels(Position))  # cols: y-axis
                        )
   plotMeans( Y.trans, Chamber, Position, 
-            error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
-            lty = Position.map$lty, pch = Position.map$pch,
+            error.bars = "custom", level = plot.error, ylim = Y.lim,
+            cex = 2, lwd = 2, lty = Position.map$lty, pch = Position.map$pch,
             col = as.character(Position.map$col),
             bg  = as.character(Position.map$bg),
             main = Plot.Title,
@@ -357,8 +358,8 @@ with( SECCp, {
                        ncol = length(levels(Position))
                        )
   plotMeans( Y.trans, Frag, Position, 
-            error.bars = "custom", level = plot.error, cex = 2, lwd = 2,
-            lty = Position.map$lty, pch = Position.map$pch,
+            error.bars = "custom", level = plot.error, ylim = Y.lim,
+            cex = 2, lwd = 2, lty = Position.map$lty, pch = Position.map$pch,
             col = as.character(Position.map$col),
             bg  = as.character(Position.map$bg),
             main = Plot.Title,
@@ -377,8 +378,8 @@ with( SECCp, {
                        ncol = length(levels(Chamber))
                        )
   plotMeans( Y.trans , Frag , Chamber, 
-            error.bars="custom", level=plot.error, cex=2, lwd=2,
-            lty=Chamber.map$lty, pch=Chamber.map$pch,
+            error.bars="custom", level=plot.error, ylim = Y.lim,
+            cex = 2, lwd = 2, lty=Chamber.map$lty, pch=Chamber.map$pch,
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,
@@ -400,8 +401,8 @@ plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Chamber)) )
 with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Chamber, 
-            error.bars="custom", level=plot.error, cex=2, lwd=2,
-            lty=1, pch=Chamber.map$pch,
+            error.bars="custom", level=plot.error, ylim = Y.lim, 
+            cex=2, lwd=2, lty=1, pch=Chamber.map$pch,
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,
@@ -416,8 +417,8 @@ plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Frag)) )
 with( SECCp, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Frag, 
-            error.bars="custom", level=plot.error, cex=2, lwd=2,
-            lty=1, pch=Frag.map$pch,
+            error.bars="custom", level=plot.error, ylim = Y.lim, 
+            cex=2, lwd=2, lty=1, pch=Frag.map$pch,
             col=as.character(Frag.map$col),
             bg=as.character(Frag.map$bg),
             main = Plot.Title,
@@ -441,8 +442,8 @@ with( SECCp, {
                        ncol = length(levels(Chamber))
                        )
   plotMeans( Y.trans , Frag , Chamber, 
-            error.bars="custom", level=plot.error, cex=2, lwd=2,
-            lty=Chamber.map$lty, pch=Chamber.map$pch,
+            error.bars="custom", level=plot.error, ylim = Y.lim, 
+            cex=2, lwd=2, lty=Chamber.map$lty, pch=Chamber.map$pch,
             col=as.character(Chamber.map$col),
             bg=as.character(Chamber.map$bg),
             main = Plot.Title,

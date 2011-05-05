@@ -35,10 +35,10 @@ SECC <- within( SECC, {
     H2O.wwt <- H2O.wwt * 100
 })
 
-attr(SECC, "labels")[["H2O.asq"]] <- ""
-attr(SECC, "units" )[["H2O.asq"]] <- quote(asin(sqrt("% H2O")))
-attr(SECC, "labels")[["H2O"]] <- ""
-attr(SECC, "units" )[["H2O"]] <- quote("% H2O")
+attr(SECC, "labels")[["H2O.asq"]] <- "Moisture"
+attr(SECC, "units" )[["H2O.asq"]] <- quote(asin(sqrt("% "* H[2]*O)))
+attr(SECC, "labels")[["H2O"]] <- "Moisture"
+attr(SECC, "units" )[["H2O"]] <- quote("("* H[2]*O *" as % of Dry Wt. moss)")
 
 
 ### Load default settings (based on response variable) *****
@@ -57,7 +57,7 @@ Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
 Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
-Save.results  <- TRUE  
+Save.results  <- FALSE
 
 
 ### Load default Labels - dependent on above settings. *****

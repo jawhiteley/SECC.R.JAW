@@ -1,6 +1,9 @@
 - Regressions
   - ARA vs. Cyanobacteria - GLM(M)
-  - Include H2O as a covariate?
+  - Include H2O
+    - as a covariate?
+    - as another explanatory variable
+    - partial regression (after removing effects of moisture?)
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?
@@ -35,3 +38,4 @@ Current Changes:
 ================
 
 
+Moved strip_empty_dims() function to miscellaneous functions, corrected a minor bug with dimensions.

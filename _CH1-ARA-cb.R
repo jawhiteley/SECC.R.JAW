@@ -13,10 +13,11 @@ if (FALSE) {  # do not run automatically
   setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
   setwd("./ SECC/") # relative to my usual default wd in R GUI (Mac).
   getwd()           # Check that we're in the right place
+  source("./lib/load.R")  # (re-)load data
+} else {
+  source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
 }
 
-## source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
-source("./lib/load.R")  # (re-)load data
 SECC.prime <- SECC    # save a copy of the original for reference.
 
 ## DO
