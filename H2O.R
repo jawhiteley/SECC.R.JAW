@@ -57,7 +57,7 @@ Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
 Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
-Save.results  <- FALSE
+Save.results  <- TRUE
 
 
 ### Load default Labels - dependent on above settings. *****
@@ -66,7 +66,6 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ##================================================
 ## CUSTOM LABELS
 ##================================================
-
 
 
 
@@ -98,3 +97,54 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
 source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) # Load default Labels. *****
 source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested ANOVA
+
+
+
+##################################################
+### PUBLICATION GRAPHS
+##################################################
+
+if (Save.results == TRUE && is.null(Save.final) == FALSE) {
+  postscript(file = Save.final, width = 6, height = 2)
+}
+
+Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
+Sub.msd <- "95% comparison intervals (MSR)" 
+
+Y.lim <- c(0, 800)
+plot.means <- tapply(SECCp$Y.trans, list(SECCp$Chamber, SECCp$Position), mean)
+plot.error <- matrix( as.numeric(msd["Chamber:Position"]/2),
+                     nrow = length(levels(SECCp$Chamber)),  # rows: x-axis
+                     ncol = length(levels(SECCp$Position))  # cols: y-axis
+                     )
+
+old.par <- par(mfrow=c(1,3), las = 1, oma = c(3, 2, 3, 1), mar = c(3, 3, 2, 0) +0.1 )
+
+for(Time.for in 1:length(Time.use)) {
+with( SECCp[SECCp$Time == Time.use[Time.for], ], {
+  plot.means <- tapply(Y.trans, list(Chamber, Position), mean)
+  plot.error <- matrix( as.numeric(msd["Chamber:Position"]/2),
+                       nrow = length(levels(SECCp$Chamber)),  # rows: x-axis
+                       ncol = length(levels(SECCp$Position))  # cols: y-axis
+                       )
+  ## custom plotMeans function, with custom error bars (LSD)
+  plotMeans( Y.trans, Chamber, Position, 
+            error.bars = "custom", level = plot.error, ylim = Y.lim,
+            cex = 2, lwd = 2, lty = Position.map$lty, pch = Position.map$pch,
+            yaxt = ifelse(Time.for > 1, "n", "s"),
+            col = as.character(Position.map$col),
+            bg  = as.character(Position.map$bg),
+            main = Time.use[Time.for],
+            sub  = "",
+            xlab = "",
+            ylab = ""
+            )   
+  })
+}
+mtext(Plot.Title, side = 3, outer = TRUE)
+mtext(attr(SECC, "labels")[["Chamber"]], side = 1, outer = TRUE)
+mtext(Sub.msd, side = 1, padj = 1.5, outer = TRUE)
+mtext(Y.plotlab, side = 2, outer = TRUE, las = 0)
+
+par(old.par)
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()

@@ -1,11 +1,11 @@
-Nested ANOVA Results for: Water Content ( H2O ) 
+Nested ANOVA Results for: Moisture ( H2O ) 
 Transformation used:      Y 
 Expt. Time:    12 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Tue Mar 29 22:07:24 2011
+Thu May  5 11:28:20 2011
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -14,30 +14,30 @@ Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
-Residuals  7 62.316  8.9023               
+Residuals  7 623159   89023               
 
 Error: Block:Chamber
           Df  Sum Sq Mean Sq F value   Pr(>F)    
-Chamber    1 112.180 112.180  38.055 0.000459 ***
-Residuals  7  20.635   2.948                     
+Chamber    1 1121796 1121796  38.055 0.000459 ***
+Residuals  7  206349   29478                     
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Block:Chamber:Frag
              Df  Sum Sq Mean Sq F value    Pr(>F)    
-Frag          3  72.643 24.2145  8.9905 0.0001019 ***
-Chamber:Frag  3   3.438  1.1460  0.4255 0.7357203    
-Residuals    42 113.121  2.6933                      
+Frag          3  726434  242145  8.9905 0.0001019 ***
+Chamber:Frag  3   34381   11460  0.4255 0.7357203    
+Residuals    42 1131206   26933                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Within
                        Df Sum Sq Mean Sq F value    Pr(>F)    
-Position                2 95.054  47.527 84.8924 < 2.2e-16 ***
-Chamber:Position        2 65.746  32.873 58.7180 < 2.2e-16 ***
-Frag:Position           6 10.070   1.678  2.9979 0.0093804 ** 
-Chamber:Frag:Position   6 15.118   2.520  4.5007 0.0004024 ***
-Residuals             112 62.703   0.560                      
+Position                2 950538  475269 84.8924 < 2.2e-16 ***
+Chamber:Position        2 657464  328732 58.7180 < 2.2e-16 ***
+Frag:Position           6 100703   16784  2.9979 0.0093804 ** 
+Chamber:Frag:Position   6 151184   25197  4.5007 0.0004024 ***
+Residuals             112 627031    5598                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -45,71 +45,71 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Tables of means
 Grand mean
          
-3.929113 
+392.9113 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-       4.693        3.165 
+       469.3        316.5 
 
  Frag 
 Frag
       Continuous   Full Corridors Pseudo-Corridors         Isolated 
-           4.790            3.402            3.294            4.230 
+           479.0            340.2            329.4            423.0 
 
  Position 
 Position
 Inner other Outer 
-4.626 4.196 2.965 
+462.6 419.6 296.5 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      5.443      4.069          4.280            4.981   
-  Full Chamber 4.138      2.735          2.307            3.479   
+  Ambient      544.3      406.9          428.0            498.1   
+  Full Chamber 413.8      273.5          230.7            347.9   
 
  Chamber:Position 
               Position
 Chamber        Inner other Outer
-  Ambient      4.748 4.830 4.503
-  Full Chamber 4.503 3.563 1.428
+  Ambient      474.8 483.0 450.3
+  Full Chamber 450.3 356.3 142.8
 
  Frag:Position 
                   Position
 Frag               Inner other Outer
-  Continuous       5.150 4.912 4.310
-  Full Corridors   4.262 3.663 2.282
-  Pseudo-Corridors 4.032 3.484 2.365
-  Isolated         5.059 4.727 2.905
+  Continuous       515.0 491.2 431.0
+  Full Corridors   426.2 366.3 228.2
+  Pseudo-Corridors 403.2 348.4 236.5
+  Isolated         505.9 472.7 290.5
 
  Chamber:Frag:Position 
 , , Position = Inner
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      5.590      4.182          4.058            5.161   
-  Full Chamber 4.709      4.342          4.006            4.956   
+  Ambient      559.0      418.2          405.8            516.1   
+  Full Chamber 470.9      434.2          400.6            495.6   
 
 , , Position = other
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      5.564      4.345          4.388            5.022   
-  Full Chamber 4.259      2.981          2.580            4.433   
+  Ambient      556.4      434.5          438.8            502.2   
+  Full Chamber 425.9      298.1          258.0            443.3   
 
 , , Position = Outer
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      5.174      3.682          4.395            4.761   
-  Full Chamber 3.446      0.883          0.335            1.048   
+  Ambient      517.4      368.2          439.5            476.1   
+  Full Chamber 344.6       88.3           33.5            104.8   
 
 
 95% Minimum Significant Ranges (MSR):
               Chamber                  Frag              Position          Chamber:Frag 
-            0.5598944             0.9541014             0.3477660             1.5641942 
+             55.98944              95.41014              34.77660             156.41942 
      Chamber:Position         Frag:Position Chamber:Frag:Position 
-            0.5841513             0.9359307             1.4639973 
+             58.41513              93.59307             146.39973 
 
 
 ================================================================
@@ -119,20 +119,20 @@ Y.trans ~ Chamber * Frag + Error(Block/Chamber)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
-Residuals  7 21.682  3.0975               
+Residuals  7 216824   30975               
 
 Error: Block:Chamber
           Df Sum Sq Mean Sq F value    Pr(>F)    
-Chamber    1 34.251  34.251  31.484 0.0008065 ***
-Residuals  7  7.615   1.088                      
+Chamber    1 342509  342509  31.484 0.0008065 ***
+Residuals  7  76151   10879                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Within
              Df Sum Sq Mean Sq F value    Pr(>F)    
-Frag          3 24.261  8.0870  8.7539 0.0001257 ***
-Chamber:Frag  3  1.182  0.3941  0.4266 0.7349612    
-Residuals    42 38.800  0.9238                      
+Frag          3 242609   80870  8.7539 0.0001257 ***
+Chamber:Frag  3  11823    3941  0.4266 0.7349612    
+Residuals    42 388003    9238                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -140,27 +140,27 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 Tables of means
 Grand mean
          
-3.995948 
+399.5948 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-       4.728        3.264 
+       472.8        326.4 
 
  Frag 
 Frag
       Continuous   Full Corridors Pseudo-Corridors         Isolated 
-           4.821            3.467            3.341            4.354 
+           482.1            346.7            334.1            435.4 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      5.473      4.138          4.307            4.991   
-  Full Chamber 4.168      2.797          2.375            3.717   
+  Ambient      547.3      413.8          430.7            499.1   
+  Full Chamber 416.8      279.7          237.5            371.7   
 
 95% Minimum Significant Ranges (MSR):
      Chamber         Frag Chamber:Frag 
-   0.5989847    0.9908797    1.6380950 
+    59.89847     99.08797    163.80950 
 
 
 <============================= END ============================>

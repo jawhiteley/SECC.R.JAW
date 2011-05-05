@@ -18,7 +18,7 @@
 
 
 - investigate multcomp package for multiple comparisons
-- investigate gplot plackage for plotmeans function? (see Quick-R).
+- investigate gplot package for plotmeans function? (see Quick-R).
 
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
 - Interaction plots at each time point, within full analysis of all time points.

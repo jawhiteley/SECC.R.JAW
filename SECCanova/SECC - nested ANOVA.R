@@ -301,14 +301,11 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				)
 }
 
-if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.final) dev.off()
-
 
 
 ##################################################
-## FINAL GRAPHICS
+## POLISHED GRAPHICS (almost FINAL)
 ##################################################
-if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 if (exists("Y.lim") == FALSE) Y.lim <- c( 0, max(SECCp$Y.trans) ) # consistent scale of Y axis
 
