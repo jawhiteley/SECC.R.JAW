@@ -18,7 +18,7 @@ Save.filename <- paste("Results - ", Y.col, " - ",
                    )
 Save.text  <- paste("./output/", Save.filename, ".txt", sep = "")
 Save.plots <- paste("./graphs/", Save.filename, ".pdf", sep = "")
-Save.final <- paste("./graphs/", "Figures - ", Y.col, ".ps", sep = "")    # Destination for final plots.
+Save.final <- paste("./graphs/", "Figure - ", Y.col, sep = "")    # Destination for final plots.
 
 
 ## Output text

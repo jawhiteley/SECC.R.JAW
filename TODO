@@ -9,8 +9,6 @@
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
 
-- Get Mean differences of Temperature & RH
-  between Chamber Treatments (HOBO Data)
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
@@ -18,12 +16,9 @@
 
 
 - investigate multcomp package for multiple comparisons
-- investigate gplot package for plotmeans function? (see Quick-R).
+- investigate gplots package for plotmeans function? (see Quick-R).
 
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
-- Interaction plots at each time point, within full analysis of all time points.
-  - Loop through each time point, then make plots.
-  - Allow for Time not being included in the model
 
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
@@ -38,4 +33,3 @@ Current Changes:
 ================
 
 
-Moved strip_empty_dims() function to miscellaneous functions, corrected a minor bug with dimensions.

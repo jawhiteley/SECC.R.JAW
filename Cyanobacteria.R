@@ -105,3 +105,51 @@ Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
 source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) # Load default Labels. *****
 source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested ANOVA
 
+
+##################################################
+### PUBLICATION GRAPHS
+##################################################
+
+Y.lim <- c(0, 200)
+Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
+Sub.msd <- "95% comparison intervals (MSR)" 
+Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
+Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+
+## data frame of plot values (for ggplot2).
+## might be able to accomplish much the same effect with stat_summary using means in ggplot2?
+plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
+levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
+plot.means$error <- as.numeric(msd["Time:Chamber:Position"]/2)
+levels(plot.means$Chamber)[2] <- "Chamber"
+
+CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
+                    geom = "point", ylim = Y.lim, size = I(3), 
+                    colour = Position, shape = Position,
+                    main = Plot.Title, sub = Sub.msd,
+                    xlab = attr(SECC, "labels")[["Chamber"]],
+                    ylab = Y.plotlab,
+                    legend = FALSE,
+                    facets = .~Time)
+## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
+CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+                                         width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
+                                           values = Position.map$col, 
+                                           breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
+                                         values = Position.map$bg, 
+                                         breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
+                                           values = Position.map$pch, 
+                                           breaks = Position.map$label)
+CxP.plot <- CxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+print(CxP.plot)
+
+
+
+if (Save.results == TRUE && is.null(Save.final) == FALSE) {
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
+}
