@@ -18,8 +18,9 @@ source('./lib/init.R')
 
 ## library(car)
 library(lattice)
-## library(lme4)
-
+library(ggplot2)
+library(lme4)
+## library\(mgcv)
 
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
@@ -29,13 +30,13 @@ library(lattice)
 X.col <- 'Cells.m'   # Column to analyze as explanatory variable        *****
 Y.col <- 'ARA.m'     # Column to analyze as response variable           *****
 
-vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m")  # for data exploration?
+vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")  # for data exploration?
 
 ##================================================
 ## SETTINGS 
 ##================================================
 ## Specify which treatment levels to include (by index is probably easiest)
-Time.use     <- levels(SECC$Time)[1]      # Time (index: 1-3) to include in this run
+Time.use     <- levels(SECC$Time)      # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]      # Chamber treatments to include
 Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
@@ -67,6 +68,8 @@ SECC <- within( SECC, {
   ARA.m[ ARA.m  < 0] <- 0
   ARA.g[ ARA.g  < 0] <- 0
   Nfix <- ARA.m * Nfix.ARA.ratio
+  H2O <- H2O * 100
+  H2O.wwt <- H2O.wwt * 100
 })
 
 
@@ -187,8 +190,6 @@ SECCa <- within( SECCa,{
 })
 
 with( SECCa,{
-	par(mfrow=c(1,1))
-
 	## scatterplot
 	plot(X, Y, type="p",
 		ylab=Y.plotlab, xlab=X.plotlab, 
@@ -197,9 +198,10 @@ with( SECCa,{
 	legend("topright", legend=Chamber.map$label, 
            pch=Chamber.map$pch, col=Chamber.map$col 
     )
+    identify(X, Y, labels = SampleID)
 })
 
-par(mfcol=c(2,2))
+old.par <- par(mfcol=c(2,2))
 ## Check distributions
 for(i in 1:length(vars.ls) ){
   var <- vars.ls[i]
@@ -234,6 +236,7 @@ for(i in 1:length(vars.ls) ){
     })
 	# qqplot(x, y) to compare distributions.
 }
+par(old.par)
 
 coplot( Y ~ X | Frag * Position, data=SECCa, 
        pch=SECCa$pt, col=SECCa$colr	# , bg=Chamber.map$bg
@@ -242,6 +245,29 @@ coplot( Y ~ X | Frag * Position, data=SECCa,
 coplot( Y ~ X | Chamber * Frag , data=SECCa, 
        pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
 )
+coplot( Y ~ X | Chamber * Position , data=SECCa, 
+       pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
+)
+# Moisture?
+coplot( Y ~ H2O | Frag * Position , data=SECCa, 
+       pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
+)
+
+
+qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position*Frag ~ Time) + theme_bw() +
+scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+
+qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position ~ Time) + theme_bw() +
+scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+
+qplot(H2O, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position*Frag ~ Time) + theme_bw() + # log = "y", 
+scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
 
 ## much the same breakdown, using TRELLIS xyplot over 3 factors.
@@ -261,9 +287,9 @@ xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1
 
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Y.formula <- Y ~ log(X+1)*Time*Chamber*Frag*Position
+  Y.formula <- Y ~ log(X+1) * Time * Chamber * Frag * Position * H2O
 } else {
-  Y.formula <- Y ~ log(X+1) * Chamber * Frag * Position
+  Y.formula <- Y ~ X * Chamber * Frag * Position * H2O
 }
 
 ##################################################
@@ -273,20 +299,31 @@ if ( length(Time.use) > 1 ) {
 # YES
 # Variance Components Analysis (variance decomposition)
 
-Y.model <- glm( Y.formula, data=SECCa, family="quasipoisson" )
+Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
+Y.model.full <- Y.model
 
+##================================================
+## MODEL SELECTION
+##================================================
+
+drop1(Y.model)
+step(Y.model)
 
 
 ##################################################
-## CHECK ASSUMPTIONS
+## CHECK ASSUMPTIONS (MODEL VALIDATION)
 ##################################################
 ## analyse residuals, standard diagnostic plots
 par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
 plot(Y.model)
 
+## Residuals
 Model.resid <- resid(Y.model)
-par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
+## par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
 hist(Model.resid)    # plot residuals
+plot(SECCa$X, Model.resid)
+plot(SECCa$H2O, Model.resid)
+qplot(Frag, Model.resid, data = SECCa, facets = Chamber * Position ~ Time ) + theme_bw()
 
 ## Plot Residuals: see Zuur et al. 2007, pg. 61-63
 coplot( Model.resid ~ X | Frag * Position, data=SECCa, 
