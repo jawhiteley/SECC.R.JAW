@@ -159,11 +159,11 @@ attr(SECC.cyanobacteria, "labels") <-
          )
 attr(SECC.cyanobacteria, "units")  <- 
     list("Cells"    = "cells/shoot",
-         "Cells.g"  = quote("cells" %.% (g^-1) * "dwt"),
-         "Cells.m"  = quote("cells" %.% (m^-2)),
+         "Cells.g"  = quote("cells" %.% g^-1 * "dwt"),
+         "Cells.m"  = quote("cells" %.% m^-2),
          "Hcells"   = "cells/shoot",
-         "Hcells.g" = quote("cells" %.% (g^-1) * "dwt"),
-         "Hcells.m" = quote("cells" %.% (m^-2))
+         "Hcells.g" = quote("cells" %.% g^-1 * "dwt"),
+         "Hcells.m" = quote("cells" %.% m^-2)
          )
 
 

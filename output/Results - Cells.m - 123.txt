@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Thu May  5 17:38:27 2011
+Sun May  8 13:20:45 2011
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -271,22 +271,16 @@ Time        Ambient Full Chamber
 
 
 95% Minimum Significant Ranges (MSR):
-                      Time                    Chamber 
-                  44.72786                   25.72807 
-                      Frag                   Position 
-                  28.86003                   14.78693 
-              Time:Chamber                  Time:Frag 
-                  61.44582                   56.48460 
-              Chamber:Frag              Time:Position 
-                  47.24028                   35.31531 
-          Chamber:Position              Frag:Position 
-                  26.32142                   43.08489 
-         Time:Chamber:Frag      Time:Chamber:Position 
-                  96.64271                   56.48460 
-        Time:Frag:Position      Chamber:Frag:Position 
-                  88.14176                   68.09918 
-Time:Chamber:Frag:Position 
-                 135.45247 
+                      Time                    Chamber                       Frag 
+                  44.72786                   25.72807                   28.86003 
+                  Position               Time:Chamber                  Time:Frag 
+                  14.78693                   61.44582                   56.48460 
+              Chamber:Frag              Time:Position           Chamber:Position 
+                  47.24028                   35.31531                   26.32142 
+             Frag:Position          Time:Chamber:Frag      Time:Chamber:Position 
+                  43.08489                   96.64271                   56.48460 
+        Time:Frag:Position      Chamber:Frag:Position Time:Chamber:Frag:Position 
+                  88.14176                   68.09918                  135.45247 
 
 
 ================================================================
