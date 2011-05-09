@@ -198,7 +198,7 @@ with( SECCa,{
 	legend("topright", legend=Chamber.map$label, 
            pch=Chamber.map$pch, col=Chamber.map$col 
     )
-    identify(X, Y, labels = SampleID)
+    ##     identify(X, Y, labels = SampleID)
 })
 
 old.par <- par(mfcol=c(2,2))
@@ -254,15 +254,15 @@ coplot( Y ~ H2O | Frag * Position , data=SECCa,
 )
 
 
-qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position*Frag ~ Time) + theme_bw() +
+qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position*Frag ~ Time) + theme_bw() +
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
+## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
-qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position ~ Time) + theme_bw() +
+qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
+## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
 qplot(H2O, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position*Frag ~ Time) + theme_bw() + # log = "y", 
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
@@ -289,7 +289,7 @@ xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1
 if ( length(Time.use) > 1 ) {
   Y.formula <- Y ~ log(X+1) * Time * Chamber * Frag * Position * H2O
 } else {
-  Y.formula <- Y ~ X * Chamber * Frag * Position * H2O
+  Y.formula <- Y ~ log(X+1) * Chamber * Frag * Position * H2O
 }
 
 ##################################################
@@ -301,14 +301,17 @@ if ( length(Time.use) > 1 ) {
 
 Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
+Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O, data = SECCa)
 
 ##================================================
 ## MODEL SELECTION
 ##================================================
 
 drop1(Y.model)
-step(Y.model)
+Y.model.selected <- step(Y.model, direction = "backward")
+Y.model.main.selected <- step(Y.model.main, direction = "backward")
 
+Y.model  <- Y.model.selected
 
 ##################################################
 ## CHECK ASSUMPTIONS (MODEL VALIDATION)
