@@ -4,6 +4,7 @@
     - as a covariate?
     - as another explanatory variable
     - partial regression (after removing effects of moisture?)
+    ~ quadrat term (is the relationship unimodal?  P-value actually smaller than linear term)
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?

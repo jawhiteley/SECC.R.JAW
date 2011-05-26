@@ -168,6 +168,8 @@ if (FALSE) {  # do not run if source()d
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
+plot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
@@ -222,7 +224,7 @@ for(i in 1:length(vars.ls) ){
                breaks=seq( 0, X.max, length.out=16 ),
                col="#CCCCCC"
                )
-          ##           abline( 5, 0, lty=3, col="#666666" ) # reference line
+###       abline( 5, 0, lty=3, col="#666666" ) # reference line
           plot( X.density,
                main=Ch.trt, xlab=label,
                xlim=c(0, X.max),
@@ -259,7 +261,7 @@ scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.
 scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
 ## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
-qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
+qplot(log(X+1), log(Y+1), data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
 scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
 ## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
@@ -271,13 +273,13 @@ scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.ma
 
 
 ## much the same breakdown, using TRELLIS xyplot over 3 factors.
-xyplot( Y ~ X | Chamber * Frag * Position, data=SECCa, 
-       pch=point, col=SECCa$colr, bg = SECCa$fill 
-)
-xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1 
-       ## , key=simpleKey(levels(SECCa$Chamber))
-)
-
+## xyplot( Y ~ X | Chamber * Frag * Position, data=SECCa, 
+##        pch=point, col=SECCa$colr, bg = SECCa$fill 
+## )
+## xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1 
+## , key=simpleKey(levels(SECCa$Chamber))
+## )
+## 
 
 
 ##################################################
@@ -301,7 +303,7 @@ if ( length(Time.use) > 1 ) {
 
 Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
-Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O, data = SECCa)
+Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)
 
 ##================================================
 ## MODEL SELECTION
