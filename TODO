@@ -5,10 +5,22 @@
     - as another explanatory variable
     - partial regression (after removing effects of moisture?)
     ~ quadrat term (is the relationship unimodal?  P-value actually smaller than linear term)
+  - aggregate patches together ('regional / metacommunity' scale)
+    - one less factor (position)
+    - less noise in Ambient treatments?
+    - more unexplained noise in Chambers (Inner vs. Outer)?
+  - Quantile Regression
+    - Crawley R book
+    - nonparametric: test for slope of (upper) bound, rather than explaining full variation
+  - Zero-inflated regression?
+    - separate out zeros from non-zero data in 2-stage model.
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
+
+- explore ARA ~ cells in survey
+- explore ARA ~ cells in transect
 
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)

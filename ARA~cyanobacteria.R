@@ -19,6 +19,7 @@ source('./lib/init.R')
 ## library(car)
 library(lattice)
 library(ggplot2)
+library(rgl)
 library(lme4)
 ## library\(mgcv)
 
@@ -523,3 +524,56 @@ if (FALSE) {
 
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
+
+
+##################################################
+## META-COMMUNITY SCALE ANALYSIS
+##################################################
+
+SECCa <- SECCmc 
+
+
+SECCa <- within( SECCa, {
+                X <- as.numeric( get(X.col) )
+                Y <- as.numeric( get(Y.col) )
+                Y.use <- Y  # compatibility with older code
+})
+
+##================================================
+## EXPLORE: PLOTS
+##================================================
+Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
+Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
+Chamber.map$label <- factor(Chamber.map$label)
+point <- 21	# 21 for circles with col & bg ; 16 for solid circles
+Chamber.map$pch <- c(21, 16)  # use circles for both treatments
+
+SECCa <- within( SECCa,{
+	colr = as.character(ifelse(Chamber == Chamber.map$label[1], 
+                               Chamber.map$col[1], 
+                               Chamber.map$col[2] 
+                               )
+    )
+	fill = as.character(ifelse(Chamber == Chamber.map$label[1], 
+                               Chamber.map$bg[1],
+                               Chamber.map$bg[2]
+                               )
+    )
+	pt = ifelse(Chamber == Chamber.map$label[1], 
+			Chamber.map$pch[1], 
+			Chamber.map$pch[2]
+		)
+})
+
+qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, facets = Frag ~ Time) + theme_bw() +
+scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
+## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+
+qplot(H2O, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Frag ~ Time) + theme_bw() + # log = "y", 
+scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
+scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
+
+with(SECCa, plot3d(H2O, X, Y, col = colr))
+
