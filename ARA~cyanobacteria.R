@@ -287,6 +287,7 @@ scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.ma
 ## ANALYSIS: formula
 ##################################################
 ## GLMM
+Y.rformula <- 1|Block/Time/Chamber/Frag
 
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
@@ -294,6 +295,7 @@ if ( length(Time.use) > 1 ) {
 } else {
   Y.formula <- Y ~ log(X+1) * Chamber * Frag * Position * H2O
 }
+
 
 ##################################################
 ## ANALYSIS: design
@@ -306,6 +308,7 @@ Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
 Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)
 
+
 ##================================================
 ## MODEL SELECTION
 ##================================================
@@ -315,6 +318,7 @@ Y.model.selected <- step(Y.model, direction = "backward")
 Y.model.main.selected <- step(Y.model.main, direction = "backward")
 
 Y.model  <- Y.model.selected
+
 
 ##################################################
 ## CHECK ASSUMPTIONS (MODEL VALIDATION)

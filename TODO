@@ -1,5 +1,6 @@
 - Regressions
   - ARA vs. Cyanobacteria - GLM(M)
+  - split script into different approaches
   - Include H2O
     - as a covariate?
     - as another explanatory variable
