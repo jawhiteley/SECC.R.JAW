@@ -143,6 +143,17 @@ for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character 
     SECC.fauna.meta[[i]] <- coli
 }
 
+##################################################
+## CALCULATIONS
+##################################################
+SECC.fauna.df <- within(SECC.fauna.df, {
+                     Comments[is.na(Comments)] <- ""
+  })
+
+## summary variables for univariate analyses
+## & merging into main SECC dataframe
+
+
 
 ##################################################
 ## CHECK & CLEAN DATA
