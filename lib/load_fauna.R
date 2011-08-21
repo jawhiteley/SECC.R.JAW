@@ -33,10 +33,7 @@ SECC.fauna.raw <- read.csv("./data/fauna_t4_raw.csv", na.strings = c("NA", "", "
 if (FALSE) {
   str(SECC.fauna.raw)
   head(SECC.fauna.raw)
-}
 
-## SECC.fauna <- SECC.fauna.raw    # make a copy to clean & process
-if (FALSE) {
   str(SECC.fauna)
   head(SECC.fauna)
 }
@@ -154,9 +151,10 @@ cat('  - Checking & Cleaning fauna data structure.\n')
 ## Check SECC structure
 SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
 ## re-generate Sample IDs
-SECC.fauna <- within(SECC.fauna, {
-                     SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-  })
+SECC.fauna <- SECC_sampleID(SECC.fauna)
+## SECC.fauna <- within(SECC.fauna, {
+##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
+##   })
 rownames(SECC.fauna) <- SECC.fauna$SampleID
 ## recode factors with meaningful labels
 ## SECC.fauna <- recodeSECC( SECC.fauna )  # standard function in `./lib/fun.r`  

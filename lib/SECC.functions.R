@@ -28,10 +28,12 @@ SECC_sampleID <- function( factors=NULL ) {
   ## Auto-concatenate factor codes into standard SampleIDs.
   ## the supplied data frame had BETTER contain all necessary columns.
   factors.names <- names(factors)
-  factors.present <- names(factors) %in% c("Chamber", "Time", "Frag", "Pos", "Position")
-  if ( any( factors.present ) == FALSE ) {
+  factors.present <- c("Chamber", "Time", "Frag", "Pos", "Position") %in% names(factors)
+  factors.present[4] <- any( factors.present[c(4,5)] )
+  factors.present <- factors.present[1:4]
+  if ( all( factors.present ) == FALSE ) {
     stop( paste("ID columns missing:", 
-                factors.present[which(factors.present==FALSE)]
+                factors.names[which(factors.present==FALSE)]
     ))
   }
   
