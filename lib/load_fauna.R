@@ -56,12 +56,22 @@ SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
                                         # keep only columns that do not start with "X" and a number (these are sample IDs).
 ## strip empty rows from meta-data
 SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.fauna.meta))
+Mdata.cols <- intersect( colnames(SECC.fauna.raw), colnames(SECC.fauna.meta))[-1]
+Mdata.cols <- which( colnames(SECC.fauna.raw) %in% colnames(SECC.fauna.meta))[-1]
 
 ## strip species metadata columns
+SECC.fauna <- SECC.fauna.raw[, -Mdata.cols]
 
 ## strip empty columns (NA or 0s)
+SECC.fauna <- strip_empty_dims(SECC.fauna, dim=2)
+sp.rows <- which(SECC.fauna$ID %in% SECC.fauna.meta$ID)
+cols.0  <- which( apply( SECC.fauna[sp.rows, ], 2, function(x) all(x==0) ) )
+SECC.fauna <- SECC.fauna[, -cols.0]
 
 ## strip 0-only rows
+sample.cols <- 2:ncol(SECC.fauna)
+rows.0 <- which( apply( SECC.fauna[, sample.cols], 1, function(x) all(x==0) ) )
+SECC.fauna <- SECC.fauna[-rows.0, ]
 
 ##################################################
 ## PROCESS DATA
