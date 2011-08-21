@@ -12,6 +12,12 @@
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
+- Load    Decomposition Data
+- Analyze Decomposition Data
+
+- Load    Fauna Data
+- Analyze Fauna Data
+
 - fix SECCstr to handle errors with aggregated data sets (line 304)
 
 

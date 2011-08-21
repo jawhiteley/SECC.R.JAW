@@ -20,8 +20,10 @@
 ##   are checked and merged as a Time Series.
 ##   -> SECC.TRH : Temperature & Relative Humidity Time Series.
 ##################################################
-# rm(list=ls())       # house-keeping
-# setwd('./ SECC/')   # project directory
+if (FALSE) {        # do not run automatically
+  rm(list=ls())     # house-keeping
+  setwd('./ SECC/') # project directory
+}
 getwd()             # check current wd
 
 ## LOAD LIBRARIES
