@@ -19,8 +19,8 @@ if (FALSE) {        # do not run automatically
 
   ## LOAD LIBRARIES
   source("./lib/fun.R")   # define functions
-  require(car)            # load external package 'car', for recode()
-  require(reshape)        # sort_df (sort data frame) wrapper for order
+  ##   require(car)            # load external package 'car', for recode()
+  ##   require(reshape)        # sort_df (sort data frame) wrapper for order
 }
 
 ##################################################
@@ -148,10 +148,10 @@ for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character 
 ## CHECK & CLEAN DATA
 ##################################################
 cat('  - Checking & Cleaning fauna data structure.\n')
-## Check SECC structure
+## Check SECC structure & overwrite un-transposed data frame if successful
 SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
 ## re-generate Sample IDs
-SECC.fauna <- SECC_sampleID(SECC.fauna)
+SECC.fauna$SampleID <- SECC_sampleID(SECC.fauna)
 ## SECC.fauna <- within(SECC.fauna, {
 ##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
 ##   })

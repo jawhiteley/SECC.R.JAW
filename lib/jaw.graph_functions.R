@@ -118,7 +118,7 @@ plotMeans <- function (response, factor1, factor2,
   level = 0.95, xlab = deparse(substitute(factor1)), 
   ylab = paste("mean of", deparse(substitute(response))), 
   legend.lab = deparse(substitute(factor2)),
-  main = "Plot of Means", pch = 1:n.levs.2, lty = 1:n.levs.2,
+  main = "Plot of Means", pch = NULL, lty = NULL,
   col = palette(), bg=NULL, cex=2, lwd=NULL, ylim=NULL, ... ) 
 {
     if (!is.numeric(response)) 
@@ -152,6 +152,8 @@ plotMeans <- function (response, factor1, factor2,
         yrange <- if ( is.null(ylim)==FALSE ) ylim else yrange # added by JAW
         levs <- levels(factor1)
         n.levs <- length(levs)
+        if (is.null(pch)) pch <- 1
+        if (is.null(lty)) lty <- 1
         plot(c(1, n.levs), yrange, type = "n", xlab = xlab, ylab = ylab, 
             axes = FALSE, main = main, ... )	# `...` argument added by JAW
         points(1:n.levs, means, type = "b", pch = pch, cex = cex, bg = bg, lty=lty, lwd=lwd)	# originally: pch=16, cex=2.  Modified by JAW.
@@ -189,6 +191,8 @@ plotMeans <- function (response, factor1, factor2,
         levs.2 <- levels(factor2)
         n.levs.1 <- length(levs.1)
         n.levs.2 <- length(levs.2)
+        if (is.null(pch)) pch <- 1:n.levs.2
+        if (is.null(lty)) lty <- 1:n.levs.2
         if (length(pch) == 1) 
             pch <- rep(pch, n.levs.2)
         if (length(col) == 1) 

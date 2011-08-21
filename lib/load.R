@@ -80,6 +80,7 @@ source("./lib/clean_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
 source("./lib/clean_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
 
 source("./lib/clean_H2O.R", echo=FALSE)            # Process Moisture data.
+source("./lib/clean_decomp.R", echo=FALSE)         # Process Decomposition data.
 
 
 ##================================================
