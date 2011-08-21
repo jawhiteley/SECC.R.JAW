@@ -15,7 +15,7 @@
 - Load    Decomposition Data
 - Analyze Decomposition Data
 
-- Load    Fauna Data
+X Load    Fauna Data
 - Analyze Fauna Data
 
 - fix SECCstr to handle errors with aggregated data sets (line 304)

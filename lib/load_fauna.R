@@ -123,11 +123,11 @@ if (FALSE) {
 
 for (i in 1:ncol(SECC.fauna.df)) {
     coli <- SECC.fauna.df[[i]]
-    if (any(is.na(as.numeric(coli))) == FALSE) {
+    if (suppressWarnings( any(is.na(as.numeric(coli))) ) == FALSE) {
       coli <- as.numeric(coli)
-    } else if (any(is.na(as.logical(coli))) == FALSE) {
+    } else if (suppressWarnings( any(is.na(as.logical(coli))) ) == FALSE) {
       coli <- as.logical(coli)
-    } else if (any(is.na((coli))) == FALSE) {
+    } else if (suppressWarnings( any(is.na((coli))) ) == FALSE) {
       coli <- as.factor(coli)
     }
     SECC.fauna.df[[i]] <- coli
@@ -136,11 +136,11 @@ for (i in 1:ncol(SECC.fauna.df)) {
 ## Same for Meta-data
 for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character data) - all rows should be unique.
     coli <- SECC.fauna.meta[[i]]
-    if (any(is.na(as.numeric(coli))) == FALSE) {
+    if (suppressWarnings( any(is.na(as.numeric(coli))) ) == FALSE) {
       coli <- as.numeric(coli)
-    } else if (any(is.na(as.logical(coli))) == FALSE) {
+    } else if (suppressWarnings( any(is.na(as.logical(coli))) ) == FALSE) {
       coli <- as.logical(coli)
-    } else if (any(is.na((coli))) == FALSE) {
+    } else if (suppressWarnings( any(is.na((coli))) ) == FALSE) {
       coli <- as.factor(coli)
     }
     SECC.fauna.meta[[i]] <- coli
@@ -166,4 +166,4 @@ rownames(SECC.fauna) <- SECC.fauna$SampleID
 
 
 ## House-keeping
-rm(list=c('coli', 'rows.0', 'cols.0', 'cols.num', 'i', 'IDs.formal', 'Mdata.cols', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.num', 'SECC.fauna.raw', 'sp.rows'))
+rm(list=c('coli', 'rows.0', 'cols.0', 'i', 'IDs.formal', 'Mdata.cols', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.raw', 'sp.rows'))
