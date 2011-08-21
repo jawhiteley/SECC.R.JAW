@@ -209,6 +209,13 @@ if (FALSE) {  # do not run when source()'d
 }
 
 ##################################################
+## LOAD OTHER DATA
+##################################################
+cat('- Loading fauna data.\n')
+source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
+
+
+##################################################
 ## SAVE DATA
 ##################################################
 # Save data to native R file "./save/SECC_data.R", or leave in memory:
@@ -219,7 +226,7 @@ if (FALSE) {  # do not run when source()'d
 # + [Other]
 cat('- Saving data & cleaning up.\n')
 
-Load.export <- c( 'SECC', 'SECC.coded')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+Load.export <- c( 'SECC', 'SECC.coded', 'SECC.fauna', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH' )
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
