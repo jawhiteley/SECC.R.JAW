@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2011-03-23
+# Jonathan Whiteley		R v2.12		2011-08-21
 ##================================================
 ## All Data files in './data' are loaded into memory.
 ## Load scripts for manual processing are source()'d

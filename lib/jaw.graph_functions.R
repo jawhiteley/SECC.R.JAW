@@ -1,6 +1,6 @@
 ##################################################
 # functions for graphing with custom error bars
-# Jonathan Whiteley		R v2.10.1		2010-05-08
+# Jonathan Whiteley     R v2.12     2011-08-21
 ##################################################
 ## access these functions in another file by using: 
 ## 	source("path/to/this/file.R")
