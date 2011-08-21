@@ -262,7 +262,7 @@ scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.
 scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
 ## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
-qplot(log(X+1), log(Y+1), data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
+qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
 scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
 ## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
