@@ -28,17 +28,34 @@ if (FALSE) {        # do not run automatically
 ##################################################
 cat('- Loading fauna data.\n')
 
-SECC.fauna.raw <- read.csv(".data/fauna_t4_raw.csv", na.strings = c("NA", "", ".") )
+SECC.fauna.raw <- read.csv("./data/fauna_t4_raw.csv", na.strings = c("NA", "", "."), as.is=TRUE)
+
+if (FALSE) {
+  str(SECC.fauna.raw)
+  head(SECC.fauna.raw)
+}
+
+## SECC.fauna <- SECC.fauna.raw    # make a copy to clean & process
+if (FALSE) {
+  str(SECC.fauna)
+  head(SECC.fauna)
+}
 
 ##################################################
 ## CLEAN INPUT
 ##################################################
 ## strip rows with empty species names
+SECC.fauna.raw <- SECC.fauna.raw[!is.na(SECC.fauna.raw$ID), ]
 
 ##================================================
 ## Extract meta-data
 ##================================================
+cat('- Extracting fauna species metadata.\n')
 ## clone first metadata columns to 'SECC.fauna.sp': species records, aliases, taxanomic categories, etc.
+SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
+                                        # keep only columns that do not start with "X" and a number (these are sample IDs).
+## strip empty rows from meta-data
+SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.fauna.meta))
 
 ## strip species metadata columns
 
