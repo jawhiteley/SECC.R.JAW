@@ -97,6 +97,15 @@ for (DataObject in merge.SECC) {
 
 
 ##################################################
+## LOAD OTHER DATA
+##################################################
+## do this here to allow generation of new data objects
+## to be merged into SECC
+cat('- Loading fauna data.\n')
+source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
+
+
+##################################################
 ## PROCESS DATA
 ##################################################
 cat('- Merging data.\n')
@@ -181,10 +190,11 @@ attr(SECC, "units" )[["Nfix"]] <- quote(mu*"mol" %.% m^-2 %.% d^-1)
 SECC.coded <- SECC          # keep a copy, just in case
 SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`  
 
-### Summarize data by means across different (or all) Positions to prevent unbalanced effects?
-# SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
-# SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
-
+if (FALSE) {
+  ## Summarize data by means across different (or all) Positions to prevent unbalanced effects?
+  SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
+  SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
+}
 
 ##################################################
 ## CHECK DATA
@@ -210,10 +220,10 @@ if (FALSE) {  # do not run when source()'d
 }
 
 ##################################################
-## LOAD OTHER DATA
+## SPLIT ENVIRONMENTAL DATA
 ##################################################
-cat('- Loading fauna data.\n')
-source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
+## Separate Environmental data -> SECC.env
+## & remove from SECC data frame.
 
 
 ##################################################

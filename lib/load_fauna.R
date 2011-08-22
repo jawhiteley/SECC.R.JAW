@@ -13,6 +13,7 @@
 ## for univariate analyses.
 ##################################################
 if (FALSE) {        # do not run automatically
+  source("./lib/init.R")   # load basic objects (needed for environmental data)
   rm(list=ls())     # house-keeping
   setwd('./ SECC/') # project directory
   getwd()           # check current wd
@@ -53,6 +54,12 @@ IDs.formal <- sub( "\\s\\(Diptera\\?\\)", "" , IDs.formal)
 IDs.formal <- sub( "beetle", "Coleoptera spp." , IDs.formal)
 SECC.fauna.raw$ID <- IDs.formal
 
+## Make ID column R-friendly (prepare for transposing to column names)
+## rownames(SECC.fauna) <- cleanVarName(SECC.fauna$ID)
+sp.names   <- make.names(SECC.fauna.raw$ID, unique = TRUE)
+rownames(SECC.fauna.raw) <- sp.names
+SECC.fauna.raw$ID <- sp.names
+
 ##================================================
 ## Extract meta-data
 ##================================================
@@ -87,10 +94,7 @@ SECC.fauna <- SECC.fauna[-rows.0, ]
 ## Transpose input data table
 ##================================================
 cat('    - Transposing fauna data.\n')
-## rownames(SECC.fauna) <- cleanVarName(SECC.fauna$ID)
-sp.names   <- make.names(SECC.fauna$ID, unique = TRUE)
 sample.IDs <- colnames(SECC.fauna)[-1]
-rownames(SECC.fauna) <- sp.names
 ## SECC.fauna.mat <- as.matrix(SECC.fauna)
 SECC.fauna.t <- t(SECC.fauna[, -1])         # omit ID column (replaced by rownames)
 SECC.fauna.t <- cbind(SampleID = sample.IDs, SECC.fauna.t)
@@ -158,17 +162,27 @@ SECC.fauna <- within(SECC.fauna, {
 ##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
 ##   })
 
+## remove missing sp IDs from meta-data
+SECC.fauna.meta <- SECC.fauna.meta[which( SECC.fauna.meta$ID %in% intersect(colnames(SECC.fauna), SECC.fauna.meta$ID) ), ]
+
 ##################################################
 ## CALCULATIONS
 ##################################################
 cat('  - Calculating fauna data.\n')
-SECC.fauna.c <- SECC.fauna
+SECC.fauna.c <- SECC.fauna  # save count data
+
 ##================================================
 ## Convert species counts to # / g dwt
 ##================================================
+## Find suitable environmental data
+## (depending on where in the load script this script is called, 
+## it might be stored in a different object)
+Env.df <- c('SECC.H2O', 'SECC.env', 'SECC')
+Env.df <- Env.df[which( sapply(Env.df, exists) )]
+Env.df <- get( Env.df[1] ) # only the first one that exists
 ## merge in Patch.dwt from SECC(.env)
-SECC.fauna.dwt  <- merge(SECC.fauna, SECC[, c('SampleID', 'Patch.dwt')], 
-                     all.x = TRUE, all.y = FALSE 
+SECC.fauna.dwt <- merge(SECC.fauna, Env.df[, c('SampleID', 'Patch.dwt')], 
+                        all.x = TRUE, all.y = FALSE 
 )
 
 ## divide all species count columns by Patch.dwt
@@ -185,15 +199,37 @@ SECC.fauna <- SECC.fauna.g
 ## Summary variables for univariate analyses
 ## & merging into main SECC dataframe
 ##================================================
+## Could have been done partly using aggregate() if the species were rows instead of columns :P
+SECC.fauna.sum <- SECC.fauna[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
+Taxa.groups <- unique(SECC.fauna.meta$Taxonomic.Group)
 
+SECC.fauna.sum <- within(SECC.fauna.sum, {
 ### Mesostigs
-### Mesostig.preds = Mesostigs - Uropodina
-### Predators = Mesostigs.preds + Prostigs
 ### Collembola
-### Grazers = Collembola + Uropodina (+ Oribatids)
-### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
-### fauna = all (-Other) * including ZL data?
+### Prostigs
+### Other
+    for (taxa in Taxa.groups) {
+      assign( taxa, apply(SECC.fauna[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == taxa)] ], 1, sum) )
+    }
+    rm(taxa)
 
+### Uropodina (non-predatory Mesostigs)
+    Uropodina <- apply(SECC.fauna[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Major.Taxa == "  Uropodina")] ], 1, sum)
+### Mesostig.preds = Mesostigs - Uropodina
+    Mesostig.preds <- Mesostigmata - Uropodina
+### Predators = Mesostigs.preds + Prostigs
+    Predators <- Mesostig.preds + Prostigmata
+### Grazers = Collembola + Uropodina (+ Oribatids)
+    Grazers <- Collembola + Uropodina
+### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
+    fauna.jaw <- Mesostigmata + Collembola
+### fauna = all (-Other) * including ZL data?
+    fauna <- apply(SECC.fauna[, SECC.fauna.meta$ID], 1, sum)
+})
+SECC.fauna.sum <- SECC.fauna.sum[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos',
+                              'Mesostigmata', 'Collembola', 'Prostigmata', 'Other',
+                              'Uropodina', 'Mesostig.preds', 'Predators', 'Grazers', 
+                              'fauna.jaw', 'fauna')]  # manually reorder columns 
 
 ##################################################
 ## FINAL CLEANUP 
