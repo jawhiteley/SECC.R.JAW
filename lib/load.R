@@ -167,7 +167,7 @@ patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
   # Dry weights are only available for samples with cyanobacteria data :(
-  ARA.g <- ARA.ml / ARA.dwt  
+  ARA.g <- ARA.ml / (ARA.dwt / 1000)  # ARA.dwt in mg
   Nfix  <- ARA.m * Nfix.ARA.ratio
 })
 

@@ -153,6 +153,13 @@ SECC.fauna.df <- within(SECC.fauna.df, {
 ## summary variables for univariate analyses
 ## & merging into main SECC dataframe
 
+### Mesostigs
+### Mesostig.preds = Mesostigs - Uropodina
+### Predators = Mesostigs.preds + Prostigs
+### Collembola
+### Grazers = Collembola + Uropodina (+ Oribatids)
+### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
+### fauna = all (-Other) * including ZL data?
 
 
 ##################################################

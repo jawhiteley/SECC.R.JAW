@@ -89,7 +89,7 @@ FINAL DATA STRUCTURE
 ## Environmental Data               SECC.env
    UTM.E            metres          UTM coordinates East  (x)
    UTM.N            metres          UTM coordinates North (y)
-   Sample.dwt        g              Dry Weight of entire sample (pi*12.5^2 = 490.87 cm^2)
+   Patch.dwt         g              Dry Weight of entire patch sample (pi*12.5^2 = 490.87 cm^2)
    ARA.dwt          mg              Dry Weight of ARA sample (20 shoots)
    Cells.dwt        mg              Dry Weight of Cyanobacteria samples (2 shoots)
    H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
