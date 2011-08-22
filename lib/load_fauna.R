@@ -21,6 +21,7 @@ if (FALSE) {        # do not run automatically
   ## LOAD LIBRARIES
   source("./lib/fun.R")   # define functions
 }
+library(vegan) # for diversity metrics
 
 ##################################################
 ## LOAD DATA FILES

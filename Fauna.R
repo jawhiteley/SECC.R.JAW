@@ -29,7 +29,11 @@ SECC.fauna.full <- SECC.fauna   # save a copy, just in case
 ## Filter by Time pt.  
 ## I do this here to maintain correspondence in row numbers between the various data frames.  
 ## I'm not really using the other data yet anyway.
-SECC.fauna <- SECC.fauna[which(SECC.fauna$Time == 4), ]
+SECC.fauna <- SECC.fauna[which(SECC.fauna$Time == 4), 
+                         setdiff(colnames(SECC.fauna), 
+                                 SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group %in% c("Other", "Prostigmata")]
+)
+]
 
 ## Aggregate count data by morphospecies with "confidence" 
 ## (i.e. lumping things together that are probably the same)
@@ -39,12 +43,15 @@ Taxa.groups <- rev( unique(SECC.fauna.meta$sp_alias) )
 SECC.fauna.sp <- within(SECC.fauna.sp, {
     for (taxa in Taxa.groups) {
       taxa.sp <- SECC.fauna.meta$ID[which(SECC.fauna.meta$sp_alias == taxa)]
-      assign( taxa, 
-             if (length(taxa.sp) > 1) 
-               apply(SECC.fauna[, taxa.sp], 1, sum) 
-             else 
-               SECC.fauna[, taxa.sp] 
-      )
+      taxa.sp <- intersect(taxa.sp, colnames(SECC.fauna))
+      if (length(taxa.sp) > 0) {
+        assign( taxa, 
+               if (length(taxa.sp) > 1) 
+                 apply(SECC.fauna[, taxa.sp], 1, sum) 
+               else 
+                 SECC.fauna[, taxa.sp] 
+        )
+      }
     }
     rm(taxa, taxa.sp)
 })
@@ -58,8 +65,9 @@ Fauna <- SECC.fauna.sp[, -1]
 ##################################################
 ## DATA EXPLORATION
 ##################################################
+if (FALSE) {
 
-## check variation & transformations
+  ## check variation & transformations
 boxplot( Fauna            , main = "raw data")
 boxplot( sqrt( Fauna )    , main = "sqrt")
 boxplot( Fauna ^0.25      , main = "4th rt")
@@ -67,6 +75,8 @@ boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
 boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
 boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
 boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
+
+}
 
 
 ##################################################
@@ -93,14 +103,56 @@ Fauna.plot <- ordiplot( Fauna.mds, type="text" )
 
 
 
+##################################################
+## ANOSIM
+##################################################
+## Distance/Similarity matrix (included in MDS call)
+Fauna.dist <- vegdist( Fauna.trans, method = "bray")
 
+## ANOSIM by single factor
+Fauna.Chamber.anosim <- anosim( Fauna.dist, SECC.fauna$Chamber )
+Fauna.Chamber.anosim # Look at results
+
+Fauna.Pos.anosim <- anosim( Fauna.dist, SECC.fauna$Pos )
+Fauna.Pos.anosim # Look at results
+
+Fauna.Frag.anosim <- anosim( Fauna.dist, SECC.fauna$Frag )
+Fauna.Frag.anosim # Look at results
+
+for (lvl in levels(SECC.fauna$Chamber)) {
+  cat("Chamber:", lvl, "\n")
+  Fauna.data <- Fauna.trans[which(SECC.fauna$Chamber == lvl), ]
+  Fauna.d <- vegdist(Fauna.data, method = "bray")
+  ## Chamber x Pos
+  cat("Chamber:", lvl, "x Pos",  "\n")
+  Fauna.CxP.anosim <- anosim( Fauna.d, SECC.fauna$Pos )
+  print(Fauna.CxP.anosim) # Look at results
+  ## Chamber x Frag
+  cat("Chamber:", lvl, "x Frag",  "\n")
+  Fauna.CxF.anosim <- anosim( Fauna.d, SECC.fauna$Frag )
+  print(Fauna.CxF.anosim) # Look at results
+}
+
+for (lvl in levels(SECC.fauna$Frag)) {
+  cat("Frag:", lvl, "\n")
+  Fauna.data <- Fauna.trans[which(SECC.fauna$Frag == lvl), ]
+  Fauna.d <- vegdist(Fauna.data, method = "bray")
+  ## Frag x Pos
+  cat("Frag:", lvl, "x Pos",  "\n")
+  Fauna.FxP.anosim <- anosim( Fauna.d, SECC.fauna$Pos )
+  print(Fauna.FxP.anosim) # Look at results
+  ## Frag x Chamber
+  cat("Frag:", lvl, "x Chamber",  "\n")
+  Fauna.FxC.anosim <- anosim( Fauna.d, SECC.fauna$Chamber )
+  print(Fauna.FxC.anosim) # Look at results
+}
 
 
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
 ## Prepare data to plot
-stress.label <- paste( "Stress = ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
+stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
 MDS.pts <- as.data.frame(Fauna.mds$points)
 colnames(MDS.pts) <- c('x', 'y')
 MDS.pts <- cbind(MDS.pts, Time = SECC.fauna$Time, Chamber = SECC.fauna$Chamber, 
@@ -148,9 +200,10 @@ Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(),
 print(Fauna.plot)
 mtext( stress.label , side=3, line=0, adj=0 )
 
-Fauna.plot.frag <- Fauna.plot + coord_cartesian() + facet_grid(facets = Frag~.)
+Fauna.plot.frag <- Fauna.plot + facet_grid(facets = Frag~.)
 print(Fauna.plot.frag)
 
 ##################################################
 ### CLEAN-UP / HOUSEKEEPING
 ##################################################
+SECC.fauna <- SECC.fauna.full   # recover full data frame
