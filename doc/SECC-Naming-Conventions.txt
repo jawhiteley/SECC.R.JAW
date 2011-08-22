@@ -102,8 +102,8 @@ FINAL DATA STRUCTURE
 >  Prod             mg dwt          Moss growth converted to biomass (productivity).
    Decomposition    %mass loss      Decomposition rates.
    NH4              ?               Available Ammonium (NH4+) from Ion resin
-   NOx              ?               Available Nitrates & Nitrites (NO2, NO3-) from Ion resin
-   N.ta             ?               Total Available Nitrogen Compounds (Ion resin)
+   NO3              ?               Available Nitrates & Nitrites (NO2, NO3-) from Ion resin
+   TAN              ?               Total Available Nitrogen Compounds (Ion resin)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
    Nostoc           #/sample        Nostoc cyanobacteria cells
 >  Nostoc.h         #/sample        Nostoc heterocysts
