@@ -20,8 +20,6 @@ if (FALSE) {        # do not run automatically
 
   ## LOAD LIBRARIES
   source("./lib/fun.R")   # define functions
-  ##   require(car)            # load external package 'car', for recode()
-  ##   require(reshape)        # sort_df (sort data frame) wrapper for order
 }
 
 ##################################################
@@ -54,7 +52,7 @@ IDs.formal <- sub( "\\s\\(Diptera\\?\\)", "" , IDs.formal)
 IDs.formal <- sub( "beetle", "Coleoptera spp." , IDs.formal)
 SECC.fauna.raw$ID <- IDs.formal
 
-## Make ID column R-friendly (prepare for transposing to column names)
+## Make species labels R-friendly (prepare for transposing to column names)
 ## rownames(SECC.fauna) <- cleanVarName(SECC.fauna$ID)
 sp.names   <- make.names(SECC.fauna.raw$ID, unique = TRUE)
 rownames(SECC.fauna.raw) <- sp.names
@@ -69,9 +67,9 @@ SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
                                         # keep only columns that do not start with "X" and a number (these are sample IDs).
 ## strip empty rows from meta-data
 SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.fauna.meta))
+
 ## Mdata.cols <- intersect( colnames(SECC.fauna.raw), colnames(SECC.fauna.meta))[-1]
 Mdata.cols <- which( colnames(SECC.fauna.raw) %in% colnames(SECC.fauna.meta))[-1]
-
 ## strip species metadata columns
 SECC.fauna <- SECC.fauna.raw[, -Mdata.cols]
 
@@ -164,6 +162,7 @@ SECC.fauna <- within(SECC.fauna, {
 
 ## remove missing sp IDs from meta-data
 SECC.fauna.meta <- SECC.fauna.meta[which( SECC.fauna.meta$ID %in% intersect(colnames(SECC.fauna), SECC.fauna.meta$ID) ), ]
+SECC.fauna.meta$sp_alias <- make.names(SECC.fauna.meta$sp_alias, unique = FALSE)
 
 ##################################################
 ## CALCULATIONS
