@@ -230,6 +230,13 @@ SECC.fauna.sum <- SECC.fauna.sum[, c('SampleID', 'Block', 'Time', 'Chamber', 'Fr
                               'Uropodina', 'Mesostig.preds', 'Predators', 'Grazers', 
                               'fauna.jaw', 'fauna')]  # manually reorder columns 
 
+
+##================================================
+## Species Richness & Diversity metrics
+##================================================
+
+
+
 ##################################################
 ## FINAL CLEANUP 
 ##################################################
