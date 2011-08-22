@@ -143,15 +143,48 @@ for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character 
     SECC.fauna.meta[[i]] <- coli
 }
 
+##================================================
+## Check & clean data structure
+##================================================
+cat('    - Checking & Cleaning fauna data structure.\n')
+## Check SECC structure & overwrite un-transposed data frame if successful
+SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
+SECC.fauna <- within(SECC.fauna, {
+    Comments[is.na(Comments)] <- ""
+    ## re-generate Sample IDs
+    SampleID <- SECC_sampleID(SECC.fauna)
+  })
+## SECC.fauna <- within(SECC.fauna, {
+##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
+##   })
+
 ##################################################
 ## CALCULATIONS
 ##################################################
-SECC.fauna.df <- within(SECC.fauna.df, {
-                     Comments[is.na(Comments)] <- ""
-  })
+cat('  - Calculating fauna data.\n')
+SECC.fauna.c <- SECC.fauna
+##================================================
+## Convert species counts to # / g dwt
+##================================================
+## merge in Patch.dwt from SECC(.env)
+SECC.fauna.dwt  <- merge(SECC.fauna, SECC[, c('SampleID', 'Patch.dwt')], 
+                     all.x = TRUE, all.y = FALSE 
+)
 
-## summary variables for univariate analyses
+## divide all species count columns by Patch.dwt
+SECC.fauna.g <- SECC.fauna.dwt
+for (i in which( sapply(SECC.fauna.g, is.numeric) ) ) {
+  if (colnames(SECC.fauna.g)[i] != "Patch.dwt")
+    SECC.fauna.g[[i]] <- SECC.fauna.dwt[[i]] / SECC.fauna.dwt$Patch.dwt
+}
+
+SECC.fauna <- SECC.fauna.g
+
+
+##================================================
+## Summary variables for univariate analyses
 ## & merging into main SECC dataframe
+##================================================
 
 ### Mesostigs
 ### Mesostig.preds = Mesostigs - Uropodina
@@ -163,23 +196,16 @@ SECC.fauna.df <- within(SECC.fauna.df, {
 
 
 ##################################################
-## CHECK & CLEAN DATA
+## FINAL CLEANUP 
 ##################################################
-cat('  - Checking & Cleaning fauna data structure.\n')
-## Check SECC structure & overwrite un-transposed data frame if successful
-SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
-## re-generate Sample IDs
-SECC.fauna$SampleID <- SECC_sampleID(SECC.fauna)
-## SECC.fauna <- within(SECC.fauna, {
-##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-##   })
 rownames(SECC.fauna) <- SECC.fauna$SampleID
 ## recode factors with meaningful labels
 ## SECC.fauna <- recodeSECC( SECC.fauna )  # standard function in `./lib/fun.r`  
 
 ## SECC.fauna still includes many extra columns with sample meta-data not needed for ordination analyses.
 ## stripping these should be fairly easy: keep only the first column (SampleIDs - or rely on these as rownames), and all numeric columns (species counts).
+## - remove Patch.dwt (numeric) column.
 
 
 ## House-keeping
-rm(list=c('coli', 'rows.0', 'cols.0', 'i', 'IDs.formal', 'Mdata.cols', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.raw', 'sp.rows'))
+rm(list=c('coli', 'rows.0', 'cols.0', 'i', 'IDs.formal', 'Mdata.cols', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.raw', 'SECC.fauna.dwt', 'SECC.fauna.g', 'sp.rows'))
