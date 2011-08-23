@@ -63,7 +63,7 @@ SECC.fauna.raw$ID <- sp.names
 ## Extract meta-data
 ##================================================
 cat('  - Extracting fauna species metadata.\n')
-## clone first metadata columns to 'SECC.fauna.sp': species records, aliases, taxanomic categories, etc.
+## clone first metadata columns to 'SECC.fauna.meta': species records, aliases, taxanomic categories, etc.
 SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
                                         # keep only columns that do not start with "X" and a number (these are sample IDs).
 ## strip empty rows from meta-data
@@ -73,6 +73,8 @@ SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.f
 Mdata.cols <- which( colnames(SECC.fauna.raw) %in% colnames(SECC.fauna.meta))[-1]
 ## strip species metadata columns
 SECC.fauna <- SECC.fauna.raw[, -Mdata.cols]
+
+
 
 ##################################################
 ## PROCESS DATA
@@ -88,6 +90,7 @@ SECC.fauna <- SECC.fauna[, -cols.0]
 sample.cols <- 2:ncol(SECC.fauna)
 rows.0 <- which( apply( SECC.fauna[, sample.cols], 1, function(x) all(x==0) ) )
 SECC.fauna <- SECC.fauna[-rows.0, ]
+
 
 ##================================================
 ## Transpose input data table
@@ -146,6 +149,7 @@ for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character 
     SECC.fauna.meta[[i]] <- coli
 }
 
+
 ##================================================
 ## Check & clean data structure
 ##================================================
@@ -164,6 +168,8 @@ SECC.fauna <- within(SECC.fauna, {
 ## remove missing sp IDs from meta-data
 SECC.fauna.meta <- SECC.fauna.meta[which( SECC.fauna.meta$ID %in% intersect(colnames(SECC.fauna), SECC.fauna.meta$ID) ), ]
 SECC.fauna.meta$sp_alias <- make.names(SECC.fauna.meta$sp_alias, unique = FALSE)
+
+
 
 ##################################################
 ## CALCULATIONS
@@ -197,7 +203,7 @@ SECC.fauna <- SECC.fauna.g
 
 ##================================================
 ## Summary variables for univariate analyses
-## & merging into main SECC dataframe
+## suitable for merging into main SECC dataframe
 ##================================================
 ## Could have been done partly using aggregate() if the species were rows instead of columns :P
 SECC.fauna.sum <- SECC.fauna[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
@@ -230,11 +236,6 @@ SECC.fauna.sum <- SECC.fauna.sum[, c('SampleID', 'Block', 'Time', 'Chamber', 'Fr
                               'Mesostigmata', 'Collembola', 'Prostigmata', 'Other',
                               'Uropodina', 'Mesostig.preds', 'Predators', 'Grazers', 
                               'fauna.jaw', 'fauna')]  # manually reorder columns 
-
-
-##================================================
-## Species Richness & Diversity metrics
-##================================================
 
 
 

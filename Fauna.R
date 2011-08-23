@@ -23,26 +23,76 @@ library(ggplot2)	# load external package
 
 
 ##################################################
+## SETTINGS
+##################################################
+
+## t4 samples only: I'm not really using the other data yet anyway.
+Samples.fauna <- which(SECC.fauna$Time == 4)
+Vars.fauna    <- setdiff(colnames(SECC.fauna), 
+                         SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group %in% c("Other", "Prostigmata")]
+)
+Spp.fauna <- intersect(SECC.fauna.meta$ID, Vars.fauna)
+
+
+##################################################
 ## CHECK & PROCESS DATA
 ##################################################
 SECC.fauna.full <- SECC.fauna   # save a copy, just in case
-## Filter by Time pt.  
-## I do this here to maintain correspondence in row numbers between the various data frames.  
-## I'm not really using the other data yet anyway.
-SECC.fauna <- SECC.fauna[which(SECC.fauna$Time == 4), 
-                         setdiff(colnames(SECC.fauna), 
-                                 SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group %in% c("Other", "Prostigmata")]
-)
-]
+## Filter data early on to maintain correspondence in row numbers 
+##   between the various data frames.  
+Fauna.sp <- SECC.fauna[Samples.fauna, Vars.fauna]
+Fauna.meta <- SECC.fauna.meta[which(SECC.fauna.meta$ID %in% Spp.fauna), ]
 
+
+##================================================
+## Summary variables for univariate analyses
+## suitable for merging into main SECC dataframe
+##================================================
+## Could have been done partly using aggregate() if the species were rows instead of columns :P
+SECC.sp.sum <- Fauna.sp[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
+Taxa.groups <- unique(Fauna.meta$Taxonomic.Group)
+
+SECC.sp.sum <- within(SECC.sp.sum, {
+### Mesostigs
+### Collembola
+### Prostigs
+### Other
+    for (taxa in Taxa.groups) {
+      assign( taxa, apply(Fauna.sp[, Fauna.meta$ID[which(Fauna.meta$Taxonomic.Group == taxa)] ], 1, sum) )
+    }
+    rm(taxa)
+
+### Uropodina (non-predatory Mesostigs)
+    Uropodina <- apply(Fauna.sp[, Fauna.meta$ID[which(Fauna.meta$Major.Taxa == "  Uropodina")] ], 1, sum)
+### Mesostig.preds = Mesostigs - Uropodina
+    Mesostig.preds <- Mesostigmata - Uropodina
+### Predators = Mesostigs.preds + Prostigs
+    Predators <- Mesostig.preds + ifelse(exists('Prostigmata'), Prostigmata, 0)
+### Grazers = Collembola + Uropodina (+ Oribatids)
+    Grazers <- Collembola + Uropodina
+### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
+    fauna.jaw <- Mesostigmata + Collembola
+### fauna = all (-Other) * including ZL data?
+    fauna <- apply(Fauna.sp[, Fauna.meta$ID], 1, sum)
+})
+Cols.sp.sum <- c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos',
+                 'Mesostigmata', 'Collembola', 'Prostigmata', 'Other',
+                 'Uropodina', 'Mesostig.preds', 'Predators', 'Grazers', 
+                 'fauna.jaw', 'fauna')
+SECC.sp.sum <- SECC.sp.sum[, Cols.sp.sum[which( sapply(Cols.sp.sum, function(x) x %in% colnames(SECC.sp.sum)) )]]  # manually reorder columns 
+
+
+##================================================
+## Aggregate 'morphospecies' records into 'species'
+##================================================
 ## Aggregate count data by morphospecies with "confidence" 
 ## (i.e. lumping things together that are probably the same)
-SECC.fauna.sp <- data.frame(SampleID = SECC.fauna[['SampleID']])
+SECC.sp <- data.frame(SampleID = SECC.fauna[['SampleID']])
 
-Taxa.groups <- rev( unique(SECC.fauna.meta$sp_alias) )
-SECC.fauna.sp <- within(SECC.fauna.sp, {
+Taxa.groups <- rev( unique(Fauna.meta$sp_alias) )
+SECC.sp <- within(SECC.sp, {
     for (taxa in Taxa.groups) {
-      taxa.sp <- SECC.fauna.meta$ID[which(SECC.fauna.meta$sp_alias == taxa)]
+      taxa.sp <- Fauna.meta$ID[which(Fauna.meta$sp_alias == taxa)]
       taxa.sp <- intersect(taxa.sp, colnames(SECC.fauna))
       if (length(taxa.sp) > 0) {
         assign( taxa, 
@@ -55,10 +105,21 @@ SECC.fauna.sp <- within(SECC.fauna.sp, {
     }
     rm(taxa, taxa.sp)
 })
-rownames(SECC.fauna.sp) <- SECC.fauna.sp$SampleID
+rownames(SECC.sp) <- SECC.sp$SampleID
+SECC.sp <- SECC.sp[, -1]    # Data matrix only: remove SampleID column, leave IDs in rownames
   
-## Data matrix only: more convenient name, minus ID column (rownames still contain SampleIDs) :P
-Fauna <- SECC.fauna.sp[, -1]  
+## Data matrix only: more convenient name :P
+Fauna <- SECC.sp  
+
+
+##================================================
+## Species Richness & Diversity metrics
+##================================================
+## diversity() and estimateR() in vegan
+SECC.sp.sum <- within(SECC.sp.sum, {
+    richness <- estimateR(SECC.sp, )
+})
+
 
 
 
@@ -66,6 +127,12 @@ Fauna <- SECC.fauna.sp[, -1]
 ## DATA EXPLORATION
 ##################################################
 if (FALSE) {
+
+  Fauna.bip <- qplot(Collembola, Mesostig.preds, data = SECC.fauna.sum,
+                     ) + theme_bw() # group = Chamber, shape = Pos, colour = Chamber
+  print(Fauna.bip)
+  Fauna.bip <- Fauna.bip + facet_grid(facets = Chamber~Pos)
+  print(Fauna.bip)
 
   ## check variation & transformations
 boxplot( Fauna            , main = "raw data")
@@ -198,10 +265,20 @@ Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(),
                                 legend.direction = "vertical"
                                 )
 print(Fauna.plot)
-mtext( stress.label , side=3, line=0, adj=0 )
+mtext( stress.label , side=3, line=0, adj=1 ) # kludge: trying to copy or save the graph now with make R crash.
 
 Fauna.plot.frag <- Fauna.plot + facet_grid(facets = Frag~.)
 print(Fauna.plot.frag)
+
+
+##================================================
+## Save graphs
+##================================================
+if (FALSE) {
+  ggsave(filename="Fauna_mds_plot.eps", plot = Fauna.plot)
+}
+
+
 
 ##################################################
 ### CLEAN-UP / HOUSEKEEPING
