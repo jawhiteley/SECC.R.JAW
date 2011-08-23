@@ -20,6 +20,7 @@
 - Analyze Ion Resin Data
 
 - fix SECCstr to handle errors with aggregated data sets (line 304)
+- check why checkSECCdata() does not catch invalid SampleID's :(
 
 
 - investigate multcomp package for multiple comparisons

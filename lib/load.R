@@ -115,10 +115,10 @@ SECC <- SECC.base  # Base template into which relevant frames will be merged.
 ## Create containers for attributes.
  # attributes are lost after every merge,
  # so they are accumulated in a separate object to be added later.
-SECC.labels <- list("Time" = "Sample Time",
-                    "Chamber" = "Chamber Treatment",
-                    "Frag" = "Fragmentation Treatment",
-                    "Pos" = "Patch Position"
+SECC.labels <- list("Time"      = "Sample Time",
+                    "Chamber"   = "Chamber Treatment",
+                    "Frag"      = "Fragmentation Treatment",
+                    "Pos"       = "Patch Position"
                     )
 SECC.units  <- list()
 

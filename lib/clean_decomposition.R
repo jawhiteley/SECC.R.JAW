@@ -76,6 +76,7 @@ SECC.Decomposition <- within(SECC.Decomposition, {
 ## CHECK DATA
 ##################################################
 if (FALSE) {  # do not run when source()'d
+
   head(SECC.Decomposition)  # have a peek at the first 6 rows & columns: is this what you expected?
   str(SECC.Decomposition)   # check structure: are the appropriate variables factors, numeric, etc.?
   ## Check structure
@@ -108,6 +109,7 @@ attr(SECC.Decomposition, "units")  <- list("Decomposition"     = quote("% mass l
 Decomp.full <- SECC.Decomposition
 # only rows for samples, exclude controls
 SECC.decomp <- SECC.Decomposition[SECC.Decomposition$Type=="Experiment",]
+SECC.decomp$SampleID <- SECC_sampleID(SECC.decomp) # important for merging!
 
 
 ##================================================
