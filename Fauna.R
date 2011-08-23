@@ -87,19 +87,19 @@ SECC.sp.sum <- SECC.sp.sum[, Cols.sp.sum[which( sapply(Cols.sp.sum, function(x) 
 ##================================================
 ## Aggregate count data by morphospecies with "confidence" 
 ## (i.e. lumping things together that are probably the same)
-SECC.sp <- data.frame(SampleID = SECC.fauna[['SampleID']])
+SECC.sp <- data.frame(SampleID = Fauna.sp[['SampleID']])
 
 Taxa.groups <- rev( unique(Fauna.meta$sp_alias) )
 SECC.sp <- within(SECC.sp, {
     for (taxa in Taxa.groups) {
       taxa.sp <- Fauna.meta$ID[which(Fauna.meta$sp_alias == taxa)]
-      taxa.sp <- intersect(taxa.sp, colnames(SECC.fauna))
+      taxa.sp <- intersect(taxa.sp, colnames(Fauna.sp))
       if (length(taxa.sp) > 0) {
         assign( taxa, 
                if (length(taxa.sp) > 1) 
-                 apply(SECC.fauna[, taxa.sp], 1, sum) 
+                 apply(Fauna.sp[, taxa.sp], 1, sum) 
                else 
-                 SECC.fauna[, taxa.sp] 
+                 Fauna.sp[, taxa.sp] 
         )
       }
     }
@@ -115,9 +115,10 @@ Fauna <- SECC.sp
 ##================================================
 ## Species Richness & Diversity metrics
 ##================================================
-## diversity() and estimateR() in vegan
+## diversity() and specpool() in vegan
 SECC.sp.sum <- within(SECC.sp.sum, {
-    richness <- estimateR(SECC.sp, )
+    Richness <- apply(SECC.sp, 1, function(x) length(which(x>0)) )  # observed # spp.
+    Evenness <- diversity(SECC.sp, index = "invsimpson")
 })
 
 
@@ -143,7 +144,20 @@ boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
 boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
 boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
 
+with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
+with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
+
 }
+
+
+##################################################
+## UNIVARIATE ANALYSES (ANOVAs)
+##################################################
+
+source('Fauna-univariate.R')
+
+
+
 
 
 ##################################################

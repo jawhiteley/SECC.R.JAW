@@ -37,11 +37,12 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
   empty.cols <- which( apply( data[rows,       ], 2, function(x) all(is.na(x)) ) )
 
   if (all(dim == 1)) {
-	data <- data[-empty.rows, ]
+	if (length(empty.rows) > 0) data <- data[-empty.rows, ]
   } else if (all(dim == 2))  {
-	data <- data[, -empty.cols]
+	if (length(empty.cols) > 0) data <- data[, -empty.cols]
   } else if (all(dim %in% c(1, 2))) {
-	data <- data[-empty.rows, -empty.cols]
+	if (length(empty.rows) > 0 && length(empty.cols) > 0) 
+      data <- data[-empty.rows, -empty.cols]
   }
   
   return(data)

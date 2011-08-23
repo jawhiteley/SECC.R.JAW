@@ -317,6 +317,7 @@ SECCstr <- function (data) {
 ##==================================================
 ## Recode standardized factors to standard values prior to merging
 recodeSECC <- function(data=NULL) {
+  require(car)  # for recode()
   data.recoded <- within( data, {
     ## Rename columns / convert to standard informative names (already handled in SECCcolumns).
     ## Ensure columns that should be factors are, and drop unused levels.
