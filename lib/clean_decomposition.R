@@ -87,7 +87,7 @@ if (FALSE) {  # do not run when source()'d
   hist(SECC.Decomposition)
   boxplot(SECC.Decomposition)
 
-  mean(SECC.Decomposition[, "H2O"], na.rm = TRUE)
+  mean(SECC.Decomposition[, "Decomposition"], na.rm = TRUE)
 }
 
 ##================================================

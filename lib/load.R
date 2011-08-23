@@ -76,11 +76,11 @@ cat('- Processing individual data objects.\n')
 # that goes here; or in a separate script that is source()'d here.
 #   Specify which columns are to be merged with attribute "SECC columns"
 
-source("./lib/clean_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
-source("./lib/clean_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
+source("./lib/clean_cyanobacteria.R", echo=FALSE)   # Process Cyanobacteria data.
+source("./lib/clean_ARA.R", echo=FALSE)             # Process ARA N-fixation data.
 
-source("./lib/clean_H2O.R", echo=FALSE)            # Process Moisture data.
-source("./lib/clean_decomp.R", echo=FALSE)         # Process Decomposition data.
+source("./lib/clean_H2O.R", echo=FALSE)             # Process Moisture data.
+source("./lib/clean_decomposition.R", echo=FALSE)   # Process Decomposition data.
 
 
 ##================================================
