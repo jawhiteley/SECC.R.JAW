@@ -81,10 +81,22 @@ Y.lim <- c(-2, 18) # consistent Y-axis
 
 
 
+##================================================
+## Data Exploration
+##================================================
+if (FALSE) {
+  SECC.t1 <- SECC[which(SECC$Time==levels(SECC$Time)[1] & 
+                  SECC$Chamber==levels(SECC$Chamber)[3]), ]
+  boxplot(ARA.ml~Block, data =SECC.t1)
+  SECC.t1[which(SECC.t1$ARA.ml == max(SECC.t1$ARA.ml, na.rm = TRUE)), c('SampleID', 'ARA.ml')]
+  SECC.t1[which(SECC.t1$ARA.ml == min(SECC.t1$ARA.ml, na.rm = TRUE)), c('SampleID', 'ARA.ml')]
+}
+
+
+
 ##################################################
 ### RUN STANDARD nested ANOVA
 ##################################################
-
 ### Run analysis on each Time point in sequence.
 for ( Time.i in 1:length(levels(SECC$Time)) ) {
   ## Specify which treatment levels to include (by index is probably easiest)
