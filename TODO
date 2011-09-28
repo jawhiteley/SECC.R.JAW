@@ -15,6 +15,8 @@
     - nonparametric: test for slope of (upper) bound, rather than explaining full variation
   - Zero-inflated regression?
     - separate out zeros from non-zero data in 2-stage model.
+  - Include only Stigonema (or Nostoc) in analysis & see if it makes a difference
+    - can individual species by included as explanatory variables as well as the total, to compare relative importance?
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?

@@ -249,3 +249,16 @@ panel.lines2 <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
 
 }
 
+
+##================================================
+## GGPLOT2 custom options
+##================================================
+
+jaw.ggplot <- function(x) {
+  require(ggplot2)
+  ## add common custom options to ggplot2 objects.
+  ## I got tired of copying the same code over &over again.
+  x <- x + theme_bw()   # change to white background colour scheme.
+  x <- x + opts(legendkey = theme_rect(colour = NA))    # remove rectangle from legend keys.
+  return(x)
+}

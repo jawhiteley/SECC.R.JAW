@@ -9,7 +9,7 @@
 ##################################################
 ## Working Directory: see lib/init.R below
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
+  setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
   getwd()  # Check that we're in the right place
 }
 
@@ -17,9 +17,9 @@ if (FALSE) {  # do not run automatically
 source('./lib/init.R')
 
 ## library(car)
-library(lattice)
+## library(lattice)    # ggplot2 with faceting is easier!
 library(ggplot2)
-library(rgl)
+library(rgl)        # 3D plots
 library(lme4)
 ## library\(mgcv)
 
@@ -30,8 +30,14 @@ library(lme4)
 ### Response Variable *****
 X.col <- 'Cells.m'   # Column to analyze as explanatory variable        *****
 Y.col <- 'ARA.m'     # Column to analyze as response variable           *****
+## I would prefer to use measurements on a per-gram dwt of moss basis ('.g'),
+## but there aren't enough of such measurements for all ARA values (univariate).
+## There are certainly enough for this analysis, but I'm worried about inconsistency
+## for readers if N-fixation is analyzed on its own on a per-m^2 basis, 
+## while everything else is on a (preferred) per-g dwt basis.
 
-vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")  # for data exploration?
+# explanatory vars for data exploration?
+vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")  
 
 ##================================================
 ## SETTINGS 
@@ -68,8 +74,8 @@ SECC <- within( SECC, {
   ARA.ml[ARA.ml < 0] <- 0
   ARA.m[ ARA.m  < 0] <- 0
   ARA.g[ ARA.g  < 0] <- 0
-  Nfix <- ARA.m * Nfix.ARA.ratio
-  H2O <- H2O * 100
+  Nfix    <- ARA.m * Nfix.ARA.ratio
+  H2O     <- H2O * 100
   H2O.wwt <- H2O.wwt * 100
 })
 
@@ -138,6 +144,7 @@ SECC.use <- SECCclean(SECC, Time.use, Chamber.use, Frag.use, Position.use)
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
 ## aggregate 'other' patch Positions?
+##   unnecessary: only 'inner' & 'outer' included.
 SECCp  <- if (FALSE)  SECC_aggregate( SECC.use, trt = 'Position' )  else SECC.use
 
 ## Meta-community (regional) -level analyses (ignoring position):
@@ -169,43 +176,99 @@ if (FALSE) {  # do not run if source()d
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
+## full dataset: unbalanced with respect to experimental treatments
 plot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
+plot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
 
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
 Chamber.map$pch <- c(21, 16)  # use circles for both treatments
+Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 
 SECCa <- within( SECCa,{
-	colr = ifelse( Chamber == Chamber.map$label[1], 
-			Chamber.map$col[1], 
-			Chamber.map$col[2] 
-		)
-	fill = ifelse( Chamber == Chamber.map$label[1], 
-			Chamber.map$bg[1], 
-			Chamber.map$bg[2] 
-		)
-	pt = ifelse( Chamber == Chamber.map$label[1], 
-			Chamber.map$pch[1], 
-			Chamber.map$pch[2]
-		)
+                colr = ifelse( Chamber == Chamber.map$label[1], 
+                              Chamber.map$col[1], 
+                              Chamber.map$col[2] 
+                              )
+                fill = ifelse( Chamber == Chamber.map$label[1], 
+                              Chamber.map$bg[1], 
+                              Chamber.map$bg[2] 
+                              )
+                pt = ifelse( Chamber == Chamber.map$label[1], 
+                            Chamber.map$pch[1], 
+                            Chamber.map$pch[2]
+                            )
 })
 
-with( SECCa,{
-	## scatterplot
-	plot(X, Y, type="p",
-		ylab=Y.plotlab, xlab=X.plotlab, 
-		pch=pt, col=colr
-	)
-	legend("topright", legend=Chamber.map$label, 
-           pch=Chamber.map$pch, col=Chamber.map$col 
-    )
-    ##     identify(X, Y, labels = SampleID)
-})
+if (FALSE) {
+  ## the old-fashioned way (low-level)
+  with( SECCa,{
+       ## scatterplot
+       plot(X, Y, type="p",
+            ylab=Y.plotlab, xlab=X.plotlab, 
+            pch=pt, col=colr
+            )
+  legend("topright", legend=Chamber.map$label, 
+         pch=Chamber.map$pch, col=Chamber.map$col 
+  )
+  ##     identify(X, Y, labels = SampleID)
+  })
+}
+
+## the easy way, using ggplot
+ARAcb.plot <- qplot(X, Y, data = SECCa, group = Chamber,
+                   geom = "point", size = I(3),
+                   colour = Chamber, shape = Chamber,
+                   xlab = X.plotlab,
+                   ylab = Y.plotlab
+                   )
+ARAcb.plot <- ARAcb.plot + scale_colour_manual(name = Chamber.label,
+                                               values = Chamber.map$col, 
+                                               breaks = levels(Chamber.map$label))
+## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
+ARAcb.plot <- ARAcb.plot + scale_shape_manual(name = Chamber.label,
+                                              values = Chamber.map$pch, 
+                                              breaks = levels(Chamber.map$label))
+ARAcb.plot <- ARAcb.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+print(ARAcb.plot)
+
+ARAcb.time <- ARAcb.plot + facet_grid(facets = .~Time) 
+print(ARAcb.time)
+##***** Full faceting
+ARAcb.panels <- ARAcb.plot + facet_grid(facets = Frag~Time*Position) 
+print(ARAcb.panels)
+
+
+## Check Variation, Ranges
+X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
+                 ylab = X.plotlab
+                 )
+X.box <- jaw.ggplot( X.box )
+print(X.box)
+
+Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab
+                 )
+Y.box <- jaw.ggplot( Y.box )
+print(Y.box)
+
+## Check distributions
+X.dist <- qplot(X, data = SECCa, geom = "histogram",
+                 xlab = X.plotlab
+                 )
+X.dist <- jaw.ggplot( X.dist ) + facet_grid(facets = Frag~Time*Position)
+print(X.dist)
+
+Y.dist <- qplot(Y, data = SECCa, geom = "histogram",
+                 xlab = Y.plotlab
+                 )
+Y.dist <- jaw.ggplot( Y.dist ) + facet_grid(facets = Frag~Time*Position)
+print(Y.dist)
 
 old.par <- par(mfcol=c(2,2))
-## Check distributions
 for(i in 1:length(vars.ls) ){
   var <- vars.ls[i]
   label <- labels.ls[i]
@@ -241,6 +304,9 @@ for(i in 1:length(vars.ls) ){
 }
 par(old.par)
 
+
+## More scatterplots, broken down in various ways.
+## coplot() deprecated - qplot with faceting is easier & better-looking?
 coplot( Y ~ X | Frag * Position, data=SECCa, 
        pch=SECCa$pt, col=SECCa$colr	# , bg=Chamber.map$bg
 )	# why does recycling Chamber.map work for bg, but not col?
@@ -255,7 +321,6 @@ coplot( Y ~ X | Chamber * Position , data=SECCa,
 coplot( Y ~ H2O | Frag * Position , data=SECCa, 
        pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
 )
-
 
 qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position*Frag ~ Time) + theme_bw() +
 scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
@@ -273,14 +338,11 @@ scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.
 scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
 
 
-## much the same breakdown, using TRELLIS xyplot over 3 factors.
-## xyplot( Y ~ X | Chamber * Frag * Position, data=SECCa, 
-##        pch=point, col=SECCa$colr, bg = SECCa$fill 
-## )
-## xyplot( Y ~ X | Chamber * Frag , data=SECCa, col=1 
-## , key=simpleKey(levels(SECCa$Chamber))
-## )
-## 
+## 3D plot with X, Y & H2O axes (requires rgl package)
+with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
+
+
+
 
 
 ##################################################
