@@ -62,6 +62,7 @@ SECC.H2O <- within( SECC.H2O, {
   H2O.wt  <- wwt - dwt
   H2O     <- H2O.wt / dwt
   H2O.wwt <- H2O.wt / wwt
+  Patch.dwt <- dwt
 })
 
 
@@ -71,12 +72,14 @@ SECC.H2O <- within( SECC.H2O, {
 ##================================================
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.H2O, "SECC columns") <- c('H2O', 'H2O.wwt')
-attr(SECC.H2O, "labels") <- list("H2O"     = "Water Content",
-                                 "H2O.wwt" = "% Water"
+attr(SECC.H2O, "SECC columns") <- c('Patch.dwt', 'H2O', 'H2O.wwt')
+attr(SECC.H2O, "labels") <- list("Patch.dwt"    = "Sample Dry Weight",
+                                 "H2O"          = "Water Content",
+                                 "H2O.wwt"      = "% Water"
                                 )
-attr(SECC.H2O, "units")  <- list("H2O"     = quote("% moss dry weight"),
-                                 "H2O.wwt" = quote("% moss wet weight")
+attr(SECC.H2O, "units")  <- list("Patch.dwt"    = quote("g"),
+                                 "H2O"          = quote("% moss dry weight"),
+                                 "H2O.wwt"      = quote("% moss wet weight")
                                  )
 
 ##################################################

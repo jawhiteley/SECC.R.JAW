@@ -33,7 +33,7 @@ SECCcolumnNames <- function(data=NULL, DataName="data") {
   ColNames_std <- colnames(SECC.base)
   SampleID.synonyms <- c("SampleID", "PatchID", "ID", "Sample", "Treatment")
   Block.synonyms   <- c("Block", "block")
-  Time.synonyms    <- c("Time", "TimePt", "time.point", "time.pt", "t.point")
+  Time.synonyms    <- c("Time", "TimePt", "time", "time.point", "time.pt", "t.point")
   Chamber.synonyms <- c("Chamber", "chamber", "Warming", "warming", "warm", "Chamber.trt", "Warming.trt")
   Frag.synonyms    <- c("Frag", "Fragmentation", "Frag.trt", "fragmentation", "frag", "frag.trt")
   Pos.synonyms     <- c("Pos", "Position", "position", "pos")
@@ -317,6 +317,7 @@ SECCstr <- function (data) {
 ##==================================================
 ## Recode standardized factors to standard values prior to merging
 recodeSECC <- function(data=NULL) {
+  require(car)  # for recode()
   data.recoded <- within( data, {
     ## Rename columns / convert to standard informative names (already handled in SECCcolumns).
     ## Ensure columns that should be factors are, and drop unused levels.

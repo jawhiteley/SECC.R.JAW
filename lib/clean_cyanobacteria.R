@@ -150,7 +150,9 @@ attr(SECC.cyanobacteria, "SECC columns") <-
       "Cells",  "Cells.g",  "Cells.m", "Hcells", "Hcells.g", "Hcells.m"
       )
 attr(SECC.cyanobacteria, "labels") <- 
-    list("Cells"    = "Cyanobacteria Cell Density",
+    list("ARA.dwt"      = "Dry Weight",
+         "Cells.dwt"    = "Dry Weight",
+         "Cells"    = "Cyanobacteria Cell Density",
          "Cells.g"  = "Cyanobacteria Cell Density",
          "Cells.m"  = "Cyanobacteria Cell Density",
          "Hcells"   = "Heterocyst Cell Density", 
@@ -158,7 +160,9 @@ attr(SECC.cyanobacteria, "labels") <-
          "Hcells.m" = "Heterocyst Cell Density" 
          )
 attr(SECC.cyanobacteria, "units")  <- 
-    list("Cells"    = "cells/shoot",
+    list("ARA.dwt"      = "mg",
+         "Cells.dwt"    = "mg",
+         "Cells"    = "cells/shoot",
          "Cells.g"  = quote("cells" %.% g^-1 * "dwt"),
          "Cells.m"  = quote("cells" %.% m^-2),
          "Hcells"   = "cells/shoot",

@@ -89,7 +89,7 @@ FINAL DATA STRUCTURE
 ## Environmental Data               SECC.env
    UTM.E            metres          UTM coordinates East  (x)
    UTM.N            metres          UTM coordinates North (y)
-   Sample.dwt        g              Dry Weight of entire sample (pi*12.5^2 = 490.87 cm^2)
+   Patch.dwt         g              Dry Weight of entire patch sample (pi*12.5^2 = 490.87 cm^2)
    ARA.dwt          mg              Dry Weight of ARA sample (20 shoots)
    Cells.dwt        mg              Dry Weight of Cyanobacteria samples (2 shoots)
    H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
@@ -101,7 +101,9 @@ FINAL DATA STRUCTURE
 +    growth.t3      mm              * Moss Growth @ t3 (i.e. when t4 was sampled).
 >  Prod             mg dwt          Moss growth converted to biomass (productivity).
    Decomposition    %mass loss      Decomposition rates.
-   N.avail          ?               Available Nitrogen Compounds (Ion resin)
+   NH4              ?               Available Ammonium (NH4+) from Ion resin
+   NO3              ?               Available Nitrates & Nitrites (NO2, NO3-) from Ion resin
+   TAN              ?               Total Available Nitrogen Compounds (Ion resin)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
    Nostoc           #/sample        Nostoc cyanobacteria cells
 >  Nostoc.h         #/sample        Nostoc heterocysts

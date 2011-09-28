@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2011-03-23
+# Jonathan Whiteley		R v2.12		2011-08-21
 ##================================================
 ## All Data files in './data' are loaded into memory.
 ## Load scripts for manual processing are source()'d
@@ -20,8 +20,10 @@
 ##   are checked and merged as a Time Series.
 ##   -> SECC.TRH : Temperature & Relative Humidity Time Series.
 ##################################################
-# rm(list=ls())       # house-keeping
-# setwd('./ SECC/')   # project directory
+if (FALSE) {        # do not run automatically
+  rm(list=ls())     # house-keeping
+  setwd('./ SECC/') # project directory
+}
 getwd()             # check current wd
 
 ## LOAD LIBRARIES
@@ -74,10 +76,11 @@ cat('- Processing individual data objects.\n')
 # that goes here; or in a separate script that is source()'d here.
 #   Specify which columns are to be merged with attribute "SECC columns"
 
-source("./lib/clean_cyanobacteria.R", echo=FALSE)  # Process Cyanobacteria data.
-source("./lib/clean_ARA.R", echo=FALSE)            # Process ARA N-fixation data.
+source("./lib/clean_cyanobacteria.R", echo=FALSE)   # Process Cyanobacteria data.
+source("./lib/clean_ARA.R", echo=FALSE)             # Process ARA N-fixation data.
 
-source("./lib/clean_H2O.R", echo=FALSE)            # Process Moisture data.
+source("./lib/clean_H2O.R", echo=FALSE)             # Process Moisture data.
+source("./lib/clean_decomposition.R", echo=FALSE)   # Process Decomposition data.
 
 
 ##================================================
@@ -94,6 +97,15 @@ for (DataObject in merge.SECC) {
 
 
 ##################################################
+## LOAD OTHER DATA
+##################################################
+## do this here to allow generation of new data objects
+## to be merged into SECC
+cat('- Loading fauna data.\n')
+source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
+
+
+##################################################
 ## PROCESS DATA
 ##################################################
 cat('- Merging data.\n')
@@ -103,10 +115,10 @@ SECC <- SECC.base  # Base template into which relevant frames will be merged.
 ## Create containers for attributes.
  # attributes are lost after every merge,
  # so they are accumulated in a separate object to be added later.
-SECC.labels <- list("Time" = "Sample Time",
-                    "Chamber" = "Chamber Treatment",
-                    "Frag" = "Fragmentation Treatment",
-                    "Pos" = "Patch Position"
+SECC.labels <- list("Time"      = "Sample Time",
+                    "Chamber"   = "Chamber Treatment",
+                    "Frag"      = "Fragmentation Treatment",
+                    "Pos"       = "Patch Position"
                     )
 SECC.units  <- list()
 
@@ -164,7 +176,7 @@ patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 SECC <- within( SECC, {
   # ARA per gram dry weight of sample.
   # Dry weights are only available for samples with cyanobacteria data :(
-  ARA.g <- ARA.ml / ARA.dwt  
+  ARA.g <- ARA.ml / (ARA.dwt / 1000)  # ARA.dwt in mg
   Nfix  <- ARA.m * Nfix.ARA.ratio
 })
 
@@ -178,10 +190,11 @@ attr(SECC, "units" )[["Nfix"]] <- quote(mu*"mol" %.% m^-2 %.% d^-1)
 SECC.coded <- SECC          # keep a copy, just in case
 SECC <- recodeSECC( SECC )  # standard function in `./lib/fun.r`  
 
-### Summarize data by means across different (or all) Positions to prevent unbalanced effects?
-# SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
-# SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
-
+if (FALSE) {
+  ## Summarize data by means across different (or all) Positions to prevent unbalanced effects?
+  SECCr <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag), mean ) )	# for regional-level analyses (ignoring Position)
+  SECC <- with( SECC, aggregate( cbind(Y) , by=list(Block=Block, Time=Time, Chamber=Chamber, Frag=Frag, Position=Position), mean ) )	# using cbind() on the response variables allows multiple columns to be summarized, and also preserves column names.
+}
 
 ##################################################
 ## CHECK DATA
@@ -207,6 +220,13 @@ if (FALSE) {  # do not run when source()'d
 }
 
 ##################################################
+## SPLIT ENVIRONMENTAL DATA
+##################################################
+## Separate Environmental data -> SECC.env
+## & remove from SECC data frame.
+
+
+##################################################
 ## SAVE DATA
 ##################################################
 # Save data to native R file "./save/SECC_data.R", or leave in memory:
@@ -217,7 +237,7 @@ if (FALSE) {  # do not run when source()'d
 # + [Other]
 cat('- Saving data & cleaning up.\n')
 
-Load.export <- c( 'SECC', 'SECC.coded')  # , 'SECC.env', 'SECC.fauna', 'SECC.TRH' )
+Load.export <- c( 'SECC', 'SECC.coded', 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH' )
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.

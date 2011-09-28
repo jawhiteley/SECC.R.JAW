@@ -34,6 +34,8 @@ Position.use <- levels(SECC$Position)     # Patch Positions to include
 ## !is.na(SECC$Time) ; NAs in factors are annoying
 SECC.prime <- SECC    # save a copy of the original for reference.
 
+if (FALSE) {
+
 ## str(SECC)
 sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
       #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
@@ -53,6 +55,7 @@ SECC <- within( SECC, {
   Nfix <- ARA.m * Nfix.ARA.ratio
 })
 
+}
 
 ##================================================
 ## Define Labels

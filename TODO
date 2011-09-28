@@ -26,7 +26,15 @@
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
 
+X Analyze Decomposition Data
+
+~ Analyze Fauna Data
+
+- Load    Ion Resin Data
+- Analyze Ion Resin Data
+
 - fix SECCstr to handle errors with aggregated data sets (line 304)
+- check why checkSECCdata() does not catch invalid SampleID's :(
 
 
 - investigate multcomp package for multiple comparisons
@@ -45,5 +53,4 @@
 
 Current Changes:
 ================
-
 
