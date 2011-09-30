@@ -40,8 +40,9 @@ if( length(SampleID.wrong)>0 ) {
   ##   or keeping only the first 2, but I haven't figured out an easy / elegant way to do this yet.
   warning( paste("There are not exactly 2 subsamples of each Cyanobacteria sample.",
                  Pblm.msg, sep='' ) )
+  rm(list=c('Duplicates', 'Missing', 'text.empty', 'Pblm.msg'))
 }
-rm(list=c('Duplicates', 'Missing', 'text.empty', 'Pblm.msg'))
+
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
