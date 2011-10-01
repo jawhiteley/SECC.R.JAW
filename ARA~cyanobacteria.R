@@ -241,6 +241,32 @@ print(ARAcb.time)
 ARAcb.panels <- ARAcb.plot + facet_grid(facets = Frag~Time*Position) 
 print(ARAcb.panels)
 
+## log-log looks encouraging
+##  Why can't I do this by adding + coord_trans(x = "log", y = "log") ??
+##  (I get an error when I do this to any of the above plots, even without faceting.
+ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy", 
+                    group = Chamber, geom = "point", size = I(3),
+                    colour = Chamber, shape = Chamber,
+                    xlab = X.plotlab,
+                    ylab = Y.plotlab
+                    )
+ARAcb.log <- ARAcb.log + scale_colour_manual(name = Chamber.label,
+                                               values = Chamber.map$col, 
+                                               breaks = levels(Chamber.map$label))
+## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
+ARAcb.log <- ARAcb.log + scale_shape_manual(name = Chamber.label,
+                                              values = Chamber.map$pch, 
+                                              breaks = levels(Chamber.map$label))
+ARAcb.log <- ARAcb.log + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+print(ARAcb.log)
+
+ARAcb.time.log <- ARAcb.log + facet_grid(facets = .~Time) 
+print(ARAcb.time.log)
+
+##***** Full faceting
+ARAcb.panels.log <- ARAcb.log + facet_grid(facets = Frag~Time*Position) 
+print(ARAcb.panels.log)
+
 
 ## Check Variation, Ranges
 X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
