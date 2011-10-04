@@ -19,6 +19,7 @@ source('./lib/init.R')
 ## library(car)
 ## library(lattice)    # ggplot2 with faceting is easier!
 library(ggplot2)
+theme_set(theme_bw())                  # change global ggplot2 theme
 library(rgl)        # 3D plots
 library(lme4)
 ## library\(mgcv)
@@ -219,20 +220,18 @@ if (FALSE) {
 }
 
 ## the easy way, using ggplot
+## prepare plot theme for points varying by Chamber
+ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label)
+Time.facets <- facet_grid(facets = .~Time)
+All.facets  <- facet_grid(facets = Frag~Time*Position)
+
 ARAcb.plot <- qplot(X, Y, data = SECCa, group = Chamber,
                    geom = "point", size = I(3),
                    colour = Chamber, shape = Chamber,
                    xlab = X.plotlab,
                    ylab = Y.plotlab
                    )
-ARAcb.plot <- ARAcb.plot + scale_colour_manual(name = Chamber.label,
-                                               values = Chamber.map$col, 
-                                               breaks = levels(Chamber.map$label))
-## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
-ARAcb.plot <- ARAcb.plot + scale_shape_manual(name = Chamber.label,
-                                              values = Chamber.map$pch, 
-                                              breaks = levels(Chamber.map$label))
-ARAcb.plot <- ARAcb.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+ARAcb.plot <- ARAcb.plot + ChamberPts + jaw.ggplot()
 print(ARAcb.plot)
 
 ARAcb.time <- ARAcb.plot + facet_grid(facets = .~Time) 
@@ -250,21 +249,14 @@ ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy",
                     xlab = X.plotlab,
                     ylab = Y.plotlab
                     )
-ARAcb.log <- ARAcb.log + scale_colour_manual(name = Chamber.label,
-                                               values = Chamber.map$col, 
-                                               breaks = levels(Chamber.map$label))
-## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
-ARAcb.log <- ARAcb.log + scale_shape_manual(name = Chamber.label,
-                                              values = Chamber.map$pch, 
-                                              breaks = levels(Chamber.map$label))
-ARAcb.log <- ARAcb.log + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+ARAcb.log <- ARAcb.log + ChamberPts + jaw.ggplot()
 print(ARAcb.log)
 
-ARAcb.time.log <- ARAcb.log + facet_grid(facets = .~Time) 
+ARAcb.time.log <- ARAcb.log + Time.facets 
 print(ARAcb.time.log)
 
 ##***** Full faceting
-ARAcb.panels.log <- ARAcb.log + facet_grid(facets = Frag~Time*Position) 
+ARAcb.panels.log <- ARAcb.log + All.facets 
 print(ARAcb.panels.log)
 
 

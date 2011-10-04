@@ -202,4 +202,18 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   return(PlotMap)
 }
 
+ggPts.SECC <- function (ptMap = plotMap("Chamber"), name = "Chamber Treatment") {
+  ## Add Chamber shapes & colours to a ggplot scatterplot
+  require(ggplot2)
+  plotTemplate <- list(scale_colour_manual(name = name,
+                                           values = ptMap$col, 
+                                           breaks = levels(ptMap$label)
+                                           ),
+                       scale_shape_manual(name = name,
+                                          values = ptMap$pch, 
+                                          breaks = levels(ptMap$label)
+                                          )
+                       )
+  ## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
+}
 

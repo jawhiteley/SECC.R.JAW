@@ -256,9 +256,21 @@ panel.lines2 <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
 
 jaw.ggplot <- function(x) {
   require(ggplot2)
-  ## add common custom options to ggplot2 objects.
-  ## I got tired of copying the same code over &over again.
-  x <- x + theme_bw()   # change to white background colour scheme.
-  x <- x + opts(legendkey = theme_rect(colour = NA))    # remove rectangle from legend keys.
-  return(x)
+  if (FALSE) {
+    if (class(x)!="ggplot") return(x)
+    ## add common custom options to ggplot2 objects.
+    ## I got tired of copying the same code over & over again.
+    x <- x + theme_bw()                  # change to white background colour scheme.
+    x <- x + opts(legend.key = theme_rect(colour = NA)) # remove rectangle from legend keys.
+    return(x)
+  } else {
+    require(ggplot2)
+    ## add common custom options to ggplot2 objects as a template.
+    ## useage: MYggPlot + jaw.ggplot()
+    ## I got tired of copying the same code over & over again.
+    plotTemplate <- list(theme_bw(),   # change to white background colour scheme.
+                         opts(legend.key = theme_rect(colour = NA)) # remove rectangle from legend keys.
+    )
+    return(plotTemplate)
+  }
 }
