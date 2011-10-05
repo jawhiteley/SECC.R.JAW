@@ -7,7 +7,7 @@
 ##################################################
 ## INITIALISE
 ##################################################
-## Working Directory: see lib/init.R below
+## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
   setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
   getwd()  # Check that we're in the right place
@@ -159,6 +159,10 @@ SECCa <- within( SECCa, {
                 X <- as.numeric( get(X.col) )
                 Y <- as.numeric( get(Y.col) )
                 Y.use <- Y  # compatibility with older code
+                X.log <- log(X)
+                X.log[X <= 0] <- 0
+                Y.log <- log(Y)
+                Y.log[Y <= 0] <- 0
 })
 
 ##################################################
@@ -234,10 +238,10 @@ ARAcb.plot <- qplot(X, Y, data = SECCa, group = Chamber,
 ARAcb.plot <- ARAcb.plot + ChamberPts + jaw.ggplot()
 print(ARAcb.plot)
 
-ARAcb.time <- ARAcb.plot + facet_grid(facets = .~Time) 
+ARAcb.time <- ARAcb.plot + Time.facets
 print(ARAcb.time)
 ##***** Full faceting
-ARAcb.panels <- ARAcb.plot + facet_grid(facets = Frag~Time*Position) 
+ARAcb.panels <- ARAcb.plot + Time.facets
 print(ARAcb.panels)
 
 ## log-log looks encouraging
@@ -264,26 +268,26 @@ print(ARAcb.panels.log)
 X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
                  ylab = X.plotlab
                  )
-X.box <- jaw.ggplot( X.box )
+X.box <- X.box + jaw.ggplot()
 print(X.box)
 
 Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
                  ylab = Y.plotlab
                  )
-Y.box <- jaw.ggplot( Y.box )
+Y.box <- Y.box + jaw.ggplot()
 print(Y.box)
 
 ## Check distributions
 X.dist <- qplot(X, data = SECCa, geom = "histogram",
                  xlab = X.plotlab
                  )
-X.dist <- jaw.ggplot( X.dist ) + facet_grid(facets = Frag~Time*Position)
+X.dist <- X.dist + jaw.ggplot() + All.facets
 print(X.dist)
 
 Y.dist <- qplot(Y, data = SECCa, geom = "histogram",
                  xlab = Y.plotlab
                  )
-Y.dist <- jaw.ggplot( Y.dist ) + facet_grid(facets = Frag~Time*Position)
+Y.dist <- Y.dist + jaw.ggplot() + All.facets
 print(Y.dist)
 
 old.par <- par(mfcol=c(2,2))
@@ -358,6 +362,7 @@ scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.ma
 
 ## 3D plot with X, Y & H2O axes (requires rgl package)
 with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
+with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
 
 
 
