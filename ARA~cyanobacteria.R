@@ -179,14 +179,18 @@ if (FALSE) {  # do not run if source()d
 ## EXPLORE: PLOTS
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
+DrawExplorationGraphs <- TRUE           # Set to FALSE to suppress all this output
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
 ### pairplots of several variables of interest (see Zuur et al. books)
-## full dataset: unbalanced with respect to experimental treatments
-pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
-## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
-pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+if (DrawExplorationGraphs) {
+  ## full dataset: unbalanced with respect to experimental treatments
+  pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+  ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
+  pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+}
 
+### Map of point styles for Chamber treatments
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
@@ -197,18 +201,18 @@ Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 ## Set up some plotting options for each data point
 ##  only needed for non-ggplot commands
 SECCa <- within( SECCa,{
-                colr = ifelse( Chamber == Chamber.map$label[1], 
+                colr = ifelse(Chamber == Chamber.map$label[1], 
                               Chamber.map$col[1], 
                               Chamber.map$col[2] 
                               )
-                fill = ifelse( Chamber == Chamber.map$label[1], 
+                fill = ifelse(Chamber == Chamber.map$label[1], 
                               Chamber.map$bg[1], 
                               Chamber.map$bg[2] 
                               )
-                pt = ifelse( Chamber == Chamber.map$label[1], 
-                            Chamber.map$pch[1], 
-                            Chamber.map$pch[2]
-                            )
+                pt   = ifelse(Chamber == Chamber.map$label[1], 
+                              Chamber.map$pch[1], 
+                              Chamber.map$pch[2]
+                              )
 })
 
 if (FALSE) {
@@ -229,27 +233,27 @@ if (FALSE) {
 ##================================================
 ## The easy way, using ggplot
 ##================================================
-## prepare plot theme for points varying by Chamber
+### prepare plot theme for points varying by Chamber
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 Time.facets <- facet_grid(facets = .~Time)
 All.facets  <- facet_grid(facets = Frag~Time*Position)
 
-ARAcb.plot <- qplot(X, Y, data = SECCa, group = Chamber,
+ARAcb.plot  <- qplot(X, Y, data = SECCa, group = Chamber,
                    geom = "point", size = I(3),
                    colour = Chamber, shape = Chamber,
                    xlab = X.plotlab,
                    ylab = Y.plotlab
                    )
-ARAcb.plot <- ARAcb.plot + jaw.ggplot() + ChamberPts + TopLegend  # order matters!
-print(ARAcb.plot)
+ARAcb.plot  <- ARAcb.plot + jaw.ggplot() + ChamberPts + TopLegend  # order matters!
 
-
-ARAcb.time <- ARAcb.plot + Time.facets
-print(ARAcb.time)
-##***** Full faceting
-ARAcb.panels <- ARAcb.plot + Time.facets
-print(ARAcb.panels)
+ARAcb.time   <- ARAcb.plot + Time.facets # Faceted by Time pts
+ARAcb.panels <- ARAcb.plot + Time.facets # Full Faceting ***
+if (DrawExplorationGraphs) {
+  print(ARAcb.plot)
+  print(ARAcb.time)
+  print(ARAcb.panels)
+}
 
 ## log-log looks encouraging
 ##  Why can't I do this by adding + coord_trans(x = "log", y = "log") ??
@@ -261,12 +265,14 @@ ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy",
                     ylab = Y.plotlab
                     )
 ARAcb.log <- ARAcb.log + ChamberPts + jaw.ggplot() + TopLegend
-print(ARAcb.log)
 
-ARAcb.time.log <- ARAcb.log + Time.facets 
-print(ARAcb.time.log)
+ARAcb.time.log   <- ARAcb.log + Time.facets 
 ARAcb.panels.log <- ARAcb.log + All.facets 
-print(ARAcb.panels.log)
+if (DrawExplorationGraphs) {
+  print(ARAcb.log)
+  print(ARAcb.time.log)
+  print(ARAcb.panels.log)
+}
 
 ## H2O plots
 ARA.H2O <- qplot(H2O, Y, data = SECCa, 
@@ -275,12 +281,14 @@ ARA.H2O <- qplot(H2O, Y, data = SECCa,
                     ylab = Y.plotlab
                     )
 ARA.H2O <- ARA.H2O + ChamberPts + jaw.ggplot() + TopLegend
-print(ARA.H2O)
 
-ARA.H2O.time <- ARA.H2O + Time.facets 
-ARA.H2O.panels <- ARA.H2O + All.facets 
-print(ARA.H2O.time)
-print(ARA.H2O.panels)
+ARA.H2O.time   <- ARA.H2O + Time.facets
+ARA.H2O.panels <- ARA.H2O + All.facets
+if (DrawExplorationGraphs) {
+  print(ARA.H2O)
+  print(ARA.H2O.time)
+  print(ARA.H2O.panels)
+}
 
 ARA.H2O.log <- qplot(H2O, Y, data = SECCa, log = "y", 
                     group = Chamber, geom = "point", size = I(3),
@@ -288,12 +296,14 @@ ARA.H2O.log <- qplot(H2O, Y, data = SECCa, log = "y",
                     ylab = Y.plotlab
                     )
 ARA.H2O.log <- ARA.H2O.log + ChamberPts + jaw.ggplot() + TopLegend
-print(ARA.H2O.log)
 
-ARA.H2O.log.time <- ARA.H2O.log + Time.facets 
-ARA.H2O.log.panels <- ARA.H2O.log + All.facets 
-print(ARA.H2O.log.time)
-print(ARA.H2O.panels)
+ARA.H2O.log.time   <- ARA.H2O.log + Time.facets
+ARA.H2O.log.panels <- ARA.H2O.log + All.facets
+if (DrawExplorationGraphs) {
+  print(ARA.H2O.log)
+  print(ARA.H2O.log.time)
+  print(ARA.H2O.panels)
+}
 
 
 if (FALSE) {    ## Deprecated scatterplots, broken down in various ways.
@@ -316,8 +326,10 @@ if (FALSE) {    ## Deprecated scatterplots, broken down in various ways.
 
 ##================================================
 ## 3D plot with X, Y & H2O axes (requires rgl package)
-with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
-with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
+if (DrawExplorationGraphs) {
+  with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
+  with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
+}
 
 
 ##================================================
@@ -326,13 +338,13 @@ X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
                  ylab = X.plotlab
                  )
 X.box <- X.box + jaw.ggplot()
-print(X.box)
+if (DrawExplorationGraphs) print(X.box)
 
 Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
                  ylab = Y.plotlab
                  )
 Y.box <- Y.box + jaw.ggplot()
-print(Y.box)
+if (DrawExplorationGraphs) print(Y.box)
 
 ##================================================
 ## Check distributions
@@ -340,49 +352,51 @@ X.dist <- qplot(X, data = SECCa, geom = "histogram",
                  xlab = X.plotlab
                  )
 X.dist <- X.dist + jaw.ggplot() + All.facets
-print(X.dist)
+if (DrawExplorationGraphs) print(X.dist)
 
 Y.dist <- qplot(Y, data = SECCa, geom = "histogram",
                  xlab = Y.plotlab
                  )
 Y.dist <- Y.dist + jaw.ggplot() + All.facets
-print(Y.dist)
+if (DrawExplorationGraphs) print(Y.dist)
 
-old.par <- par(mfcol=c(2,2))
-for(i in 1:length(vars.ls) ){
-  var <- vars.ls[i]
-  label <- labels.ls[i]
-  with( SECCa,{
-        X.var <- get(var)
-        X.max  <- max( X.var )
-        ##         cat(var, " ", X.max, "\n")
-        freq.max <- length(X.var)/2
-        X.maxD <- max( density( X.var )$y )*1.5
-        for(Ch.trt in levels(Chamber)){
-          X.trt <- X.var[Chamber==Ch.trt]
-          X.density <- density( X.trt )
-          hist( X.trt,
-               main=Ch.trt, xlab=label,
-               xlim=c(0, X.max), 
-               ylim=c(0, freq.max),
-               breaks=seq( 0, X.max, length.out=16 ),
-               col="#CCCCCC"
-               )
+if (DrawExplorationGraphs) {
+  old.par <- par(mfcol=c(2,2))
+  for(i in 1:length(vars.ls) ) {
+    var <- vars.ls[i]
+    label <- labels.ls[i]
+    with( SECCa,{
+         X.var <- get(var)
+    X.max  <- max( X.var )
+    ##         cat(var, " ", X.max, "\n")
+    freq.max <- length(X.var)/2
+    X.maxD <- max( density( X.var )$y )*1.5
+    for(Ch.trt in levels(Chamber)) {
+      X.trt <- X.var[Chamber==Ch.trt]
+      X.density <- density( X.trt )
+      hist(X.trt,
+           main=Ch.trt, xlab=label,
+           xlim=c(0, X.max), 
+           ylim=c(0, freq.max),
+           breaks=seq( 0, X.max, length.out=16 ),
+           col="#CCCCCC"
+           )
 ###       abline( 5, 0, lty=3, col="#666666" ) # reference line
-          plot( X.density,
-               main=Ch.trt, xlab=label,
-               xlim=c(0, X.max),
-               ylim=c(0, X.maxD)
-               )
-          densityplot( X.trt,
-                      main=Ch.trt, xlab=label,
-                      xlim=c(0, max( X.var ) )
-                      )	# ** TRELLIS plot
-        }
+      plot(X.density,
+           main=Ch.trt, xlab=label,
+           xlim=c(0, X.max),
+           ylim=c(0, X.maxD)
+           )
+      densityplot( X.trt,
+                  main=Ch.trt, xlab=label,
+                  xlim=c(0, max( X.var ) )
+                  )	# ** TRELLIS plot
+      }
     })
-	# qqplot(x, y) to compare distributions.
+    ## qqplot(x, y) to compare distributions.
+  }
+  par(old.par)
 }
-par(old.par)
 
 
 
@@ -392,13 +406,16 @@ par(old.par)
 ## ANALYSIS: formula
 ##################################################
 ## GLMM
-Y.rformula <- 1|Block/Time/Chamber/Frag
+Y.Ri  <- ~ 1|Block/Time/Chamber/Frag # Random intercept across Blocks
+Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept across Blocks
 
+### Fixed effects
+### - Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Y.formula <- Y ~ log(X+1) * Time * Chamber * Frag * Position * H2O
+  Y.formula <- Y.log ~ X.log * Time * Chamber * Frag * Position * H2O
 } else {
-  Y.formula <- Y ~ log(X+1) * Chamber * Frag * Position * H2O
+  Y.formula <- Y.log ~ X.log * Chamber * Frag * Position * H2O
 }
 
 
@@ -411,8 +428,9 @@ if ( length(Time.use) > 1 ) {
 
 Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
-Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)
+Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
 
+Y.glmm <- lme(Y.formula, data=SECCa, random=Y.rformula)
 
 ##================================================
 ## MODEL SELECTION
