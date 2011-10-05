@@ -3,7 +3,7 @@
 ### GLMM (regression)
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2011-03-30
+### Jonathan Whiteley     R v2.12     2011-10-05
 ##################################################
 ## INITIALISE
 ##################################################
@@ -193,6 +193,8 @@ point <- 21	# 21 for circles with col & bg ; 16 for solid circles
 Chamber.map$pch <- c(21, 16)  # use circles for both treatments
 Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 
+## Set up some plotting options for each data point
+##  only needed for non-ggplot commands
 SECCa <- within( SECCa,{
                 colr = ifelse( Chamber == Chamber.map$label[1], 
                               Chamber.map$col[1], 
@@ -223,9 +225,12 @@ if (FALSE) {
   })
 }
 
-## the easy way, using ggplot
+##================================================
+## The easy way, using ggplot
+##================================================
 ## prepare plot theme for points varying by Chamber
-ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label)
+ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
+TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 Time.facets <- facet_grid(facets = .~Time)
 All.facets  <- facet_grid(facets = Frag~Time*Position)
 
@@ -235,8 +240,9 @@ ARAcb.plot <- qplot(X, Y, data = SECCa, group = Chamber,
                    xlab = X.plotlab,
                    ylab = Y.plotlab
                    )
-ARAcb.plot <- ARAcb.plot + ChamberPts + jaw.ggplot()
+ARAcb.plot <- ARAcb.plot + jaw.ggplot() + ChamberPts + TopLegend  # order matters!
 print(ARAcb.plot)
+
 
 ARAcb.time <- ARAcb.plot + Time.facets
 print(ARAcb.time)
@@ -253,17 +259,67 @@ ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy",
                     xlab = X.plotlab,
                     ylab = Y.plotlab
                     )
-ARAcb.log <- ARAcb.log + ChamberPts + jaw.ggplot()
+ARAcb.log <- ARAcb.log + ChamberPts + jaw.ggplot() + TopLegend
 print(ARAcb.log)
 
 ARAcb.time.log <- ARAcb.log + Time.facets 
 print(ARAcb.time.log)
-
-##***** Full faceting
 ARAcb.panels.log <- ARAcb.log + All.facets 
 print(ARAcb.panels.log)
 
+## H2O plots
+ARA.H2O <- qplot(H2O, Y, data = SECCa, 
+                    group = Chamber, geom = "point", size = I(3),
+                    colour = Chamber, shape = Chamber,
+                    ylab = Y.plotlab
+                    )
+ARA.H2O <- ARA.H2O + ChamberPts + jaw.ggplot() + TopLegend
+print(ARA.H2O)
 
+ARA.H2O.time <- ARA.H2O + Time.facets 
+ARA.H2O.panels <- ARA.H2O + All.facets 
+print(ARA.H2O.time)
+print(ARA.H2O.panels)
+
+ARA.H2O.log <- qplot(H2O, Y, data = SECCa, log = "y", 
+                    group = Chamber, geom = "point", size = I(3),
+                    colour = Chamber, shape = Chamber,
+                    ylab = Y.plotlab
+                    )
+ARA.H2O.log <- ARA.H2O.log + ChamberPts + jaw.ggplot() + TopLegend
+print(ARA.H2O.log)
+
+ARA.H2O.log.time <- ARA.H2O.log + Time.facets 
+ARA.H2O.log.panels <- ARA.H2O.log + All.facets 
+print(ARA.H2O.log.time)
+print(ARA.H2O.panels)
+
+
+if (FALSE) {    ## Deprecated scatterplots, broken down in various ways.
+  ## coplot() deprecated - qplot with faceting is easier & better-looking (but slower)
+  coplot( Y ~ X | Frag * Position, data=SECCa, 
+         pch=SECCa$pt, col=SECCa$colr	# , bg=Chamber.map$bg
+)  # why does recycling Chamber.map work for bg, but not col?
+  ## I think it's because of the way the arguments are passed: coplot has specific arguments for col & pch, but not bg: bg is simply passed on directly to the plotting function (points) within each panel.
+  coplot( Y ~ X | Chamber * Frag , data=SECCa, 
+         pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
+)
+  coplot( Y ~ X | Chamber * Position , data=SECCa, 
+         pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
+)
+                                        # Moisture?
+  coplot( Y ~ H2O | Frag * Position , data=SECCa, 
+         pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
+)
+}
+
+##================================================
+## 3D plot with X, Y & H2O axes (requires rgl package)
+with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
+with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
+
+
+##================================================
 ## Check Variation, Ranges
 X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
                  ylab = X.plotlab
@@ -277,6 +333,7 @@ Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
 Y.box <- Y.box + jaw.ggplot()
 print(Y.box)
 
+##================================================
 ## Check distributions
 X.dist <- qplot(X, data = SECCa, geom = "histogram",
                  xlab = X.plotlab
@@ -325,44 +382,6 @@ for(i in 1:length(vars.ls) ){
 	# qqplot(x, y) to compare distributions.
 }
 par(old.par)
-
-
-## More scatterplots, broken down in various ways.
-## coplot() deprecated - qplot with faceting is easier & better-looking?
-coplot( Y ~ X | Frag * Position, data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr	# , bg=Chamber.map$bg
-)	# why does recycling Chamber.map work for bg, but not col?
-## I think it's because of the way the arguments are passed: coplot has specific arguments for col & pch, but not bg: bg is simply passed on directly to the plotting function (points) within each panel.
-coplot( Y ~ X | Chamber * Frag , data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
-coplot( Y ~ X | Chamber * Position , data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
-# Moisture?
-coplot( Y ~ H2O | Frag * Position , data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
-
-qplot(X, Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position*Frag ~ Time) + theme_bw() +
-scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
-## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
-
-qplot(log(X+1), Y, data = SECCa, color = Chamber, shape = Chamber, facets = Position ~ Time) + theme_bw() +
-scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) 
-## scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
-
-qplot(H2O, Y, data = SECCa, color = Chamber, shape = Chamber, fill = Chamber, facets = Position*Frag ~ Time) + theme_bw() + # log = "y", 
-scale_shape_manual(name = "Chamber", values = Chamber.map$pch, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_color_manual(name = "Chamber", values = Chamber.map$col, breaks = Chamber.map$label, labels = c("Ambient", "Chamber")) + 
-scale_fill_manual(name = "Chamber", values = Chamber.map$bg, breaks = Chamber.map$label, labels = c("Ambient", "Chamber"))
-
-
-## 3D plot with X, Y & H2O axes (requires rgl package)
-with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
-with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
 
 
 
