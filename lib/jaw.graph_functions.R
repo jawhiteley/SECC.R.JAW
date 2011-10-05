@@ -1,6 +1,6 @@
 ##################################################
 # functions for graphing with custom error bars
-# Jonathan Whiteley     R v2.12     2011-08-21
+# Jonathan Whiteley     R v2.12     2011-10-05
 ##################################################
 ## access these functions in another file by using: 
 ## 	source("path/to/this/file.R")
@@ -234,10 +234,88 @@ plotMeans <- function (response, factor1, factor2,
 
 
 ##================================================
+pairplot <- function(x, panel=points, 
+                     correlations=TRUE, histograms=TRUE, splines=TRUE, ...) 
+{
+  ## pairplot: wrapper for pairs().
+  ## bivariate plots of variable pairs with a few extra useful bits of info
+  ## * Mixed Effects Models with Extensions in Ecology with R Figure A.2 p.534 (Appendix)
+  ## * Analyzing Ecological Data Figure 4.9 p.33 (CH4)
+  ## Requires:
+  ## + panel.cor      copied here from books' R code
+  ## + panel.hist     copied here from books' R code
+  ## + panel.smooth   the books defined a crippled version of the same built-in function
+  ##   - see graphics::panel.smooth()
+  ## + panel.ablines  There is a version in the lattice package (panel.lines).  
+  ##   - I copied the one from the books' code (panel.lines2) and renamed it.
+  pairs(x, 
+        upper.panel = if (splines)      panel.smooth else panel,
+        diag.panel  = if (histograms)   panel.hist   else NULL ,
+        lower.panel = if (correlations) panel.cor    else panel,
+        ...
+        )
+
+  if (FALSE) {  ## test code
+    pairplot(CO2)
+    pairplot(CO2, cor=FALSE)
+    pairplot(CO2, hist=FALSE)
+    pairplot(CO2, splines=FALSE)
+  }
+}
+
+##================================================
 ## PANEL FUNCTIONS
 ##================================================
+panel.cor <- function(x, y, digits=1, prefix="", cex.cor)
+{
+  ## "panel.cor" in "MyLibrary.R" from:
+  ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
+  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   www.highstat.com
+  ## put correlations on the panels,
+  ## with size proportional to the correlations.
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(0, 1, 0, 1))
+  r1=cor(x,y,use="pairwise.complete.obs")
+  r <- abs(cor(x, y,use="pairwise.complete.obs"))
+
+  txt <- format(c(r1, 0.123456789), digits=digits)[1]
+  txt <- paste(prefix, txt, sep="")
+  if(missing(cex.cor)) cex <- 0.9/strwidth(txt)
+  text(0.5, 0.5, txt, cex = cex * r)
+}
+
+panel.hist <- function(x, ...)
+{
+  ## "panel.hist" in "MyLibrary.R" from:
+  ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
+  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   www.highstat.com
+  usr <- par("usr"); on.exit(par(usr))
+  par(usr = c(usr[1:2], 0, 1.5) )
+  h <- hist(x, plot = FALSE)
+  breaks <- h$breaks; nB <- length(breaks)
+  y <- h$counts; y <- y/max(y)
+  rect(breaks[-nB], 0, breaks[-1], y, col="white", ...)
+}
+
+panel.ablines <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
+                           cex = 1, ...)
+{
+  ## "panel.lines2" in "MyLibrary.R" from:
+  ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
+  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   www.highstat.com
+  points(x, y, pch = pch, col = col, bg = bg, cex = cex)
+  ok <- is.finite(x) & is.finite(y)
+  if (any(ok)){
+    tmp=lm(y[ok]~x[ok])
+    abline(tmp)}
+
+}
 
 ## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
+## Deprecated?  Do I still use Coplots rather than faceted ggplots anymore?
 panel.lines2 <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
     cex = 1, ...)
 {

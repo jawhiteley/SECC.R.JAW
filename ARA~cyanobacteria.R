@@ -181,10 +181,11 @@ if (FALSE) {  # do not run if source()d
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
+### pairplots of several variables of interest (see Zuur et al. books)
 ## full dataset: unbalanced with respect to experimental treatments
-plot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
 ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
-plot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
 
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
@@ -299,18 +300,18 @@ if (FALSE) {    ## Deprecated scatterplots, broken down in various ways.
   ## coplot() deprecated - qplot with faceting is easier & better-looking (but slower)
   coplot( Y ~ X | Frag * Position, data=SECCa, 
          pch=SECCa$pt, col=SECCa$colr	# , bg=Chamber.map$bg
-)  # why does recycling Chamber.map work for bg, but not col?
+  )  # why does recycling Chamber.map work for bg, but not col?
   ## I think it's because of the way the arguments are passed: coplot has specific arguments for col & pch, but not bg: bg is simply passed on directly to the plotting function (points) within each panel.
   coplot( Y ~ X | Chamber * Frag , data=SECCa, 
          pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
+  )
   coplot( Y ~ X | Chamber * Position , data=SECCa, 
          pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
+  )
                                         # Moisture?
   coplot( Y ~ H2O | Frag * Position , data=SECCa, 
          pch=SECCa$pt, col=SECCa$colr	# , bg= Chamber.map$bg
-)
+  )
 }
 
 ##================================================
@@ -449,6 +450,11 @@ print( xyplot( Model.resid ~ X | Chamber * Frag * Position, data=SECCa,
        pch=point, col=SECCa$colr, bg = SECCa$fill,
        ylab = "Residuals"
 ) )
+
+## Plot Residuals: see Zuur et al. 2007, pg. 131-133
+plot(Y.model$fitted[,2],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
+qqnorm(resid(Y.model,type="p"),cex=1,main="")
+
 
 
 ##################################################
@@ -632,6 +638,14 @@ if (FALSE) {
 
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
+
+
+
+
+
+
+
+
 
 
 ##################################################
