@@ -234,7 +234,7 @@ plotMeans <- function (response, factor1, factor2,
 
 
 ##================================================
-pairplot <- function(x, panel=points, 
+pairplot <- function(x, panel=points, upper.plots=TRUE, mirror.panels=TRUE,
                      correlations=TRUE, histograms=TRUE, splines=TRUE, ...) 
 {
   ## pairplot: wrapper for pairs().
@@ -248,18 +248,43 @@ pairplot <- function(x, panel=points,
   ##   - see graphics::panel.smooth()
   ## + panel.ablines  There is a version in the lattice package (panel.lines).  
   ##   - I copied the one from the books' code (panel.lines2) and renamed it.
-  pairs(x, 
-        upper.panel = if (splines)      panel.smooth else panel,
-        diag.panel  = if (histograms)   panel.hist   else NULL ,
-        lower.panel = if (correlations) panel.cor    else panel,
+  ## ARGUMENTS ##
+  ## x          object with data for pairplots (usually a data frame).  
+  ##            Passed to pairs()
+  ## panel      panel function, same default as pairs().
+  ## upper.plots    TRUE:  correlation values in lower panels, plots in upper panels
+  ##                FALSE: vice versa.
+  ## mirror.panels  TRUE:  same panel function in upper & lower panels
+  ##                FALSE: allow splines on one side and default panel on the other
+  ##                Only relevant if correlations=FALSE
+  ## correlations   TRUE:  Show Correlation values in font size proportional 
+  ##                       to value in panels of one side.  
+  ##                FALSE: do not show correlation values 
+  ##                       (panel function will be used instead).
+  ## histograms     TRUE:  Add histograms in diagonal panels.  FALSE: do not ...
+  ## splines        TRUE:  Scatterplots with smoother curves (splines) in panels.
+  ##                FALSE: Use default (or specified) panel function instead.
+  panel.plot <- if (splines && mirror.panels) panel.smooth else panel
+  panel1    <- if (splines)      panel.smooth else panel.plot
+  panel2    <- if (correlations) panel.cor    else panel.plot
+  up.panel  <- if (upper.plots)  panel1       else panel2
+  low.panel <- if (upper.plots)  panel2       else panel1
+  d.panel   <- if (histograms)   panel.hist   else NULL
+  pairs(x, panel=panel,
+        upper.panel =  up.panel,
+         diag.panel =   d.panel,
+        lower.panel = low.panel,
         ...
         )
 
   if (FALSE) {  ## test code
     pairplot(CO2)
-    pairplot(CO2, cor=FALSE)
-    pairplot(CO2, hist=FALSE)
     pairplot(CO2, splines=FALSE)
+    pairplot(CO2, hist=FALSE)
+    pairplot(CO2, cor=FALSE)
+    pairplot(CO2, upper=FALSE)
+    pairplot(CO2, panel=panel.smooth, cor=FALSE)
+    pairplot(CO2, cor=FALSE, mirror=FALSE)
   }
 }
 
@@ -270,7 +295,7 @@ panel.cor <- function(x, y, digits=1, prefix="", cex.cor)
 {
   ## "panel.cor" in "MyLibrary.R" from:
   ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
-  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   This function was produced by Alain Zuur (highstat@highstat.com)
   ##   www.highstat.com
   ## put correlations on the panels,
   ## with size proportional to the correlations.
@@ -289,7 +314,7 @@ panel.hist <- function(x, ...)
 {
   ## "panel.hist" in "MyLibrary.R" from:
   ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
-  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   This function was produced by Alain Zuur (highstat@highstat.com)
   ##   www.highstat.com
   usr <- par("usr"); on.exit(par(usr))
   par(usr = c(usr[1:2], 0, 1.5) )
@@ -304,7 +329,7 @@ panel.ablines <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
 {
   ## "panel.lines2" in "MyLibrary.R" from:
   ##   Analysing Ecological Data. (2007). Zuur, Ieno and Smith. Springer, 680p.
-  ##   This file was produced by Alain Zuur (highstat@highstat.com)
+  ##   This function was produced by Alain Zuur (highstat@highstat.com)
   ##   www.highstat.com
   points(x, y, pch = pch, col = col, bg = bg, cex = cex)
   ok <- is.finite(x) & is.finite(y)
