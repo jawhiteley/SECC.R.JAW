@@ -21,8 +21,9 @@ source('./lib/init.R')
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
 library(rgl)        # 3D plots
-library(lme4)
-## library\(mgcv)
+library(nlme)       # GLMMs (older, but still works)
+## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
+## library\(mgcv)   # Cross-Validation
 
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
@@ -179,16 +180,8 @@ if (FALSE) {  # do not run if source()d
 ## EXPLORE: PLOTS
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
-DrawExplorationGraphs <- TRUE           # Set to FALSE to suppress all this output
+DrawExplorationGraphs <- Save.results  # Set to FALSE to suppress all this output
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
-
-### pairplots of several variables of interest (see Zuur et al. books)
-if (DrawExplorationGraphs) {
-  ## full dataset: unbalanced with respect to experimental treatments
-  pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
-  ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
-  pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
-}
 
 ### Map of point styles for Chamber treatments
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
@@ -215,6 +208,23 @@ SECCa <- within( SECCa,{
                               )
 })
 
+### pairplots of several variables of interest: check for collinearity, patterns, etc.
+### see Zuur et al. books
+if (DrawExplorationGraphs) {
+  ## full dataset: unbalanced with respect to experimental treatments
+  pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+  ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
+  pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+  ## Cleveland Dotplots (Zuur et al. 2009)
+  Dotplot.y <- "Order of observations"
+  op <- par(mfcol=c(2,2))
+  dotchart(SECCa$X, ylab=Dotplot.y, xlab=X.label)
+  dotchart(SECCa$X.log, ylab=Dotplot.y, xlab=paste("log(", X.label, ")"))
+  dotchart(SECCa$Y, ylab=Dotplot.y, xlab=Y.label)
+  dotchart(SECCa$Y.log, ylab=Dotplot.y, xlab=paste("log(", Y.label, ")"))
+  par(op)
+}
+
 if (FALSE) {
   ## the old-fashioned way (low-level)
   with( SECCa,{
@@ -231,7 +241,7 @@ if (FALSE) {
 }
 
 ##================================================
-## The easy way, using ggplot
+## The easy way, with ggplot2
 ##================================================
 ### prepare plot theme for points varying by Chamber
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
@@ -403,12 +413,10 @@ if (DrawExplorationGraphs) {
 
 
 ##################################################
-## ANALYSIS: formula
+## ANALYSIS
 ##################################################
-## GLMM
-Y.Ri  <- ~ 1|Block/Time/Chamber/Frag # Random intercept across Blocks
-Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept across Blocks
-
+## Model Formula
+##================================================
 ### Fixed effects
 ### - Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
@@ -418,24 +426,29 @@ if ( length(Time.use) > 1 ) {
   Y.formula <- Y.log ~ X.log * Chamber * Frag * Position * H2O
 }
 
+## Random effects for GLMM
+Y.Ri  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks
+Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slope
 
-##################################################
-## ANALYSIS: design
-##################################################
-# Should I not also be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
-# YES
-# Variance Components Analysis (variance decomposition)
 
+if (FALSE) {    # deprecated: wrapped to allow folding
+##################################################
+## BASIC GLM - soon to be deprecated by GLMM (below)
+##################################################
+##================================================
+## Model Fitting
+##================================================
+### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
 Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
 Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
 
-Y.glmm <- lme(Y.formula, data=SECCa, random=Y.rformula)
+# Should I not be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
+# YES (See below)
 
 ##================================================
 ## MODEL SELECTION
 ##================================================
-
 drop1(Y.model)
 Y.model.selected <- step(Y.model, direction = "backward")
 Y.model.main.selected <- step(Y.model.main, direction = "backward")
@@ -481,9 +494,83 @@ qqnorm(resid(Y.model,type="p"),cex=1,main="")
 anova(Y.model)
 summary(Y.model)
 
+}
 
-  
-  
+
+
+ 
+##################################################
+## GLMM - Hierarchical Mixed / Multilevel Model **
+##################################################
+##================================================
+## Model Fitting
+##================================================
+## Using a mixed-effects model to account for treatments of different sizes: 
+##  Chamber / Frag / Position
+lmd <- lmeControl()                    # save defaults
+lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
+Y.rim  <- lme(Y.formula, data=SECCa, random=Y.Ri , control=lmd)
+## Y.rism <- lme(Y.formula, data=SECCa, random=Y.Ris, control=lmc) # R crashes on this :(
+
+Y.model <- Y.rim
+
+# Variance Components Analysis (variance decomposition)?
+
+
+##================================================
+## MODEL SELECTION
+##================================================
+
+
+
+##################################################
+## CHECK ASSUMPTIONS: MODEL VALIDATION
+##################################################
+## Regression (ANOVA): Normality; Homogeneity; Independence; Fixed X*
+## Fixed X: *think about how X data was generated*
+##          - fixed values [+] or large mesurement error [-] ?
+## Check Normality: histogram, qqnorm of Residuals
+## Check Homogeneity: (standardized) Residuals vs. Fitted, Residual boxplots ~ factors
+## Check Independence: (standardized) Residuals vs. X
+
+## Standard diagnostic plots 
+op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
+plot(Y.model$fitted[,1],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
+plot(Y.model)
+par(op)
+
+## Residuals
+Model.resid <- resid(Y.model, type="p") #  Zuur et al like to use type="p".  What is this?
+## Plot Residuals: see Zuur et al. 2007, pg. 131-133
+## par(mfrow=c(1,1))
+hist(Model.resid)                      # residuals: Normal distribution?
+qqnorm(Model.resid)                    # residuals: Normal distribution?
+## Homogeneity, Independence: Pattern in residuals indicates violation
+plot(SECCa$X.log, Model.resid)             
+plot(SECCa$H2O, Model.resid)
+qplot(Chamber, Model.resid, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+
+## Compare model to GA(M)M to check that a linear fit is the most appropriate
+## see Zuur et al. (2007, 2009: Appendix)
+
+
+
+
+##################################################
+## ANALYSIS: GET RESULTS
+##################################################
+anova(Y.model)
+summary(Y.model)
+
+
+
+
+
+
+
+
+
+
 ##################################################
 ## SAVE OUTPUT
 ##################################################
