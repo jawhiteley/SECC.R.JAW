@@ -55,3 +55,4 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 }
 
 
+gmean <- function (x) exp( mean( log(x) ) ) # Geometric mean == nth root of product of n values

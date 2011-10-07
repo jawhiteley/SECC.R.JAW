@@ -1,12 +1,12 @@
-##################################################
+################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### GLMM (regression)
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
 ### Jonathan Whiteley     R v2.12     2011-10-05
-##################################################
+################################################################
 ## INITIALISE
-##################################################
+################################################################
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
   setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
@@ -25,9 +25,9 @@ library(nlme)       # GLMMs (older, but still works)
 ## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
 ## library\(mgcv)   # Cross-Validation
 
-##################################################
+################################################################
 ## CONFIGURE BASIC ANALYSIS
-##################################################
+################################################################
 
 ### Response Variable *****
 X.col <- 'Cells.m'   # Column to analyze as explanatory variable        *****
@@ -41,9 +41,9 @@ Y.col <- 'ARA.m'     # Column to analyze as response variable           *****
 # explanatory vars for data exploration?
 vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")  
 
-##================================================
+##==============================================================
 ## SETTINGS 
-##================================================
+##==============================================================
 ## Specify which treatment levels to include (by index is probably easiest)
 Time.use     <- levels(SECC$Time)      # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]      # Chamber treatments to include
@@ -55,9 +55,9 @@ Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
 Save.results  <- FALSE  
 
 
-##================================================
+##==============================================================
 ## CALCULATIONS 
-##================================================
+##==============================================================
 SECC.prime <- SECC    # save a copy of the original for reference.
 
 # str(SECC)
@@ -82,9 +82,9 @@ SECC <- within( SECC, {
 })
 
 
-##================================================
+##==============================================================
 ## LABELS
-##================================================
+##==============================================================
 
 X.label <- attr(SECC, "labels")[[X.col]]  # explanatory variable label
 X.units <- attr(SECC, "units" )[[X.col]]  # explanatory variable units
@@ -138,9 +138,9 @@ Save.end      <- paste("\n",
 
 
 
-##################################################
+################################################################
 ## PROCESS DATA: planned
-##################################################
+################################################################
 ## filter & clean SECC data frame.
 SECC.use <- SECCclean(SECC, Time.use, Chamber.use, Frag.use, Position.use)
 
@@ -166,9 +166,9 @@ SECCa <- within( SECCa, {
                 Y.log[Y <= 0] <- 0
 })
 
-##################################################
+################################################################
 ## CHECK DATA
-##################################################
+################################################################
 if (FALSE) {  # do not run if source()d
   head(SECCa)     # have a peek at the first 6 rows & columns: is this what you expected?
   str( SECCa)     # check structure: are the appropriate variables factors, numeric, etc.?
@@ -176,9 +176,9 @@ if (FALSE) {  # do not run if source()d
 }
 
 
-##################################################
+################################################################
 ## EXPLORE: PLOTS
-##################################################
+################################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 DrawExplorationGraphs <- Save.results  # Set to FALSE to suppress all this output
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
@@ -240,9 +240,9 @@ if (FALSE) {
   })
 }
 
-##================================================
+##==============================================================
 ## The easy way, with ggplot2
-##================================================
+##==============================================================
 ### prepare plot theme for points varying by Chamber
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
@@ -334,7 +334,7 @@ if (FALSE) {    ## Deprecated scatterplots, broken down in various ways.
   )
 }
 
-##================================================
+##==============================================================
 ## 3D plot with X, Y & H2O axes (requires rgl package)
 if (DrawExplorationGraphs) {
   with(SECCa, plot3d(X, H2O, Y, size = 6, pch = pt, col = colr, bg = fill) )
@@ -342,7 +342,7 @@ if (DrawExplorationGraphs) {
 }
 
 
-##================================================
+##==============================================================
 ## Check Variation, Ranges
 X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
                  ylab = X.plotlab
@@ -356,7 +356,7 @@ Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
 Y.box <- Y.box + jaw.ggplot()
 if (DrawExplorationGraphs) print(Y.box)
 
-##================================================
+##==============================================================
 ## Check distributions
 X.dist <- qplot(X, data = SECCa, geom = "histogram",
                  xlab = X.plotlab
@@ -412,11 +412,22 @@ if (DrawExplorationGraphs) {
 
 
 
-##################################################
+################################################################
 ## ANALYSIS
-##################################################
+################################################################
+## Given that both continuous explanatory variables (cyanobacteria, H2O)
+## were measured and not controlled, this is most likely a "Model II regression"
+##  Model 1 regression *underestimates the slope*, because both variables contain error
+##  Model II regression allows X to vary (no "Fixed X" assumption),
+##  but different methods for *prediction* (OLS) or
+##  describing the *functional relationship* (structural relation, major axis, etc.)
+##  - See Sokal & Rohlf p. 541, 545
+##  - See Legendre & Legendre p.504
+##  Honestly, I think I'm more interested in the latter (functional relationship) than the former (prediction), although I'm not aware of any methods for model 2 GLMMs with multiple variables and nested data, and I'm not sure I have the time to learn/develop them.
+
+##==============================================================
 ## Model Formula
-##================================================
+##==============================================================
 ### Fixed effects
 ### - Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
@@ -430,6 +441,13 @@ if ( length(Time.use) > 1 ) {
 Y.Ri  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks
 Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slope
 
+
+
+
+
+################################################################
+## GLMM - Hierarchical Mixed / Multilevel Model               **
+################################################################
 
 if (FALSE) {    # deprecated: wrapped to allow folding
 ##################################################
@@ -498,13 +516,68 @@ summary(Y.model)
 
 
 
- 
-##################################################
-## GLMM - Hierarchical Mixed / Multilevel Model **
-##################################################
-##================================================
+
+if (FALSE) {    # Model II Regression: nice idea in theory
+################################################################
+## Model II Regression?                                       **
+################################################################
+library(lmodel2)
+
+Y.m2 <- lmodel2(Y.log ~ X.log, data=SECCa, nperm=999) ## Model II regression (Legendre & Legendre)
+print(Y.m2) # What does this tell me, exactly?
+plot(Y.m2)
+
+Y.m2 <- lmodel2(Y.log ~ X.log * H2O, data=SECCa, nperm=999) ## Model II regression (Legendre & Legendre)
+print(Y.m2) # What does this tell me, exactly?
+plot(Y.m2)
+
+## lmodel2 seems to drop all but the first explanatory variable!
+## I would have to fit models for each pair of variables across all combinations
+## of treatment factors?  Ouch.  How would I compare them?
+
+## MA (Major Axis) is also called "geometric mean regression" (Sokal & Rohlf p.544)
+## and can easily be computed as the geometric mean of the slopes of y~x and x~y
+## <http://tolstoy.newcastle.edu.au/R/help/05/06/5992.html>
+## I'm guessing that the MA also passes through the intersection of the y~x & x~y regression lines (the "centroid" of the data points?)
+
+## Legendre & Legendre (p.515) suggest: 
+## "MA may also be used with dimensionally heterogeneous variables when the purpose of the analysis is 
+## **(1) to compare the slopes of the relationships between the same two variables measured under different conditions (e.g. at two or more sampling sites), or 
+##   (2) to test the hypothesis that the major axis does not significantly differ from a value given by hypothesis
+## "
+## AND
+## "If a straight line is not an appropriate model, polynomial or nonlinear regression should be considered."
+## 
+## see also the User Guide to the 'lmodel2' R package:
+## vignette("mod2user", package="lmodel2")
+
+## Therefore:
+## In theory, I could use MA for a simple relationship between ARA & Cells,
+## for each combination of experimental treatments (Chamber x2, Frag x4, Position x2).
+## and compare them using some sort of non-parametric, 
+## bootstapped, or permutation-based test statistic,
+## while controlling for experiment-wise multiple comparisons.
+## OR
+## I could just proceed with non-linear regression (GLMM/GAMM), 
+## and accept that the regressions parameters (slopes) are likely underestimated
+## (I call this "conservative").
+## Furthermore, I'm not convinced the relationship *is* linear,
+## or that is dimensionally homogeneous or bivariate normal,
+## and I want to include multiple fixed and random variables, with a nested structure,
+## which would be rather difficult for me to do in a reasonable amount of time
+## within a model 2 approach.
+
+}
+
+
+
+
+################################################################
+## GLMM - Hierarchical Mixed / Multilevel Model               **
+################################################################
+##==============================================================
 ## Model Fitting
-##================================================
+##==============================================================
 ## Using a mixed-effects model to account for treatments of different sizes: 
 ##  Chamber / Frag / Position
 lmd <- lmeControl()                    # save defaults
@@ -517,18 +590,18 @@ Y.model <- Y.rim
 # Variance Components Analysis (variance decomposition)?
 
 
-##================================================
+##==============================================================
 ## MODEL SELECTION
-##================================================
+##==============================================================
 
 
 
-##################################################
+################################################################
 ## CHECK ASSUMPTIONS: MODEL VALIDATION
-##################################################
+################################################################
 ## Regression (ANOVA): Normality; Homogeneity; Independence; Fixed X*
-## Fixed X: *think about how X data was generated*
-##          - fixed values [+] or large mesurement error [-] ?
+## Fixed X (Model I): *think about how X data was generated*
+##                    - fixed values [I] or large mesurement error [II] ?
 ## Check Normality: histogram, qqnorm of Residuals
 ## Check Homogeneity: (standardized) Residuals vs. Fitted, Residual boxplots ~ factors
 ## Check Independence: (standardized) Residuals vs. X
@@ -556,9 +629,9 @@ qplot(Chamber, Model.resid, data = SECCa, facets = Frag * Position ~ Time, geom=
 
 
 
-##################################################
+################################################################
 ## ANALYSIS: GET RESULTS
-##################################################
+################################################################
 anova(Y.model)
 summary(Y.model)
 
@@ -571,9 +644,9 @@ summary(Y.model)
 
 
 
-##################################################
+################################################################
 ## SAVE OUTPUT
-##################################################
+################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header), 
 				 print(Y.formula),              # model
@@ -589,9 +662,9 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 
 
 
-##################################################
+################################################################
 ## FINAL GRAPHICS
-##################################################
+################################################################
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 ## generate grid to add predicted values to (X-values in all combinations of factors).
@@ -670,9 +743,9 @@ with( SECCa,{
 
 
 
-##================================================
+##==============================================================
 ## Plot fitted on observed, by factor?
-##================================================
+##==============================================================
 
 ## lattice panels
 print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
@@ -753,9 +826,9 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
 
 
 
-##################################################
+################################################################
 ## META-COMMUNITY SCALE ANALYSIS
-##################################################
+################################################################
 
 SECCa <- SECCmc 
 
