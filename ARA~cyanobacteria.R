@@ -215,6 +215,13 @@ if (DrawExplorationGraphs) {
   pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
   ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
   pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
+  ## look at log transformations
+  pairplot(SECCa[, c('Y', 'Y.log', 'X', 'X.log', 'H2O')],
+           labels=c(Y.col, paste("log(", Y.col, ")"), 
+                    X.col, paste("log(", X.col, ")"), "H2O"
+                    )
+          )
+
   ## Cleveland Dotplots (Zuur et al. 2009)
   Dotplot.y <- "Order of observations"
   op <- par(mfcol=c(2,2))
@@ -415,16 +422,6 @@ if (DrawExplorationGraphs) {
 ################################################################
 ## ANALYSIS
 ################################################################
-## Given that both continuous explanatory variables (cyanobacteria, H2O)
-## were measured and not controlled, this is most likely a "Model II regression"
-##  Model 1 regression *underestimates the slope*, because both variables contain error
-##  Model II regression allows X to vary (no "Fixed X" assumption),
-##  but different methods for *prediction* (OLS) or
-##  describing the *functional relationship* (structural relation, major axis, etc.)
-##  - See Sokal & Rohlf p. 541, 545
-##  - See Legendre & Legendre p.504
-##  Honestly, I think I'm more interested in the latter (functional relationship) than the former (prediction), although I'm not aware of any methods for model 2 GLMMs with multiple variables and nested data, and I'm not sure I have the time to learn/develop them.
-
 ##==============================================================
 ## Model Formula
 ##==============================================================
@@ -443,11 +440,6 @@ Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slope
 
 
 
-
-
-################################################################
-## GLMM - Hierarchical Mixed / Multilevel Model               **
-################################################################
 
 if (FALSE) {    # deprecated: wrapped to allow folding
 ##################################################
@@ -521,14 +513,24 @@ if (FALSE) {    # Model II Regression: nice idea in theory
 ################################################################
 ## Model II Regression?                                       **
 ################################################################
+## Given that both continuous explanatory variables (cyanobacteria, H2O)
+## were measured and not controlled, this is most likely a "Model II regression"
+##  Model 1 regression *underestimates the slope*, because both variables contain error
+##  Model II regression allows X to vary (no "Fixed X" assumption),
+##  but different methods for *prediction* (OLS) or
+##  describing the *functional relationship* (structural relation, major axis, etc.)
+##  - See Sokal & Rohlf p. 541, 545
+##  - See Legendre & Legendre p.504
+##  Honestly, I think I'm more interested in the latter (functional relationship) than the former (prediction), although I'm not aware of any methods for model 2 GLMMs with multiple variables and nested data, and I'm not sure I have the time to learn/develop them.
+
 library(lmodel2)
 
-Y.m2 <- lmodel2(Y.log ~ X.log, data=SECCa, nperm=999) ## Model II regression (Legendre & Legendre)
-print(Y.m2) # What does this tell me, exactly?
+Y.m2 <- lmodel2(Y.log ~ X.log, data=SECCa, nperm=999) # Model II regression (Legendre & Legendre)
+print(Y.m2)                            # What does this tell me, exactly?
 plot(Y.m2)
 
-Y.m2 <- lmodel2(Y.log ~ X.log * H2O, data=SECCa, nperm=999) ## Model II regression (Legendre & Legendre)
-print(Y.m2) # What does this tell me, exactly?
+Y.m2 <- lmodel2(Y.log ~ X.log * H2O, data=SECCa, nperm=999) # Model II regression (Legendre & Legendre)
+print(Y.m2)                            # What does this tell me, exactly?
 plot(Y.m2)
 
 ## lmodel2 seems to drop all but the first explanatory variable!
