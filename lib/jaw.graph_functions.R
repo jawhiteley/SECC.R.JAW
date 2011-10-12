@@ -235,7 +235,7 @@ plotMeans <- function (response, factor1, factor2,
 
 ##================================================
 pairplot <- function(x, panel=points, upper.plots=TRUE, mirror.panels=TRUE,
-                     correlations=TRUE, histograms=TRUE, splines=TRUE, ...) 
+                     correlations=TRUE, histograms=TRUE, add.smooth=TRUE, ...) 
 {
   ## pairplot: wrapper for pairs().
   ## bivariate plots of variable pairs with a few extra useful bits of info
@@ -255,21 +255,21 @@ pairplot <- function(x, panel=points, upper.plots=TRUE, mirror.panels=TRUE,
   ## upper.plots    TRUE:  correlation values in lower panels, plots in upper panels
   ##                FALSE: vice versa.
   ## mirror.panels  TRUE:  same panel function in upper & lower panels
-  ##                FALSE: allow splines on one side and default panel on the other
+  ##                FALSE: allow smoothers on one side and default panel on the other
   ##                Only relevant if correlations=FALSE
   ## correlations   TRUE:  Show Correlation values in font size proportional 
   ##                       to value in panels of one side.  
   ##                FALSE: do not show correlation values 
   ##                       (panel function will be used instead).
   ## histograms     TRUE:  Add histograms in diagonal panels.  FALSE: do not ...
-  ## splines        TRUE:  Scatterplots with smoother curves (splines) in panels.
+  ## add.smooth     TRUE:  Scatterplots with smoother curves in panels.
   ##                FALSE: Use default (or specified) panel function instead.
-  panel.plot <- if (splines && mirror.panels) panel.smooth else panel
-  panel1    <- if (splines)      panel.smooth else panel.plot
-  panel2    <- if (correlations) panel.cor    else panel.plot
-  up.panel  <- if (upper.plots)  panel1       else panel2
-  low.panel <- if (upper.plots)  panel2       else panel1
-  d.panel   <- if (histograms)   panel.hist   else NULL
+  panel.plot <- if (add.smooth && mirror.panels) panel.smooth else panel
+  panel1     <- if (add.smooth)   panel.smooth else panel.plot
+  panel2     <- if (correlations) panel.cor    else panel.plot
+  up.panel   <- if (upper.plots)  panel1       else panel2
+  low.panel  <- if (upper.plots)  panel2       else panel1
+  d.panel    <- if (histograms)   panel.hist   else NULL
   pairs(x, panel=panel,
         upper.panel =  up.panel,
          diag.panel =   d.panel,
@@ -279,7 +279,7 @@ pairplot <- function(x, panel=points, upper.plots=TRUE, mirror.panels=TRUE,
 
   if (FALSE) {  ## test code
     pairplot(CO2)
-    pairplot(CO2, splines=FALSE)
+    pairplot(CO2, add.smooth=FALSE)
     pairplot(CO2, hist=FALSE)
     pairplot(CO2, cor=FALSE)
     pairplot(CO2, upper=FALSE)
