@@ -605,8 +605,12 @@ Y.model <- Y.rim
 ## Fixed X (Model I): *think about how X data was generated*
 ##                    - fixed values [I] or large mesurement error [II] ?
 ## Check Normality: histogram, qqnorm of Residuals
-## Check Homogeneity: (standardized) Residuals vs. Fitted, Residual boxplots ~ factors
+## Check Homogeneity: (standardized) Residuals vs. Fitted / vs. X
 ## Check Independence: (standardized) Residuals vs. X
+## Assess Model fit, specification: Look for patterns in graphs of Residuals
+##  - Should be no areas of residuals with similar values, gaps in the cloud, etc.
+## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
+
 
 ## Standard diagnostic plots 
 op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
