@@ -57,19 +57,31 @@ SECC_sampleID <- function( factors=NULL ) {
   return(SampleIDs)
 }
 
-SECC_aggregate <- function( data = NULL , trt = "Frag", ... ) {
+SECC_aggregate <- function( dataf = NULL , trt = "Frag", drop.trt = FALSE, ... ) {
   ## aggregate full SECC data to means for each level of specified treatment
-  ## - default: Frag (Meta-Community)
+  ## - default: Frag (for Meta-Community scale data)
+  ## optional: specify a drop argument to aggregate across all other levels, 
+  ##		   except for the dropped level(s)
   
-  data.cols <- names(data)
-  col.types <- lapply(data, class)
-  agg.cols  <- names(data)[(col.types=="numeric" | col.types=="integer")]  # not sure if integer is necessary, but ...
-  agg.by    <- with( data, list(Block    = Block,
-                                Time     = Time,
-                                Chamber  = Chamber,
-                                Frag     = Frag,
-                                Position = Position
-                                )
+  if (is.null(drop.trt)) {
+	dropt.trt <- FALSE
+  } else {
+	if (drop.trt==TRUE) {
+	  drop.trt <- trt                     # 'trt' will be dropped
+	} else if (!is.logical(drop.trt)) {
+	  drop.trt -> trt                     # use 'drop.trt' for 'trt'
+	  drop.trt <- TRUE
+	}
+  }
+  data.cols <- names(dataf)
+  col.types <- lapply(dataf, class)
+  agg.cols  <- names(dataf)[(col.types=="numeric" | col.types=="integer")]  # not sure if integer is necessary, but ...
+  agg.by    <- with(dataf, list(Block    = Block,
+								Time     = Time,
+								Chamber  = Chamber,
+								Frag     = Frag,
+								Position = Position
+								)
                     )
   if (trt %in% names(agg.by) == FALSE) {
     stop( paste("Treatment \'", trt, "\' is not a valid column.  Choose one of:\n",
@@ -77,14 +89,18 @@ SECC_aggregate <- function( data = NULL , trt = "Frag", ... ) {
                 sep = "" )
          )
   }
-  agg.lvl <- match(TRUE, names(agg.by) == trt )
-  agg.by  <- agg.by[1:agg.lvl]
+  agg.lvl <- match(TRUE, names(agg.by) %in% trt ) # == or %in%? %in% allows vector of trts
+  if (drop.trt==FALSE) {
+	agg.by <- agg.by[1:agg.lvl[1]]        # use only the first value, if more than one (avoids Warning messages).
+  } else {
+	agg.by <- agg.by[-agg.lvl]
+  }
   
-  data.mc <- with(data,
-                  aggregate(data[, agg.cols], by=agg.by, mean, na.rm = TRUE, ... )
+  data.agg <- with(dataf,
+                  aggregate(dataf[, agg.cols], by=agg.by, mean, na.rm = TRUE, ... )
                   )
   ## note that the mean of only NAs is NaN.
-  return(data.mc)
+  return(data.agg)
 }
 
 
