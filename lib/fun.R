@@ -276,6 +276,8 @@ checkSECCdata <- function(data=NULL, DataName="-", CheckValues = TRUE, CheckDupl
 
 
 SECCstr <- function (data) {
+  ## see also ?replications
+  ## replications(~ Block + Time + Chamber + Frag + Position, data = SECC)
   # Check if first argument is actually a data frame.
   if ('data.frame' %in% class(data) == FALSE)
     stop( "The first argument must be a \'data.frame\'." )
