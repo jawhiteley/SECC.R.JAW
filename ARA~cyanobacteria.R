@@ -499,14 +499,18 @@ if (DrawExplorationGraphs) {
 ### Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Y.formula <- Y.log ~ X.log * H2O * Time * Chamber * Frag * Position
+  Y.fixed <- Y.log ~ X.log * H2O * Time * Chamber * Frag * Position
 } else {
-  Y.formula <- Y.log ~ X.log * H2O * Chamber * Frag * Position
+  Y.fixed <- Y.log ~ X.log * H2O * Chamber * Frag * Position
 }
 
 ## Random effects for GLMM
+##  Although it's hard to find examples of this type of nesting, 
+##  the slash '/' does appear to be the correct operator 
+##  for this type of serially nested treatment structure 
+##  (based on examples found online).
 Y.Ri  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks
-Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slope
+Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slopes
 
 
 
@@ -584,7 +588,7 @@ if (FALSE) {    # GLM: deprecated. wrapped to allow folding
 ## Model Fitting
 ##================================================
 ### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
-Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
+Y.model <- glm( Y.fixed, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
 Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
 
@@ -605,8 +609,9 @@ Y.model  <- Y.model.selected
 ## CHECK ASSUMPTIONS (MODEL VALIDATION)
 ##################################################
 ## analyse residuals, standard diagnostic plots
-par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
+op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
 plot(Y.model)
+par(op)
 
 ## Residuals
 Model.resid <- resid(Y.model)
@@ -654,10 +659,10 @@ summary(Y.model)
 ##  Chamber / Frag / Position
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
-Y.rim  <- lme(Y.formula, data=SECCa, random=Y.Ri , control=lmd)
-## Y.rism <- lme(Y.formula, data=SECCa, random=Y.Ris, control=lmc) # R crashes on this :(
+Y.rim  <- lme(Y.fixed, data=SECCa, random=Y.Ri , control=lmd)
+## Y.rism <- lme(Y.fixed, data=SECCa, random=Y.Ris, control=lmc) # R crashes on this :(
 
-Y.model <- Y.rim
+Y.mm <- Y.rim
 
 # Variance Components Analysis (variance decomposition)?
 
@@ -684,12 +689,20 @@ Y.model <- Y.rim
 
 ## Standard diagnostic plots 
 op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
-plot(Y.model$fitted[,1],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
-plot(Y.model)
+plot(Y.mm$fitted[,1],resid(Y.mm,type="p"),xlab="Fitted values",ylab="Residuals")
+plot(Y.mm)
 par(op)
 
-## Residuals
-Model.resid <- resid(Y.model, type="p") #  Zuur et al like to use type="p".  What is this?
+## Residuals ##
+Model.resid <- resid(Y.mm, type="p") #  Zuur et al like to use type="p".  "pearson" (standardised) residuals ?residuals.lme
+## type = "normalized" residuals 
+##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
+##  - in the examples in Zuur et al. 2009, there is no difference between normalized and standardised ("pearson"), but it might matter with more complicated correlation structures.
+## type = "pearson" for 'standardised' residuals (see ?residuals.lme)
+##  - this is what Zuur et al. 2009 are actually referring to, and is what Zuur et al. 2007 use in their R-code (type="p")
+## see also rstudent (studentized) and rstandard (standardized) residuals.
+## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
+
 ## Plot Residuals: see Zuur et al. 2007, pg. 131-133
 ## par(mfrow=c(1,1))
 hist(Model.resid)                      # residuals: Normal distribution?
@@ -708,9 +721,10 @@ qplot(Chamber, Model.resid, data = SECCa, facets = Frag * Position ~ Time, geom=
 ################################################################
 ## ANALYSIS: GET RESULTS
 ################################################################
-anova(Y.model)
-summary(Y.model)
+anova(Y.mm)
+summary(Y.mm)
 
+## intervals(Fitted.Model.Object)   # Approx. Confidence intervals.  see ?intervals
 
 
 
