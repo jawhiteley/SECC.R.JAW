@@ -478,89 +478,35 @@ if (DrawExplorationGraphs) {
 ################################################################
 ## ANALYSIS
 ################################################################
+## Goal: Identify which variables have most relative importance,
+##       and identify any interactions with experimental treatments.
+## Alternative outline (based on Zuur et al. examples):
+## progress from simple to "ultimate" (final) model / approach
+## Cycle through:
+##  1. Model fitting
+##  2. Test Assumptions (graphical analysis of residuals)
+##  2a) Identify violated assumptions, and possible solutions
+##  3. Model Selection on *valid* models
+##  3a) Check Model output, ANOVA tables, parameter values, AIC, R^2, etc.
+##  3b) Identify possible improvements
+##  END:    choose optimal model; produce model output: tables and graphs.
+## Start with GLMM, to incorporate known nested treatments.
+## Build in extensions as necessary, time permitting.
 ##==============================================================
 ## Model Formula
 ##==============================================================
 ### Fixed effects
-### - Include H2O^2 to test for unimodal relationship?
+### Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Y.formula <- Y.log ~ X.log * Time * Chamber * Frag * Position * H2O
+  Y.formula <- Y.log ~ X.log * H2O * Time * Chamber * Frag * Position
 } else {
-  Y.formula <- Y.log ~ X.log * Chamber * Frag * Position * H2O
+  Y.formula <- Y.log ~ X.log * H2O * Chamber * Frag * Position
 }
 
 ## Random effects for GLMM
 Y.Ri  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks
 Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slope
-
-
-
-
-if (FALSE) {    # deprecated: wrapped to allow folding
-##################################################
-## BASIC GLM - soon to be deprecated by GLMM (below)
-##################################################
-##================================================
-## Model Fitting
-##================================================
-### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
-Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
-Y.model.full <- Y.model
-Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
-
-# Should I not be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
-# YES (See below)
-
-##================================================
-## MODEL SELECTION
-##================================================
-drop1(Y.model)
-Y.model.selected <- step(Y.model, direction = "backward")
-Y.model.main.selected <- step(Y.model.main, direction = "backward")
-
-Y.model  <- Y.model.selected
-
-
-##################################################
-## CHECK ASSUMPTIONS (MODEL VALIDATION)
-##################################################
-## analyse residuals, standard diagnostic plots
-par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
-plot(Y.model)
-
-## Residuals
-Model.resid <- resid(Y.model)
-## par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
-hist(Model.resid)    # plot residuals
-plot(SECCa$X, Model.resid)
-plot(SECCa$H2O, Model.resid)
-qplot(Frag, Model.resid, data = SECCa, facets = Chamber * Position ~ Time ) + theme_bw()
-
-## Plot Residuals: see Zuur et al. 2007, pg. 61-63
-coplot( Model.resid ~ X | Frag * Position, data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr,
-       ylab = "Residuals"
-)
-## much the same breakdown, using TRELLIS xyplot over 3 factors.
-print( xyplot( Model.resid ~ X | Chamber * Frag * Position, data=SECCa, 
-       pch=point, col=SECCa$colr, bg = SECCa$fill,
-       ylab = "Residuals"
-) )
-
-## Plot Residuals: see Zuur et al. 2007, pg. 131-133
-plot(Y.model$fitted[,2],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
-qqnorm(resid(Y.model,type="p"),cex=1,main="")
-
-
-
-##################################################
-## ANALYSIS: GET RESULTS
-##################################################
-anova(Y.model)
-summary(Y.model)
-
-}
 
 
 
@@ -630,8 +576,76 @@ plot(Y.m2)
 
 
 
+if (FALSE) {    # GLM: deprecated. wrapped to allow folding
+##################################################
+## BASIC GLM - soon to be deprecated by GLMM (below)
+##################################################
+##================================================
+## Model Fitting
+##================================================
+### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
+Y.model <- glm( Y.formula, data=SECCa, family="gaussian" )
+Y.model.full <- Y.model
+Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
+
+# Should I not be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
+# YES (See below)
+
+##================================================
+## MODEL SELECTION
+##================================================
+drop1(Y.model)
+Y.model.selected <- step(Y.model, direction = "backward")
+Y.model.main.selected <- step(Y.model.main, direction = "backward")
+
+Y.model  <- Y.model.selected
+
+
+##################################################
+## CHECK ASSUMPTIONS (MODEL VALIDATION)
+##################################################
+## analyse residuals, standard diagnostic plots
+par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
+plot(Y.model)
+
+## Residuals
+Model.resid <- resid(Y.model)
+## par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
+hist(Model.resid)    # plot residuals
+plot(SECCa$X, Model.resid)
+plot(SECCa$H2O, Model.resid)
+qplot(Frag, Model.resid, data = SECCa, facets = Chamber * Position ~ Time ) + theme_bw()
+
+## Plot Residuals: see Zuur et al. 2007, pg. 61-63
+coplot( Model.resid ~ X | Frag * Position, data=SECCa, 
+       pch=SECCa$pt, col=SECCa$colr,
+       ylab = "Residuals"
+)
+## much the same breakdown, using TRELLIS xyplot over 3 factors.
+print( xyplot( Model.resid ~ X | Chamber * Frag * Position, data=SECCa, 
+       pch=point, col=SECCa$colr, bg = SECCa$fill,
+       ylab = "Residuals"
+) )
+
+## Plot Residuals: see Zuur et al. 2007, pg. 131-133
+plot(Y.model$fitted[,2],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
+qqnorm(resid(Y.model,type="p"),cex=1,main="")
+
+
+
+##################################################
+## ANALYSIS: GET RESULTS
+##################################################
+anova(Y.model)
+summary(Y.model)
+
+}
+
+
+
+
 ################################################################
-## GLMM - Hierarchical Mixed / Multilevel Model               **
+## GLMM - Hierarchical / Multilevel Mixed Model               **
 ################################################################
 ##==============================================================
 ## Model Fitting
@@ -977,7 +991,7 @@ if (DrawExplorationGraphs) {
   print(ARAcb.panels)
 }
 
-## log-log 
+## log-log: messy, apparently negative relationships? (too much noise from inner/outer patches being averaged together in Chambers?
 ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy", 
                     group = Chamber, geom = "point", size = I(3),
                     colour = Chamber, shape = Chamber,
@@ -994,7 +1008,7 @@ if (DrawExplorationGraphs) {
   print(ARAcb.panels.log)
 }
 
-## H2O plots
+## H2O plots: A few clear differences in log slope among Frag Treatments, at least in August samples. **
 ARA.H2O <- qplot(H2O, Y, data = SECCa, 
                     group = Chamber, geom = "point", size = I(3),
                     colour = Chamber, shape = Chamber,
