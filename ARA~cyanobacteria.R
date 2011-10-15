@@ -20,10 +20,12 @@ source('./lib/init.R')
 ## library(lattice)    # ggplot2 with faceting is easier!
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
-library(rgl)        # 3D plots
-library(nlme)       # GLMMs (older, but still works)
+library(rgl)                           # 3D plots
+library(car)                           # diagnostic plots & tools
+library(gvlma)                         # Global Validation of Linear Model Assumptions
+library(nlme)                          # GLMMs (older, but still works)
 ## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
-## library\(mgcv)   # Cross-Validation
+## library\(mgcv)   # Additive Modelling, Cross-Validation
 
 ################################################################
 ## CONFIGURE BASIC ANALYSIS
@@ -664,8 +666,6 @@ Y.rim  <- lme(Y.fixed, data=SECCa, random=Y.Ri , control=lmd)
 
 Y.mm <- Y.rim
 
-# Variance Components Analysis (variance decomposition)?
-
 
 ##==============================================================
 ## MODEL SELECTION
@@ -676,6 +676,8 @@ Y.mm <- Y.rim
 ################################################################
 ## CHECK ASSUMPTIONS: MODEL VALIDATION
 ################################################################
+## see Zuur et al. 2007, 2009 books, 
+##  and [Quick-R](http://www.statmethods.net/stats/rdiagnostics.html)
 ## Regression (ANOVA): Normality; Homogeneity; Independence; Fixed X*
 ## Fixed X (Model I): *think about how X data was generated*
 ##                    - fixed values [I] or large mesurement error [II] ?
@@ -683,38 +685,57 @@ Y.mm <- Y.rim
 ## Check Homogeneity: (standardized) Residuals vs. Fitted / vs. X
 ## Check Independence: (standardized) Residuals vs. X
 ## Assess Model fit, specification: Look for patterns in graphs of Residuals
-##  - Should be no areas of residuals with similar values, gaps in the cloud, etc.
+## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
 
 ## Standard diagnostic plots 
-op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
-plot(Y.mm$fitted[,1],resid(Y.mm,type="p"),xlab="Fitted values",ylab="Residuals")
+op <- par(mfrow=c(2,2))	 # panel of figures
 plot(Y.mm)
 par(op)
 
 ## Residuals ##
-Model.resid <- resid(Y.mm, type="p") #  Zuur et al like to use type="p".  "pearson" (standardised) residuals ?residuals.lme
-## type = "normalized" residuals 
-##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
-##  - in the examples in Zuur et al. 2009, there is no difference between normalized and standardised ("pearson"), but it might matter with more complicated correlation structures.
-## type = "pearson" for 'standardised' residuals (see ?residuals.lme)
-##  - this is what Zuur et al. 2009 are actually referring to, and is what Zuur et al. 2007 use in their R-code (type="p")
-## see also rstudent (studentized) and rstandard (standardized) residuals.
-## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
+Res.lab <- "Standardized Residuals"
+Res <- resid(Y.mm, type="p")            # "pearson" (standardised) residuals
+if (FALSE) {                           # type="p" or type="normalized"?
+  ## type = "normalized" residuals 
+  ##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
+  ##  - in the examples in Zuur et al. 2009, there is no difference between normalized and standardised ("pearson"), but it might matter with more complicated correlation structures.
+  ## type = "pearson" for 'standardised' residuals (see ?residuals.lme)
+  ##  - this is what Zuur et al. 2009 are actually referring to, and is what Zuur et al. 2007 use in their R-code (type="p")
+  ## see also rstudent (studentized) and rstandard (standardized) residuals.
+  ## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
+}
 
 ## Plot Residuals: see Zuur et al. 2007, pg. 131-133
-## par(mfrow=c(1,1))
-hist(Model.resid)                      # residuals: Normal distribution?
-qqnorm(Model.resid)                    # residuals: Normal distribution?
+## Residuals: Normal distribution?
+op <- par(mfrow=c(2,2))
+hist(Res)
+hist(Res, freq=FALSE)
+Xnorm <- seq(min(Res), max(Res), length=40)
+lines(Xnorm, dnorm(Xnorm), col="grey70", lwd=2) # reference Normal distribution
+qqnorm(Res)
+qqPlot(Res)
+
 ## Homogeneity, Independence: Pattern in residuals indicates violation
-plot(SECCa$X.log, Model.resid)             
-plot(SECCa$H2O, Model.resid)
-qplot(Chamber, Model.resid, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+Fit  <- fitted(Y.mm)
+Fit0 <- fitted(Y.mm, level=0)
+Fit1 <- fitted(Y.mm, level=1)
+plot(Fit, Res, xlab="Fitted values", ylab=Res.lab)
+plot(SECCa$X.log, Res, ylab=Res.lab)             
+plot(SECCa$H2O,   Res, ylab=Res.lab)
+spreadLevelPlot(Y.mm)                  # library(car)
+par(op)
+qplot(Chamber, Res, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
 
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate
 ## see Zuur et al. (2007, 2009: Appendix)
 
+
+## Global Validation of Linear Model Assumptions (gvlma package)
+validation <- gvlma(Y.mm)
+plot(validation)
+summary(validation)
 
 
 
@@ -726,6 +747,9 @@ summary(Y.mm)
 
 ## intervals(Fitted.Model.Object)   # Approx. Confidence intervals.  see ?intervals
 
+
+##==============================================================
+## Variance Components Analysis (variance decomposition)?
 
 
 
