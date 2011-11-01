@@ -166,6 +166,7 @@ SECCa <- within( SECCa, {
                 X.log[X <= 0] <- 0
                 Y.log <- log10(Y)
                 Y.log[Y <= 0] <- 0
+                Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
 
 ################################################################
@@ -415,11 +416,21 @@ X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
 X.box <- X.box + jaw.ggplot()
 if (DrawExplorationGraphs) print(X.box)
 
-Y.box <- qplot(Time, Y, data = SECCa, geom = "boxplot",
-                 ylab = Y.plotlab
-                 )
-Y.box <- Y.box + jaw.ggplot()
-if (DrawExplorationGraphs) print(Y.box)
+Y.Time <- qplot(Time, Y, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab)
+Y.Time <- Y.Time + jaw.ggplot()
+Y.Chamber <- qplot(Chamber, Y, data = SECCa, geom = "boxplot",
+                   ylab = Y.plotlab) + jaw.ggplot() 
+Y.Frag <- qplot(Frag, Y, data = SECCa, geom = "boxplot",
+                ylab = Y.plotlab) + jaw.ggplot() 
+Y.Pos  <- qplot(Position, Y, data = SECCa, geom = "boxplot",
+                ylab = Y.plotlab) + jaw.ggplot() 
+if (DrawExplorationGraphs) {
+  print(Y.Time)
+  print(Y.Chamber)
+  print(Y.Frag)
+  print(Y.Pos)
+}
 
 ##==============================================================
 ## Check distributions
@@ -497,22 +508,50 @@ if (DrawExplorationGraphs) {
 ##==============================================================
 ## Model Formula
 ##==============================================================
+UseClimateFac <- TRUE
+
 ### Fixed effects
 ### Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
   Y.fixed <- Y.log ~ X.log * H2O * Time * Chamber * Frag * Position
+  Y.fixCl <- Y.log ~ X.log * H2O * Time * Climate * Frag
 } else {
   Y.fixed <- Y.log ~ X.log * H2O * Chamber * Frag * Position
+  Y.fixCl <- Y.log ~ X.log * H2O * Climate * Frag
 }
+if (UseClimateFac) Y.fixed <- Y.fixCl
 
 ## Random effects for GLMM
 ##  Although it's hard to find examples of this type of nesting, 
 ##  the slash '/' does appear to be the correct operator 
 ##  for this type of serially nested treatment structure 
 ##  (based on examples found online).
-Y.Ri  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks
-Y.Ris <- ~ 1 + X.log + H2O | Block/Time/Chamber/Frag # Random intercept + slopes
+## The only truly random factor I have is 'Block', 
+## which is also the only effective level of replication.  
+## Including Block as the highest-level random factor causes 
+## nlme to take a *LONG* time to converge.
+##   i.e. R hangs for several minutes / hours
+## It might be more practical to exclude Block entirely, and just chalk it up to replication.
+##  If I do, it might also make the whole 'mixed effects' side of things unnecessary?
+## The nesting structure I have is really a violation of independence: 
+## patches in the same block are closer together 
+## and likely to experience more similar environmental conditions 
+## (apart from the chamber effect).
+## With Block as largest nested unit: > 12 hours to fit ris model (random intercet + slope), with NaNs in some p-values (Time, Climate, and their interaction)
+if (!UseClimateFac) {
+  Y.RiN  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks & nested factors
+  Y.RisN <- ~ 1 + X.log * H2O | Block/Time/Chamber/Frag # Random intercept + slopes
+} else {
+  Y.RiN  <- ~ 1|Block/Time/Climate
+  Y.RisN <- ~ 1 + X.log * H2O | Block/Time/Climate # Random intercept + slopes
+}
+
+## This might be the wrong approach: Block is the only real "random" factor.
+## Fixed factors happen to be nested within it.
+## Maybe what I should really be doing is accounting for heterogeneity across nested fixed factors?
+Y.Ri  <- ~ 1 | Block
+Y.Ris <- ~ 1 + X.log * H2O | Block     # Random intercept + slopes
 
 
 
@@ -592,7 +631,7 @@ if (FALSE) {    # GLM: deprecated. wrapped to allow folding
 ### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
 Y.model <- glm( Y.fixed, data=SECCa, family="gaussian" )
 Y.model.full <- Y.model
-Y.model.main <- glm(Y ~ log(X+1) + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
+Y.model.main <- glm(Y.log ~ X.log + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
 
 # Should I not be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
 # YES (See below)
@@ -657,20 +696,122 @@ summary(Y.model)
 ##==============================================================
 ## Model Fitting
 ##==============================================================
-## Using a mixed-effects model to account for treatments of different sizes: 
-##  Chamber / Frag / Position
+## Using a mixed-effects model to account for treatments of different sizes? 
+##  Block / Chamber / Frag / Position
+Y.fm <- gls( Y.fixed, data=SECCa, method="REML") # fixed effects only for comparison
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
-Y.rim  <- lme(Y.fixed, data=SECCa, random=Y.Ri , control=lmd)
-## Y.rism <- lme(Y.fixed, data=SECCa, random=Y.Ris, control=lmc) # R crashes on this :(
+Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
+Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML") # SLOW! :(
+Y.rie  <- lme(Y.fixed, random=Y.Ri,  
+              weights=varIdent(form=~ 1 | Block),
+              data=SECCa, control=lmc, method="REML")
+Y.rise <- lme(Y.fixed, random=Y.Ris,  
+              weights=varIdent(form=~ 1 | Block),
+              data=SECCa, control=lmc, method="REML")
+if (false) {                           # not working :(
+  Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varIdent(form=~ 1 | Block/Time/Chamber/Frag),
+                 data=SECCa, control=lmc, method="REML")
+  Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varFixed(form=~ X.log),
+                 data=SECCa, control=lmc, method="REML")
+  Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varConstPower(form=~ H2O),
+                 data=SECCa, control=lmc, method="REML")
+  Y.riceX <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varComb(varIdent(form=~ 1 | Block),
+                                 varConstPower(form=~ X.log)),
+                 data=SECCa, control=lmc, method="REML")
+  Y.riceH <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varComb(varIdent(form=~ 1 | Block),
+                                 varConstPower(form=~ H2O)),
+                 data=SECCa, control=lmc, method="REML")
+  Y.rice  <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varComb(varIdent(form=~ 1 | Block),
+                                 varConstPower(form=~ X.log),
+                                 varConstPower(form=~ H2O)),
+                 data=SECCa, control=lmc, method="REML")
+}
 
-Y.mm <- Y.rim
+
 
 
 ##==============================================================
 ## MODEL SELECTION
 ##==============================================================
+## RANDOM structure
+anova(Y.fm, Y.rism)                    # do random effects improve the model?
+anova(Y.fm, Y.rim)                     # do random effects improve the model?
+anova(Y.fm, Y.rie)                     # do random effects improve the model?
+anova(Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
 
+Y.mm <- Y.rim                          # Optimal random structure
+## The biggest improvement seems to come from random intercepts across Blocks.
+## However, that model shows major heterogeneity in the residuals.
+## I need other random factors to maintain a valid model fit.
+
+## optimize FIXED factors
+if (FALSE) {
+  Y.ml  <- lme(Y.fixed, data=SECCa, random=Y.Ri, method="ML") # re-fit with ML
+  Y.rieML <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varIdent(form=~ 1 | Block),
+                 data=SECCa, control=lmc, method="ML")
+}
+Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
+drop1(Y.ml)                            # not encouraging
+## Y.step <- step(Y.ml)                # stepwise back & forward model selection?  Not for lme
+if (!UseClimateFac) {                  # all factors
+  Y.ml1 <- update(Y.ml, ~. - X.log:H2O:Time:Chamber:Frag:Position)
+
+  ## No interactions?
+  Y.mlMain <- lme(Y.log ~ X.log + H2O + Time + Chamber + Frag + Position, data = SECCa, random = Y.Ri, method="ML")
+} else {                               # Chamber & position lumped into Climate pseudo-factor
+  Y.ml1 <- update(Y.ml, ~. - X.log:H2O:Time:Climate:Frag)
+  anova(Y.ml, Y.ml1)
+  ## drop 4-way interactions?
+  Y.ml2 <- update(Y.ml1, ~. - X.log:H2O:Time:Climate) # *
+  anova(Y.ml1, Y.ml2)
+  Y.ml3 <- update(Y.ml1, ~. - X.log:H2O:Time:Frag)
+  anova(Y.ml1, Y.ml3)
+  Y.ml4 <- update(Y.ml1, ~. - X.log:H2O:Climate:Frag) # <-
+  anova(Y.ml1, Y.ml4)
+  Y.ml5 <- update(Y.ml1, ~. - X.log:Time:Climate:Frag) # **
+  anova(Y.ml1, Y.ml5)
+  Y.ml6 <- update(Y.ml1, ~. - H2O:Time:Climate:Frag)
+  anova(Y.ml1, Y.ml6)
+  ## dropped least significant 4-way interaction: next
+  Y.ml2 <- update(Y.ml4, ~. - X.log:H2O:Time:Climate) # *
+  anova(Y.ml4, Y.ml2)
+  Y.ml3 <- update(Y.ml4, ~. - X.log:H2O:Time:Frag) # <-
+  anova(Y.ml4, Y.ml3)
+  Y.ml5 <- update(Y.ml4, ~. - X.log:Time:Climate:Frag) # **
+  anova(Y.ml4, Y.ml5)
+  Y.ml6 <- update(Y.ml4, ~. - H2O:Time:Climate:Frag)
+  anova(Y.ml4, Y.ml6)
+  ## dropped least significant 4-way interaction: next
+  Y.ml2 <- update(Y.ml3, ~. - X.log:H2O:Time:Climate) # *
+  anova(Y.ml3, Y.ml2)
+  Y.ml5 <- update(Y.ml3, ~. - X.log:Time:Climate:Frag) # *
+  anova(Y.ml3, Y.ml5)
+  Y.ml6 <- update(Y.ml3, ~. - H2O:Time:Climate:Frag) # <-
+  anova(Y.ml3, Y.ml6)
+  ## dropped least significant 4-way interaction: next
+  Y.ml2 <- update(Y.ml6, ~. - X.log:H2O:Time:Climate) # *
+  anova(Y.ml6, Y.ml2)
+  Y.ml5 <- update(Y.ml6, ~. - X.log:Time:Climate:Frag) # *
+  anova(Y.ml6, Y.ml5)
+  Y.ml4 <- Y.ml6                       # optimal model with 4-way interactions
+  anova(Y.ml, Y.ml4)
+  Y.mm <- update(Y.ml4, method="REML") # re-fit with REML
+
+  ## 3-way interactions?
+
+  ## No interactions?
+  Y.mlMain <- lme(Y.log ~ X.log + H2O + Time + Climate + Frag, data = SECCa, random = Y.Ri, method="ML")
+  anova(Y.ml, Y.mlMain)
+  anova(Y.ml4, Y.mlMain)
+}
 
 
 ################################################################
@@ -695,8 +836,8 @@ plot(Y.mm)
 par(op)
 
 ## Residuals ##
-Res.lab <- "Standardized Residuals"
-Res <- resid(Y.mm, type="p")            # "pearson" (standardised) residuals
+RE.lab <- "Standardized Residuals"
+RE <- resid(Y.mm, type="p")            # "pearson" (standardised) residuals
 if (FALSE) {                           # type="p" or type="normalized"?
   ## type = "normalized" residuals 
   ##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
@@ -707,36 +848,43 @@ if (FALSE) {                           # type="p" or type="normalized"?
   ## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
 }
 
-## Plot Residuals: see Zuur et al. 2007, pg. 131-133
-## Residuals: Normal distribution?
+## Plot REiduals: see Zuur et al. 2007, pg. 131-133
+## REiduals: Normal distribution?
 op <- par(mfrow=c(2,2))
-hist(Res)
-hist(Res, freq=FALSE)
-Xnorm <- seq(min(Res), max(Res), length=40)
+hist(RE)
+hist(RE, freq=FALSE)
+Xnorm <- seq(min(RE), max(RE), length=40)
 lines(Xnorm, dnorm(Xnorm), col="grey70", lwd=2) # reference Normal distribution
-qqnorm(Res)
-qqPlot(Res)
+qqnorm(RE)
+qqPlot(RE)
 
 ## Homogeneity, Independence: Pattern in residuals indicates violation
 Fit  <- fitted(Y.mm)
 Fit0 <- fitted(Y.mm, level=0)
 Fit1 <- fitted(Y.mm, level=1)
-plot(Fit, Res, xlab="Fitted values", ylab=Res.lab)
-plot(SECCa$X.log, Res, ylab=Res.lab)             
-plot(SECCa$H2O,   Res, ylab=Res.lab)
-spreadLevelPlot(Y.mm)                  # library(car)
+plot(Fit, RE, xlab="Fitted values", ylab=RE.lab)
+plot(SECCa$X.log, RE, ylab=RE.lab)             
+plot(SECCa$H2O,   RE, ylab=RE.lab)
+## spreadLevelPlot(Y.mm)                  # library(car)
 par(op)
-qplot(Chamber, Res, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+
+qplot(Block, RE, data = SECCa, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot()
+qplot(Chamber, RE, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+
+qplot(X.log, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
+qplot(H2O, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
+
 
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate
 ## see Zuur et al. (2007, 2009: Appendix)
 
 
 ## Global Validation of Linear Model Assumptions (gvlma package)
-validation <- gvlma(Y.mm)
-plot(validation)
-summary(validation)
-
+if ("lm" %in% class(Y.mm)) {
+  validation <- gvlma(Y.mm)
+  plot(validation)
+  summary(validation)
+}
 
 
 ################################################################
