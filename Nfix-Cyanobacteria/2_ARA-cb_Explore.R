@@ -62,9 +62,10 @@ if (DrawExplorationGraphs) {
   ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
   pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
   ## look at log transformations
-  pairplot(SECCa[, c('Y', 'Y.log', 'X', 'X.log', 'H2O')],
+  pairplot(SECCa[, c('Y', 'Y.log', 'X', 'X.log', 'H2O', 'Time', 'Chamber', 'Frag', 'Position')],
            labels=c(Y.col, paste("log(", Y.col, ")"), 
                     X.col, paste("log(", X.col, ")"), "H2O"
+                    , "Time", "Chamber", "Frag", "Position"
                     )
           )
 
