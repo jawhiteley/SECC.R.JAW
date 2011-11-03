@@ -37,7 +37,11 @@ SECCa <- within( SECCa, {
                 X.trans <- X.log  # convenience
                 Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
+SECCa <- SECCa[SECCa$Time==levels(SECCa$Time)[3], ]
+
 UseClimateFac <- FALSE
+
+
 
 ################################################################
 ## ANALYSIS
@@ -70,29 +74,19 @@ UseClimateFac <- FALSE
 
 ## Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## Time as a fixed factor, or separate analysis on each Time?
-## Remove data where Cells == 0? (detection failure)
 
 ##==============================================================
 ## Model Formula
 ##==============================================================
-
 ### Fixed effects
 ## Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 ## - It might be better to analyse each time period separately, and avoid the higher-order interactions that I know exist.
-if ( length(Time.use) > 1 ) {
-  Y.fixed <- Y.trans ~ X.trans * H2O * Time * Chamber * Frag * Position
-  Y.fixCl <- Y.trans ~ X.trans * H2O * Time * Climate * Frag
-  ## Main effects only
-  Y.main  <- Y.trans ~ X.trans + H2O + Time + Chamber + Frag + Position
-  Y.mainCl<- Y.trans ~ X.trans + H2O + Time + Climate + Frag
-} else {
   Y.fixed <- Y.trans ~ X.trans * H2O * Chamber * Frag * Position
   Y.fixCl <- Y.trans ~ X.trans * H2O * Climate * Frag
   ## Main effects only
   Y.main  <- Y.trans ~ X.trans + H2O + Chamber + Frag + Position
   Y.mainCl<- Y.trans ~ X.trans + H2O + Climate + Frag
-}
 if (UseClimateFac) {
   Y.fixed <- Y.fixCl
   Y.main  <- Y.mainCl
@@ -140,75 +134,6 @@ Y.Ris <- ~ 1 + X.trans * H2O | Block     # Random intercept + slopes
 
 
 
-if (FALSE) {    # GLM: deprecated. wrapped to allow folding
-##################################################
-## BASIC GLM - soon to be deprecated by GLMM (below)
-##################################################
-##================================================
-## Model Fitting
-##================================================
-### "basic" GLM: initial foray into analysis.  Soon to be deprecated by GLMM.
-Y.model <- glm( Y.fixed, data=SECCa, family="gaussian" )
-Y.model.full <- Y.model
-Y.model.main <- glm(Y.trans ~ X.trans + Time + Chamber + Frag + Position + H2O + I(H2O^2), data = SECCa)  # Main factors only; no interaction terms.
-
-# Should I not be using a mixed-effects model to account for treatments of different sizes? Chamber / Frag / Position
-# YES (See below)
-
-##================================================
-## MODEL SELECTION
-##================================================
-drop1(Y.model)
-Y.model.selected <- step(Y.model, direction = "backward")
-Y.model.main.selected <- step(Y.model.main, direction = "backward")
-
-Y.model  <- Y.model.selected
-
-
-##################################################
-## CHECK ASSUMPTIONS (MODEL VALIDATION)
-##################################################
-## analyse residuals, standard diagnostic plots
-op <- par(mfrow=c(2,2))	 # panel of figures: 3 rows & 2 columns
-plot(Y.model)
-par(op)
-
-## Residuals
-Model.resid <- resid(Y.model)
-## par(mfrow=c(1,1))	 # panel of figures: 1 rows & 1 columns
-hist(Model.resid)    # plot residuals
-plot(SECCa$X, Model.resid)
-plot(SECCa$H2O, Model.resid)
-qplot(Frag, Model.resid, data = SECCa, facets = Chamber * Position ~ Time ) + theme_bw()
-
-## Plot Residuals: see Zuur et al. 2007, pg. 61-63
-coplot( Model.resid ~ X | Frag * Position, data=SECCa, 
-       pch=SECCa$pt, col=SECCa$colr,
-       ylab = "Residuals"
-)
-## much the same breakdown, using TRELLIS xyplot over 3 factors.
-print( xyplot( Model.resid ~ X | Chamber * Frag * Position, data=SECCa, 
-       pch=point, col=SECCa$colr, bg = SECCa$fill,
-       ylab = "Residuals"
-) )
-
-## Plot Residuals: see Zuur et al. 2007, pg. 131-133
-plot(Y.model$fitted[,2],resid(Y.model,type="p"),xlab="Fitted values",ylab="Residuals")
-qqnorm(resid(Y.model,type="p"),cex=1,main="")
-
-
-
-##################################################
-## ANALYSIS: GET RESULTS
-##################################################
-anova(Y.model)
-summary(Y.model)
-
-}
-
-
-
-
 ################################################################
 ## GLMM - Hierarchical / Multilevel Mixed Model               **
 ################################################################
@@ -217,7 +142,7 @@ summary(Y.model)
 ##==============================================================
 ## Using a mixed-effects model to account for treatments of different sizes? 
 ##  Block / Chamber / Frag / Position
-Y.fm <- gls( Y.fixed, data=SECCa, method="REML") # fixed effects only for comparison
+Y.fm <- gls(Y.fixed, data=SECCa, method="REML") # fixed effects only for comparison
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
 Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
@@ -227,22 +152,22 @@ Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML")
 Y.rie  <- lme(Y.fixed, random=Y.Ri,  
               weights=varIdent(form=~ 1 | Block),
               data=SECCa, control=lmc, method="REML")
-Y.rise <- lme(Y.fixed, random=Y.Ris,  
-              weights=varIdent(form=~ 1 | Block),
-              data=SECCa, control=lmc, method="REML")
 if (UseClimateFac) {
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block),
-                 correlation=corAR1(form = ~ 1 | Block/Time/Frag/Climate),
+                 correlation=corAR1(form = ~ 1 | Block/Frag/Climate),
                  data=SECCa, control=lmc, method="REML")
 } else {
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
-                 weights=varIdent(form=~ 1 | Block),
-                 correlation=corAR1(form = ~ 1 | Block/Time/Chamber/Frag),
+                 ##                  weights=varIdent(form=~ 1 | Block),
+                 correlation=corAR1(form = ~ 1 | Block/Chamber/Frag),
                  data=SECCa, control=lmc, method="REML")
 }
 
 if (FALSE) {                           # these attempts are not working :(
+  Y.rise <- lme(Y.fixed, random=Y.Ris,  
+                weights=varIdent(form=~ 1 | Block),
+                data=SECCa, control=lmc, method="REML")
   ## Error in getGroups.data.frame(data, form, level = length(splitFormula(grpForm,  : Invalid formula for groups
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block/Time/Chamber/Frag),
@@ -285,7 +210,6 @@ if (FALSE) {                           # these attempts are not working :(
 
 ## Main effects only: ignore interactions?
 Y.mainMM <- lme(Y.main, data = SECCa, random = Y.Ri, method="REML")
-Y.mainML <- update(Y.mainMM, method="ML")
 
 
 
@@ -294,10 +218,10 @@ Y.mainML <- update(Y.mainMM, method="ML")
 ## MODEL SELECTION
 ##==============================================================
 ## RANDOM structure
-anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rim)                     # do random effects improve the model?
+anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rie)                     # do random effects improve the model?
-anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
+anova(Y.rieN, Y.rie, Y.rim, Y.rism)    # do we need random slopes or error terms?
 anova(Y.rieN, Y.rim)                   # do we need nested error terms?
 
 Y.mm <- Y.rim                          # Optimal random structure
@@ -313,116 +237,122 @@ if (FALSE) {
                  data=SECCa, control=lmc, method="ML")
 }
 Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
+Y.mainML <- update(Y.mainMM, method="ML")
 
-drop1(Y.ml)                            # not encouraging
+drop1(Y.ml)
 ## Y.step <- step(Y.ml)                # stepwise back & forward model selection?  Not for lme
 if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
-  Y.ml1 <- update(Y.ml, .~. - X.trans:H2O:Time:Chamber:Frag:Position) # * sig. WORSE!
+  Y.ml1 <- update(Y.ml, .~. - X.trans:H2O:Chamber:Frag:Position) # <-
   anova(Y.ml, Y.ml1)
+  ## 4-way interactions
+  drop1(Y.ml1)
+  Y.ml1.1 <- update(Y.ml1, .~. - X.trans:H2O:Chamber:Frag) # <-
+  Y.ml1.2 <- update(Y.ml1, .~. - X.trans:H2O:Chamber:Position)
+  Y.ml1.3 <- update(Y.ml1, .~. - X.trans:H2O:Frag:Position)
+  Y.ml1.4 <- update(Y.ml1, .~. - X.trans:Chamber:Frag:Position)
+  Y.ml1.5 <- update(Y.ml1, .~. - H2O:Chamber:Frag:Position)
+  anova(Y.ml1, Y.ml1.1)
+  anova(Y.ml1, Y.ml1.2)
+  anova(Y.ml1, Y.ml1.3)
+  anova(Y.ml1, Y.ml1.4)
+  anova(Y.ml1, Y.ml1.5)
+  Y.ml2 <- Y.ml1.1
+  drop1(Y.ml2)
+  Y.ml2.1 <- update(Y.ml2, .~. - X.trans:H2O:Chamber:Position)
+  Y.ml2.2 <- update(Y.ml2, .~. - X.trans:H2O:Frag:Position)
+  Y.ml2.3 <- update(Y.ml2, .~. - X.trans:Chamber:Frag:Position) # <-
+  Y.ml2.4 <- update(Y.ml2, .~. - H2O:Chamber:Frag:Position)
+  anova(Y.ml2, Y.ml2.1)
+  anova(Y.ml2, Y.ml2.2)
+  anova(Y.ml2, Y.ml2.3)
+  anova(Y.ml2, Y.ml2.4)
+  Y.ml3 <- Y.ml2.3
+  drop1(Y.ml3)
+  Y.ml3.1 <- update(Y.ml3, .~. - X.trans:H2O:Chamber:Position)  # *
+  Y.ml3.2 <- update(Y.ml3, .~. - X.trans:H2O:Frag:Position)
+  Y.ml3.3 <- update(Y.ml3, .~. - H2O:Chamber:Frag:Position)     # <-
+  anova(Y.ml3, Y.ml3.1)
+  anova(Y.ml3, Y.ml3.2)
+  anova(Y.ml3, Y.ml3.3)
+  Y.ml4 <- Y.ml3.3
+  drop1(Y.ml4)
+  Y.ml4.1 <- update(Y.ml4, .~. - X.trans:H2O:Chamber:Position)  # *
+  Y.ml4.2 <- update(Y.ml4, .~. - X.trans:H2O:Frag:Position)		# ~
+  anova(Y.ml4, Y.ml4.1)
+  anova(Y.ml4, Y.ml4.2)
+  ## 3-way interactions?
+  Y.ml4.3 <- update(Y.ml4, .~. - X.trans:Chamber:Frag)
+  Y.ml4.4 <- update(Y.ml4, .~. - H2O:Chamber:Frag) # <-
+  Y.ml4.5 <- update(Y.ml4, .~. - H2O:Frag:Position)
+  anova(Y.ml4, Y.ml4.3)
+  anova(Y.ml4, Y.ml4.4)
+  anova(Y.ml4, Y.ml4.5)
+  Y.ml5 <- Y.ml4.4
+  drop1(Y.ml5)
+  Y.ml5.1 <- update(Y.ml5, .~. - X.trans:Chamber:Frag) # ~
+  Y.ml5.2 <- update(Y.ml5, .~. - H2O:Frag:Position)
+  anova(Y.ml5, Y.ml5.1)
+  anova(Y.ml5, Y.ml5.2)
+  Y.ml6 <- Y.ml5.1
+  drop1(Y.ml6)
+  Y.ml6.1 <- update(Y.ml6, .~. - H2O:Frag:Position) # ~
+  anova(Y.ml6, Y.ml6.1)
+  Y.mm <- update(Y.ml5, method="REML")
+
 
   ## No interactions?
-  Y.main1 <- update(Y.mainML, .~. - X.trans)
-  Y.main2 <- update(Y.mainML, .~. - H2O)
-  Y.main3 <- update(Y.mainML, .~. - Time)
-  Y.main4 <- update(Y.mainML, .~. - Chamber)
-  Y.main5 <- update(Y.mainML, .~. - Frag)
-  Y.main6 <- update(Y.mainML, .~. - Position)
+  drop1(Y.mainML)
+  Y.main1 <- update(Y.mainML, .~. - X.trans)  # <-
+  Y.main2 <- update(Y.mainML, .~. - H2O)      # *
+  Y.main3 <- update(Y.mainML, .~. - Chamber)  # *
+  Y.main4 <- update(Y.mainML, .~. - Frag)     # *
+  Y.main5 <- update(Y.mainML, .~. - Position) # *
   anova(Y.mainML, Y.main1)
   anova(Y.mainML, Y.main2)
   anova(Y.mainML, Y.main3)
   anova(Y.mainML, Y.main4)
   anova(Y.mainML, Y.main5)
-  anova(Y.mainML, Y.main6)
-  ## Full model is still the best :(
+  Y.m1 <- Y.main1
+  drop1(Y.m1)
+  Y.m1.1 <- update(Y.m1, .~. - H2O)      # *
+  Y.m1.2 <- update(Y.m1, .~. - Chamber)  # *
+  Y.m1.3 <- update(Y.m1, .~. - Frag)     # *
+  Y.m1.4 <- update(Y.m1, .~. - Position) # *
+  anova(Y.m1, Y.m1.1)
+  anova(Y.m1, Y.m1.2)
+  anova(Y.m1, Y.m1.3)
+  anova(Y.m1, Y.m1.4)
+  Y.mainM <- Y.m1
+  Y.mainMM <- update(Y.mainM, method="REML")
+
   ## Forward model selection to add interactions?
-  Y.m1     <- update(Y.mainML, .~. + X.trans:H2O)
-  Y.m2     <- update(Y.mainML, .~. + Chamber:Position)         # *
-  Y.m3     <- update(Y.mainML, .~. + Chamber:Frag)
-  Y.m4     <- update(Y.mainML, .~. + Frag:Position)
-  Y.m5     <- update(Y.mainML, .~. + Time:X.trans)
-  Y.m6     <- update(Y.mainML, .~. + Time:H2O)                 # **
-  Y.m7     <- update(Y.mainML, .~. + X.trans:Chamber)
-  Y.m8     <- update(Y.mainML, .~. + H2O:Chamber)              # *
-  Y.m1.1   <- update(Y.mainML, .~. + X.trans:H2O
-                     + X.trans:Time + H2O:Time 
-                     + X.trans:H2O:Time)         # *
-  Y.m1.1.1 <- update(Y.mainML, .~. + X.trans:H2O + X.trans:Time + H2O:Time 
-                     + X.trans:Chamber + H2O:Chamber + Time:Chamber
-                     + X.trans:H2O:Time + X.trans:H2O:Chamber 
-                     + X.trans:Time:Chamber + H2O:Time:Chamber
-                     + X.trans:H2O:Time:Chamber) # *
+  Y.m1     <- update(Y.mainM, .~. + H2O:Chamber)
+  Y.m2     <- update(Y.mainM, .~. + H2O:Frag)
+  Y.m3     <- update(Y.mainM, .~. + H2O:Position)
+  Y.m4     <- update(Y.mainM, .~. + Chamber:Frag)
+  Y.m5     <- update(Y.mainM, .~. + Frag:Position)
+  Y.m1.1 <- update(Y.mainM, .~. + H2O:Chamber
+				   + H2O:Position + H2O:Frag
+				   + Chamber:Frag + Chamber:Position + Frag:Position) # *
+  Y.m1.1.1 <- update(Y.m1.1, .~. + H2O:Chamber:Frag
+				   + H2O:Chamber:Position + H2O:Frag:Position
+				   + Chamber:Frag:Position + H2O:Chamber:Frag:Position) # *
   anova(Y.mainML, Y.m1)
   anova(Y.mainML, Y.m2)
   anova(Y.mainML, Y.m3)
   anova(Y.mainML, Y.m4)
   anova(Y.mainML, Y.m5)
-  anova(Y.mainML, Y.m6)
-  anova(Y.mainML, Y.m7)
-  anova(Y.mainML, Y.m8)
   anova(Y.mainML, Y.m1.1)
   anova(Y.mainML, Y.m1.1.1)
 
-  Y.mainMM <- update(Y.mainML, method="REML")
+  Y.mainMM <- update(Y.mainM, method="REML")
 
   AIC(Y.ml, Y.mainML)
   AIC(Y.mm, Y.mainMM)
 
 } else {                               # Chamber & position lumped into Climate pseudo-factor
-  Y.ml1 <- update(Y.ml, .~. - X.trans:H2O:Time:Climate:Frag)
-  anova(Y.ml, Y.ml1)
-  ## drop 4-way interactions?
-  Y.ml2 <- update(Y.ml1, .~. - X.trans:H2O:Time:Climate)  # *
-  Y.ml3 <- update(Y.ml1, .~. - X.trans:H2O:Time:Frag)
-  Y.ml4 <- update(Y.ml1, .~. - X.trans:H2O:Climate:Frag)  # <-
-  Y.ml5 <- update(Y.ml1, .~. - X.trans:Time:Climate:Frag) # **
-  Y.ml6 <- update(Y.ml1, .~. - H2O:Time:Climate:Frag)
-  anova(Y.ml1, Y.ml2)
-  anova(Y.ml1, Y.ml3)
-  anova(Y.ml1, Y.ml4)
-  anova(Y.ml1, Y.ml5)
-  anova(Y.ml1, Y.ml6)
-  ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml4, .~. - X.trans:H2O:Time:Climate)  # *
-  Y.ml3 <- update(Y.ml4, .~. - X.trans:H2O:Time:Frag)     # <-
-  Y.ml5 <- update(Y.ml4, .~. - X.trans:Time:Climate:Frag) # **
-  Y.ml6 <- update(Y.ml4, .~. - H2O:Time:Climate:Frag)
-  anova(Y.ml4, Y.ml2)
-  anova(Y.ml4, Y.ml3)
-  anova(Y.ml4, Y.ml5)
-  anova(Y.ml4, Y.ml6)
-  ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml3, .~. - X.trans:H2O:Time:Climate)  # *
-  Y.ml5 <- update(Y.ml3, .~. - X.trans:Time:Climate:Frag) # *
-  Y.ml6 <- update(Y.ml3, .~. - H2O:Time:Climate:Frag)     # <-
-  anova(Y.ml3, Y.ml2)
-  anova(Y.ml3, Y.ml5)
-  anova(Y.ml3, Y.ml6)
-  ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml6, .~. - X.trans:H2O:Time:Climate)  # *
-  Y.ml5 <- update(Y.ml6, .~. - X.trans:Time:Climate:Frag) # *
-  anova(Y.ml6, Y.ml2)
-  anova(Y.ml6, Y.ml5)
-  Y.ml4 <- Y.ml6                       # optimal model with 4-way interactions
-  anova(Y.ml, Y.ml4)
-  Y.mm <- update(Y.ml4, method="REML") # re-fit with REML
 
-  ## 3-way interactions?
-
-  ## Ignore interactions?
-  Y.main1 <- update(Y.mainML, .~. - X.trans)
-  Y.main2 <- update(Y.mainML, .~. - H2O)
-  Y.main3 <- update(Y.mainML, .~. - Time)
-  Y.main4 <- update(Y.mainML, .~. - Climate)
-  Y.main5 <- update(Y.mainML, .~. - Frag) # <-
-  anova(Y.mainML, Y.main1)
-  anova(Y.mainML, Y.main2)
-  anova(Y.mainML, Y.main3)
-  anova(Y.mainML, Y.main4)
-  anova(Y.mainML, Y.main5)
-  Y.mainML <- Y.main5
-  Y.mainMM <- update(Y.mainML, method="REML")
-
-  AIC(Y.ml, Y.ml4, Y.mainML)
+  AIC(Y.ml, Y.mainML)
   AIC(Y.rim, Y.mm, Y.mainMM)
 }
 ##   Y.mm <- Y.mainMM
@@ -445,9 +375,11 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
 diagnostics(Y.mm)
+diagnostics(Y.rie)                     # Normality :(
 diagnostics(Y.rieN)
 diagnostics(Y.mainMM)
-diagnostics(Y.m1.1.1)
+diagnostics(Y.m1.1)                    # main effects +interactions?
+diagnostics(Y.m1.1.1)                  # main effects +interactions?
 
 Y.model <- Y.mm
 diagnostics(Y.model)
