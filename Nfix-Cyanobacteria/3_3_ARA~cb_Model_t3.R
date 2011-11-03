@@ -37,7 +37,7 @@ SECCa <- within( SECCa, {
                 X.trans <- X.log  # convenience
                 Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
-SECCa <- SECCa[SECCa$Time==levels(SECCa$Time)[3], ]
+SECCt <- SECCa[SECCa$Time==levels(SECCa$Time)[3], ]
 
 UseClimateFac <- FALSE
 
@@ -142,74 +142,74 @@ Y.Ris <- ~ 1 + X.trans * H2O | Block     # Random intercept + slopes
 ##==============================================================
 ## Using a mixed-effects model to account for treatments of different sizes? 
 ##  Block / Chamber / Frag / Position
-Y.fm <- gls(Y.fixed, data=SECCa, method="REML") # fixed effects only for comparison
+Y.fm <- gls(Y.fixed, data=SECCt, method="REML") # fixed effects only for comparison
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
-Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
+Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCt, control=lmd, method="REML")
 ## SLOW! :(
 ## more complex models take a few minutes (or hours) to fit.  Use with discretion.
-Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML")
+Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCt, control=lmc, method="REML")
 Y.rie  <- lme(Y.fixed, random=Y.Ri,  
               weights=varIdent(form=~ 1 | Block),
-              data=SECCa, control=lmc, method="REML")
+              data=SECCt, control=lmc, method="REML")
 if (UseClimateFac) {
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block),
                  correlation=corAR1(form = ~ 1 | Block/Frag/Climate),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
 } else {
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  ##                  weights=varIdent(form=~ 1 | Block),
                  correlation=corAR1(form = ~ 1 | Block/Chamber/Frag),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
 }
 
 if (FALSE) {                           # these attempts are not working :(
   Y.rise <- lme(Y.fixed, random=Y.Ris,  
                 weights=varIdent(form=~ 1 | Block),
-                data=SECCa, control=lmc, method="REML")
+                data=SECCt, control=lmc, method="REML")
   ## Error in getGroups.data.frame(data, form, level = length(splitFormula(grpForm,  : Invalid formula for groups
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block/Time/Chamber/Frag),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block/Time/Frag/Climate),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
 
   ## I want to use varConstPower (variance covariate with values of 0), but that produces an error (false convergence) :(
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varConstPower(form = ~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCt, control=lmd, method="REML")
 
   ## varFixed gives no errors, but takes >12 hours to fit (if at all)
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varFixed(~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCt, control=lmd, method="REML")
   ## varPower works, but not for X.trans, which has 0's!   :/
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varPower(form = ~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCt, control=lmd, method="REML")
   Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varPower(form = ~ H2O),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCt, control=lmd, method="REML")
 
   Y.riceX <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
                                  varConstPower(form=~ X.trans)),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
   Y.riceH <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
                                  varConstPower(form=~ H2O)),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
   Y.rice  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
                                  varConstPower(form=~ X.trans),
                                  varConstPower(form=~ H2O)),
-                 data=SECCa, control=lmc, method="REML")
+                 data=SECCt, control=lmc, method="REML")
 }
 
 ## Main effects only: ignore interactions?
-Y.mainMM <- lme(Y.main, data = SECCa, random = Y.Ri, method="REML")
+Y.mainMM <- lme(Y.main, data = SECCt, random = Y.Ri, method="REML")
 
 
 
@@ -231,10 +231,10 @@ Y.mm <- Y.rim                          # Optimal random structure
 
 ## optimize FIXED factors
 if (FALSE) {
-  Y.ml  <- lme(Y.fixed, data=SECCa, random=Y.Ri, method="ML") # re-fit with ML
+  Y.ml  <- lme(Y.fixed, data=SECCt, random=Y.Ri, method="ML") # re-fit with ML
   Y.rieML <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block),
-                 data=SECCa, control=lmc, method="ML")
+                 data=SECCt, control=lmc, method="ML")
 }
 Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
 Y.mainML <- update(Y.mainMM, method="ML")
@@ -438,29 +438,29 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 ## generate grid to add predicted values to (X-values in all combinations of factors).
-Y.pred <- expand.grid(Chamber  = levels(SECCa$Chamber) , 
-                      Frag     = levels(SECCa$Frag), 
-                      Position = levels(SECCa$Position), 
-                      X=seq(0, max(SECCa$X), length.out=100 ) 
+Y.pred <- expand.grid(Chamber  = levels(SECCt$Chamber) , 
+                      Frag     = levels(SECCt$Frag), 
+                      Position = levels(SECCt$Position), 
+                      X=seq(0, max(SECCt$X), length.out=100 ) 
                       )
 Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdata must have same explanatory variable name for predict to work.
 
 if (FALSE) {
-  pred.Chamber <- expand.grid(Chamber = levels(SECCa$Chamber) , 
-                              X=seq(0, max(SECCa$X), length.out=100 ) 
+  pred.Chamber <- expand.grid(Chamber = levels(SECCt$Chamber) , 
+                              X=seq(0, max(SECCt$X), length.out=100 ) 
   )
   pred.Chamber$predicted <- predict(Y.model, newdata=pred.Chamber, type="response" )
-  pred.Frag <- expand.grid(Frag = levels(SECCa$Frag) , 
-                           X=seq(0, max(SECCa$X), length.out=100 )
+  pred.Frag <- expand.grid(Frag = levels(SECCt$Frag) , 
+                           X=seq(0, max(SECCt$X), length.out=100 )
   )
   pred.Frag$predicted <- predict(Y.model, newdata=pred.Frag, type="response" )
-  pred.Position <- expand.grid(Position = levels(SECCa$Position) , 
-                               X=seq(0, max(SECCa$X), length.out=100 ) 
+  pred.Position <- expand.grid(Position = levels(SECCt$Position) , 
+                               X=seq(0, max(SECCt$X), length.out=100 ) 
   )
   pred.Position$predicted <- predict(Y.model, newdata=pred.Position, type="response" )
-  pred.FxP <- expand.grid(Frag     = levels(SECCa$Frag), 
-                          Position = levels(SECCa$Position), 
-                          X=seq(0, max(SECCa$X), length.out=100 ) 
+  pred.FxP <- expand.grid(Frag     = levels(SECCt$Frag), 
+                          Position = levels(SECCt$Position), 
+                          X=seq(0, max(SECCt$X), length.out=100 ) 
                           )
   pred.FxP$predicted <- predict(Y.model, newdata=pred.Position, type="response" )
 }
@@ -472,7 +472,7 @@ Chamber.map$label <- factor(Chamber.map$label)
 point <- 21	# 21 for circles with col & bg ; 16 for solid circles
 Chamber.map$pch <- c(21, 16)  # use circles for both treatments
 
-SECCa <- within( SECCa,{
+SECCt <- within( SECCt,{
 	colr = as.character(ifelse(Chamber == Chamber.map$label[1], 
                                Chamber.map$col[1], 
                                Chamber.map$col[2] 
@@ -494,7 +494,7 @@ par(mfrow=c(1,1))
 pred.Y <- with( Y.pred, 
                aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
 )  # I should be getting direct predictions, not means of predictions. *****
-with( SECCa,{
+with( SECCt,{
 	# pred | augpred | ?
 	plot(X, Y, type="p",
 		ylab=Y.plotlab, xlab=X.plotlab,
@@ -518,13 +518,13 @@ with( SECCa,{
 ##==============================================================
 
 ## lattice panels
-print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
-              pch = SECCa$pt, col = SECCa$colr, 
+print( xyplot( Y ~ X | Frag * Position , data=SECCt, 
+              pch = SECCt$pt, col = SECCt$colr, 
               xlab = quote(X.plotlab), ylab = quote(Y.plotlab), 
               panel = function(..., data, subscripts) {
                 panel.xyplot(...)  # regular plot of data points
-                Frag.lvl <- unique(SECCa$Frag[subscripts]) # get current factor levels
-                Pos.lvl  <- unique(SECCa$Position[subscripts])
+                Frag.lvl <- unique(SECCt$Frag[subscripts]) # get current factor levels
+                Pos.lvl  <- unique(SECCt$Position[subscripts])
                 preds    <- Y.pred[which(Y.pred$Frag %in% Frag.lvl 
                                        & Y.pred$Position %in% Pos.lvl), ]
 ##                  browser()
@@ -546,19 +546,19 @@ print( xyplot( Y ~ X | Frag * Position , data=SECCa,
 if (FALSE) {
   ## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
   ## individual lm's within each panel.  Not exactly what I want.
-  coplot( Y ~ X | Frag * Position, data=SECCa, 
-         pch=SECCa$pt, col=SECCa$colr, # , bg=Chamber.map$bg
+  coplot( Y ~ X | Frag * Position, data=SECCt, 
+         pch=SECCt$pt, col=SECCt$colr, # , bg=Chamber.map$bg
          panel = panel.lines2
          )
 
   ## Plotting: Observed and Fitted from GLMM - from Richard & Zofia's GLMM workshop
-  df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
+  df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCt) )
   cc1 <- as.data.frame(coef(Y.model)$Y)
   names(cc1) <- c("A", "B")
   df <- cbind(df, cc1)
   ff <- fixef(Y.model)
 
-  print( xyplot( Y ~ X | Chamber * Position, data = SECCa, 
+  print( xyplot( Y ~ X | Chamber * Position, data = SECCt, 
                 aspect = "xy", layout = c(4,3),
                 type = c("g", "p", "r"), coef.list = df[,3:4],
                 panel = function(..., coef.list) {
