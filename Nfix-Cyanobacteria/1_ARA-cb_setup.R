@@ -156,8 +156,8 @@ SECCa <- within( SECCa, {
                 X.log[X <= 0] <- 0
                 Y.log <- log10(Y)
                 Y.log[Y <= 0] <- 0
-                Y.use <- Y.log  # convenience
-                X.use <- X.log  # convenience
+                Y.trans <- Y.log  # convenience
+                X.trans <- X.log  # convenience
                 Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
 

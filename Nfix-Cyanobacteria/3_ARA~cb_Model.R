@@ -37,6 +37,12 @@ SECCa <- within( SECCa, {
                 X.trans <- X.log  # convenience
                 Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
+## drop values of X == 0 
+## - detection errors where I didn't count any cells 
+##   (doesn't mean there were none in the sample)
+## Unfortunately, this happens too often: errors in model fitting.  
+## May have to drop some variables?
+SECC.X0 <- SECCa[SECCa$X.trans != 0, ]
 UseClimateFac <- FALSE
 
 ################################################################
