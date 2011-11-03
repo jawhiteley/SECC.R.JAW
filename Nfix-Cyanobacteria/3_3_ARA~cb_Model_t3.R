@@ -61,19 +61,7 @@ UseClimateFac <- FALSE
 ##  END:    choose optimal model; produce model output: tables and graphs.
 ## Start with GLMM, to incorporate known nested treatments.
 ## Build in extensions as necessary, time permitting.
-##==============================================================
-## Methods & Approaches to use
-##==============================================================
-## *GLMM: fit model using Cells, H2O, and experimental treatments
-##  - account for nesting of fixed factors?  How??!
-##  - Include spatial autocorrelation instead?
-##  - Zero-inflated model to account for exessive 0s in Cells AND ARA?
-##  - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
-## H2O
-## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
-## Subsume Chamber & Position into "Climate" pseudo-treatment?
-## Time as a fixed factor, or separate analysis on each Time?
 
 ##==============================================================
 ## Model Formula
@@ -92,24 +80,6 @@ if (UseClimateFac) {
   Y.main  <- Y.mainCl
 }
 
-## Random effects for GLMM
-##  Although it's hard to find examples of this type of nesting, 
-##  the slash '/' does appear to be the correct operator 
-##  for this type of serially nested treatment structure 
-##  (based on examples found online).
-##  - http://r.789695.n4.nabble.com/lmer-random-factor-nested-in-a-fixed-factor-td865029.html
-## The only truly random factor I have is 'Block', 
-## which is also the only effective level of replication.  
-## Including Block as the highest-level random factor causes 
-## nlme to take a *LONG* time to converge.
-##   i.e. R hangs for several minutes / hours
-## It might be more practical to exclude Block entirely, and just chalk it up to replication.
-##  If I do, it might also make the whole 'mixed effects' side of things unnecessary?
-## The nesting structure I have is really a violation of independence: 
-## patches in the same block are closer together 
-## and likely to experience more similar environmental conditions 
-## (apart from the chamber effect).
-## With Block as largest nested unit: > 12 hours to fit ris model (random intercet + slope), with NaNs in some p-values (Time, Climate, and their interaction)
 if (!UseClimateFac) {
   Y.RiN  <- ~ 1|Block/Time/Chamber/Frag                 # Random intercept across Blocks & nested factors
   Y.RisN <- ~ 1 + X.trans * H2O | Block/Time/Chamber/Frag # Random intercept + slopes
@@ -120,16 +90,8 @@ if (!UseClimateFac) {
 
 ## This might be the wrong approach: Block is the only real "random" factor.
 ## Fixed factors happen to be nested within it.
-## Maybe what I should really be doing is accounting for heterogeneity across nested fixed factors?
 Y.Ri  <- ~ 1 | Block
 Y.Ris <- ~ 1 + X.trans * H2O | Block     # Random intercept + slopes
-
-## Block / Chamber / Frag / Position
-## - using a correlation structure?
-## correlation = corAR1(form = ~ 1 | Block/Time/Chamber/Frag)
-## - using variance-covariance structure?
-## weights = varIdent(form = ~ 1 | Block/Time/Chamber/Frag)
-## - equivalent: correlation = corCompSymm(form = ~ 1 | Block/Time/Chamber/Frag)
 
 
 

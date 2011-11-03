@@ -70,8 +70,8 @@ UseClimateFac <- FALSE
 ##  - account for nesting of fixed factors?  How??!
 ##  - Include spatial autocorrelation instead?
 ##  - Zero-inflated model to account for exessive 0s in Cells AND ARA?
-##  - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
 ## H2O
+## - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
 ## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
 ## Subsume Chamber & Position into "Climate" pseudo-treatment?
@@ -300,8 +300,8 @@ Y.mainML <- update(Y.mainMM, method="ML")
 ## MODEL SELECTION
 ##==============================================================
 ## RANDOM structure
-anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rim)                     # do random effects improve the model?
+anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rie)                     # do random effects improve the model?
 anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
 anova(Y.rieN, Y.rim)                   # do we need nested error terms?
@@ -450,13 +450,18 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
-diagnostics(Y.mm)
-diagnostics(Y.rieN)
-diagnostics(Y.mainMM)
-diagnostics(Y.m1.1.1)
+diagnostics(Y.fm)                      # No random effects
+diagnostics(Y.mm)                      # Optimal mixed model
+diagnostics(Y.rieN)                    # Do more random effects help?
+diagnostics(Y.mainMM)                  # Main effects only: tend to violate fewer assumptions :/
+diagnostics(Y.m1.1.1)                  # Main effects + interactions: better or worse?
 
 Y.model <- Y.mm
 diagnostics(Y.model)
+
+
+## Compare model to GA(M)M to check that a linear fit is the most appropriate?
+## see Zuur et al. (2007, 2009: Appendix)
 
 
 

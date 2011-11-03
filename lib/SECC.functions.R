@@ -161,12 +161,15 @@ SECCclean <- function(data=NULL,
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
-diagnostics <- function(Y.model) {
+diagnostics <- function(Y.model=NULL, label=Y.model$call, more=FALSE) {
+  require(car)                         # diagnostic plots
   ## Standard diagnostic plots 
-  op <- par(mfrow=c(2,2))	 # panel of figures
-  print(plot(Y.model))
-  mtext(Y.model$call, 3, adj=0.5, line=-2, outer=TRUE)
-  par(op)
+  if (FALSE) {                         # buggy
+    op <- par(mfrow=c(2,2))	 # panel of figures
+    print(plot(Y.model))
+    mtext(label, 3, adj=0.5, line=-2, outer=TRUE)
+    par(op)
+  }
 
   ## Residuals ##
   RE.lab <- "Standardized Residuals"
@@ -184,12 +187,14 @@ diagnostics <- function(Y.model) {
   ## Plot REsiduals: see Zuur et al. 2007, pg. 131-133
   ## REsiduals: Normal distribution?
   op <- par(mfrow=c(2,2))
-  hist(RE)
-  hist(RE, freq=FALSE)
-  Xnorm <- seq(min(RE), max(RE), length=40)
-  lines(Xnorm, dnorm(Xnorm), col="grey70", lwd=2) # reference Normal distribution
-  qqnorm(RE)
-  qqPlot(RE)
+  if (more) {
+    hist(RE)
+    hist(RE, freq=FALSE, xlab=RE.lab, main="")
+    Xnorm <- seq(min(RE), max(RE), length=40)
+    lines(Xnorm, dnorm(Xnorm), col="grey70", lwd=2) # reference Normal distribution
+    qqnorm(RE)
+  }
+  qqPlot(RE, ylab=RE.lab)
 
   ## Homogeneity, Independence: Pattern in residuals indicates violation
   Fit  <- fitted(Y.model)
@@ -199,22 +204,20 @@ diagnostics <- function(Y.model) {
   plot(SECCa$X.trans, RE, ylab=RE.lab)             
   plot(SECCa$H2O,   RE, ylab=RE.lab)
   ## spreadLevelPlot(Y.model)                  # library(car)
-  mtext(Y.model$call, 3, adj=0.5, line=-2, outer=TRUE)
+  mtext(label, 3, adj=0.5, line=-2, outer=TRUE)
   par(op)
 
-  qplot(Block, RE, data = SECCa, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot()
-  qplot(Chamber, RE, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+  if (more) {
+    print( qplot(Block, RE, data = SECCa, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot() )
+    print( qplot(Chamber, RE, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot() )
 
-  qplot(X.trans, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
-  qplot(H2O, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
-
-
-  ## Compare model to GA(M)M to check that a linear fit is the most appropriate
-  ## see Zuur et al. (2007, 2009: Appendix)
-
+    print( qplot(X.trans, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot() )
+    print( qplot(H2O, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot() )
+  }
 
   ## Global Validation of Linear Model Assumptions (gvlma package)
   if ("lm" %in% class(Y.model)) {
+    require(gvlma)                         # diagnostic plots
     validation <- gvlma(Y.model)
     plot(validation)
     summary(validation)
