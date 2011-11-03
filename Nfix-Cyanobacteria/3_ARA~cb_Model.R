@@ -53,6 +53,10 @@ library(nlme)                          # GLMMs (older, but still works)
 ## *GLMM: fit model using Cells, H2O, and experimental treatments
 ##  - account for nesting of fixed factors?  How??!
 ##  - Include spatial autocorrelation instead?
+##  - Zero-inflated model to account for exessive 0s in Cells AND ARA?
+##  - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
+## H2O
+## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
 ## Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## Time as a fixed factor, or separtae analysis on each Time?
@@ -63,9 +67,9 @@ library(nlme)                          # GLMMs (older, but still works)
 UseClimateFac <- TRUE
 
 ### Fixed effects
-### Include H2O^2 to test for unimodal relationship?
+## Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
-## It might be better to analyse each time period separately, and avoid the higher-order interactions that I know exist.
+## - It might be better to analyse each time period separately, and avoid the higher-order interactions that I know exist.
 if ( length(Time.use) > 1 ) {
   Y.fixed <- Y.log ~ X.log * H2O * Time * Chamber * Frag * Position
   Y.fixCl <- Y.log ~ X.log * H2O * Time * Climate * Frag
@@ -89,6 +93,7 @@ if (UseClimateFac) {
 ##  the slash '/' does appear to be the correct operator 
 ##  for this type of serially nested treatment structure 
 ##  (based on examples found online).
+##  - http://r.789695.n4.nabble.com/lmer-random-factor-nested-in-a-fixed-factor-td865029.html
 ## The only truly random factor I have is 'Block', 
 ## which is also the only effective level of replication.  
 ## Including Block as the highest-level random factor causes 
@@ -114,6 +119,13 @@ if (!UseClimateFac) {
 ## Maybe what I should really be doing is accounting for heterogeneity across nested fixed factors?
 Y.Ri  <- ~ 1 | Block
 Y.Ris <- ~ 1 + X.log * H2O | Block     # Random intercept + slopes
+
+## Block / Chamber / Frag / Position
+## - using a correlation structure?
+## correlation = corAR1(form = ~ 1 | Block/Time/Chamber/Frag)
+## - using variance-covariance structure?
+## weights = varIdent(form = ~ 1 | Block/Time/Chamber/Frag)
+## - equivalent: correlation = corCompSymm(form = ~ 1 | Block/Time/Chamber/Frag)
 
 
 
@@ -200,7 +212,7 @@ lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
 Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
 ## SLOW! :(
-## more complex models take a few minutes (or hours) to fit.  Use with caution.
+## more complex models take a few minutes (or hours) to fit.  Use with discretion.
 Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML")
 Y.rie  <- lme(Y.fixed, random=Y.Ri,  
               weights=varIdent(form=~ 1 | Block),
@@ -208,18 +220,44 @@ Y.rie  <- lme(Y.fixed, random=Y.Ri,
 Y.rise <- lme(Y.fixed, random=Y.Ris,  
               weights=varIdent(form=~ 1 | Block),
               data=SECCa, control=lmc, method="REML")
-if (false) {                           # not working :(
+if (UseClimateFac) {
+  Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varIdent(form=~ 1 | Block),
+                 correlation=corAR1(form = ~ 1 | Block/Time/Frag/Climate),
+                 data=SECCa, control=lmc, method="REML")
+} else {
+  Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varIdent(form=~ 1 | Block),
+                 correlation=corAR1(form = ~ 1 | Block/Time/Chamber/Frag),
+                 data=SECCa, control=lmc, method="REML")
+}
+
+if (false) {                           # these attempts are not working :(
+  ## Error in getGroups.data.frame(data, form, level = length(splitFormula(grpForm,  : Invalid formula for groups
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block/Time/Chamber/Frag),
                  data=SECCa, control=lmc, method="REML")
-  ## I want to use varConstPower (variance covariate with values of 0), but that produces an error :(
+  Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varIdent(form=~ 1 | Block/Time/Frag/Climate),
+                 data=SECCa, control=lmc, method="REML")
+
+  ## I want to use varConstPower (variance covariate with values of 0), but that produces an error (false convergence) :(
+  Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varConstPower(form = ~ X.log),
+                 data=SECCa, control=lmd, method="REML")
+
   ## varFixed gives no errors, but takes >12 hours to fit (if at all)
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varFixed(~ X.log),
                  data=SECCa, control=lmd, method="REML")
-  Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
-                 weights=varPower(form=~ H2O),
+  ## varPower works, but not for X.log, which has 0's!   :/
+  Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varPower(form = ~ X.log),
                  data=SECCa, control=lmd, method="REML")
+  Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
+                 weights=varPower(form = ~ H2O),
+                 data=SECCa, control=lmd, method="REML")
+
   Y.riceX <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
                                  varConstPower(form=~ X.log)),
@@ -248,7 +286,7 @@ Y.mainML <- lme(Y.main, data = SECCa, random = Y.Ri, method="ML")
 anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rim)                     # do random effects improve the model?
 anova(Y.fm, Y.rie)                     # do random effects improve the model?
-anova(Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
+anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
 
 Y.mm <- Y.rim                          # Optimal random structure
 ## The biggest improvement seems to come from random intercepts across Blocks.
@@ -263,48 +301,49 @@ if (FALSE) {
                  data=SECCa, control=lmc, method="ML")
 }
 Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
+
 drop1(Y.ml)                            # not encouraging
 ## Y.step <- step(Y.ml)                # stepwise back & forward model selection?  Not for lme
 if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
-  Y.ml1 <- update(Y.ml, ~. - X.log:H2O:Time:Chamber:Frag:Position)
+  Y.ml1 <- update(Y.ml, .~. - X.log:H2O:Time:Chamber:Frag:Position)
 
   ## No interactions?
   anova(Y.ml, Y.mlMain)
 
 } else {                               # Chamber & position lumped into Climate pseudo-factor
-  Y.ml1 <- update(Y.ml, ~. - X.log:H2O:Time:Climate:Frag)
+  Y.ml1 <- update(Y.ml, .~. - X.log:H2O:Time:Climate:Frag)
   anova(Y.ml, Y.ml1)
   ## drop 4-way interactions?
-  Y.ml2 <- update(Y.ml1, ~. - X.log:H2O:Time:Climate) # *
+  Y.ml2 <- update(Y.ml1, .~. - X.log:H2O:Time:Climate) # *
   anova(Y.ml1, Y.ml2)
-  Y.ml3 <- update(Y.ml1, ~. - X.log:H2O:Time:Frag)
+  Y.ml3 <- update(Y.ml1, .~. - X.log:H2O:Time:Frag)
   anova(Y.ml1, Y.ml3)
-  Y.ml4 <- update(Y.ml1, ~. - X.log:H2O:Climate:Frag) # <-
+  Y.ml4 <- update(Y.ml1, .~. - X.log:H2O:Climate:Frag) # <-
   anova(Y.ml1, Y.ml4)
-  Y.ml5 <- update(Y.ml1, ~. - X.log:Time:Climate:Frag) # **
+  Y.ml5 <- update(Y.ml1, .~. - X.log:Time:Climate:Frag) # **
   anova(Y.ml1, Y.ml5)
-  Y.ml6 <- update(Y.ml1, ~. - H2O:Time:Climate:Frag)
+  Y.ml6 <- update(Y.ml1, .~. - H2O:Time:Climate:Frag)
   anova(Y.ml1, Y.ml6)
   ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml4, ~. - X.log:H2O:Time:Climate) # *
+  Y.ml2 <- update(Y.ml4, .~. - X.log:H2O:Time:Climate) # *
   anova(Y.ml4, Y.ml2)
-  Y.ml3 <- update(Y.ml4, ~. - X.log:H2O:Time:Frag) # <-
+  Y.ml3 <- update(Y.ml4, .~. - X.log:H2O:Time:Frag) # <-
   anova(Y.ml4, Y.ml3)
-  Y.ml5 <- update(Y.ml4, ~. - X.log:Time:Climate:Frag) # **
+  Y.ml5 <- update(Y.ml4, .~. - X.log:Time:Climate:Frag) # **
   anova(Y.ml4, Y.ml5)
-  Y.ml6 <- update(Y.ml4, ~. - H2O:Time:Climate:Frag)
+  Y.ml6 <- update(Y.ml4, .~. - H2O:Time:Climate:Frag)
   anova(Y.ml4, Y.ml6)
   ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml3, ~. - X.log:H2O:Time:Climate) # *
+  Y.ml2 <- update(Y.ml3, .~. - X.log:H2O:Time:Climate) # *
   anova(Y.ml3, Y.ml2)
-  Y.ml5 <- update(Y.ml3, ~. - X.log:Time:Climate:Frag) # *
+  Y.ml5 <- update(Y.ml3, .~. - X.log:Time:Climate:Frag) # *
   anova(Y.ml3, Y.ml5)
-  Y.ml6 <- update(Y.ml3, ~. - H2O:Time:Climate:Frag) # <-
+  Y.ml6 <- update(Y.ml3, .~. - H2O:Time:Climate:Frag) # <-
   anova(Y.ml3, Y.ml6)
   ## dropped least significant 4-way interaction: next
-  Y.ml2 <- update(Y.ml6, ~. - X.log:H2O:Time:Climate) # *
+  Y.ml2 <- update(Y.ml6, .~. - X.log:H2O:Time:Climate) # *
   anova(Y.ml6, Y.ml2)
-  Y.ml5 <- update(Y.ml6, ~. - X.log:Time:Climate:Frag) # *
+  Y.ml5 <- update(Y.ml6, .~. - X.log:Time:Climate:Frag) # *
   anova(Y.ml6, Y.ml5)
   Y.ml4 <- Y.ml6                       # optimal model with 4-way interactions
   anova(Y.ml, Y.ml4)
@@ -313,11 +352,11 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
   ## 3-way interactions?
 
   ## Ignore interactions?
-  Y.main1 <- update(Y.mainML, ~. - X.log)
-  Y.main2 <- update(Y.mainML, ~. - H2O)
-  Y.main3 <- update(Y.mainML, ~. - Time)
-  Y.main4 <- update(Y.mainML, ~. - Climate)
-  Y.main5 <- update(Y.mainML, ~. - Frag) # <-
+  Y.main1 <- update(Y.mainML, .~. - X.log)
+  Y.main2 <- update(Y.mainML, .~. - H2O)
+  Y.main3 <- update(Y.mainML, .~. - Time)
+  Y.main4 <- update(Y.mainML, .~. - Climate)
+  Y.main5 <- update(Y.mainML, .~. - Frag) # <-
   anova(Y.mainML, Y.main1)
   anova(Y.mainML, Y.main2)
   anova(Y.mainML, Y.main3)
@@ -328,6 +367,8 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 
   AIC(Y.ml, Y.ml4, Y.mainML)
   AIC(Y.rim, Y.mm, Y.mainMM)
+  ##   Y.mm <- Y.mainMM
+  ## The model with only main effects actually shows more Normal residuals, and less heterogeneity!
 }
 
 
@@ -411,11 +452,16 @@ anova(Y.mm)
 summary(Y.mm)
 
 ## intervals(Fitted.Model.Object)   # Approx. Confidence intervals.  see ?intervals
+## see multcomp package for multiple comparisons (Tukey's HSD on mixed effects model?)
 
 
 ##==============================================================
 ## Variance Components Analysis (variance decomposition)?
-
+## VarCorr() and then calculate percentage variance for each component from output of VarCorr 
+## - http://r.789695.n4.nabble.com/Components-of-variance-with-lme-td3329753.html
+## - http://r.789695.n4.nabble.com/extract-variance-components-td866971.html
+## ?VarCorr
+## ?getVarCov
 
 
 
