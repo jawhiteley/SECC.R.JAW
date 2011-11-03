@@ -149,7 +149,78 @@ SECCclean <- function(data=NULL,
 ##================================================
 ## CHECK ASSUMPTIONS: residuals, standard diagnostic plots
 ##================================================
+## see Zuur et al. 2007, 2009 books, 
+##  and [Quick-R](http://www.statmethods.net/stats/rdiagnostics.html)
+## Regression (ANOVA): Normality; Homogeneity; Independence; Fixed X*
+## Fixed X (Model I): *think about how X data was generated*
+##                    - fixed values [I] or large mesurement error [II] ?
+## Check Normality: histogram, qqnorm of Residuals
+## Check Homogeneity: (standardized) Residuals vs. Fitted / vs. X
+## Check Independence: (standardized) Residuals vs. X
+## Assess Model fit, specification: Look for patterns in graphs of Residuals
+## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
+## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
+diagnostics <- function(Y.model) {
+  ## Standard diagnostic plots 
+  op <- par(mfrow=c(2,2))	 # panel of figures
+  print(plot(Y.model))
+  mtext(Y.model$call, 3, adj=0.5, line=-2, outer=TRUE)
+  par(op)
+
+  ## Residuals ##
+  RE.lab <- "Standardized Residuals"
+  RE <- resid(Y.model, type="p")            # "pearson" (standardised) residuals
+  if (FALSE) {                           # type="p" or type="normalized"?
+    ## type = "normalized" residuals 
+    ##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
+    ##  - in the examples in Zuur et al. 2009, there is no difference between normalized and standardised ("pearson"), but it might matter with more complicated correlation structures.
+    ## type = "pearson" for 'standardised' residuals (see ?residuals.lme)
+    ##  - this is what Zuur et al. 2009 are actually referring to, and is what Zuur et al. 2007 use in their R-code (type="p")
+    ## see also rstudent (studentized) and rstandard (standardized) residuals.
+    ## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
+  }
+
+  ## Plot REsiduals: see Zuur et al. 2007, pg. 131-133
+  ## REsiduals: Normal distribution?
+  op <- par(mfrow=c(2,2))
+  hist(RE)
+  hist(RE, freq=FALSE)
+  Xnorm <- seq(min(RE), max(RE), length=40)
+  lines(Xnorm, dnorm(Xnorm), col="grey70", lwd=2) # reference Normal distribution
+  qqnorm(RE)
+  qqPlot(RE)
+
+  ## Homogeneity, Independence: Pattern in residuals indicates violation
+  Fit  <- fitted(Y.model)
+  Fit0 <- fitted(Y.model, level=0)
+  Fit1 <- fitted(Y.model, level=1)
+  plot(Fit, RE, xlab="Fitted values", ylab=RE.lab)
+  plot(SECCa$X.trans, RE, ylab=RE.lab)             
+  plot(SECCa$H2O,   RE, ylab=RE.lab)
+  ## spreadLevelPlot(Y.model)                  # library(car)
+  mtext(Y.model$call, 3, adj=0.5, line=-2, outer=TRUE)
+  par(op)
+
+  qplot(Block, RE, data = SECCa, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot()
+  qplot(Chamber, RE, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot()
+
+  qplot(X.trans, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
+  qplot(H2O, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot()
+
+
+  ## Compare model to GA(M)M to check that a linear fit is the most appropriate
+  ## see Zuur et al. (2007, 2009: Appendix)
+
+
+  ## Global Validation of Linear Model Assumptions (gvlma package)
+  if ("lm" %in% class(Y.model)) {
+    validation <- gvlma(Y.model)
+    plot(validation)
+    summary(validation)
+  }
+  return(invisible(RE))
+}
 
 
 
