@@ -35,7 +35,6 @@ library(nlme)                          # GLMMs (older, but still works)
 SECCa <- within( SECCa, {
                 Y.trans <- Y.log  # convenience
                 X.trans <- X.log  # convenience
-                Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
 ## drop values of X == 0 
 ## - detection errors where I didn't count any cells 
@@ -70,18 +69,25 @@ UseClimateFac <- FALSE
 ##  - account for nesting of fixed factors?  How??!
 ##  - Include spatial autocorrelation instead?
 ##  - Zero-inflated model to account for exessive 0s in Cells AND ARA?
+
 ## H2O
+## - include quadratic term to allow for unimodal effect of moisture?
+##   - This term was NS in the glm, 
+##      but should probably be included anyway for theoretical reasons, 
+##      and in case it helps remove patterns in the residuals.
 ## - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
 ## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
-## Subsume Chamber & Position into "Climate" pseudo-treatment?
-## Time as a fixed factor, or separate analysis on each Time?
+## * Subsume Chamber & Position into "Climate" pseudo-treatment?
+## * Time as a fixed factor, or separate analysis on each Time?
+## Try other transformations (for residual patterns)
+## Try GAM(M)s to see if relationships are really linear?
 ## Remove data where Cells == 0? (detection failure)
+## Bootstrapping to overcome "Fixed X" violations?
 
 ##==============================================================
 ## Model Formula
 ##==============================================================
-
 ### Fixed effects
 ## Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
