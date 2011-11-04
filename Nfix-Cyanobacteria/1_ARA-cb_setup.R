@@ -126,8 +126,6 @@ Save.end      <- paste("\n",
 ## in this design, due to destructive sampling.
 
 ## Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
-## source("./R", echo = FALSE) # Load default Labels. *****
-## source("./R", echo = FALSE) # RUN STANDARD nested ANOVA
 
 
 

@@ -161,7 +161,7 @@ SECCclean <- function(data=NULL,
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
-diagnostics <- function(Y.model=NULL, label=Y.model$call, more=FALSE) {
+diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, more=FALSE) {
   require(car)                         # diagnostic plots
   ## Standard diagnostic plots 
   if (FALSE) {                         # buggy
@@ -172,9 +172,11 @@ diagnostics <- function(Y.model=NULL, label=Y.model$call, more=FALSE) {
   }
 
   ## Residuals ##
-  RE.lab <- "Standardized Residuals"
-  RE <- resid(Y.model, type="p")            # "pearson" (standardised) residuals
-  if (FALSE) {                           # type="p" or type="normalized"?
+  if (resType=="r" | resType=="response")   RE.lab <- "Raw Residuals"
+  if (resType=="p" | resType=="pearson")    RE.lab <- "Standardized Residuals"
+  if (resType=="n" | resType=="normalized") RE.lab <- "Normalized Residuals"
+  RE <- resid(Y.model, type=resType)   # c("response", "pearson", "normalized")
+  if (FALSE) {                         # type="p" or type="normalized"?
     ## type = "normalized" residuals 
     ##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
     ##  - in the examples in Zuur et al. 2009, there is no difference between normalized and standardised ("pearson"), but it might matter with more complicated correlation structures.
@@ -208,11 +210,11 @@ diagnostics <- function(Y.model=NULL, label=Y.model$call, more=FALSE) {
   par(op)
 
   if (more) {
-    print( qplot(Block, RE, data = SECCa, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot() )
-    print( qplot(Chamber, RE, data = SECCa, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot() )
+    print( qplot(Block, RE, data = SECCa, ylab=RE.lab, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot() )
+    print( qplot(Chamber, RE, data = SECCa, ylab=RE.lab, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot() )
 
-    print( qplot(X.trans, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot() )
-    print( qplot(H2O, RE, data = SECCa, facets = Block ~ Time) + jaw.ggplot() )
+    print( qplot(X.trans, RE, data = SECCa, ylab=RE.lab, facets = Block ~ Time) + jaw.ggplot() )
+    print( qplot(H2O, RE, data = SECCa, ylab=RE.lab, facets = Block ~ Time) + jaw.ggplot() )
   }
 
   ## Global Validation of Linear Model Assumptions (gvlma package)

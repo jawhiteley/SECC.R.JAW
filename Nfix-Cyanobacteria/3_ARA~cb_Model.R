@@ -78,6 +78,7 @@ UseClimateFac <- FALSE
 ## - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
 ## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
+## * try additional factors for varIdent()? Time**, Chamber*
 ## * Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## * Time as a fixed factor, or separate analysis on each Time?
 ## Try other transformations (for residual patterns)
@@ -222,7 +223,7 @@ summary(Y.model)
 
 
 ################################################################
-## GLMM - Hierarchical / Multilevel Mixed Model               **
+## LMM - Hierarchical / Multilevel Mixed Model               **
 ################################################################
 ##==============================================================
 ## Model Fitting
@@ -236,12 +237,16 @@ Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
 ## SLOW! :(
 ## more complex models take a few minutes (or hours) to fit.  Use with discretion.
 Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML")
+## Allow different error variances within treatment groups (see Zuur et al. 2009, pg. 188)
+## too many groups causes lme errors: "false convergence (8)"
+## Nesting causes Error in getGroups.data.frame(...): Invalid formula for groups
 Y.rie  <- lme(Y.fixed, random=Y.Ri,  
-              weights=varIdent(form=~ 1 | Block),
+              weights=varIdent(form=~ 1 | Block * Time), # Block * Time?
               data=SECCa, control=lmc, method="REML")
 Y.rise <- lme(Y.fixed, random=Y.Ris,  
-              weights=varIdent(form=~ 1 | Block),
+              weights=varIdent(form=~ 1 | Time),
               data=SECCa, control=lmc, method="REML")
+## Nesting with correlation structure?  Not sure an auto-regression model is the most appropriate
 if (UseClimateFac) {
   Y.rieN  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block),
@@ -309,12 +314,13 @@ Y.mainML <- update(Y.mainMM, method="ML")
 anova(Y.fm, Y.rim)                     # do random effects improve the model?
 anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rie)                     # do random effects improve the model?
+anova(Y.fm, Y.rise)                    # do random effects improve the model?
 anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
-anova(Y.rieN, Y.rim)                   # do we need nested error terms?
+anova(Y.rieN, Y.rie, Y.rim)                   # do we need nested error terms?
 
-Y.mm <- Y.rim                          # Optimal random structure
+Y.mm <- Y.rie                          # Optimal random structure
 ## The biggest improvement seems to come from random intercepts across Blocks.
-## However, that model shows major heterogeneity in the residuals.
+## However, a model with only this random effect shows major heterogeneity in the residuals.
 ## I may need other random factors to maintain a valid model fit.
 
 ## optimize FIXED factors
@@ -458,13 +464,19 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 
 diagnostics(Y.fm)                      # No random effects
 diagnostics(Y.mm)                      # Optimal mixed model
-diagnostics(Y.rieN)                    # Do more random effects help?
+diagnostics(Y.rie, resType="n")        # Do more random effects help?
+diagnostics(Y.rieN, resType="n")       # Do more random effects help?
 diagnostics(Y.mainMM)                  # Main effects only: tend to violate fewer assumptions :/
 diagnostics(Y.m1.1.1)                  # Main effects + interactions: better or worse?
 
 Y.model <- Y.mm
-diagnostics(Y.model)
+diagnostics(Y.model, resType="normalized", more=TRUE) # full diagnostics, just to be sure
 
+## A Model with Main Effects only has the most valid fit (despite a low AIC): 
+## Normally-distributed residuals, low heterogeneity (not perfect, though)
+## BUT, strong patterns in the residuals vs. fitted values (negative trend)
+## Models with random terms tend to have better AICs, but also violate more assumptions, especially Normality.
+## Allowing different variances per Block or Time reduces patterns in the residuals, but is also highly non-Normal, and there is still heterogeneity in the residuals across H2O
 
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)

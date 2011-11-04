@@ -35,7 +35,6 @@ library(nlme)                          # GLMMs (older, but still works)
 SECCa <- within( SECCa, {
                 Y.trans <- Y.log  # convenience
                 X.trans <- X.log  # convenience
-                Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
 ## use only data from t1
 SECCt <- SECCa[SECCa$Time==levels(SECCa$Time)[1], ]

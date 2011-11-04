@@ -26,7 +26,7 @@ library(car)                           # diagnostic plots & tools
 ## EXPLORE: PLOTS
 ################################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
-DrawExplorationGraphs <- Save.results  # Set to FALSE to suppress all this output
+DrawExplorationGraphs <- TRUE # Save.results  # Set to FALSE to suppress all this output
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
 
 ### Map of point styles for Chamber treatments
@@ -61,7 +61,7 @@ if (DrawExplorationGraphs) {
   pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
   ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
   pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
-  ## look at log transformations
+  ## look at log transformations & check for colinearity among explanatory variables
   pairplot(SECCa[, c('Y', 'Y.log', 'X', 'X.log', 'H2O', 'Time', 'Chamber', 'Frag', 'Position')],
            labels=c(Y.col, paste("log(", Y.col, ")"), 
                     X.col, paste("log(", X.col, ")"), "H2O"
@@ -195,6 +195,7 @@ if (DrawExplorationGraphs) {
   with(SECCa, plot3d(X.log, H2O, Y.log, size = 6, pch = pt, col = colr, bg = fill) )
 }
 
+
 ##==============================================================
 ## Averaged over time?
 ##  I know the measurements were not taken directly from the same patch,
@@ -255,21 +256,25 @@ if (DrawExplorationGraphs) {
 ##==============================================================
 ## Check Variation, Ranges
 X.box <- qplot(Time, X, data = SECCa, geom = "boxplot",
-                 ylab = X.plotlab
-                 )
+                 ylab = X.plotlab)
 X.box <- X.box + jaw.ggplot()
 if (DrawExplorationGraphs) print(X.box)
 
-Y.Time <- qplot(Time, Y, data = SECCa, geom = "boxplot",
-                 ylab = Y.plotlab)
-Y.Time <- Y.Time + jaw.ggplot()
-Y.Chamber <- qplot(Chamber, Y, data = SECCa, geom = "boxplot",
+Y.logBlock <- qplot(Block, Y.log, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab) + jaw.ggplot()
+Y.Block <- qplot(Block, Y, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab) + jaw.ggplot()
+Y.Time <- qplot(Time, Y.log, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab) + jaw.ggplot()
+Y.Chamber <- qplot(Chamber, Y.log, data = SECCa, geom = "boxplot",
                    ylab = Y.plotlab) + jaw.ggplot() 
-Y.Frag <- qplot(Frag, Y, data = SECCa, geom = "boxplot",
+Y.Frag <- qplot(Frag, Y.log, data = SECCa, geom = "boxplot",
                 ylab = Y.plotlab) + jaw.ggplot() 
-Y.Pos  <- qplot(Position, Y, data = SECCa, geom = "boxplot",
+Y.Pos  <- qplot(Position, Y.log, data = SECCa, geom = "boxplot",
                 ylab = Y.plotlab) + jaw.ggplot() 
 if (DrawExplorationGraphs) {
+  print(Y.logBlock)
+  print(Y.Block)
   print(Y.Time)
   print(Y.Chamber)
   print(Y.Frag)
