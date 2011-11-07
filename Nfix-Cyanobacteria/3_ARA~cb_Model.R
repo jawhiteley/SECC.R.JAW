@@ -78,7 +78,6 @@ UseClimateFac <- FALSE
 ## - Partial regression to remove effect of moisture FIRST, then model the resulting residuals
 ## - does it affect N-fixation directly, or mediate the effect of cyanobacteria?
 
-## * try additional factors for varIdent()? Time**, Chamber*
 ## * Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## * Time as a fixed factor, or separate analysis on each Time?
 ## Try other transformations (for residual patterns)
@@ -318,10 +317,11 @@ anova(Y.fm, Y.rise)                    # do random effects improve the model?
 anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
 anova(Y.rieN, Y.rie, Y.rim)                   # do we need nested error terms?
 
-Y.mm <- Y.rie                          # Optimal random structure
+Y.mm <- Y.rim                          # Optimal random structure
 ## The biggest improvement seems to come from random intercepts across Blocks.
 ## However, a model with only this random effect shows major heterogeneity in the residuals.
 ## I may need other random factors to maintain a valid model fit.
+## Some models with different error structures can't be refit with ML :(
 
 ## optimize FIXED factors
 if (FALSE) {
@@ -335,10 +335,11 @@ Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
 drop1(Y.ml)                            # not encouraging
 ## Y.step <- step(Y.ml)                # stepwise back & forward model selection?  Not for lme
 if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
+  ## model selection for Y.rim **
   Y.ml1 <- update(Y.ml, .~. - X.trans:H2O:Time:Chamber:Frag:Position) # * sig. WORSE!
   anova(Y.ml, Y.ml1)
 
-  ## No interactions?
+  ## Main Effects only: No interactions?
   Y.main1 <- update(Y.mainML, .~. - X.trans)
   Y.main2 <- update(Y.mainML, .~. - H2O)
   Y.main3 <- update(Y.mainML, .~. - Time)
@@ -463,9 +464,12 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
 diagnostics(Y.fm)                      # No random effects
-diagnostics(Y.mm)                      # Optimal mixed model
+diagnostics(Y.rim)                     # Random Intercept
+diagnostics(Y.rism)                    # Random Intercept + slope
+diagnostics(Y.rise)                    # Random Intercept + slope
 diagnostics(Y.rie, resType="n")        # Do more random effects help?
 diagnostics(Y.rieN, resType="n")       # Do more random effects help?
+diagnostics(Y.mm)                      # Optimal mixed model (after model selection)
 diagnostics(Y.mainMM)                  # Main effects only: tend to violate fewer assumptions :/
 diagnostics(Y.m1.1.1)                  # Main effects + interactions: better or worse?
 
