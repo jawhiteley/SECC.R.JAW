@@ -80,6 +80,10 @@ UseClimateFac <- FALSE
 
 ## * Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## * Time as a fixed factor, or separate analysis on each Time?
+## Include Temperature values as explanatory variables?
+## - Average Temp. during sample collection
+## - Avg. Temp. the week before; the month before; since last sample.
+## - I don't have Temperature data at the plot resolution ...
 ## Try other transformations (for residual patterns)
 ## Try GAM(M)s to see if relationships are really linear?
 ## Remove data where Cells == 0? (detection failure)
