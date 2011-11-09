@@ -98,22 +98,13 @@ rpc <- rpart.control(minsplit=minsplit, cp=0.001)
 ##  more splits => different tree structure, and larger optimal tree?
 ##  deeper splits: may end up pruning less 'significant' branches elsewhere
 ##  - deep branches end up with large groups, other leaves split to smaller groups.
+## Do I care more about big differences within small groups (smaller minsplit)
+## or small differences within large groups (larger minsplit)?
 ## default cp = 0.01; smaller number = longer cptable (more candidate splits)
 ARA.tree <- rpart(Y.main, data=SECCa, control=rpc)  # no interaction terms
 ARA.treeD <- rpart(Y.main, data=SECCa) # using default settings; no pruning
 
 ## Pruning
-ARA.cptable <- ARA.tree$cptable             # matrix, not a data.frame!
-## Optimal cp, according to Quick-R http://www.statmethods.net/advstats/cart.html
-## cross-validation is not always reproducible, hence this value may be somewhat unstable.
-ARA.cpMinError <- ARA.tree$cptable[which.min(ARA.tree$cptable[,"xerror"]),"CP"]
-## optimal cp, according to Zuur et al. 2007
-MaxXerror <- mean(ARA.cptable[, "xerror"]) + ARA.cptable[nrow(ARA.cptable),"xstd"]
-## actually, rpart calculates the line differently than Zuur et al. describe:
-SE1 <- min(ARA.cptable[, "xerror"]) + ARA.cptable[which.min( ARA.cptable[, "xerror"] ), "xstd"]
-ARA.cpMin <- ARA.cptable[ which(ARA.cptable[, "xerror"] < SE1)[1], "CP"]
-ARA.cp <- ARA.cpMinError
-
 if (FALSE) {                           # repeated tree-fitting for 'optimal' size
   ## cptable values are unstable, due to cross-validation process; better to choose a consistent value, based on multiple runs...
   cpMinError <- c()                      # empty vector
@@ -134,9 +125,9 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
 }
 
 if (minsplit==20) {
-  ARA.cp <- 0.01                         # actual means are a little lower, but the resulting cutoff is effectively the same
+  ARA.cp <- 0.01                       # actual means are a little lower, but the resulting cutoff is effectively the same
 } else {
-  ARA.cp <- 0.02
+  ARA.cp <- 0.02                       # 0.02
 }
 ARA.treeP <- prune(ARA.tree, cp=ARA.cp)
 
@@ -223,36 +214,42 @@ if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.f
 
 Suppl.text  <- paste("cp=", ARA.cp, ", split min. n = ", minsplit, sep="")
 Yvals       <- as.numeric(ARA.treeP$frame[, "yval"])
-Ylabels     <- paste("", formatC(Yvals, digits=1, flag="-", format="f"), sep="")
+Ylabels     <- paste(" ", formatC(Yvals, digits=1, flag="-", format="f"), sep="")
 Nvals       <- as.numeric(ARA.treeP$frame[, "n"])
-Nlabels     <- paste("n=", formatC(Nvals), sep="")
-Info.labels <- paste(Ylabels, ", ", Nlabels, sep="")
-Node.labels <- labels(ARA.treeP, pretty=F) # includes full factor levels, decision criteria, etc.
+Nlabels     <- paste("", formatC(Nvals), sep="") # "n="
+Droot       <- as.numeric(ARA.treeP$frame[1, "dev"]) 
+Dvals       <- as.numeric(ARA.treeP$frame[, "dev"]) / Droot # proportion of total deviance
+Dlabels     <- paste("", formatC(Dvals, digits=2, big.mark=",", flag="-", format="f"), sep="")
+Leaf.labels <- paste(Ylabels, " (", Dlabels, ")", sep="") #
+Info.labels <- paste(" n=", Nlabels, sep="") # ARA.tree.labels
+Var.labels <- labels(ARA.treeP, pretty=F) # includes full factor levels, decision criteria, etc.
 ## clean up labels
-Node.labels <- gsub(" months,", ",", Node.labels) #  duplicate month labels
-Node.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Node.labels)
-Node.labels <- gsub("X.trans", "Cells", Node.labels)
-Node.labels <- gsub("Full Corridors", "Corridors", Node.labels)
-Node.labels <- gsub("Pseudo-Corridors", "Pseudo-Cs", Node.labels)
+Var.labels <- gsub(" months,", ",", Var.labels) #  duplicate month labels
+Var.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Var.labels)
+Var.labels <- gsub("X.trans", "Cells", Var.labels)
+Var.labels <- gsub("Full Corridors", "Corridors", Var.labels)
+Var.labels <- gsub("Pseudo-Corridors", "Pseudo-Cs", Var.labels)
 if (FALSE) { # ggplot2 doesn't support math annotations (yet)
-  Node.labels <- gsub("H2O(..[0-9.]+)", "H[2]*O\\1%", Node.labels)
-  Node.labels <- gsub("\\de\\+(\\d+)", " %*% 10^{\\1}", Node.labels)
-  Node.labels <- expression(Node.labels)      # expressions
+  Var.labels <- gsub("H2O(..[0-9.]+)", "H[2]*O\\1%", Var.labels)
+  Var.labels <- gsub("\\de\\+(\\d+)", " %*% 10^{\\1}", Var.labels)
+  Var.labels <- expression(Var.labels)      # expressions
 } else {
 }
-
-Full.labels <- paste(" ", Node.labels, "\n", " ", Info.labels, sep="") #space in front of each line for padding (hack)
-ARA.dend.data <- data.frame(x=ARA.plot$x, y=ARA.plot$y, label=Full.labels, node=Node.labels, leaf=Info.labels)
+Var.labels  <- paste(" ", Var.labels, sep="")
+Node.labels <- paste(Var.labels, "\n", Dlabels, sep="") # space in front of each line for padding (hack) ; blank line for leaf labels in between
+Full.labels <- paste(" ", Var.labels, "\n ", Ylabels, " (n=", Nlabels, ") ", Dlabels, sep="")
+ARA.tree.labels <- data.frame(x=ARA.plot$x, y=ARA.plot$y, label=Full.labels, 
+                              node=Node.labels, leaf=Leaf.labels, info=Info.labels,
+                              var=Var.labels, dev=Dlabels, n=Nlabels, yval=Ylabels)
 
 class(ARA.treeP) <- c("rpart", "tree") # largely the same, but no methods for "rpart"
 ARA.dend <- dendro_data(ARA.treeP)
-## ARA.dend.labels <- ARA.dend.data$label[as.numeric(row.names(ARA.dend$labels)) +1]
-ARA.dend.labels <- ARA.dend.data$label[-1] # drop "root"
-numLabels <- length(ARA.dend.labels)
-branch_labels <- segment(ARA.dend)[1:numLabels, c("xend", "yend")]     # coordinates for segments / branches
-names(branch_labels) <- c("x", "y")    # rename columns ;)
-branch_labels$label <- ARA.dend.labels
-ARA.dend.leaf   <- ARA.dend.data$leaf[ as.numeric(row.names(ARA.dend$leaf_label)) ]
+## ARA.dend.labels <- ARA.tree.labels$label[as.numeric(row.names(ARA.dend$labels)) +1]
+numLabels <- nrow(ARA.tree.labels) -1  # drop "root"
+branch_labels <- segment(ARA.dend)[1:numLabels, c("x", "y", "xend", "yend")]     # coordinates for segments / branches
+## names(branch_labels) <- c("x", "y")    # rename columns ;)
+branch_labels <- cbind(branch_labels, ARA.tree.labels[-1, 3:ncol(ARA.tree.labels)])
+ARA.dend.leaf   <- ARA.tree.labels$leaf[ as.numeric(row.names(ARA.dend$leaf_label)) ]
 leaf_labels <- ARA.dend$leaf_label
 leaf_labels$label <- ARA.dend.leaf
 
@@ -260,22 +257,34 @@ Y.lim <- c( min(segment(ARA.dend)$y), max(segment(ARA.dend)$y) )
 Y.lim[1] <- 0
 
 ARA.tree.plot <- ggplot(segment(ARA.dend)) +
-                 geom_segment(aes(x=x, y=y, xend=xend, yend=yend))
-ARA.tree.plot <- ARA.tree.plot + geom_text(data=branch_labels, aes(label=label, x=x, y=y),
-                                           hjust = 0, size=3) + scale_size_identity()
+                 geom_segment(aes(x=x, y=y, xend=xend, yend=yend), size=1, color="grey60") +
+                 scale_size_identity() + scale_color_identity()
+ARA.tree.plot <- ARA.tree.plot + geom_text(data=branch_labels, 
+                                           aes(label=var, x=xend, y=yend),
+                                           hjust=0, vjust=-0.7, size=3) + 
+                                           scale_size_identity() # vjust=-0.7 for 1 line
+ARA.tree.plot <- ARA.tree.plot + geom_text(data=branch_labels, 
+                                           aes(label=info, x=xend, y=yend),
+                                           hjust=0, vjust=1.75, size=3) + 
+                                           scale_size_identity()
+ARA.tree.plot <- ARA.tree.plot + geom_text(data=branch_labels, 
+                                           aes(label=leaf, x=x, y=y),
+                                           hjust=0, vjust=0.5, size=3) + 
+                                           scale_size_identity()
 ## ARA.tree.plot <- ARA.tree.plot + geom_text(data=leaf_labels, aes(label=label, x=x, y=y), 
 ##                                            hjust=-0.1, size=4) + scale_size_identity()
-ARA.tree.plot <- ARA.tree.plot + geom_text(aes(label=Suppl.text, x=max(segment(ARA.dend)$x), y=max(Y.lim[2])), hjust = 0, size=4) + scale_size_identity()
+ARA.tree.plot <- ARA.tree.plot + geom_text(aes(label=Suppl.text, 
+                                               x=max(segment(ARA.dend)$x), y=max(Y.lim[2])), 
+                                           hjust = 0, size=4) + scale_size_identity()
 ## ARA.tree.plot <- ARA.tree.plot + coord_cartesian(ylim=Y.lim)
 ARA.tree.plot <- ARA.tree.plot + coord_flip() + scale_y_reverse(expand=c(0.2, 0)) + 
                  theme_dendro() + opts(panel.border = theme_blank())
 ## expand() within the sacle_y_reverse() adds space to *both* sides, to make room for long labels.  Not ideal, but it works
+
 print(ARA.tree.plot)
 
 ## labels as mathematical expressions?
-## grid.text(parse(text=Node.labels), x=ARA.dend.data$x, y=ARA.dend.data$y)
-
-## ggdendrogram(dendro_data(ARA.ttree))   # still get "Error in eval(expr, envir, enclos) : object 'x0' not found"   wtf?
+## grid.text(parse(text=Node.labels), x=ARA.tree.labels$x, y=ARA.tree.labels$y)
 
 
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
