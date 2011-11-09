@@ -92,7 +92,7 @@ if (UseClimateFac) {
 ##==============================================================
 ## Regression Trees
 ##==============================================================
-minsplit <- 20
+minsplit <- 10
 rpc <- rpart.control(minsplit=minsplit, cp=0.001)      
 ## default minsplit is 20; smaller number = more (deeper) splits!
 ##  more splits => different tree structure, and larger optimal tree?
@@ -228,6 +228,19 @@ Nvals       <- as.numeric(ARA.treeP$frame[, "n"])
 Nlabels     <- paste("n=", formatC(Nvals), sep="")
 Info.labels <- paste(Ylabels, ", ", Nlabels, sep="")
 Node.labels <- labels(ARA.treeP, pretty=F) # includes full factor levels, decision criteria, etc.
+## clean up labels
+Node.labels <- gsub(" months,", ",", Node.labels) #  duplicate month labels
+Node.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Node.labels)
+Node.labels <- gsub("X.trans", "Cells", Node.labels)
+Node.labels <- gsub("Full Corridors", "Corridors", Node.labels)
+Node.labels <- gsub("Pseudo-Corridors", "Pseudo-Cs", Node.labels)
+if (FALSE) { # ggplot2 doesn't support math annotations (yet)
+  Node.labels <- gsub("H2O(..[0-9.]+)", "H[2]*O\\1%", Node.labels)
+  Node.labels <- gsub("\\de\\+(\\d+)", " %*% 10^{\\1}", Node.labels)
+  Node.labels <- expression(Node.labels)      # expressions
+} else {
+}
+
 Full.labels <- paste(" ", Node.labels, "\n", " ", Info.labels, sep="") #space in front of each line for padding (hack)
 ARA.dend.data <- data.frame(x=ARA.plot$x, y=ARA.plot$y, label=Full.labels, node=Node.labels, leaf=Info.labels)
 
@@ -258,6 +271,9 @@ ARA.tree.plot <- ARA.tree.plot + coord_flip() + scale_y_reverse(expand=c(0.2, 0)
                  theme_dendro() + opts(panel.border = theme_blank())
 ## expand() within the sacle_y_reverse() adds space to *both* sides, to make room for long labels.  Not ideal, but it works
 print(ARA.tree.plot)
+
+## labels as mathematical expressions?
+## grid.text(parse(text=Node.labels), x=ARA.dend.data$x, y=ARA.dend.data$y)
 
 ## ggdendrogram(dendro_data(ARA.ttree))   # still get "Error in eval(expr, envir, enclos) : object 'x0' not found"   wtf?
 
