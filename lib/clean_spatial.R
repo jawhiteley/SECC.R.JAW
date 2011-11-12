@@ -51,35 +51,39 @@ Plot.vectors <- within(Plot.vectors, {
 ##################################################
 ## CALCULATIONS
 ##################################################
+## still buggy.  Some plots overlapping.  Check the From & To vectors?
 PlotGPS <- Plot.xy                     # save a copy of original GPS coordinates, just in case
-CalcXY <- rep(FALSE, nrow(Plot.xy))    # to track which plots have had destinations calculated?
+CalcXY <- rep(NA, nrow(Plot.xy))       # to track which plots have had destinations calculated?
 
 GPSXY <- which(Plot.xy$GPS == TRUE)
-KnownXY <- which(!is.na(Plot.xy$GPS))
-for (i in KnownXY) {
-  Destinations <- which(Plot.vectors$From == Plot.xy$Plot[i])
-  Startxy <- Plot.xy[i, ]
-  for (d in Destinations) {
-    Pvector <- Plot.vectors[d, ]       # get vector data
-    EndPlot <- Pvector$To              # which plot are we going to?
-    Endi <- which(Plot.xy$Plot == EndPlot) # convert label to index (easier)
-    Endxy <- Plot.xy[Endi, ]           # current data
-    ## calculate destination coordinates
-    Pdist   <- Pvector$distance
-    Pangle  <- Pvector$direction * (pi/180)
-    dx      <- sin(Pangle) * Pdist
-    dy      <- cos(Pangle) * Pdist
-    EndX    <- Startxy$mx + dx 
-    EndY    <- Startxy$my + dx 
-    Endxy$mx <- mean(c(EndX, Endxy$mx) , na.rm = TRUE)
-    Endxy$my <- mean(c(EndY, Endxy$my) , na.rm = TRUE)
-    Endxy$GPS <- FALSE
-    if (!is.na(Endxy$GPS)) {
+KnownXY <- which(!is.na(Plot.xy$GPS))  # first set of starting points
+while (length(KnownXY) > 0) {
+  for (i in KnownXY) {
+    Destinations <- which(Plot.vectors$From == Plot.xy$Plot[i])
+    Startxy <- Plot.xy[i, ]
+    for (d in Destinations) {
+      Pvector <- Plot.vectors[d, ]       # get vector data
+      EndPlot <- Pvector$To              # which plot are we going to?
+      Endi <- which(Plot.xy$Plot == EndPlot) # convert label to index (easier)
+      Endxy <- Plot.xy[Endi, ]           # current data
+      ## calculate destination coordinates
+      Pdist   <- Pvector$distance
+      Pangle  <- Pvector$direction * (pi/180)
+      dx      <- sin(Pangle) * Pdist
+      dy      <- cos(Pangle) * Pdist
+      EndX    <- Startxy$mx + dx 
+      EndY    <- Startxy$my + dx 
+      Endxy$mx <- mean(c(EndX, Endxy$mx) , na.rm = TRUE)
+      Endxy$my <- mean(c(EndY, Endxy$my) , na.rm = TRUE)
+      if (is.na(Endxy$GPS)) Endxy$GPS <- FALSE
       if (Endxy$GPS != TRUE) Plot.xy[Endi, ] <- Endxy # update values (if not a GPS value)
+      if (is.na(CalcXY[Endi]))  CalcXY[Endi] <- FALSE # flag for use as future Start point
     }
+    CalcXY[i] <- TRUE
   }
-  CalcXY[i] <- TRUE
+  KnownXY <- which(CalcXY == FALSE & Plot.xy$GPS == FALSE) # new set of starting points
 }
+
 
 ## calculate patch-level coordinates?
 SECC.xy <- Plot.xy
@@ -106,7 +110,7 @@ if (FALSE) {
        ylab = attr(SECC.xy, "labels")$my,
        main = "Plot positions"
        )
-  text(SECC.xy$mx, SECC.xy$my, labels=SECC.xy$Plot, cex=0.5)
+  text(SECC.xy$mx, SECC.xy$my, labels=SECC.xy$Plot, cex=0.1)
 }
 
 
