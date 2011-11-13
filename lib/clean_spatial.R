@@ -8,9 +8,6 @@ if (FALSE) {        # do not run automatically
   rm(list=ls())     # house-keeping
   setwd('./ SECC/') # project directory
   getwd()           # check current wd
-
-  ## LOAD LIBRARIES
-  source("./lib/fun.R")   # define functions
 }
 
 ##================================================
@@ -72,8 +69,18 @@ while (length(KnownXY) > 0) {
       dx      <- sin(Pangle) * Pdist
       dy      <- cos(Pangle) * Pdist
       EndX    <- Startxy$mx + dx 
-      EndY    <- Startxy$my + dx 
+      EndY    <- Startxy$my + dy 
+      ## average subsequent coordinates, or use only first set?
+      ## ideally, I'd like to weight some vectors over others 
+      ## i.e. vectors from GPS points take priority over calculated ones, 
+      ## or closer vectors take priority over vectors farther away...
+      ## store each calculated position separately, with fields for:
+      ## - distance (from source)
+      ## - was source a GPS position?
+      ## computed weights, based on above information
+      ##       if (is.na(Endxy$mx)) 
       Endxy$mx <- mean(c(EndX, Endxy$mx) , na.rm = TRUE)
+      ##       if (is.na(Endxy$my)) 
       Endxy$my <- mean(c(EndY, Endxy$my) , na.rm = TRUE)
       if (is.na(Endxy$GPS)) Endxy$GPS <- FALSE
       if (Endxy$GPS != TRUE) Plot.xy[Endi, ] <- Endxy # update values (if not a GPS value)
