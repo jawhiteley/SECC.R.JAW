@@ -16,26 +16,28 @@ if (FALSE) {        # do not run automatically
 ## Should be 2 data frames:
 ## - Plot_xy: xy coordinates, in UTM mE & mN
 ## - Plot_vectors : distances (m) & directions (degrees) from plots with known coordinates (GPS)
-## I need to use the data in PlotVectors to compute missing coordinates in SECC.spatial
+Raw.xy      <- Plot.xy                 # save a copy
+Raw.vectors <- Plot.vectors            # save a copy
 if (FALSE) {
   str(Plot.xy)
   str(Plot.vectors)                    # column names may have to be cleaned (smybols may cause errors)
-  Raw.xy <- Plot.xy                    # save a copy
-  Raw.vectors <- Plot.vectors          # save a copy
-  Plot.xy <- Raw.xy                    # restore
+  Plot.xy      <- Raw.xy               # restore
   Plot.vectors <- Raw.vectors          # restore
 }
 
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
-## Manually clean & prepare data for automatic checking.
+distBase <- 2                          # this distance, in m, has a weight of '1' for weighted averaging of calculated positions.
 names(Plot.xy)[names(Plot.xy)=="time"] <- "Time"
 Plot.xy <- within(Plot.xy, {
                   GPS <- as.logical(GPS)
                   Plot <- as.character(Plot)
                   mx <- as.double(mx)
                   my <- as.double(my)
+                  distance <- 0        # distance from origin for calculated positions
+                  GPSstart <- FALSE    # Was the origin a GPS point?
+                  wt <- 1              # weights for averaging calculated positions
 })
 Plot.vectors <- within(Plot.vectors, {
                   comments <- as.character(comments)
@@ -43,6 +45,9 @@ Plot.vectors <- within(Plot.vectors, {
                   To   <- as.character(To)
                   skip <- as.logical(skip)
                   skip[is.na(skip)] <- FALSE
+                  calc <- 0            # How many times has this vector been calculated?
+                  calcFrom <- FALSE    # Has it beed used to calculate position of "From" plot?
+                  calcTo   <- FALSE    # Has it beed used to calculate position of "To" plot?
 })
 
 ## Standardize ID column names & values
@@ -54,107 +59,182 @@ Plot.vectors <- within(Plot.vectors, {
 ##################################################
 ## CALCULATIONS
 ##################################################
-ReverseVector <- function (Vector.df, Vector.i) {
-      NewVector <- Vector.df[Vector.i, ]
-      OldFrom   <- NewVector$From
-      OldAngle  <- NewVector$direction
-      NewVector$From      <- NewVector$To
-      NewVector$To        <- OldFrom
-      NewVector$direction <- OldAngle + 180
-      Vector.df[Vector.i, ] <- NewVector
-      Vector.df
+## compute destination positions for each vector twice:
+## - once in each direction (From->To, To->From)
+## Stop once all vectors have been used in each direction once
+## - collect list of Known Positions (available starting points)
+## - calculate destinations for remaining available vectors
+##   - including GPS coords? (these have some error, too...)
+## - Collect all calculated positions & average together for final position
+## Ideally, I'd like to weight some vectors over others 
+## i.e. vectors from GPS points take priority over calculated ones, 
+## or closer vectors take priority over vectors farther away...
+## store each calculated position separately, with fields for:
+## - distance (from source)
+## - was source a GPS position?
+## - computed weights, based on above information (=2/distance; GPS = 1)
+## Aggregate data frame using weighted means.
+
+ReverseVector <- function (Vector.df) {
+  NewVector <- Vector.df               # only pass in the rows you want to reverse
+  NewVector$From      <- Vector.df$To
+  NewVector$To        <- Vector.df$From
+  NewVector$direction <- Vector.df$direction + 180
+  NewVector
 }
 
-Calc.xy <- function (Start.xy, Vector.xy) {
-      ## calculate destination coordinates
-      Pdist   <- Vector.xy$distance
-      Pangle  <- Vector.xy$direction * (pi/180)
-      dx      <- sin(Pangle) * Pdist
-      dy      <- cos(Pangle) * Pdist
-      EndX    <- Startxy$mx + dx 
-      EndY    <- Startxy$my + dy 
-      c(EndX, EndY)
+Calc.xy <- function (StartXY, VectorXY) {
+  EndXY   <- PlotXYrow(Plot=VectorXY$To, GPS=FALSE, 
+                       distance=VectorXY$distance, GPSstart=StartXY$GPS, 
+                       wt=1) # Blank row for end pt.
+  EndXY   <- PlotRowFactors(EndXY)
+  ## calculate destination coordinates
+  Pdist   <- VectorXY$distance
+  Pangle  <- VectorXY$direction * (pi/180)
+  dx      <- sin(Pangle) * Pdist
+  dy      <- cos(Pangle) * Pdist
+  EndX    <- StartXY$mx + dx 
+  EndY    <- StartXY$my + dy 
+  if (FALSE) {
+    c(EndX, EndY)
+  } else {
+    EndXY$mx <- EndX
+    EndXY$my <- EndY
+    ## compute weights for weighted averaging.  
+    ##   NB: ifelse() works with a vector of logical values (results element-wise)!
+    EndXY$wt <- max(as.numeric(EndXY$GPSstart), distBase/EndXY$distance)
+    EndXY
+  }
 }
 
-PlotGPS <- Plot.xy                     # save a copy of original GPS coordinates, just in case
+PlotXYrow <- function (PlotLabel="", mx=NA, my=NA, GPS=NA, 
+                       GPSstart=NA, distance=NA, wt=1, comments="") {
+  ## create a (blank) row for new Plot coordinates
+  data.frame(Block=NA, Time=NA, Chamber=NA, Plot=PlotLabel, 
+             mx=mx, my=my, GPS=GPS, GPSstart=GPSstart, distance=distance, wt=wt, 
+             comments="", stringsAsFactors=FALSE)
+}
+
+PlotRowFactors <- function (PlotXY) {
+  ## extract factor levels from Plot labels
+  within(PlotXY, {
+         Block   <- as.character(Block)
+         Time    <- as.character(Time)
+         Chamber <- as.character(Chamber)
+         Block   <- substr(Plot, 1, 1)
+         Time    <- substr(Plot, 2, 2)
+         Chamber <- substr(Plot, 3, 3)
+         Block   <- factor(Block)
+         Time    <- factor(Time)
+         Chamber <- factor(Chamber)
+         })
+}
+
+## if positions are added to the same data frame throughout, would this upset the 'KnownXY' indices?  Unless new positions are added at the *END*
+## However, it might be best to track based on Plot label, rather than index of Plot.xy:
+##   The starting location should include the average of all (current) positions for a given Plot (not a given position in the Plot.xy data frame)
+## Or should I be tracking each vector instead of each plot?
+##   calculate each vector once?  or twice (once in each direction)?
 CalcXY <- rep(NA, nrow(Plot.xy))       # to track which plots have had destinations calculated?
+CalcXY <- data.frame(Plot=Plot.xy$Plot, Calc=FALSE, stringsAsFactors=F) # track by Plot label, rather than index
 
 GPSXY <- which(Plot.xy$GPS == TRUE)
-Plot.xy[-GPSXY, c("mx", "my", "GPS")] <- NA # wipe non-GPS coordinates
+GPSplots <- Plot.xy$Plot[GPSXY]        # Plot labels with GPS-based coordinates
+Plot.xy[-GPSXY, c("mx", "my", "GPS")] <- NA # wipe existing 'non-GPS' coordinates
+## Plot.xy <- Plot.xy[GPSXY, ]            # remove unknown coordinates?
 ## GPS coordinates have error associated with them as well.  
 ## Fortunately, I also have vector information between them.
-## Perhaps I should start by adjusting these initial GPS coordinates first?
-## Selected points have been "de-selected" by removing the GPS flag: their positions are open for re-calculation based on vector data
+## Selected points have been "de-selected" by removing the GPS flag: their positions will be re-calculated using vector data
 GPSfrom <- Plot.vectors$From %in% Plot.xy$Plot[GPSXY]
 GPSto   <- Plot.vectors$To   %in% Plot.xy$Plot[GPSXY]
 GPSvectors <- GPSfrom & GPSto
-Plot.vectors[GPSvectors, ]
+Plot.vectors[GPSvectors, ]             # vectors between GPS locations
+## Reverse vectors to prioritize C over B chambers?
 Bvectors <- grep(".+B", Plot.vectors$From)
-Plot.vectors <- ReverseVector(Plot.vectors, Bvectors) # set B plots to 'destinations' only
+Plot.vectors[Bvectors, ] <- ReverseVector(Plot.vectors[Bvectors, ]) # prioritize B plots as 'destinations', rather than starting points
 
-KnownXY <- GPSXY # which(!is.na(Plot.xy$GPS))  # first set of starting points
-while (length(KnownXY) > 0) {
-  ## Make new, blank data frame to store new calculated positions?
-  ## if positions are added to the same data frame throughout, would this upset the 'KnownXY' indices?  Unless new positions are added at the *END*
-  for (i in KnownXY) {
-    Startxy <- Plot.xy[i, ]            # average of current positions?
-    ## Collect all plots whose positions depend on currently known positions
-    Destinations <- which(Plot.vectors$From == Plot.xy$Plot[i])
-    ## - include "From" AND "To" vectors?  Reverse "To" vectors?
-    ReVectors    <- which(Plot.vectors$To   == Plot.xy$Plot[i])
-    for (r in ReVectors) {
-      NewVector <- Plot.vectors[r, ]
-      OldFrom   <- NewVector$From
-      OldAngle  <- NewVector$direction
-      NewVector$From      <- NewVector$To
-      NewVector$To        <- OldFrom
-      NewVector$direction <- OldAngle + 180
-      Plot.vectors[r, ]   <- NewVector
-    }
-    Destinations <- c(Destinations, ReVectors)
-    KeepVectors  <- which(Plot.vectors[Destinations, "skip"] != TRUE)
-    Destinations <- Destinations[KeepVectors] # drop vectors marked to skip
+Destinations <- 1:nrow(Plot.vectors)  # indices of vectors to process (start with all candidates to begin the loop)
+while (length(Destinations) > 0) {
+  ## Make new, blank data frame to store new calculated positions
+  New.xy  <- Plot.xy[0, ]              # 0-row data frame with same columns as Plot.xy
+  ## Make a list of starting points, and associated vectors to calculate target locations
+  KnownXY <- !is.na(Plot.xy$mx) & !is.na(Plot.xy$my)
+  KnownXY <- Plot.xy$Plot[KnownXY]       # first set of starting points
+  VectorsToKeep <- Plot.vectors$skip == FALSE 
+  VectorsToCalc <- Plot.vectors$calcFrom==FALSE | Plot.vectors$calcTo==FALSE
+  ## Keep only Vectors based on From / To with known locations
+  VectorsFrom   <- Plot.vectors$From %in% KnownXY
+  VectorsTo     <- Plot.vectors$To   %in% KnownXY
+  Destinations  <- which(VectorsToKeep & VectorsToCalc & (VectorsFrom | VectorsTo))  # indices of vectors to process
+  ## Remove starting points that have had all related vectors processed already
+  Starts <- (KnownXY %in% Plot.vectors[Destinations, "From"]) |
+  (KnownXY %in% Plot.vectors[Destinations, "To"])
+  KnownXY <- KnownXY[Starts]
+  for (p in KnownXY) {
+    i <- which(Plot.xy$Plot == p)
+    Startxy <- Plot.xy[i, ]            # get currently known positions
+    ## average of current positions? 
+    Startxy <- aggregate(Startxy[, c("mx", "my")], 
+                         by=list(Plot=Startxy$Plot), 
+                         FUN=weighted.mean, w = Startxy$wt)                            
+    Startxy$GPS <- Startxy$Plot %in% GPSplots
+
     for (d in Destinations) {
       Pvector <- Plot.vectors[d, ]       # get vector data
-      EndPlot <- Pvector$To              # which plot are we going to?
-      Endi    <- which(Plot.xy$Plot == EndPlot) # convert label to index (easier)
-      Endxy   <- Plot.xy[Endi, ]           # current data
+      ## check origin & destination
+      ## - if necessary, reverse vector to match known starting location
+      ## It is perhaps safer to reverse vectors individually here, 
+      ## to keep "From" & "To" fields consistent,
+      ## and allow tracking based on each direction consistently
+      StartPlot <- Pvector$From        # Are we going the right way?
+      if (Pvector$To == Startxy$Plot) {
+        Dvector <- ReverseVector(Pvector)
+      } else {
+        Dvector <- Pvector
+      }
       ## calculate destination coordinates
-      Pdist   <- Pvector$distance
-      Pangle  <- Pvector$direction * (pi/180)
-      dx      <- sin(Pangle) * Pdist
-      dy      <- cos(Pangle) * Pdist
-      EndX    <- Startxy$mx + dx 
-      EndY    <- Startxy$my + dy 
-      ## Reverse vectors to prioritize C over B chambers?
-      ## - switch "From" & To" if "To" is a GPS coord, or "From" is a B plot.
-      ## Adjust *both* Start & End positions if neither are GPS coords?
-      ## Average subsequent coordinates, or use only first set?
-      ## ideally, I'd like to weight some vectors over others 
-      ## i.e. vectors from GPS points take priority over calculated ones, 
-      ## or closer vectors take priority over vectors farther away...
-      ## store each calculated position separately, with fields for:
-      ## - distance (from source)
-      ## - was source a GPS position?
-      ## - computed weights, based on above information (=2/distance; GPS = 1)
-      ## aggregate data frame using weighted means.
-      ##       Endxy$mx <- mean(c(EndX, Endxy$mx) , na.rm = TRUE)
-      ##       Endxy$my <- mean(c(EndY, Endxy$my) , na.rm = TRUE)
-      ##       browser()
-      if (is.na(Endxy$GPS) | is.na(Endxy$mx) | is.na(Endxy$my)) {
-        ## & (!is.na(EndX) & !is.na(EndY))
+      if (TRUE) {
+        Endxy  <- PlotXYrow(Plot=Dvector$To, GPS=FALSE, 
+                            distance=Dvector$distance, GPSstart=Startxy$GPS, 
+                            wt=1) # Blank row for end pt.
+        Pdist  <- Dvector$distance
+        Pangle <- Dvector$direction * (pi/180)
+        dx     <- sin(Pangle) * Pdist
+        dy     <- cos(Pangle) * Pdist
+        EndX   <- Startxy$mx + dx 
+        EndY   <- Startxy$my + dy 
         Endxy$mx  <- EndX
         Endxy$my  <- EndY
-        Endxy$GPS <- FALSE
+      } else {
+        Endxy <- Calc.xy(Startxy, Dvector)
       }
-      if (Endxy$GPS != TRUE) Plot.xy[Endi, ] <- Endxy # update values (if not a GPS value)
-      if (is.na(CalcXY[Endi]))  CalcXY[Endi] <- FALSE # flag for use as future Start point
+      ## store new coordinates
+      New.xy <- rbind(New.xy, Endxy)
+      ## Update vector
+      if (Startxy$Plot == Pvector$From) {
+        Pvector$calcFrom <- TRUE
+      } else if (Startxy$Plot == Pvector$To) {
+        Pvector$calcTo   <- TRUE
+      }
+      Pvector$calc <- Pvector$calc +1
+      Plot.vectors[d, ] <- Pvector
     }
-    CalcXY[i] <- TRUE
+    CalcXY[CalcXY$Plot == p, "Calc"] <- TRUE # plot has been used to calculate dependent locations
   }
-  ## merge new calculated positions to 'official' data frame
-  KnownXY <- which(CalcXY == FALSE) # new set of starting points
+  ## add new calculated positions to main data frame
+  Plot.xy <- rbind(Plot.xy, New.xy)
 }
+
+## aggregate all calculated positions using a weighted average
+Plot.xy <- PlotRowFactors(Plot.xy)     # ensure all factors are properly specified
+Plot.xy <- aggregate(Plot.xy[, c("mx", "my")], 
+                     by  = list(Block   = Plot.xy$Block, 
+                               Time    = Plot.xy$Time,
+                               Chamber = Plot.xy$Chamber,
+                               Plot    = Plot.xy$Plot),
+                     FUN = weighted.mean, w = Plot.xy$wt) # , na.action=na.omit
+## merge new with Raw (or CalcXY), to ensure a row for every Plot, even if NA?
+
 ## Note: comparing coordinates produced by averaging vs. first vector only
 ##       highlights possible data entry errors (plots that jump a lot because of errors in distance or direction)
 ## Plots with problematic coordinates / vectors
