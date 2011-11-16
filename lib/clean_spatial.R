@@ -66,11 +66,19 @@ Plot.vectors <- within(Plot.vectors, {
 ## Ideally, I'd like to weight some vectors over others 
 ## i.e. vectors from GPS points take priority over calculated ones, 
 ## or closer vectors take priority over vectors farther away...
-## store each calculated position separately, with fields for:
+## Store each calculated position separately, with fields for:
 ## - distance (from source)
 ## - was source a GPS position?
 ## - computed weights, based on above information (=2/distance; GPS = 1)
 ## Aggregate data frame using weighted means.
+
+## Reduce effects of GPS error?
+## Use 1 GPS coordinate position at a time (loop through all, 1 @ a time)
+## Compute all possible dependent (relative) positions using vector data
+## - There may be multiple calculated positions for each GPS starting point,
+##   but I only want to use positions calculated from the same GPS start point at a time.
+## Store all calculated positions -- separately?
+## Average positions derived from each GPS starting point
 
 ReverseVector <- function (Vector.df) {
   NewVector <- Vector.df               # only pass in the rows you want to reverse
@@ -139,8 +147,9 @@ CalcXY <- data.frame(Plot=Plot.xy$Plot, Calc=FALSE, stringsAsFactors=F) # track 
 
 GPSXY <- which(Plot.xy$GPS == TRUE)
 GPSplots <- Plot.xy$Plot[GPSXY]        # Plot labels with GPS-based coordinates
+ExPlots  <- Plot.xy$Plot[!is.na(Plot.xy$mx)] # Plots with initial GPS coordinates (whether used or not)
 Plot.xy[-GPSXY, c("mx", "my", "GPS")] <- NA # wipe existing 'non-GPS' coordinates
-## Plot.xy <- Plot.xy[GPSXY, ]            # remove unknown coordinates?
+## Plot.xy <- Plot.xy[GPSXY, ]            # remove unknown coordinates? Plots with no calculated positions will disappear!
 ## GPS coordinates have error associated with them as well.  
 ## Fortunately, I also have vector information between them.
 ## Selected points have been "de-selected" by removing the GPS flag: their positions will be re-calculated using vector data
@@ -269,12 +278,6 @@ Plot.xy <- PlotRowFactors(Plot.xy)     # ensure all factors are properly specifi
 Plot.xy <- Plot.xy[, c("Block", "Time", "Chamber", "Plot", "mx", "my")] # re-order columns
 ## merge new with Raw (or CalcXY), to ensure a row for every Plot, even if NA? Unnecessary
 
-## Note: comparing coordinates produced by averaging vs. first vector only
-##       highlights possible data entry errors (plots that jump a lot because of errors in distance or direction)
-## Plots with problematic coordinates / vectors
-## Distances between GPS locations mismatch measured distances: 
-## 14A-24A (10.7; 12), 34A-44A (7 ; 11.4), 44A-42A (8.4 ; 4.2), 54A-51A (6.5 ; 16.2), 64A-62A (13.5 ; 8.1), 84A-81A (7.5, 20.6)
-## Abnormally close to each other:  32B/43C, 33A/22B
 
 
 ##================================================
@@ -309,7 +312,16 @@ if (FALSE) {
   distxy <- dist(SECC.xy[, c("mx", "my")])
   dist.mat <- as.matrix(distxy)        # coerce to matrix for easier sub-setting
   dist.mat[GPSXY, GPSXY]
-  Plot.vectors[GPSvectors, ]             # vectors between GPS locations
+  dist.mat[ExPlots, ExPlots]
+  min(dist.mat[dist.mat>0], na.rm=TRUE) # should be >1
+  Plot.vectors[GPSvectors, ]           # vectors between GPS locations
+  ShortVectors <- which(Plot.vectors$distance < 2)
+  Plot.vectors[ShortVectors, ]
+  ClosePlots <- c(Plot.vectors[ShortVectors, "From"], Plot.vectors[ShortVectors, "To"])
+  ClosePlots <- unique(ClosePlots)
+  CloseDist <- which(rownames(dist.mat) %in% ClosePlots)
+  print( dist.mat[CloseDist, CloseDist], digits=2 )
+
   plot(SECC.xy$mx, SECC.xy$my, asp=1, type="n",
        xlab = attr(SECC.xy, "labels")$mx,
        ylab = attr(SECC.xy, "labels")$my,
