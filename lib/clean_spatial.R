@@ -10,6 +10,10 @@ if (FALSE) {        # do not run automatically
   getwd()           # check current wd
 }
 
+cat('  - Processing Spatial Data.\n')
+library(plyr)                          # applying functions to subsets of data
+Objects.ls <- ls()                     # List of current objects in memory (for clean-up after)
+
 ##================================================
 ## CHECK DATA
 ##================================================
@@ -28,6 +32,7 @@ if (FALSE) {
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
+cat('    - Preparing Spatial Data.\n')
 distBase <- 2                          # this distance, in m, has a weight of '1' for weighted averaging of calculated positions.
 names(Plot.xy)[names(Plot.xy)=="time"] <- "Time"
 Plot.xy <- within(Plot.xy, {
@@ -71,6 +76,7 @@ Plot.vectors <- within(Plot.vectors, {
 ## - was source a GPS position?
 ## - computed weights, based on above information (=2/distance; GPS = 1)
 ## Aggregate data frame using weighted means.
+cat('    - Calculating Plot Positions.  This could take a minute or two.\n')
 
 ## Reduce effects of GPS error by averaging across GPS readings
 ## Use 1 GPS coordinate position at a time (loop through all, 1 @ a time)
@@ -290,16 +296,117 @@ PlotC.xy <- PlotC.xy[, c("Block", "Time", "Chamber", "Plot", "mx", "my")] # re-o
 
 
 ##================================================
-## calculate patch-level coordinates?
-SECC.xy <- PlotC.xy
-
-## Standardize ID column names & values
-## SECC.xy <- checkSECCdata(SECC.xy, "SECC.spatial")
-
-
+## Calculate Patch-level Coordinates
 ##================================================
+cat('    - Calculating Sample Patch Positions.  This could take a few seconds.\n')
+Cardinals <- c("N", "S", "E", "W")
+PatchDirs <- c("NW", "NE", "SE", "SW")
+NE <- pi*1/4                           # Direction in radians
+SE <- pi*3/4
+SW <- pi*5/4
+NW <- pi*7/4
+Pdiam <- 12.5/100                      # Patch diameter, in m
+Pdist <- 10/100                        # inter-patch distance, in m
+## distance to centre of edge plots from plot centre, along x OR y
+EdgeDist <- Pdist/2 + Pdiam + Pdist + Pdiam/2   
+## distance from centre of plot to centre of each Frag treatment
+FragC <- Pdist/2 + Pdiam + Pdist/2  # to centre of Frag trts
+Fdist <- sqrt( (FragC^2) + (FragC^2) )
+## distance from centre of each Frag treatment to centre of Patches
+FPlotC <- Pdist/2 + Pdiam/2
+FPdist <- sqrt( (FPlotC^2) + (FPlotC^2) ) # Fdist/2 ;)
+FCdist <- Pdiam/2                      # distance to centres of patches in Continuous Frag trts
+FCPlot <- sqrt((FCdist^2)/2)           # distance along x & y for Continuous Frag trts
+
+## Build list of all patches, and direction from Frag/Plot centre
+Patch.d <- within(SECC.base, 
+                  {
+                    Xdir  <- NA        # X direction: W/E
+                    Ydir  <- NA        # Y direction: N/S
+                    FragD <- NA        # direction from Plot to Frag trt centre
+                    FPD   <- NA        # direction from Frag to Patch centre
+                    dx    <- NA        # adjustment to x from Plot centre to patch, in m
+                    dy    <- NA        # adjustment to y from Plot centre to patch, in m
+                  }
+)
+Patch.d <- ddply(Patch.d, c("Block", "Time", "Chamber", "Frag"), 
+                 function(FragGroup) {
+                   WhichCardinals  <- which(Cardinals %in% FragGroup$Pos)
+                   WhichCardinalY  <- which(Cardinals[1:2] %in% FragGroup$Pos)
+                   WhichCardinalX  <- which(Cardinals[3:4] %in% FragGroup$Pos)
+                   FragGroup$FragD <- paste(Cardinals[WhichCardinals], collapse="")
+                   FragGroup$Xdir  <- paste(Cardinals[WhichCardinalX+2], collapse="")
+                   FragGroup$Ydir  <- paste(Cardinals[WhichCardinalY  ], collapse="")
+                   FragGroup
+                 }
+)
+## loop over every row.  There's probably a more efficient way to do this, I just haven't figured it out yet.
+Patch.d <- ddply(Patch.d, "SampleID", 
+                 function (Prow) {
+                   CardX <- Cardinals %in% Prow$Xdir
+                   CardY <- Cardinals %in% Prow$Ydir
+                   Cards <- c(CardY[1:2], CardX[3:4])
+                   if (Prow$Pos == "O") {
+                     Prow$FragD
+                   } else if (Prow$Pos == "I") {
+                     Cards <- !Cards
+                   } else if ( any(Prow$Pos %in% Cardinals[1:2]) ) { # N,S
+                     Cards <- c( Cards[1:2], !Cards[3:4])
+                   } else if ( any(Prow$Pos %in% Cardinals[3:4]) ) { # E,W
+                     Cards <- c(!Cards[1:2],  Cards[3:4])
+                   }
+                   Prow$FPD <- paste(Cardinals[Cards], collapse="")
+                   Prow
+                 }
+)
+
+## Calculate distances for each Patch from Plot centre
+for (i in 1:nrow(Patch.d)) {
+  dx <- 0
+  dy <- 0
+  ## calculate relative position of Frag trt centre
+  xdir <- Patch.d[i, "Xdir"]
+  ydir <- Patch.d[i, "Ydir"]
+  dx <- if (xdir == Cardinals[4]) -FragC else FragC
+  dy <- if (ydir == Cardinals[2]) -FragC else FragC
+  ## add relative position of Patch centre
+  PatchD <- if (Patch.d[i, "Frag"] == 1) FCPlot else FPlotC
+  xdir <- substr(Patch.d[i, "FPD"], 2, 2)
+  ydir <- substr(Patch.d[i, "FPD"], 1, 1)
+  dx <- dx + if (xdir == Cardinals[4]) -PatchD else PatchD
+  dy <- dy + if (ydir == Cardinals[2]) -PatchD else PatchD
+  ## save results
+  Patch.d[i, "dx"] <- dx
+  Patch.d[i, "dy"] <- dy
+}
+
+## Prepare final data frame
+## SECC.xy <- PlotC.xy
+SECC.xy <- within(SECC.base, 
+                  {
+                    my  <- NA        # Y, metres UTM North
+                    mx  <- NA        # X, metres UTM East
+                  }
+)
+
+## Add Patch distances to Plot positions
+for (i in 1:nrow(SECC.xy)) {
+  PatchID    <- SECC.xy[i, "SampleID"]
+  PlotString <- substr(PatchID, 1, 3)
+  PlotCoords <- PlotC.xy[PlotC.xy$Plot==PlotString, ]
+  PatchRow   <- which(Patch.d$SampleID == SECC.xy[i, "SampleID"])
+  PatchCoord <- Patch.d[PatchRow, ]
+  SECC.xy[i, "mx"] <- PlotCoords$mx + PatchCoord$dx
+  SECC.xy[i, "my"] <- PlotCoords$my + PatchCoord$dy
+}
+
+
+
+
+##################################################
 ## Assign Attributes
-##================================================
+##################################################
+cat('    - Assigning Attributes to Spatial Data.\n')
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
 attr(SECC.xy, "SECC columns") <- c('mx', 'my')
@@ -309,7 +416,7 @@ attr(SECC.xy, "labels") <- list("mx" = "UTM East",
 attr(SECC.xy, "units")  <- list("mx" = quote("m"),
                                 "my" = quote("m")
                                 )
-row.names(SECC.xy) <- SECC.xy$Plot
+row.names(SECC.xy) <- SECC.xy$SampleID
 
 
 
@@ -317,12 +424,17 @@ row.names(SECC.xy) <- SECC.xy$Plot
 ##################################################
 ## CHECK DATA
 ##################################################
+## Standardize ID column names & values
+SECC.xy <- checkSECCdata(SECC.xy, "SECC.xy")
+
 if (FALSE) {
-  distxy <- dist(SECC.xy[, c("mx", "my")])
+  row.names(PlotC.xy) <- PlotC.xy$Plot   # makes subsetting calculated distance matrix SO MUCH easier
+  distxy <- dist(PlotC.xy[, c("mx", "my")])
   dist.mat <- as.matrix(distxy)        # coerce to matrix for easier sub-setting
   dist.mat[GPSXY, GPSXY]
   dist.mat[IniPlots, IniPlots]
-  min(dist.mat[dist.mat>0], na.rm=TRUE) # should be >1
+  min(dist.mat[dist.mat>0], na.rm=TRUE) # should be >1 (51C -- 52A)
+  max(dist.mat[dist.mat>0], na.rm=TRUE) # ~200m?
   Plot.vectors[GPSvectors, ]           # vectors between GPS locations
   ShortVectors <- which(Plot.vectors$distance < 2)
   Plot.vectors[ShortVectors, ]
@@ -331,12 +443,19 @@ if (FALSE) {
   CloseDist <- which(rownames(dist.mat) %in% ClosePlots)
   print( dist.mat[CloseDist, CloseDist], digits=2 )
 
-  plot(SECC.xy$mx, SECC.xy$my, asp=1, type="n",
+  plot(PlotC.xy$mx, PlotC.xy$my, asp=1, type="n",
        xlab = attr(SECC.xy, "labels")$mx,
        ylab = attr(SECC.xy, "labels")$my,
        main = "Plot positions"
        )
-  text(SECC.xy$mx, SECC.xy$my, labels=SECC.xy$Plot, cex=0.1)
+  text(PlotC.xy$mx, PlotC.xy$my, labels=PlotC.xy$Plot, cex=0.1)
+
+  plot(SECC.xy$mx, SECC.xy$my, asp=1, type="n",
+       xlab = attr(SECC.xy, "labels")$mx,
+       ylab = attr(SECC.xy, "labels")$my,
+       main = "Sample Patch positions"
+       )
+  text(SECC.xy$mx, SECC.xy$my, labels=SECC.xy$SampleID, cex=0.005)
 }
 
 
@@ -345,12 +464,19 @@ if (FALSE) {
 ##################################################
 ## SAVE DATA
 ##################################################
+cat('    - Saving Spatial Data to file.\n')
+write.csv(format(SECC.xy, digits = 3, nsmall=3), 
+          file = paste("./save/", "SECC_xy", ".csv", sep=""), row.names=FALSE)
+
 
 ##================================================
 ## Housekeeping
 ##================================================
+cat('    - Cleaning up after Spatial Calculations.\n')
 ## Remove old objects from memory
-rm.objects <- c('Plot.xy', 'Plot.vectors', 'Calc.ini', 'Calc.xy', 'PlotCalc', 'PlotC.xy')
+New.Objects <- setdiff(ls(), Objects.ls)
+rm.objects <- setdiff(New.Objects, 'SECC.xy')
+rm.objects <- c(rm.objects, 'Plot.xy', 'Plot.vectors')
 rm(list=rm.objects)
 ## Update list of Data_objects for importing
 Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.xy' )
