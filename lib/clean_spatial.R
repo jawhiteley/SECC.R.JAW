@@ -10,7 +10,7 @@ if (FALSE) {        # do not run automatically
   getwd()           # check current wd
 }
 
-cat('  - Processing Spatial Data.\n')
+cat('- Processing Spatial Data.\n')
 library(plyr)                          # applying functions to subsets of data
 Objects.ls <- ls()                     # List of current objects in memory (for clean-up after)
 
@@ -32,7 +32,7 @@ if (FALSE) {
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
-cat('    - Preparing Spatial Data.\n')
+cat('  - Preparing Spatial Data.\n')
 distBase <- 2                          # this distance, in m, has a weight of '1' for weighted averaging of calculated positions.
 names(Plot.xy)[names(Plot.xy)=="time"] <- "Time"
 Plot.xy <- within(Plot.xy, {
@@ -76,7 +76,7 @@ Plot.vectors <- within(Plot.vectors, {
 ## - was source a GPS position?
 ## - computed weights, based on above information (=2/distance; GPS = 1)
 ## Aggregate data frame using weighted means.
-cat('    - Calculating Plot Positions.  This could take a minute or two.\n')
+cat('  - Calculating Plot Positions.  This may take a minute or two.\n')
 
 ## Reduce effects of GPS error by averaging across GPS readings
 ## Use 1 GPS coordinate position at a time (loop through all, 1 @ a time)
@@ -298,7 +298,7 @@ PlotC.xy <- PlotC.xy[, c("Block", "Time", "Chamber", "Plot", "mx", "my")] # re-o
 ##================================================
 ## Calculate Patch-level Coordinates
 ##================================================
-cat('    - Calculating Sample Patch Positions.  This could take a few seconds.\n')
+cat('  - Calculating Sample Patch Positions.  This may take a few seconds.\n')
 Cardinals <- c("N", "S", "E", "W")
 PatchDirs <- c("NW", "NE", "SE", "SW")
 NE <- pi*1/4                           # Direction in radians
@@ -406,7 +406,7 @@ for (i in 1:nrow(SECC.xy)) {
 ##################################################
 ## Assign Attributes
 ##################################################
-cat('    - Assigning Attributes to Spatial Data.\n')
+cat('  - Assigning Attributes to Spatial Data.\n')
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
 attr(SECC.xy, "SECC columns") <- c('xE', 'yN')
@@ -464,15 +464,16 @@ if (FALSE) {
 ##################################################
 ## SAVE DATA
 ##################################################
-cat('    - Saving Spatial Data to file.\n')
+cat('  - Saving Spatial Data to file.\n')
+## Save to a special name to avoid being overwritten in load script
 write.csv(format(SECC.xy, digits = 3, nsmall=3), 
-          file = paste("./save/", "SECC_xy", ".csv", sep=""), row.names=FALSE)
+          file = paste("./save/", "SECC_spatial", ".csv", sep=""), row.names=FALSE)
 
 
 ##================================================
 ## Housekeeping
 ##================================================
-cat('    - Cleaning up after Spatial Calculations.\n')
+cat('  - Cleaning up after Spatial Calculations.\n')
 ## SECC_env.xy <- SECC.xy                 # rename for rest of loading script
 ## Remove old objects from memory
 New.Objects <- setdiff(ls(), Objects.ls)

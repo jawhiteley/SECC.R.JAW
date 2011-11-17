@@ -244,13 +244,12 @@ Load.export <- c('SECC', 'SECC.coded', 'SECC.xy',
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
-for (DataFrame in Load.export)
-{
+for (DataFrame in Load.export) {
   Filename <- gsub('\\.', '_', DataFrame, perl = TRUE)  # replace '.' with '_' 
-  write.csv( get(DataFrame), 
-    file = paste("./save/", Filename, ".csv", sep=""), 
-    row.names=FALSE
-  ) 
+  write.csv(get(DataFrame), 
+            file = paste("./save/", Filename, ".csv", sep=""), 
+            row.names=FALSE
+            ) 
 }
 
 ## House-keeping
