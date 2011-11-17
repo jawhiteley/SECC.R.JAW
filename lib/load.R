@@ -13,7 +13,7 @@
 ##   are checked and merged onto 'SECC.base'
 ##   -> SECC : Main data frame of response variables.
 ## Data objects starting with 'SECC_env'
-##   are checked and merged onto 'SECC.base' -> SECC.env
+##   are checked and merged onto 'SECC.base'
 ##   -> SECC.env : Environmental data.
 ## Faunal data is loaded into 'SECC.fauna'
 ## Data objects starting with 'TRH.'
@@ -99,10 +99,12 @@ for (DataObject in merge.SECC) {
 ##################################################
 ## LOAD OTHER DATA
 ##################################################
-## do this here to allow generation of new data objects
-## to be merged into SECC
+## do this here to allow generation of new data objects to be merged into SECC
+## These objects themselves will not be merged into SECC (not included in merge.SECC, above)
 cat('- Loading fauna data.\n')
 source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
+
+source("./lib/clean_spatial.R", echo=FALSE) # Load Spatial data.
 
 
 ##################################################
@@ -237,7 +239,8 @@ if (FALSE) {  # do not run when source()'d
 # + [Other]
 cat('- Saving data & cleaning up.\n')
 
-Load.export <- c( 'SECC', 'SECC.coded', 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH' )
+Load.export <- c('SECC', 'SECC.coded', 'SECC.xy', 
+                 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH'
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.

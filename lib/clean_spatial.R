@@ -384,8 +384,8 @@ for (i in 1:nrow(Patch.d)) {
 ## SECC.xy <- PlotC.xy
 SECC.xy <- within(SECC.base, 
                   {
-                    my  <- NA        # Y, metres UTM North
-                    mx  <- NA        # X, metres UTM East
+                    yN  <- NA        # Y, metres UTM North
+                    xE  <- NA        # X, metres UTM East
                   }
 )
 
@@ -396,8 +396,8 @@ for (i in 1:nrow(SECC.xy)) {
   PlotCoords <- PlotC.xy[PlotC.xy$Plot==PlotString, ]
   PatchRow   <- which(Patch.d$SampleID == SECC.xy[i, "SampleID"])
   PatchCoord <- Patch.d[PatchRow, ]
-  SECC.xy[i, "mx"] <- PlotCoords$mx + PatchCoord$dx
-  SECC.xy[i, "my"] <- PlotCoords$my + PatchCoord$dy
+  SECC.xy[i, "xE"] <- PlotCoords$mx + PatchCoord$dx
+  SECC.xy[i, "yN"] <- PlotCoords$my + PatchCoord$dy
 }
 
 
@@ -409,12 +409,12 @@ for (i in 1:nrow(SECC.xy)) {
 cat('    - Assigning Attributes to Spatial Data.\n')
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.xy, "SECC columns") <- c('mx', 'my')
-attr(SECC.xy, "labels") <- list("mx" = "UTM East",
-                                "my" = "UTM North"
+attr(SECC.xy, "SECC columns") <- c('xE', 'yN')
+attr(SECC.xy, "labels") <- list("xE" = "UTM East",
+                                "yN" = "UTM North"
                                 )
-attr(SECC.xy, "units")  <- list("mx" = quote("m"),
-                                "my" = quote("m")
+attr(SECC.xy, "units")  <- list("xE" = quote("m"),
+                                "yN" = quote("m")
                                 )
 row.names(SECC.xy) <- SECC.xy$SampleID
 
@@ -450,12 +450,12 @@ if (FALSE) {
        )
   text(PlotC.xy$mx, PlotC.xy$my, labels=PlotC.xy$Plot, cex=0.1)
 
-  plot(SECC.xy$mx, SECC.xy$my, asp=1, type="n",
-       xlab = attr(SECC.xy, "labels")$mx,
-       ylab = attr(SECC.xy, "labels")$my,
+  plot(SECC.xy$xE, SECC.xy$yN, asp=1, type="n",
+       xlab = attr(SECC.xy, "labels")$xE,
+       ylab = attr(SECC.xy, "labels")$yN,
        main = "Sample Patch positions"
        )
-  text(SECC.xy$mx, SECC.xy$my, labels=SECC.xy$SampleID, cex=0.005)
+  text(SECC.xy$xE, SECC.xy$yN, labels=SECC.xy$SampleID, cex=0.005)
 }
 
 
@@ -473,6 +473,7 @@ write.csv(format(SECC.xy, digits = 3, nsmall=3),
 ## Housekeeping
 ##================================================
 cat('    - Cleaning up after Spatial Calculations.\n')
+## SECC_env.xy <- SECC.xy                 # rename for rest of loading script
 ## Remove old objects from memory
 New.Objects <- setdiff(ls(), Objects.ls)
 rm.objects <- setdiff(New.Objects, 'SECC.xy')
