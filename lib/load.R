@@ -239,12 +239,8 @@ if (FALSE) {  # do not run when source()'d
 # + [Other]
 cat('- Saving data & cleaning up.\n')
 
-<<<<<<< HEAD
-Load.export <- c( 'SECC', 'SECC.coded', 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH' )
-=======
 Load.export <- c('SECC', 'SECC.coded', 'SECC.xy', 
                  'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH'
->>>>>>> refs/heads/master
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
