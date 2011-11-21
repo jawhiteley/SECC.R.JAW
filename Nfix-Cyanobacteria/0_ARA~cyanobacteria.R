@@ -48,6 +48,16 @@ source('./Nfix-Cyanobacteria/2_ARA-cb_Explore.R')
 ################################################################
 ## Goal: Identify which variables have most relative importance,
 ##       and identify any interactions with experimental treatments.
+## Challenges:
+## - Complex Model: 7 explanatory variables!
+## - Fixed X violation: all explanatory variables were measured, with associated error
+## - Violations of Independence: 
+##   - plots are arranged in a nested (multilevel) design, in a field experiment
+##     with potential spatial patterns in residuals, etc.
+##   - Patterns in Residuals vs. Predicted values.
+## - Low replication: 8 replications of each combination of experimental treatments, each from a separate Block
+## - Violations of Heterogeneity: error variance differs across Blocks, Chambers, H2O, and possibly other explanatory variables
+## - Violations of Normality: the more interaction terms are included, the less normal the residuals become.
 ##==============================================================
 ## Methods & Approaches to use
 ##==============================================================

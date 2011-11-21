@@ -1,25 +1,32 @@
-- Regressions
-  - ARA vs. Cyanobacteria - GLM(M)
+- Regressions: ARA vs. Cyanobacteria - GLM(M)
+  - GLMM: What's the best (linear) model?
+  - GAMM: check for non-linearity?
+  - Zero-inflated regression?
+    - separate out zeros from non-zero data in 2-stage model.
+  - Quantile Regression
+    - Crawley R book
+    - nonparametric: test for slope of (upper) bound, rather than explaining full variation
+
+- Things to try to improve Regression models?
   + Include H2O
     ~ as a covariate?
     + as another explanatory variable
     - partial regression (after removing effects of moisture?)
     ~ quadratic term (is the relationship unimodal?  P-value actually smaller than linear term)
-  - aggregate patches together ('regional / metacommunity' scale)
-    - one less factor (position)
-    - less noise in Ambient treatments?
-    - more unexplained noise in Chambers (Inner vs. Outer)?
+  - Include Block as a fixed effect, rather than random effect?
+    - If there is an effect, we should know about it and be able to look at possible interactions.
+    - This does not preclude allowing variances to change across Blocks, or other LMM extensions.
+  ~ Separate Analyses for each Time point.
   + Combine Chamber & Position into 'Climate' pseudo-factor
     + fewer main effects & interactions
     - Nesting not as clear
   + Spatial autocorrelation
     - improves the AIC, but not much effect on residuals
     - Variogram shows overall decline: what does this even mean?
-  - Zero-inflated regression?
-    - separate out zeros from non-zero data in 2-stage model.
-  - Quantile Regression
-    - Crawley R book
-    - nonparametric: test for slope of (upper) bound, rather than explaining full variation
+  X aggregate patches together ('regional / metacommunity' scale)
+    - one less factor (position)
+    - less noise in Ambient treatments?
+    - more unexplained noise in Chambers (Inner vs. Outer)?
   - Include only Stigonema (or Nostoc) in analysis & see if it makes a difference
     - can individual species by included as explanatory variables as well as the total, to compare relative importance?
   - Bootstrapping to overcome "Fixed X" violation?
