@@ -29,7 +29,7 @@ if (FALSE) {  # do not run automatically
 ################################################################
 ## Initialize (clear memory), load & process data, load functions, etc.
 ## Configure analysis & run-time options
-source('1_ARA-cb_setup.R')
+source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
 
 
 
@@ -38,7 +38,7 @@ source('1_ARA-cb_setup.R')
 ## EXPLORE: PLOTS
 ################################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
-source('2_ARA-cb_Explore.R')
+source('./Nfix-Cyanobacteria/2_ARA-cb_Explore.R')
 
 
 
@@ -54,7 +54,7 @@ source('2_ARA-cb_Explore.R')
 ## *GLMM: fit model using Cells, H2O, and experimental treatments
 ##  - account for nesting of fixed factors?  How??!
 ##  - Include spatial autocorrelation instead?
-source('3_ARA~cb_Model.R')
+source('./Nfix-Cyanobacteria/3_ARA~cb_Model.R')
 
 ##  - Mantel Test: Is N-fixation similarity related to spatial distance?
 ##    ~ Partial Mantel Test: Effects of treatment groups on response after removing effect of distance

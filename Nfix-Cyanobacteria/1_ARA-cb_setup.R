@@ -135,6 +135,12 @@ Save.end      <- paste("\n",
 ## filter & clean SECC data frame.
 SECC.use <- SECCclean(SECC, Time.use, Chamber.use, Frag.use, Position.use)
 
+## Merge in spatial coordinates, and retrieve attributes
+SECC.use <- merge(SECC.use, SECC.xy[, c("SampleID", "xE", "yN")], 
+                  by="SampleID", all.x=TRUE, all.y=FALSE, sort=TRUE)
+attr(SECC.use, "labels") <- attr(SECC, "labels")
+attr(SECC.use, "units" ) <- attr(SECC, "units" )
+
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
 ## aggregate 'other' patch Positions?
 ##   unnecessary: only 'inner' & 'outer' included.
@@ -158,6 +164,9 @@ SECCa <- within( SECCa, {
                 X.trans <- X.log  # convenience
                 Climate <- factor( paste(Position, Chamber) ) # psuedo-factor to simplify modelling: fewer interactions to deal with.
 })
+
+
+
 
 ################################################################
 ## CHECK DATA

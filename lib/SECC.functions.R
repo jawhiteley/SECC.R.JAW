@@ -171,11 +171,6 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
     par(op)
   }
 
-  ## Residuals ##
-  if (resType=="r" | resType=="response")   RE.lab <- "Raw Residuals"
-  if (resType=="p" | resType=="pearson")    RE.lab <- "Standardized Residuals"
-  if (resType=="n" | resType=="normalized") RE.lab <- "Normalized Residuals"
-  RE <- resid(Y.model, type=resType)   # c("response", "pearson", "normalized")
   if (FALSE) {                         # type="p" or type="normalized"?
     ## type = "normalized" residuals 
     ##  Zuur et al. 2009 use this for 'standardized' residuals, but it actually does something more complicated.  see ?residuals.lme
@@ -185,6 +180,12 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
     ## see also rstudent (studentized) and rstandard (standardized) residuals.
     ## Zuur et al. use stdres() & studres() from the MASS library - what's the difference?
   }
+
+  ## Residuals ##
+  if (resType=="r" | resType=="response")   RE.lab <- "Raw Residuals"
+  if (resType=="p" | resType=="pearson")    RE.lab <- "Standardized Residuals"
+  if (resType=="n" | resType=="normalized") RE.lab <- "Normalized Residuals"
+  RE <- resid(Y.model, type=resType)   # c("response", "pearson", "normalized")
 
   ## Plot REsiduals: see Zuur et al. 2007, pg. 131-133
   ## REsiduals: Normal distribution?
@@ -218,7 +219,7 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
   }
 
   ## Global Validation of Linear Model Assumptions (gvlma package)
-  if ("lm" %in% class(Y.model)) {
+  if (FALSE & ( "lm" %in% class(Y.model) )) {
     require(gvlma)                         # diagnostic plots
     validation <- gvlma(Y.model)
     plot(validation)

@@ -226,22 +226,35 @@ summary(Y.model)
 
 
 ################################################################
-## LMM - Hierarchical / Multilevel Mixed Model               **
+## LMM - Hierarchical / Multilevel Mixed Model                **
 ################################################################
+## Control options for lme
+## - the default optimizer since R 2.2.x is 'nlminb', which sometimes causes false convergence errors.  'optim' sometimes avoids the issue, but may change results?
+##   <http://r.789695.n4.nabble.com/unexpected-quot-false-convergence-quot-td790625.html>
+## - adding more iterations allows for convergence for complex models, but takes longer.
+## - returnObject=TRUE may also avoid false convergence errors
+##   <http://r.789695.n4.nabble.com/quot-False-convergence-quot-in-LME-td860675.html>
+lmd <- lmeControl()                    # save defaults
+lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
+
 ##==============================================================
 ## Model Fitting
 ##==============================================================
+## fixed effects only for assessment (How much variation is explained?
+Y.lm <- lm( Y.fixed , data=SECCa)
+summary(Y.lm)
+Y.lm <- lm( Y.trans ~ X.trans + H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
+summary(Y.lm)
+
 ## Using a mixed-effects model to account for treatments of different sizes? 
 ##  Block / Chamber / Frag / Position
 Y.fm <- gls( Y.fixed, data=SECCa, method="REML") # fixed effects only for comparison
-lmd <- lmeControl()                    # save defaults
-lmc <- lmeControl(niterEM = 5000, msMaxIter = 1000) # takes a while to converge...
 Y.rim  <- lme(Y.fixed, random=Y.Ri,  data=SECCa, control=lmd, method="REML")
 ## SLOW! :(
 ## more complex models take a few minutes (or hours) to fit.  Use with discretion.
 Y.rism <- lme(Y.fixed, random=Y.Ris, data=SECCa, control=lmc, method="REML")
 ## Allow different error variances within treatment groups (see Zuur et al. 2009, pg. 188)
-## too many groups causes lme errors: "false convergence (8)"
+##   too many groups causes lme errors: "false convergence (8)"; see notes on lmeControl, above
 ## Nesting causes Error in getGroups.data.frame(...): Invalid formula for groups
 Y.rie  <- lme(Y.fixed, random=Y.Ri,  
               weights=varIdent(form=~ 1 | Block * Time), # Block * Time?
@@ -308,24 +321,34 @@ Y.mainMM <- lme(Y.main, data = SECCa, random = Y.Ri, method="REML")
 Y.mainML <- update(Y.mainMM, method="ML")
 
 
+## Spatial autocorrelation?
+Y.ce <- update(Y.fm, correlation = corExp(form=~ xE + yN, nugget = TRUE) )
+Y.cg <- update(Y.fm, correlation = corGaus(form=~ xE + yN, nugget = TRUE) )
+Y.cs <- update(Y.fm, correlation = corSpher(form=~ xE + yN, nugget = TRUE) )
+## Y.cl <- update(Y.fm, correlation = corLin(form=~ xE + yN, nugget = TRUE) )
+
+
 
 
 ##==============================================================
 ## MODEL SELECTION
 ##==============================================================
 ## RANDOM structure
+anova(Y.fm, Y.ce, Y.cg, Y.cs)          # does spatial autocorrelation improve the model?
 anova(Y.fm, Y.rim)                     # do random effects improve the model?
 anova(Y.fm, Y.rism)                    # do random effects improve the model?
 anova(Y.fm, Y.rie)                     # do random effects improve the model?
 anova(Y.fm, Y.rise)                    # do random effects improve the model?
-anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise)    # do we need random slopes or error terms?
-anova(Y.rieN, Y.rie, Y.rim)                   # do we need nested error terms?
+anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise) # do we need random slopes or error terms?
+anova(Y.rieN, Y.rie, Y.rim)                 # do we need nested error terms?
 
 Y.mm <- Y.rim                          # Optimal random structure
+Y.mm <- update(Y.rim, correlation = corExp(form=~ xE + yN, nugget = TRUE) ) # Optimal random structure
 ## The biggest improvement seems to come from random intercepts across Blocks.
 ## However, a model with only this random effect shows major heterogeneity in the residuals.
 ## I may need other random factors to maintain a valid model fit.
 ## Some models with different error structures can't be refit with ML :(
+##   despite having lower AICs (e.g Y.rie)
 
 ## optimize FIXED factors
 if (FALSE) {
@@ -334,7 +357,7 @@ if (FALSE) {
                  weights=varIdent(form=~ 1 | Block),
                  data=SECCa, control=lmc, method="ML")
 }
-Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models can't be :(
+Y.ml  <- update(Y.mm, method="ML")     # re-fit with ML; some models produce errors :(
 
 drop1(Y.ml)                            # not encouraging
 ## Y.step <- step(Y.ml)                # stepwise back & forward model selection?  Not for lme
@@ -467,7 +490,9 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
+diagnostics(Y.lm, more=TRUE)           # Simple linear model, with a few interactions
 diagnostics(Y.fm)                      # No random effects
+
 diagnostics(Y.rim)                     # Random Intercept
 diagnostics(Y.rism)                    # Random Intercept + slope
 diagnostics(Y.rise)                    # Random Intercept + slope
@@ -478,13 +503,37 @@ diagnostics(Y.mainMM)                  # Main effects only: tend to violate fewe
 diagnostics(Y.m1.1.1)                  # Main effects + interactions: better or worse?
 
 Y.model <- Y.mm
-diagnostics(Y.model, resType="normalized", more=TRUE) # full diagnostics, just to be sure
+RE <- diagnostics(Y.model, resType="normalized", more=TRUE) # full diagnostics, just to be sure
 
 ## A Model with Main Effects only has the most valid fit (despite a low AIC): 
 ## Normally-distributed residuals, low heterogeneity (not perfect, though)
 ## BUT, strong patterns in the residuals vs. fitted values (negative trend)
 ## Models with random terms tend to have better AICs, but also violate more assumptions, especially Normality.
 ## Allowing different variances per Block or Time reduces patterns in the residuals, but is also highly non-Normal, and there is still heterogeneity in the residuals across H2O
+
+## Check for spatial patterns in residuals?
+library (gstat)
+RE.df <- data.frame(RE=resid(Y.model, type="normalized"), x=SECCa$xE, y=SECCa$yN) # I hope the order is the same!
+coordinates(RE.df) <- c('x', 'y')
+Y.bubble <- bubble(RE.df, "RE", col=c("black", "grey"), # cex=0.1,
+                   main = attr(RE, "label"),
+                   xlab = attr(SECC.xy, "labels")$xE,
+                   ylab = attr(SECC.xy, "labels")$yN)
+print(Y.bubble)                        # Evidence of spatial patterns in residuals?
+## A little hard to tell how prominent the spatial patterns are.
+## Patches are so close together, it's difficult to separate the large layered bubbles.
+## This proximity may be more justification for including spatial autocorrelation, however.
+## Variogram (Zuur et al. 2009 Ch. 7.2, pg. 167-169)
+Y.vario <- variogram(RE ~ 1, RE.df)
+plot(Y.vario)
+Y.variogls <- Variogram(Y.fm, form=~ xE + yN,
+                        robust=TRUE, maxDist=200,
+                        resType="pearson")
+plot(Y.variogls, smooth=TRUE)
+Y.varioMM <- Variogram(Y.model, form=~ xE + yN,
+                        robust=TRUE, maxDist=200,
+                        resType="pearson")
+plot(Y.varioMM, smooth=TRUE)
 
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)
@@ -512,7 +561,7 @@ summary(Y.model)
 ## - http://r.789695.n4.nabble.com/extract-variance-components-td866971.html
 ## ?VarCorr
 ## ?getVarCov
-
+Y.varcor <- VarCorr(Y.model)           # random components only :(
 
 
 
@@ -543,12 +592,16 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.f
 if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
 
 ## generate grid to add predicted values to (X-values in all combinations of factors).
-Y.pred <- expand.grid(Chamber  = levels(SECCa$Chamber) , 
+## - watch length.out: if it's too long, R will choke.
+Y.pred <- expand.grid(Block    = levels(SECCa$Block) , 
+                      Time     = levels(SECCa$Time) , 
+                      Chamber  = levels(SECCa$Chamber) , 
                       Frag     = levels(SECCa$Frag), 
                       Position = levels(SECCa$Position), 
-                      X=seq(0, max(SECCa$X), length.out=100 ) 
+                      X.trans  =seq(0, max(SECCa$X.trans), length.out=20 ),
+                      H2O      =seq(0, max(SECCa$H2O), length.out=20 ) 
                       )
-Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdata must have same explanatory variable name for predict to work.
+Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdata must have same explanatory variable names for predict to work.
 
 if (FALSE) {
   pred.Chamber <- expand.grid(Chamber = levels(SECCa$Chamber) , 
@@ -597,7 +650,7 @@ SECCa <- within( SECCa,{
 
 par(mfrow=c(1,1))
 pred.Y <- with( Y.pred, 
-               aggregate(cbind(predicted), list(Chamber = Chamber, X = X), mean)
+               aggregate(cbind(predicted), list(Chamber = Chamber, X = X.trans), mean)
 )  # I should be getting direct predictions, not means of predictions. *****
 with( SECCa,{
 	# pred | augpred | ?
@@ -621,7 +674,7 @@ with( SECCa,{
 ##==============================================================
 ## Plot fitted on observed, by factor?
 ##==============================================================
-
+library(lattice)
 ## lattice panels
 print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
               pch = SECCa$pt, col = SECCa$colr, 
@@ -648,49 +701,4 @@ print( xyplot( Y ~ X | Frag * Position , data=SECCa,
 
 
 
-if (FALSE) {
-  ## Coplots with linear fits (from Zuur et al. 2007 Chapter 22 R code)
-  ## individual lm's within each panel.  Not exactly what I want.
-  coplot( Y ~ X | Frag * Position, data=SECCa, 
-         pch=SECCa$pt, col=SECCa$colr, # , bg=Chamber.map$bg
-         panel = panel.lines2
-         )
-
-  ## Plotting: Observed and Fitted from GLMM - from Richard & Zofia's GLMM workshop
-  df <- coef( lmList(Y ~ X | Chamber * Position, data=SECCa) )
-  cc1 <- as.data.frame(coef(Y.model)$Y)
-  names(cc1) <- c("A", "B")
-  df <- cbind(df, cc1)
-  ff <- fixef(Y.model)
-
-  print( xyplot( Y ~ X | Chamber * Position, data = SECCa, 
-                aspect = "xy", layout = c(4,3),
-                type = c("g", "p", "r"), coef.list = df[,3:4],
-                panel = function(..., coef.list) {
-                  panel.xyplot(...)
-                  panel.abline(as.numeric( coef.list[packet.number(),] ), 
-                               col.line = trellis.par.get("superpose.line")$col[2],
-                               lty = trellis.par.get("superpose.line")$lty[2]
-                               )
-                  panel.abline(fixef(Y.model), 
-                               col.line = trellis.par.get("superpose.line")$col[4],
-                               lty = trellis.par.get("superpose.line")$lty[4]
-                               )
-                },
-                index.cond = function(x,y) coef(lm(y ~ x))[1],
-                xlab = X.plotlab,
-                ylab = Y.plotlab,
-                key = list(space = "top", columns = 3,
-                  text = list(c("Within-subject", "Mixed model", "Population")),
-                  lines = list(col = trellis.par.get("superpose.line")$col[c(2:1,4)],
-                  lty = trellis.par.get("superpose.line")$lty[c(2:1,4)]
-                  ))
-                )
-  )
-}
-
-
 if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
-
-
-

@@ -1,34 +1,35 @@
 - Regressions
   - ARA vs. Cyanobacteria - GLM(M)
-  - split script into different approaches
-  - Include H2O
-    - as a covariate?
-    - as another explanatory variable
+  + Include H2O
+    ~ as a covariate?
+    + as another explanatory variable
     - partial regression (after removing effects of moisture?)
-    ~ quadrat term (is the relationship unimodal?  P-value actually smaller than linear term)
+    ~ quadratic term (is the relationship unimodal?  P-value actually smaller than linear term)
   - aggregate patches together ('regional / metacommunity' scale)
     - one less factor (position)
     - less noise in Ambient treatments?
     - more unexplained noise in Chambers (Inner vs. Outer)?
+  + Combine Chamber & Position into 'Climate' pseudo-factor
+    + fewer main effects & interactions
+    - Nesting not as clear
+  + Spatial autocorrelation
+    - improves the AIC, but not much effect on residuals
+    - Variogram shows overall decline: what does this even mean?
+  - Zero-inflated regression?
+    - separate out zeros from non-zero data in 2-stage model.
   - Quantile Regression
     - Crawley R book
     - nonparametric: test for slope of (upper) bound, rather than explaining full variation
-  - Zero-inflated regression?
-    - separate out zeros from non-zero data in 2-stage model.
   - Include only Stigonema (or Nostoc) in analysis & see if it makes a difference
     - can individual species by included as explanatory variables as well as the total, to compare relative importance?
+  - Bootstrapping to overcome "Fixed X" violation?
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
 
-- explore ARA ~ cells in survey
-- explore ARA ~ cells in transect
-
 - Load    Moss Growth Data
 - Analyze Moss Growth Data (repeated measures in time)
-
-X Analyze Decomposition Data
 
 ~ Analyze Fauna Data
 
@@ -40,7 +41,8 @@ X Analyze Decomposition Data
 
 
 - investigate multcomp package for multiple comparisons
-- investigate gplots package for plotmeans function? (see Quick-R).
+X investigate gplots package for plotmeans function? (see Quick-R).
+  - just use ggplot2
 
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
 
