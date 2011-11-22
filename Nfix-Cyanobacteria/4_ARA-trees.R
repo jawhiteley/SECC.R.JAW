@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression trees:
 ### Acetylene Reduction Assay (ARA: N-fixation)
-### vs. cyanobacteria density
+### vs. cyanobacteria density (& other explanatory variables)
 ### Jonathan Whiteley     R v2.12     2011-11-05
 ################################################################
 ## INITIALISE
@@ -64,13 +64,13 @@ UseClimateFac <- FALSE                 # appears to make no difference! (equally
 ##==============================================================
 ## Main effects only
 ##  include Block just to see relative importance
-##  can also include Block as an 'offset' variable
+##  can also include Block as an 'offset' variable: offset(Block)
 ##  - not 100% sure what this does, but should model a Block 'effect', without including it in the tree (or calculating parameters).
 ##  - splits do not change, but group means do.
 ##  - The position of the offset variable **does** matter
 ##    - I think it should be first, to account for Blocks *before* any other factors?
-Y.main   <- Y.trans ~ offset(Block) + X.trans + H2O + Time + Chamber + Frag + Position
-Y.mainCl <- Y.trans ~ offset(Block) + X.trans + H2O + Time + Climate + Frag
+Y.main   <- Y.trans ~ Block + X.trans + H2O + Time + Chamber + Frag + Position
+Y.mainCl <- Y.trans ~ Block + X.trans + H2O + Time + Climate + Frag
 
 if (UseClimateFac) {
   Y.main  <- Y.mainCl
@@ -81,6 +81,7 @@ if (UseClimateFac) {
 Y.mainT <- update(Y.main, .~. -Time)   # this changes the order!! puts offset() @ end :(
 Y.mainT <- Y.trans ~ offset(Block) + X.trans + H2O + Chamber + Frag + Position
  
+BlockOffset <- if (length(grep("offset\\(Block\\)", paste(Y.main, collapse=" "))) > 0) TRUE else FALSE
 
 
 ##==============================================================
@@ -104,10 +105,11 @@ ARA.treeD <- rpart(Y.main, data=SECCa) # using default settings; no pruning
 ## Pruning
 if (FALSE) {                           # repeated tree-fitting for 'optimal' size
   ## cptable values are unstable, due to cross-validation process; better to choose a consistent value, based on multiple runs...
+
   cpMinError <- c()                      # empty vector
   cpMin      <- c()                      # empty vector
   for (i in 1:1000) {
-    ThisTree <- rpart(Y.main, data=SECCa, subset=Time==levels(Time)[1], control=rpc)  # no interaction terms
+    ThisTree <- rpart(Y.main, data=SECCa, control=rpc)  # no interaction terms
     ARA.cptable <- ThisTree$cptable             # matrix, not a data.frame!
     ARA.cpMinError <- ARA.cptable[which.min(ARA.cptable[,"xerror"]),"CP"]
     MaxXerror <- mean(ARA.cptable[, "xerror"]) + ARA.cptable[nrow(ARA.cptable),"xstd"]
@@ -117,24 +119,44 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
     cpMin      <- c(cpMin     , ARA.cpMin     ) # less variable over multiple repetitions
   }
 
-                                       # approx. long-term averages:
-  ARA.cp <- mean(cpMin)                # minsplit 20: 0.039  ; minsplit 10: 0.056
-  ARA.cp <- mean(cpMinError)           # minsplit 20: 0.0088 ; minsplit 10: 0.023
+  ARA.cp <- mean(cpMin)
+  ARA.cp <- mean(cpMinError)
+  ## Approx. long-term averages:
+  ## Block as a Factor
+  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.038
+  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.0105
+  ## minsplit 10, t1: cpMin 0.147 ; cpMinError 0.0485
+  ## minsplit 10, t2: cpMin 0.183 ; cpMinError 0.176
+  ## minsplit 10, t3: cpMin 0.113 ; cpMinError 0.038
+  ## Block as an Offset
+  ## cpMin:           minsplit 20: 0.039  ; minsplit 10: 0.056
+  ## cpMinError:      minsplit 20: 0.0088 ; minsplit 10: 0.023
   ## minsplit 10, t1: cpMin 0.17  ; cpMinError 0.085
   ## minsplit 10, t2: cpMin 0.136 ; cpMinError 0.126
   ## minsplit 10, t3: cpMin 0.100 ; cpMinError 0.047
 }
 
-if (minsplit==20) {
-  ARA.cp <- 0.01                       # actual means are a little lower, but the resulting cutoff is effectively the same
+if (BlockOffset) {
+  if (minsplit==20) {
+    ARA.cp <- 0.01                       # actual means are a little lower, but the resulting cutoff is effectively the same
+  } else {
+    ARA.cp <- 0.02                       # 0.02
+  }
+  ARA.treeP  <- prune(ARA.tree , cp=ARA.cp)
+  ARA.treeP1 <- prune(ARA.tree1, cp=0.05) # 0.08 ; but this allows an extra split
+  ARA.treeP2 <- prune(ARA.tree2, cp=0.02) # 0.12 ; strange tree: # splits accelerates rapidly
+  ARA.treeP3 <- prune(ARA.tree3, cp=0.03) # 0.045 ; a couple of extra splits?
 } else {
-  ARA.cp <- 0.02                       # 0.02
+  if (minsplit==20) {
+    ARA.cp <- 0.01                     # actual means are a little lower, but the resulting cutoff is effectively the same
+  } else {
+    ARA.cp <- 0.015                    # reduce smaller branches (over-fitting)
+  }
+  ARA.treeP  <- prune(ARA.tree , cp=ARA.cp)
+  ARA.treeP1 <- prune(ARA.tree1, cp=0.04) # 0.04 ; but this allows an extra split
+  ARA.treeP2 <- prune(ARA.tree2, cp=0.17) # 0.17 ; strange tree: # splits accelerates rapidly
+  ARA.treeP3 <- prune(ARA.tree3, cp=0.04) # 0.04 ; a couple of extra splits?
 }
-ARA.treeP  <- prune(ARA.tree , cp=ARA.cp)
-ARA.treeP1 <- prune(ARA.tree1, cp=0.05) # 0.08 ; but this allows an extra split
-ARA.treeP2 <- prune(ARA.tree2, cp=0.02) # 0.12 ; strange tree: # splits accelerates rapidly
-ARA.treeP3 <- prune(ARA.tree3, cp=0.03) # 0.045 ; a couple of extra splits?
-
 
 if (FALSE) {                           # tree package
   ## using the tree package - pretty much the same, but with minor differences
@@ -220,24 +242,20 @@ if (FALSE) {                           # tree package
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header), 
-				 print(Y.formula),              # model
-				 anova(Y.model),                # model summary
-				 summary(Y.model),              # model summary
-				 cat("\n\n"),                   # for output
-				 cat(Save.end),                 # END OUTPUT #
+				 print(ARA.treeP),                 # model
+				 summary(ARA.treeP),               # model summary
+				 cat("\n\n"),                      # for output
+				 cat(Save.end),                    # END OUTPUT #
 				 file = Save.text
 				)
 }
 
-if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.final) dev.off()
 
 
 
 ################################################################
 ## FINAL GRAPHICS
 ################################################################
-if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
-
 ## I want a HORIZONTAL dendrogram, with criteria ABOVE each branch,
 ##   and mean values & n's BELOW each branch
 ##   Mean values & n's at each terminal leaf
@@ -342,11 +360,14 @@ ARA.tree1.plot <- RegTreePlot.SECC(ARA.treeP1, minsplit) + opts(title = levels(S
 ARA.tree2.plot <- RegTreePlot.SECC(ARA.treeP2, minsplit) + opts(title = levels(SECCa$Time)[2])
 ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(SECCa$Time)[3])
 
-print(ARA.tree.plot)
-print(ARA.tree1.plot)
-print(ARA.tree2.plot)
-print(ARA.tree3.plot)
 
-
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off() # replace with ggsave()
-
+if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) {
+  FileName = sub(".pdf$", ".eps", Save.final)
+  FileName = paste("./graphs/Figure -", Y.col, "- RegTree - 123.eps")
+  ggsave(filename = FileName, plot = ARA.tree.plot )
+} else {
+  print(ARA.tree.plot)
+  print(ARA.tree1.plot)
+  print(ARA.tree2.plot)
+  print(ARA.tree3.plot)
+}
