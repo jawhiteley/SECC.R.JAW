@@ -156,6 +156,23 @@ if (DrawExplorationGraphs) {
   print(ARAcb.panels.log)
 }
 
+## sqrt-transformation on cells?
+ARAcb.sqrt <- qplot(sqrt(X), Y, data = SECCa, log = "y", 
+                    group = Chamber, geom = "point", size = I(3),
+                    colour = Chamber, shape = Chamber,
+                    xlab = bquote(sqrt(.(X.plotlab))),
+                    ylab = Y.plotlab
+                    )
+ARAcb.sqrt <- ARAcb.sqrt + ChamberPts + jaw.ggplot() + TopLegend
+
+ARAcb.time.sqrt   <- ARAcb.sqrt + Time.facets 
+ARAcb.panels.sqrt <- ARAcb.sqrt + All.facets 
+if (DrawExplorationGraphs) {
+  print(ARAcb.sqrt)
+  print(ARAcb.time.sqrt)
+  print(ARAcb.panels.sqrt)
+}
+
 ## H2O plots
 ARA.H2O <- qplot(H2O, Y, data = SECCa, 
                     group = Chamber, geom = "point", size = I(3),
