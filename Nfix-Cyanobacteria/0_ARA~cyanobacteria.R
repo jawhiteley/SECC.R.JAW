@@ -58,6 +58,9 @@ source('./Nfix-Cyanobacteria/2_ARA-cb_Explore.R')
 ## - Low replication: 8 replications of each combination of experimental treatments, each from a separate Block
 ## - Violations of Heterogeneity: error variance differs across Blocks, Chambers, H2O, and possibly other explanatory variables
 ## - Violations of Normality: the more interaction terms are included, the less normal the residuals become.
+## - Correlations: among explantory variables (Cells & H2O)?
+##   - Experimental treatments are orthogonal
+##   - ANOVA revealed virtually no patterns in Cells vs. experimental treatments or H2O.
 ##==============================================================
 ## Methods & Approaches to use
 ##==============================================================

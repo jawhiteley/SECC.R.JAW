@@ -13,7 +13,7 @@ if (FALSE) {  # do not run automatically
   getwd()  # Check that we're in the right place
 
   ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-  source('1_ARA-cb_setup.R')
+  source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
 }
 
 ## library(lattice)    # ggplot2 with faceting is easier!
@@ -65,9 +65,10 @@ if (DrawExplorationGraphs) {
   pairplot(SECCa[, c('Y', 'Y.log', 'X', 'X.log', 'H2O', 'Time', 'Chamber', 'Frag', 'Position')],
            labels=c(Y.col, paste("log(", Y.col, ")"), 
                     X.col, paste("log(", X.col, ")"), "H2O"
-                    , "Time", "Chamber", "Frag", "Position"
-                    )
+                    , "Block", "Time", "Chamber", "Frag", "Position")
           )
+  ## Moisture by Block?
+  pairplot(SECCa[, c('H2O', 'Block')])
 
   ## Cleveland Dotplots (Zuur et al. 2009)
   Dotplot.y <- "Order of observations"
@@ -119,7 +120,24 @@ if (DrawExplorationGraphs) {
   print(ARAcb.panels)
 }
 
-## log-log looks encouraging
+## log-y may be the best linear model (according to AIC), but essentially implies an exponential relationship (!)
+ARAcb.logy <- qplot(X, Y, data = SECCa, log = "y", 
+                    group = Chamber, geom = "point", size = I(3),
+                    colour = Chamber, shape = Chamber,
+                    xlab = X.plotlab,
+                    ylab = Y.plotlab
+                    )
+ARAcb.logy <- ARAcb.logy + ChamberPts + jaw.ggplot() + TopLegend
+
+ARAcb.time.logy   <- ARAcb.logy + Time.facets 
+ARAcb.panels.logy <- ARAcb.logy + All.facets 
+if (DrawExplorationGraphs) {
+  print(ARAcb.logy)
+  print(ARAcb.time.logy)
+  print(ARAcb.panels.logy)
+}
+
+## log-log looks encouraging, and may be theoretically ($ Biologically) justified.
 ##  Why can't I do this by adding + coord_trans(x = "log", y = "log") ??
 ##  (I get an error when I do this to any of the above plots, even without faceting.
 ARAcb.log <- qplot(X, Y, data = SECCa, log = "xy", 

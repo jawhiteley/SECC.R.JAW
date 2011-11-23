@@ -96,19 +96,13 @@ UseClimateFac <- FALSE
 ## Include H2O^2 to test for unimodal relationship?
 ## Including Time as a factor?
 ## - It might be better to analyse each time period separately, and avoid the higher-order interactions that I know exist.
-if ( length(Time.use) > 1 ) {
-  Y.fixed <- Y.trans ~ X.trans * H2O * Time * Chamber * Frag * Position
-  Y.fixCl <- Y.trans ~ X.trans * H2O * Time * Climate * Frag
-  ## Main effects only
-  Y.main  <- Y.trans ~ X.trans + H2O + Time + Chamber + Frag + Position
-  Y.mainCl<- Y.trans ~ X.trans + H2O + Time + Climate + Frag
-} else {
-  Y.fixed <- Y.trans ~ X.trans * H2O * Chamber * Frag * Position
-  Y.fixCl <- Y.trans ~ X.trans * H2O * Climate * Frag
-  ## Main effects only
-  Y.main  <- Y.trans ~ X.trans + H2O + Chamber + Frag + Position
-  Y.mainCl<- Y.trans ~ X.trans + H2O + Climate + Frag
-}
+if ( length(Time.use) > 1 ) { }
+
+Y.fixed <- Y.trans ~ X.trans * H2O * Time * Chamber * Frag * Position
+Y.fixCl <- Y.trans ~ X.trans * H2O * Time * Climate * Frag
+## Main effects only
+Y.main  <- Y.trans ~ X.trans + H2O + Time + Chamber + Frag + Position
+Y.mainCl<- Y.trans ~ X.trans + H2O + Time + Climate + Frag
 if (UseClimateFac) {
   Y.fixed <- Y.fixCl
   Y.main  <- Y.mainCl
@@ -240,11 +234,12 @@ lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
 ##==============================================================
 ## Model Fitting
 ##==============================================================
-## fixed effects only for assessment (How much variation is explained?
-Y.lm <- lm( Y.fixed , data=SECCa)
+## Main effects only for assessment (How much variation is explained?) - John Connolly
+Y.lmain <- lm( update(Y.main, .~. + I(H2O^2) + Block) , data=SECCa)
+summary(Y.lmain)
+Y.lm <- lm( Y.trans ~ X.trans + H2O + I(H2O^2) + Block + Time * Chamber * Frag * Position , data=SECCa)
 summary(Y.lm)
-Y.lm <- lm( Y.trans ~ X.trans + H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
-summary(Y.lm)
+## including a quadratic terms for H2O is significant, but reduces the significance of Chamber
 
 ## Using a mixed-effects model to account for treatments of different sizes? 
 ##  Block / Chamber / Frag / Position
@@ -274,6 +269,15 @@ if (UseClimateFac) {
                  correlation=corAR1(form = ~ 1 | Block/Time/Chamber/Frag),
                  data=SECCa, control=lmc, method="REML")
 }
+## Error varying by H2O (depending on lmeControl settings)
+##   minimal difference between VarPower & VarConstPower
+Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
+               weights=varConstPower(form = ~ H2O),
+               data=SECCa, control=lmc, method="REML")
+Y.riceH <- lme(Y.fixed, random=Y.Ri,  
+               weights=varComb(varIdent(form=~ 1 | Time),
+                               varConstPower(form=~ H2O)),
+               data=SECCa, control=lmc, method="REML")
 
 if (FALSE) {                           # these attempts are not working :(
   ## Error in getGroups.data.frame(data, form, level = length(splitFormula(grpForm,  : Invalid formula for groups
@@ -287,27 +291,22 @@ if (FALSE) {                           # these attempts are not working :(
   ## I want to use varConstPower (variance covariate with values of 0), but that produces an error (false convergence) :(
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varConstPower(form = ~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
-
+                 data=SECCa, control=lmc, method="REML")
   ## varFixed gives no errors, but takes >12 hours to fit (if at all)
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varFixed(~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCa, control=lmc, method="REML")
   ## varPower works, but not for X.trans, which has 0's!   :/
   Y.rieXP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varPower(form = ~ X.trans),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCa, control=lmc, method="REML")
   Y.rieHP <- lme(Y.fixed, random=Y.Ri,  
                  weights=varPower(form = ~ H2O),
-                 data=SECCa, control=lmd, method="REML")
+                 data=SECCa, control=lmc, method="REML")
 
   Y.riceX <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
                                  varConstPower(form=~ X.trans)),
-                 data=SECCa, control=lmc, method="REML")
-  Y.riceH <- lme(Y.fixed, random=Y.Ri,  
-                 weights=varComb(varIdent(form=~ 1 | Block),
-                                 varConstPower(form=~ H2O)),
                  data=SECCa, control=lmc, method="REML")
   Y.rice  <- lme(Y.fixed, random=Y.Ri,  
                  weights=varComb(varIdent(form=~ 1 | Block),
@@ -341,9 +340,15 @@ anova(Y.fm, Y.rie)                     # do random effects improve the model?
 anova(Y.fm, Y.rise)                    # do random effects improve the model?
 anova(Y.rieN, Y.rie, Y.rim, Y.rism, Y.rise) # do we need random slopes or error terms?
 anova(Y.rieN, Y.rie, Y.rim)                 # do we need nested error terms?
+anova(Y.rim, Y.rieHP)                  # allow error variance to change with H2O?
+anova(Y.rim, Y.riceH, Y.rieHP)         # allow error variance to change with H2O?
+anova(Y.rim, Y.rie, Y.riceH)           # compare different random structures
+anova(Y.ce, Y.rim, Y.riceH)            # compare different random structures
 
-Y.mm <- Y.rim                          # Optimal random structure
+Y.mm <- Y.rim                          # Optimal random structure (suitable for model selection)
+Y.mm <- Y.riceH                        # Optimal random structure (lowest AIC)
 Y.mm <- update(Y.rim, correlation = corExp(form=~ xE + yN, nugget = TRUE) ) # Optimal random structure
+anova(Y.riceH, Y.mm, Y.ce)
 ## The biggest improvement seems to come from random intercepts across Blocks.
 ## However, a model with only this random effect shows major heterogeneity in the residuals.
 ## I may need other random factors to maintain a valid model fit.
@@ -352,7 +357,7 @@ Y.mm <- update(Y.rim, correlation = corExp(form=~ xE + yN, nugget = TRUE) ) # Op
 
 ## optimize FIXED factors
 if (FALSE) {
-  Y.ml  <- lme(Y.fixed, data=SECCa, random=Y.Ri, method="ML") # re-fit with ML
+  Y.ml  <- lme(Y.fixed, data=SECCa, random=Y.Ri, method="ML", control=lmd) # re-fit with ML
   Y.rieML <- lme(Y.fixed, random=Y.Ri,  
                  weights=varIdent(form=~ 1 | Block),
                  data=SECCa, control=lmc, method="ML")
@@ -490,7 +495,8 @@ if (!UseClimateFac) {                  # All factors, or Climate pseudo-factor
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
-diagnostics(Y.lm, more=TRUE)           # Simple linear model, with a few interactions
+diagnostics(Y.lmain)                   # Main Effects only; no Interactions
+diagnostics(Y.lm)                      # Simple linear model, with a few interactions
 diagnostics(Y.fm)                      # No random effects
 
 diagnostics(Y.rim)                     # Random Intercept
@@ -498,6 +504,8 @@ diagnostics(Y.rism)                    # Random Intercept + slope
 diagnostics(Y.rise)                    # Random Intercept + slope
 diagnostics(Y.rie, resType="n")        # Do more random effects help?
 diagnostics(Y.rieN, resType="n")       # Do more random effects help?
+diagnostics(Y.rieHP, resType="n")      # Do more random effects help?
+diagnostics(Y.riceH, resType="n")      # Do more random effects help?
 diagnostics(Y.mm)                      # Optimal mixed model (after model selection)
 diagnostics(Y.mainMM)                  # Main effects only: tend to violate fewer assumptions :/
 diagnostics(Y.m1.1.1)                  # Main effects + interactions: better or worse?
