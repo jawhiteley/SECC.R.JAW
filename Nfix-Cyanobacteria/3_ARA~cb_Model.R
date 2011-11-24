@@ -21,9 +21,7 @@ if (FALSE) {  # do not run automatically
 ## library(lattice)    # ggplot2 with faceting is easier!
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
-library(rgl)                           # 3D plots
 library(car)                           # diagnostic plots & tools
-library(gvlma)                         # Global Validation of Linear Model Assumptions
 library(nlme)                          # GLMMs (older, but still works)
 ## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
 ## library\(mgcv)   # Additive Modelling, Cross-Validation
