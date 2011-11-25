@@ -69,10 +69,22 @@ source('./Nfix-Cyanobacteria/2_ARA-cb_Explore.R')
 ##  - Include spatial autocorrelation instead?
 source('./Nfix-Cyanobacteria/3_ARA~cb_Model.R')
 
+## Regression trees: higher-order interactions & relative importance
+source('./Nfix-Cyanobacteria/4_ARA-trees.R')
+
 ##  - Mantel Test: Is N-fixation similarity related to spatial distance?
 ##    ~ Partial Mantel Test: Effects of treatment groups on response after removing effect of distance
-## Regression trees: higher-order interactions & relative importance
+
 ## Partial Regression (Legendre & Legendre): Variance Decomposition
+## - What is *pure* effect of cyanobacteria cell density on N-fixation, after removing effects of other variables?
+## - What is the *pure* effect of moisture?
+##   - moisture is highly related to other experimental factors, however
+##     If I partial these out, the effect of moisture will be minimal.
+##   - What would be more relevant is to partial out effect of moisture *before* fitting the experimental factors, to see what their 'pure' effects really are.
+## - Partial out effects of moisture (using GAM) before fitting models with cell density and experimental factors...
+##   - What about possible Cells:H2O interaction?
+
+## Quantile regression: Upper or lower *limits* imposed by explanatory variables, rather than precise values. (regresstion through quantile of 0.5 == linear regression).
 
 ## Subsume Chamber & Position into "Climate" pseudo-treatment?
 ## Time as a fixed factor, or separtae analysis on each Time?

@@ -18,7 +18,6 @@ if (FALSE) {  # do not run automatically
 }
 
 
-## library(lattice)    # ggplot2 with faceting is easier!
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
 
@@ -59,57 +58,116 @@ UseClimateFac <- FALSE
 ##==============================================================
 ## Methods & Approaches to use
 ##==============================================================
-## Start simple and add complexity (i.e. forward model-selection
+## Start simple and add complexity, as necessary or appropriate
 
-
-### Fixed effects: All?  No Replication for all combinations!
-Y.fixed <- Y.trans ~ X.trans * H2O * I(H2O^2) * Block * Time * Chamber * Frag * Position
-Y.fixCl <- Y.trans ~ X.trans * H2O * I(H2O^2) * Block * Time * Climate * Frag
 ## Main effects only
 Y.main  <- Y.trans ~ X.trans + H2O + I(H2O^2) + Block + Time + Chamber + Frag + Position
 Y.mainCl<- Y.trans ~ X.trans + H2O + I(H2O^2) + Block + Time + Climate + Frag
+### Fixed effects: All?  No Replication for all combinations!
+Y.fixed <- Y.trans ~ X.trans * H2O * I(H2O^2) * Block * Time * Chamber * Frag * Position
+Y.fixCl <- Y.trans ~ X.trans * H2O * I(H2O^2) * Block * Time * Climate * Frag
+### Main Effects + Selected Interactions (the most important / significant ones)
+Y.form  <- Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag
+Y.formCl<- Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Climate + Frag
 
 
 
 
 ##==============================================================
-## Model Fitting
+## GAM: Is the relationship linear or not?
+##==============================================================
+## Compare model to GA(M)M to check that a linear fit is the most appropriate?
+## see Zuur et al. (2007, 2009: Appendix)
+library(mgcv)
+ARA.gam <- gam(Y ~ s(X) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
+ARA.gam1 <- gam(Y.log ~ s(X) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
+ARA.loggam <- gam(Y.log ~ s(X.log) + s(H2O) + Block + Time*Chamber*Position * Frag, data=SECCa)
+ARA.loggam1 <- gam(Y.log ~ s(X.log) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
+## It *might* be linear for log(Cells) (X.log; edf = 2.18), but definitely NOT for H2O (edf=4)
+## Frag-interactions are less significant than Block-interactions
+AIC(ARA.gam, ARA.loggam, ARA.loggam1, ARA.gam1)
+anova(ARA.loggam1)
+anova(ARA.gam1)
+## The main non-linear portion for Cells is between 0-values and the rest: non-zero values are rather linear.
+op <- par(mfrow=c(2,2))
+plot(ARA.gam)
+plot(ARA.gam1)
+plot(ARA.loggam1)
+## polynomial for moisture (H2O)?
+ARA.gam2 <- gam(Y.log ~ s(X.log) + s(poly(H2O, 2)) + Block + Time*Chamber*Frag*Position, data=SECCa)
+anova(ARA.gam2)
+## what about sqrt-transforming Cell Density (on a whim)
+ARA.Xsqrt.gam <- gam(Y ~ s(sqrt(X)) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
+ARA.logsqrt.gam <- gam(Y.log ~ s(sqrt(X)) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
+anova(ARA.Xsqrt.gam)
+anova(ARA.logsqrt.gam)
+## Definitely linear for sqrt(Cell Density)!! wtf?
+plot(ARA.logsqrt.gam)
+
+par(op)                                # restore original settings
+
+
+
+##==============================================================
+## Model Fitting: What Transformations do I need?
 ##==============================================================
 ## fixed effects only for assessment (How much variation is explained?)
 Y.lmain <- lm( Y.main , data=SECCa)
 summary(Y.lmain)
+anova(Y.lmain)                          # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
 Y.fmain <- lm( Y.fixed , data=SECCa)   # no replication of all interaction combinations
-anova(Y.fmain)
+anova.full <- anova(Y.fmain)
+anova.full$PropVar <- anova.full[, "Sum Sq"] / sum(anova.full[, "Sum Sq"])
+anova.full <- anova.full[order(anova.full$PropVar, decreasing=TRUE), ] # sort by Prop. Var
+print(sum(anova.full$PropVar))
+print(anova.full)
+
 ## Reasonable model of effects & Interactions for assessment (thanks John Connelly)
 Y.lm <- lm( Y.trans ~ X.trans * H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
-summary(Y.lm)
-## Transformation?
-Y.rawlm <- lm( Y ~ X * H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
-summary(Y.rawlm)
-Y.translm <- lm( Y.trans ~ X * H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
-summary(Y.translm)
-Y.lmtrans <- lm( Y ~ X.trans * H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
-Y.lmsqrt <- lm( Y.log ~ I(sqrt(X)) * H2O + I(H2O^2) + Block + Time * Chamber * Frag * Position , data=SECCa)
+summary(Y.lm)                          # R2 = 0.59
+anova(Y.lm)
+## Frag interactions are not significant.  Let's look at interactions with Blocks instead:
+Y.lm1 <- lm( Y.trans ~ X.trans * H2O + Block * Time * Chamber * Position + Frag , data=SECCa)
+Y.lmH <- lm( Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
+summary(Y.lm1)                         # R2 = 0.75 !!
+summary(Y.lmH)                         # R2 = 0.77 !!
+anova(Y.lmH)                           # ORDER MATTERS! (see Zuur et al. 2009 pg. 540)
+AIC(Y.lm, Y.lm1, Y.lmH)                # Block interactions are a better fit than Frag interactions
 
-AIC(Y.lmain, Y.lm, Y.rawlm, Y.lmtrans, Y.translm, Y.lmsqrt)
-summary(Y.lmain)                       # The best model, according to AIC**
+## Transformation?
+Y.rawlm   <- lm( Y ~ X * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
+summary(Y.rawlm)
+Y.translm <- lm( Y.trans ~ X * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
+summary(Y.translm)                     # better fit than log-log transformation?
+if (F) { ## Transformation via link function in glm? (invalid Y values causes error)
+  Y.logglm <- glm( Y ~ X * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , 
+                  data=SECCa[SECCa$Y>0, ], family=gaussian(link="log"))
+  summary(Y.logglm)
+}
+Y.lmtrans <- lm( Y ~ X.trans * H2O + Block * Time * Chamber * Position + Frag , data=SECCa)
+## incorporating sqrt(Cells), quadratic H2O term, and better interactions ****
+Y.lmsqrt <- lm( Y.log ~ I(sqrt(X)) * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
+
+AIC(Y.lmain, Y.lm, Y.lm1, Y.lmH, Y.rawlm, Y.lmtrans, Y.translm, Y.lmsqrt)
+summary(Y.lmsqrt)                         # The best model, according to AIC**
 ## AIC suggests a log-transformation on only the response (ARA/N-fixation) is a good fit.
 ## However, this implies an *exponential*, rather than saturating log- relationship
 ## between N-fixation and Cell abundance, which we predicted / hypothesised.
-## Granted, the AIC improvement is about 1.7% (905 -> 888), 
-## and the R^2 is only marginally higher (0.609 vs. 0.591)
+## Granted, the AIC improvement is about 1-2% (745 -> 729; 721 -> 729)
+## and the R^2 is only marginally higher (0.769 vs. 0.764)
 ## Both are substantially better than the model with untransformed (response) variables.
 ## It is probably more defensible to use the log-log model, which makes more sense theoretically.
 ## There is so much noise in the data that the marginally better log-Y fit may be spurious or inconsequential.
 ## The model with more interactions seems to be a *poorer* fit than main effects only, 
 ##   according to AIC?  But the R^2 is a little higher (0.59 vs. 0.57)
+## Correction: depends on which interactions are included ;-) (R^2= 0.769 vs. 0.57)
 
-Y.model  <- Y.lmain
+Y.model  <- Y.lmH
 
 
 
 ##==============================================================
-## MODEL SELECTION
+## MODEL SELECTION: Which TERMS do I need in the model?
 ##==============================================================
 ## multi-model averaging and inference with glmulti!
 library(glmulti)                       #  v1.0, april 2011
@@ -118,28 +176,40 @@ library(MASS)
 ## Note: glmulti performs an exhaustive search of all candidate models.  
 ##       2^7 = 128 candidate models (not including interactions). 256 according to glmulti
 ## method="l" (leaps) uses a *much* faster algorithm, but not with factors or interactions :(
-ARA.glmulti1 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=1, fitfunc=lm, 
-                        confsetsize=256, plotty=FALSE, report=FALSE)
+ARA.glmulti1 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=1, fitfunc=lm, marginality = TRUE,
+                        method="h", confsetsize=256, plotty=FALSE, report=FALSE)
 print(ARA.glmulti1)
-ARA.fit <- ARA.glmulti1@objects
 
 ## level=2 for 2-way interactions
 ## 2^(7 + choose(7,2) ) = 268,435,456 candidate models with 2-way interactions!!
-## 416,869,200 according to glmulti
+## 416,869,200 according to glmulti (without marginality); 286,192,513 with marginality.
 ## An exhaustive exploration would take ~ 1 month on my computer.  
-## Try with 'genetic' algorithm to speed things up (method="g").
-## method="d" to print a summary of candidate models (no fitting)
-ARA.glmulti2 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=2, fitfunc=lm, 
-                        method="g", confsetsize=1024, plotty=FALSE, report=TRUE)
+## Try with 'genetic' algorithm to speed things up (method="g"). ~ 30 minutes
+## Best to run 2-4+ replicate genetic algorithms, and take consensus.
+## use method="d" to print a summary of candidate models (no fitting)
+ARA.multi <- list()
+for (i in 1:4) {
+  cat("\n================ glmulti: Genetic Algorithm Run", i, "================\n\n")
+  ARA.multi[[i]] <- glmulti(Y.fixed, data=SECCa, crit=aic, level=2, fitfunc=lm, 
+                            marginality = TRUE, method="g", confsetsize=256, 
+                            plotty=FALSE, report=TRUE)
+}
+ARA.glmulti2 <- consensus(ARA.multi, confsetsize=256)
 print(ARA.glmulti2)
+
+ARA.best2 <- as.formula(summary(ARA.glmulti2)$bestmodel)
+ARA.best2lm <- lm(ARA.best2, data=SECCa)
+summary(ARA.best2lm)
 
 
 getCoef.glmulti <- function(glmObj, minImportance=0) {
   glm.coef <- as.data.frame(coef(glmObj))
+  ## from coef: these are weights of model *coefficients*, NOT *model terms*...
+  ## I think I want weights of model terms (variables, rather than levels of each factor)
   ## ggplot will order the bars by levels of the explanatory factor
-  glm.coef$Variable <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
+  glm.coef$Term <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
   glm.order <- order(glm.coef$Importance, decreasing=TRUE)
-  ## glm.coef$Variable <- factor(glm.coef$Variable, levels=levels(glm.coef$Variable)[glm.order])
+  ## glm.coef$Term <- factor(glm.coef$Term, levels=levels(glm.coef$Term)[glm.order])
   ## Drop terms below the threshold
   glm.minImp <- which(glm.coef$Importance >= minImportance)
   glm.coef <- glm.coef[glm.minImp, ]
@@ -147,12 +217,18 @@ getCoef.glmulti <- function(glmObj, minImportance=0) {
   glm.coef$Emax <- glm.coef$Estimate + glm.coef[, "+/- (alpha=0.05)"]
   glm.coef$Emin <- glm.coef$Estimate - glm.coef[, "+/- (alpha=0.05)"]
   ## Clean up labels
-  levels(glm.coef$Variable) <- gsub("X.trans", "Cells", levels(glm.coef$Variable))
-  levels(glm.coef$Variable) <- gsub("Chamber.*", "Chamber", levels(glm.coef$Variable))
-  levels(glm.coef$Variable) <- gsub("Position.*", "Position", levels(glm.coef$Variable))
-  levels(glm.coef$Variable) <- gsub("Frag(.*)", "Frag(\\1)", levels(glm.coef$Variable))
-  levels(glm.coef$Variable) <- gsub("Time(.*)", "Time(\\1)", levels(glm.coef$Variable))
+  levels(glm.coef$Term) <- gsub("X.trans", attr(SECC, "labels")[X.col], levels(glm.coef$Term))
+  levels(glm.coef$Term) <- gsub("ChamberFull Chamber", "Chamber", levels(glm.coef$Term))
+  levels(glm.coef$Term) <- gsub("PositionOuter", "Position", levels(glm.coef$Term))
+  levels(glm.coef$Term) <- gsub("Frag(.*)", "Frag (\\1)", levels(glm.coef$Term))
+  levels(glm.coef$Term) <- gsub("Time(.*)", "Time (\\1)", levels(glm.coef$Term))
   glm.coef
+}
+if (F) {
+  names(ARA.glmulti2)
+  str(summary(ARA.glmulti2))
+  summary(ARA.glmulti1)$modelweights
+  weightable(ARA.glmulti1)             # models, IC values, and relative weights (for confset)
 }
 
 ARA.coef1 <- getCoef.glmulti(ARA.glmulti1)
@@ -164,13 +240,18 @@ ARA.coef <- ARA.coef1
 
 ## Output graphs
 par(mfrow=c(1,1))
-plot(ARA.glmulti1, type="w")
-barplot(ARA.coef1[, "Importance"], horiz=TRUE, names.arg=ARA.coef1$Variable, las=2) 
+plot(ARA.glmulti1, type="p")           # red line at ~2 IC units above best model: should consider at least all models below this line.
+plot(ARA.glmulti1, type="w")           # red line where cumulative evidence weight = 95%
+## plot(ARA.glmulti1, type="r")           # diagnostic plots (windows only?)
+## sum of relative evidence weights over all models that include each term?
+barplot(ARA.coef1[, "Importance"], horiz=TRUE, names.arg=ARA.coef1$Term, las=2) 
+plot(ARA.glmulti2, type="p")
+plot(ARA.glmulti2, type="w")
 
-## ggplot2 theme settings
+## ggplot2: theme settings
 bar.import <- function(glmObj) {
-  ggplot(glmObj, aes(x=Variable, y=Importance), 
-                          stat="identity", xlab = "Explanatory Variables") +
+  ggplot(glmObj, aes(x=Term, y=Importance), 
+                          stat="identity", xlab = "Model Terms") +
          list(geom_bar(), coord_flip(), scale_y_continuous(expand=c(0,0)),
               opts(panel.border=theme_blank(), axis.line=theme_segment(),
                    plot.title=theme_text(size = 16, face = "bold"),
@@ -180,9 +261,10 @@ bar.import <- function(glmObj) {
 est.confint <- function(glmObj) {
   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
-  ggplot(glmObj, aes(x=Variable, y=Estimate) ) +
-  list(geom_point(), 
-       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.1),
+  ggplot(glmObj, aes(x=Term, y=Estimate) ) +
+  geom_hline(yintercept=0, colour="grey") + 
+  list(geom_point(),
+       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
        coord_flip())
 }
 
@@ -191,35 +273,42 @@ ARA.est1 <-est.confint(ARA.coef1)
 print(ARA.importance1)
 print(ARA.est1)
 
-ARA.importance2 <- bar.import(ARA.coef2[ARA.coef2$Importance>=1, 
-                              c("Variable", "Importance")]) + 
-                              opts(axis.text.y=theme_text(size=5))
-ARA.est2 <-est.confint(ARA.coef2)
+ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ]  #  sharp jump from 0.2->0.3->99
+ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
+ARA.importance2 <- bar.import(ARA.coef2plot) + 
+                              opts(axis.text.y=theme_text(size=8, hjust=1))
+ARA.est2 <-est.confint(ARA.coef2plot) + 
+                              opts(axis.text.y=theme_text(size=8, hjust=1))
 print(ARA.importance2)
 print(ARA.est2)
 
+## Important 2-way interactions:
+## Block:Time
+## Chamber:Time
+## H2O:Cells
+## H2O^2:Cells
+## Block:Cells
+## Block:H2O
+## Block:H2O^2
+## Chamber:Cells
+## H2O^2:Time
+## Position:Time
+
+
+
 
 
 ##==============================================================
-## GAM: Is the relationship linear or not?
+## MODEL FITTING: Final Model Structure with higher interactions?
 ##==============================================================
-## Compare model to GA(M)M to check that a linear fit is the most appropriate?
-## see Zuur et al. (2007, 2009: Appendix)
-library(mgcv)
-ARA.gam <- gam(Y.log ~ s(X.log) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
-anova(ARA.gam)
-ARA.gam1 <- gam(Y.log ~ s(X) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
-anova(ARA.gam1)
-## It *might* be linear for log(Cells) (X.log; edf = 2.18), but definitely NOT for H2O (edf=4)
-## polynomial for moisture (H2O)?
-ARA.gam2 <- gam(Y.log ~ s(X.log) + s(poly(H2O, 2)) + Block + Time*Chamber*Frag*Position, data=SECCa)
-anova(ARA.gam2)
-## what about sqrt-transforming Cell Density (on a whim)
-ARA.Xsqrt.gam <- gam(Y ~ s(sqrt(X)) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
-anova(ARA.Xsqrt.gam)
-ARA.logsqrt.gam <- gam(Y.log ~ s(sqrt(X)) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
-anova(ARA.logsqrt.gam)
-## Definitely linear for sqrt(Cell Density)!!
+## use glmulti output to identify which 2-way interactions are important
+## include relevant higher-order interactions as necessary, and feasible
+Y.formula <- ARA.best2
+Y.model <- Y.lmH
+Y.model <- lm(as.formula(summary(ARA.glmulti2)$bestmodel), data=SECCa)
+Y.model <- ARA.best2lm
+
+## Add mixed effects extensions to avoid violating model assumptions?
 
 
 
@@ -239,8 +328,17 @@ anova(ARA.logsqrt.gam)
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
+diagnostics(Y.lmain)
+diagnostics(Y.lm1)
+diagnostics(Y.lmH)
+diagnostics(Y.lmsqrt)
+diagnostics(ARA.best2lm)
 
 RE <- diagnostics(Y.model, resType="pearson", more=TRUE) # full diagnostics, just to be sure
+op <- par(mfrow=c(2,2))
+plot(Y.model)
+par(op)
+residualPlots(Y.model)                 # car
 
 ## Check for spatial patterns in residuals?
 
@@ -252,8 +350,31 @@ RE <- diagnostics(Y.model, resType="pearson", more=TRUE) # full diagnostics, jus
 ################################################################
 ## ANALYSIS: GET RESULTS
 ################################################################
-anova(Y.model)
+anova(Y.model)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
 summary(Y.model)
+## effects of single-term deletions?
+drop1(Y.model)
+drop1(Y.lmain)
+
+## Partial effects of each variable (Zuur et al. 2009, pg. 400)
+## termplot() only works for main effects, not when interactions are present :(
+## termplot(Y.model, se=T, rug=T, partial.resid=T)
+library(effects)
+plot(allEffects(Y.model), ask=FALSE)   # interesting, but messy
+plot(effect("X.trans", Y.model), ask=FALSE) # Warning: averaged over interactions
+plot(effect("X.trans:H2O", Y.model), ask=FALSE) # ?
+plot(effect("X.trans*H2O*I(H2O^2)", Y.model), ask=FALSE) # ?
+plot(effect("Chamber:X.trans", Y.model), ask=FALSE)
+plot(effect("Block:X.trans", Y.model), ask=FALSE)
+plot(effect("Block:Time", Y.model), ask=FALSE)
+plot(effect("Time*Chamber", Y.model), ask=FALSE)
+plot(effect("I(H2O^2)", Y.model), ask=FALSE) # wtf?
+plot(effect("H2O", Y.model), ask=FALSE) # wtf?
+
+library(car)
+avPlots(Y.model, terms= ~ X.trans * I(H2O^2), ask=FALSE)
+
+## http://intersci.ss.uci.edu/wiki/index.php/R_partial_regression_plots ??
 
 ## intervals(Fitted.Model.Object)   # Approx. Confidence intervals.  see ?intervals
 ## see multcomp package for multiple comparisons (Tukey's HSD on mixed effects model?)
@@ -292,10 +413,14 @@ Y.pred <- expand.grid(Block    = levels(SECCa$Block) ,
                       Chamber  = levels(SECCa$Chamber) , 
                       Frag     = levels(SECCa$Frag), 
                       Position = levels(SECCa$Position), 
-                      X.trans  =seq(0, max(SECCa$X.trans), length.out=20 ),
-                      H2O      =seq(0, max(SECCa$H2O), length.out=20 ) 
+                      X.trans  =seq(0, max(SECCa$X.trans), length.out=10 ),
+                      H2O      =seq(0, max(SECCa$H2O), length.out=10 ) 
                       )
 Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdata must have same explanatory variable names for predict to work.
+Y.pred.terms <- predict(Y.model, type="terms")
+## type=="response" for full predictions (including interactions)
+## type=="terms" for partial predictions (?)
+## with(Y.pred.terms, plot())
 
 
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
@@ -326,52 +451,53 @@ par(mfrow=c(1,1))
 pred.Y <- with( Y.pred, 
                aggregate(cbind(predicted), list(Chamber = Chamber, X = X.trans), mean)
 )  # I should be getting direct predictions, not means of predictions. *****
-with( SECCa,{
 	# pred | augpred | ?
-	plot(X, Y, type="p",
+	plot(SECCa$X.trans, SECCa$Y.trans, type="p",
 		ylab=Y.plotlab, xlab=X.plotlab,
-		pch=pt, col=colr, bg=fill
+		pch=SECCa$pt, col=SECCa$colr, bg=SECCa$fill
         )
-	lines(predicted ~ X, data=subset(pred.Y, Chamber == "Ambient"), 
+	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Ambient"), 
           col = Chamber.map$col[1], 
           lty = Chamber.map$lty[1]
           )
-	lines(predicted ~ X, data=subset(pred.Y, Chamber == "Full Chamber"), 
+	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Full Chamber"), 
           col = as.character(Chamber.map$col[2]), 
           lty = Chamber.map$lty[2]
           )
 	legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
-})
 
 
 
 ##==============================================================
 ## Plot fitted on observed, by factor?
 ##==============================================================
-library(lattice)
-## lattice panels
-print( xyplot( Y ~ X | Frag * Position , data=SECCa, 
-              pch = SECCa$pt, col = SECCa$colr, 
-              xlab = quote(X.plotlab), ylab = quote(Y.plotlab), 
-              panel = function(..., data, subscripts) {
-                panel.xyplot(...)  # regular plot of data points
-                Frag.lvl <- unique(SECCa$Frag[subscripts]) # get current factor levels
-                Pos.lvl  <- unique(SECCa$Position[subscripts])
-                preds    <- Y.pred[which(Y.pred$Frag %in% Frag.lvl 
-                                       & Y.pred$Position %in% Pos.lvl), ]
-##                  browser()
-                for( lvl in levels(preds$Chamber) ) {
-                  preds.lvl <- subset(preds, preds$Chamber == lvl)
-                  panel.xyplot(preds.lvl$X, preds.lvl$predicted, 
-                               type = 'l', 
-                               col = Chamber.map$col[Chamber.map$label == lvl]
-                               )
-                }
-              },
-              subscripts = T
-              )
-)
+Chamber.label <- attr(SECC, "labels")[["Chamber"]]
+ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
+TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 
+ARA.plot <- qplot(X.trans, Y.trans, data=SECCa, group = Chamber,
+                   geom = "point", size = I(3),
+                   colour = Chamber, shape = Chamber,) + jaw.ggplot() + ChamberPts + TopLegend
+ARA.facet.plot <- ARA.plot + facet_grid(facets=Position~Time)
+ARA.Block.plot <- ARA.plot + facet_grid(facets=Block~Time)
+
+ARA.Frag.plot <- qplot(Frag, Y.trans, data=SECCa, group = Chamber,
+                   geom = "point", size = I(3),
+                   colour = Chamber, shape = Chamber,) + jaw.ggplot() + ChamberPts + TopLegend
+ARA.Frag.plot <- ARA.Frag.plot + facet_grid(facets=.~Time) # optional
+
+H2O.breaks   <- seq(0, max(SECCa$H2O), length.out=10) #  9 groups
+H2O.bins     <- cut(SECCa$H2O, breaks=H2O.breaks)
+SECCa$H2Obin <- H2O.bins
+ARA.H2O.plot <- qplot(X.trans, Y.trans, data=SECCa, group = Chamber,
+                   geom = "point", size = I(3),
+                   colour = Chamber, shape = Chamber,) + jaw.ggplot() + ChamberPts + TopLegend
+ARA.H2O.plot <- ARA.H2O.plot + facet_wrap(~ H2Obin)
+
+print(ARA.facet.plot)
+print(ARA.Block.plot)
+print(ARA.Frag.plot)
+print(ARA.H2O.plot)
 
 
 
