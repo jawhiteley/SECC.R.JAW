@@ -6,3 +6,5 @@
 # *~
 
 .Rhistory
+graphs/
+glmulti.*\.back

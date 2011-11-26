@@ -350,7 +350,11 @@ residualPlots(Y.model)                 # car
 ################################################################
 ## ANALYSIS: GET RESULTS
 ################################################################
+library(car)
+
+## the anova() function performs sequential (Type I) tests: order matters.
 anova(Y.model)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
+Anova(Y.model, type=2)                 # Type II: car package**
 summary(Y.model)
 ## effects of single-term deletions?
 drop1(Y.model)
@@ -371,14 +375,9 @@ plot(effect("Time*Chamber", Y.model), ask=FALSE)
 plot(effect("I(H2O^2)", Y.model), ask=FALSE) # wtf?
 plot(effect("H2O", Y.model), ask=FALSE) # wtf?
 
-library(car)
 avPlots(Y.model, terms= ~ X.trans * I(H2O^2), ask=FALSE)
 
 ## http://intersci.ss.uci.edu/wiki/index.php/R_partial_regression_plots ??
-
-## intervals(Fitted.Model.Object)   # Approx. Confidence intervals.  see ?intervals
-## see multcomp package for multiple comparisons (Tukey's HSD on mixed effects model?)
-
 
 
 
@@ -420,7 +419,10 @@ Y.pred$predicted <- predict(Y.model, newdata=Y.pred, type="response" )  # newdat
 Y.pred.terms <- predict(Y.model, type="terms")
 ## type=="response" for full predictions (including interactions)
 ## type=="terms" for partial predictions (?)
-## with(Y.pred.terms, plot())
+
+## Note: there is a predict() method for glmulti objects...
+## Use effect() to get predicted effects for specific terms
+## summary(eff.obj$term) : $effect, $lower, $upper for 95% CI
 
 
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
