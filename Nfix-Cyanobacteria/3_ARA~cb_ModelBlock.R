@@ -10,6 +10,7 @@
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
   setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
+  setwd("..")  # relative to this file (\rd in Vim-R)
   getwd()  # Check that we're in the right place
 
   ## Load data, functions, etc.  Process data & setup config. values.  
@@ -18,6 +19,7 @@ if (FALSE) {  # do not run automatically
 }
 
 
+library(car)
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
 
@@ -79,15 +81,17 @@ Y.formCl<- Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Climate + Frag
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)
 library(mgcv)
-ARA.gam <- gam(Y ~ s(X) + s(H2O) + Block + Time*Chamber*Frag*Position, data=SECCa)
+ARA.gam <- gam(Y ~ s(X) + s(H2O), data=SECCa)
 ARA.gam1 <- gam(Y.log ~ s(X) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
-ARA.loggam <- gam(Y.log ~ s(X.log) + s(H2O) + Block + Time*Chamber*Position * Frag, data=SECCa)
+ARA.loggam <- gam(Y.log ~ s(X.log) + s(H2O), data=SECCa)
+ARA.loggamF <- gam(Y.log ~ s(X.log) + s(H2O) + Block + Time*Chamber*Position * Frag, data=SECCa)
 ARA.loggam1 <- gam(Y.log ~ s(X.log) + s(H2O) + Block * Time*Chamber*Position + Frag, data=SECCa)
-## It *might* be linear for log(Cells) (X.log; edf = 2.18), but definitely NOT for H2O (edf=4)
 ## Frag-interactions are less significant than Block-interactions
-AIC(ARA.gam, ARA.loggam, ARA.loggam1, ARA.gam1)
-anova(ARA.loggam1)
+AIC(ARA.gam, ARA.gam1, ARA.loggam, ARA.loggamF, ARA.loggam1)
+## It *might* be linear for log(Cells) (X.log; edf = 2.18), but definitely NOT for H2O (edf=4)
 anova(ARA.gam1)
+anova(ARA.loggamF)
+anova(ARA.loggam1)
 ## The main non-linear portion for Cells is between 0-values and the rest: non-zero values are rather linear.
 op <- par(mfrow=c(2,2))
 plot(ARA.gam)
@@ -127,12 +131,20 @@ Y.lm <- lm( Y.trans ~ X.trans * H2O + Block + Time * Chamber * Frag * Position ,
 summary(Y.lm)                          # R2 = 0.59
 anova(Y.lm)
 ## Frag interactions are not significant.  Let's look at interactions with Blocks instead:
-Y.lm1 <- lm( Y.trans ~ X.trans * H2O + Block * Time * Chamber * Position + Frag , data=SECCa)
-Y.lmH <- lm( Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
-summary(Y.lm1)                         # R2 = 0.75 !!
-summary(Y.lmH)                         # R2 = 0.77 !!
-anova(Y.lmH)                           # ORDER MATTERS! (see Zuur et al. 2009 pg. 540)
-AIC(Y.lm, Y.lm1, Y.lmH)                # Block interactions are a better fit than Frag interactions
+Y.lm1  <- lm( Y.trans ~ X.trans * H2O + Block * Time * Chamber * Position + Frag + Block:Time, data=SECCa)
+Y.lmH  <- lm( Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag, data=SECCa)
+Y.lmHB <- lm( Y.trans ~ X.trans * H2O * I(H2O^2) * Block + Time * Chamber * Position + Frag + 
+              Block:Time + Chamber:X.trans, data=SECCa)
+Y.lmHC <- lm( Y.trans ~ X.trans * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag + 
+              Chamber:X.trans, data=SECCa)
+summary(Y.lm1)                         # Block * Time ... R2 = 0.75 !!
+summary(Y.lmH)                         # Block * Time ... R2 = 0.77 !!
+summary(Y.lmHB)                        # Block * Cells... R2 = 0.75
+summary(Y.lmHC)                        # Block * Time + Chamber:Cells ... R2 = 0.77 !
+anova(Y.lmH, Y.lmHC)                   # Adding Chamber:Cells interaction is not a sig. improvement
+anova(Y.lmH)                          # ORDER MATTERS! (see Zuur et al. 2009 pg. 540)
+Anova(Y.lmH)
+AIC(Y.lm, Y.lm1, Y.lmH, Y.lmHC, Y.lmHB) # Block interactions are a better fit than Frag interactions (more degrees of freedom?)
 
 ## Transformation?
 Y.rawlm   <- lm( Y ~ X * H2O * I(H2O^2) + Block * Time * Chamber * Position + Frag , data=SECCa)
@@ -171,7 +183,7 @@ Y.model  <- Y.lmH
 ##==============================================================
 ## multi-model averaging and inference with glmulti!
 library(glmulti)                       #  v1.0, april 2011
-library(MASS)
+## library(MASS)                          # ?
 ## library(leaps)
 ## Note: glmulti performs an exhaustive search of all candidate models.  
 ##       2^7 = 128 candidate models (not including interactions). 256 according to glmulti
@@ -180,21 +192,28 @@ ARA.glmulti1 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=1, fitfunc=lm, marg
                         method="h", confsetsize=256, plotty=FALSE, report=FALSE)
 print(ARA.glmulti1)
 
-## level=2 for 2-way interactions
-## 2^(7 + choose(7,2) ) = 268,435,456 candidate models with 2-way interactions!!
-## 416,869,200 according to glmulti (without marginality); 286,192,513 with marginality.
-## An exhaustive exploration would take ~ 1 month on my computer.  
-## Try with 'genetic' algorithm to speed things up (method="g"). ~ 30 minutes
-## Best to run 2-4+ replicate genetic algorithms, and take consensus.
-## use method="d" to print a summary of candidate models (no fitting)
-ARA.multi <- list()
-for (i in 1:4) {
-  cat("\n================ glmulti: Genetic Algorithm Run", i, "================\n\n")
-  ARA.multi[[i]] <- glmulti(Y.fixed, data=SECCa, crit=aic, level=2, fitfunc=lm, 
-                            marginality = TRUE, method="g", confsetsize=256, 
-                            plotty=FALSE, report=TRUE)
+if (T) {
+  ## level=2 for 2-way interactions
+  ## 2^(7 + choose(7,2) ) = 268,435,456 candidate models with 2-way interactions!!
+  ## 416,869,200 according to glmulti (without marginality); 286,192,513 with marginality.
+  ## An exhaustive exploration would take ~ 1 month on my computer.  
+  ## Try with 'genetic' algorithm to speed things up (method="g"). ~ 30 minutes
+  ## Best to run 2-4+ replicate genetic algorithms, and take consensus.
+  ## use method="d" to print a summary of candidate models (no fitting)
+  ARA.multi <- list()
+  for (i in 1:4) {
+    cat("\n================ glmulti: Genetic Algorithm Run", i, "================\n\n")
+    ARA.multi[[i]] <- glmulti(Y.fixed, data=SECCa, crit=aic, level=2, fitfunc=lm, 
+                              marginality = TRUE, method="g", confsetsize=256, 
+                              plotty=FALSE, report=TRUE)
+  }
+  ARA.glmulti2 <- consensus(ARA.multi, confsetsize=256)
+  ## save object to speed up loading for future analysis.  This is still a big file: >1 GB!
+  save(ARA.glmulti1, ARA.glmulti2, file="./save/ARA-cb.glmulti.R")
+} else {
+  ## load saved object to speed things up
+  load("./save/ARA-cb.glmulti.R")
 }
-ARA.glmulti2 <- consensus(ARA.multi, confsetsize=256)
 print(ARA.glmulti2)
 
 ARA.best2 <- as.formula(summary(ARA.glmulti2)$bestmodel)
@@ -284,6 +303,7 @@ print(ARA.est2)
 
 ## Important 2-way interactions:
 ## Block:Time
+## Chamber:Position
 ## Chamber:Time
 ## H2O:Cells
 ## H2O^2:Cells
@@ -293,6 +313,9 @@ print(ARA.est2)
 ## Chamber:Cells
 ## H2O^2:Time
 ## Position:Time
+## Implied Higher-order interactions:
+##   Cells * H2O * I(H2O^2) * Block
+##   Time * Chamber * Position
 
 
 
@@ -350,8 +373,6 @@ residualPlots(Y.model)                 # car
 ################################################################
 ## ANALYSIS: GET RESULTS
 ################################################################
-library(car)
-
 ## the anova() function performs sequential (Type I) tests: order matters.
 anova(Y.model)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
 Anova(Y.model, type=2)                 # Type II: car package**
