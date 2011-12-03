@@ -391,15 +391,25 @@ drop1(Y.lmain)
 library(effects)
 plot(allEffects(Y.model), ask=FALSE)   # interesting, but messy
 
-X.eff <- effect("Chamber:X.trans", Y.model)
+intermean <- function (vec) {
+  vec1 <- rep(NA, length(vec) -1)
+  for (i in 1:length(vec1) ) {
+    vec1[i] <- mean(vec[c(i, i+1)])
+  }
+  vec1
+}
+H2O.breaks9 <- seq(0, max(SECCa$H2O), length.out=10) # 9 groups
+H2O.breaks4 <- seq(0, max(SECCa$H2O), length.out=5 ) # 4 groups
+H2O.9lvls   <- intermean(H2O.breaks9)  # 9 groups
+H2O.4lvls   <- intermean(H2O.breaks4)  # 4 groups
+
+X.eff     <- effect("Chamber:X.trans", Y.model)
 X.TCP.eff <- effect("Time : Chamber : Position : X.trans", Y.model)
 X.BTC.eff <- effect("Block : Time : Chamber : X.trans", Y.model)
-F.eff <- effect("Frag", Y.model)
-X.H.eff <- effect("X.trans:H2O:I(H2O^2)", Y.model, default.levels=9)
-X.HB.eff <- effect("Block:X.trans:H2O:I(H2O^2)", Y.model,
-                   xlevels=list(Block=1:8, 
-                                H2O=seq(0, max(SECCa$H2O), length.out=4))
-) # I want X.trans continuous, but 4 bins for H2O :(
+F.eff     <- effect("Time:Frag", Y.model)
+X.H.eff   <- effect("X.trans:H2O:I(H2O^2)", Y.model, xlevels=list(H2O=H2O.9lvls))
+X.HB.eff  <- effect("Block:X.trans:H2O:I(H2O^2)", Y.model,
+                    xlevels=list(Block=1:8, H2O=H2O.4lvls))
 plot(X.eff,     ask=FALSE)
 plot(X.TCP.eff, ask=FALSE)
 plot(X.BTC.eff, ask=FALSE)
@@ -407,12 +417,12 @@ plot(F.eff,     ask=FALSE)
 plot(X.H.eff,   ask=FALSE)
 plot(X.HB.eff,   ask=FALSE)
 
-plot(effect("X.trans", Y.model), ask=FALSE) # Warning: averaged over interactions
+plot(effect("X.trans",       Y.model), ask=FALSE) # Warning: averaged over interactions
 plot(effect("Block:X.trans", Y.model), ask=FALSE)
-plot(effect("Block:Time", Y.model), ask=FALSE)
-plot(effect("Time*Chamber", Y.model), ask=FALSE)
-plot(effect("I(H2O^2)", Y.model), ask=FALSE) # wtf?
-plot(effect("H2O", Y.model), ask=FALSE) # wtf?
+plot(effect("Block:Time",    Y.model), ask=FALSE)
+plot(effect("Time*Chamber",  Y.model), ask=FALSE)
+plot(effect("I(H2O^2)",      Y.model), ask=FALSE) # wtf?
+plot(effect("H2O",           Y.model), ask=FALSE) # wtf?
 
 if (F) {
   plot(X.eff$x$X.trans, X.eff$fit, ylim=range(c(X.eff$lower, X.eff$upper)), type="n")
@@ -595,55 +605,60 @@ X.label <- paste("\"", attr(SECCa, "labels")[X.col], ": \"*log[10](", attr(SECCa
 Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], ": \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- parse(text=X.label)
 Y.label <- parse(text=Y.label)
+XY.axlab <- list( xlab(bquote(.(X.label))), ylab(bquote(.(Y.label))) )
 
-eff.layers <- function(effObj, conf.int=TRUE) {
+df.eff <- function (effObj) {
   eff.df <- data.frame(fit     = effObj$fit,
                        lower   = effObj$lower,
                        upper   = effObj$upper)
   for (v in names(effObj$x)) {
     eff.df[, v] <- effObj$x[, v]
   }
+  eff.df
+}
+eff.layers <- function(effObj, conf.int=TRUE, colour="black", bin.name="H2Obin", bin.lvls=NULL, bin.var="H2O") {
+  eff.df <- df.eff(effObj)
+  if (!is.null(bin.lvls)) {
+    eff.df[, bin.name] <- factor(eff.df[, bin.var])
+    levels(eff.df[, bin.name]) <- bin.lvls
+  }
   ## no $ in aes() !!!!
-  result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit, group=NULL, colour="black", shape=NULL)) )
+  result <- list(geom_line(data=eff.df, colour=colour, aes(x=X.trans, y=fit, group=NULL, shape=NULL)) )
   if (conf.int == TRUE) {
     result <- c(result, 
-                geom_line(data=eff.df, aes(x=X.trans, y=lower, group=NULL, colour="black", shape=NULL, lty=2)), 
-                geom_line(data=eff.df, aes(x=X.trans, y=upper, group=NULL, colour="black", shape=NULL, lty=2)) 
+                geom_line(data=eff.df, colour=colour, aes(x=X.trans, y=lower, lty=2)), 
+                geom_line(data=eff.df, colour=colour, aes(x=X.trans, y=upper, lty=2)) 
                 )
   }
   result
 }
 eff.C.layers <- function(effObj, conf.int=TRUE) {
-  eff.df <- data.frame(fit     = effObj$fit,
-                       lower   = effObj$lower,
-                       upper   = effObj$upper)
-  for (v in names(effObj$x)) {
-    eff.df[, v] <- effObj$x[, v]
-  }
+  eff.df <- df.eff(effObj)
   ## no $ in aes() !!!!
-  result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit,   group=Chamber)) )
+  result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit,  group=Chamber, colour=Chamber)) )
   if (conf.int == TRUE) {
     result <- c(result, 
-                geom_line(data=eff.df, aes(x=X.trans, y=lower, group=Chamber, lty=2)), 
-                geom_line(data=eff.df, aes(x=X.trans, y=upper, group=Chamber, lty=2)) 
+                geom_line(data=eff.df, aes(x=X.trans, y=lower, group=Chamber, colour=Chamber, lty=2)), 
+                geom_line(data=eff.df, aes(x=X.trans, y=upper, group=Chamber, colour=Chamber, lty=2)) 
                 )
   }
   result
 }
-eff.F.layers <- function(effObj, conf.int=TRUE) { # for factors
-  eff.df <- data.frame(fit     = effObj$fit,
-                       lower   = effObj$lower,
-                       upper   = effObj$upper)
-  for (v in names(effObj$x)) {
-    eff.df[, v] <- effObj$x[, v]
-  }
+eff.F.layers <- function(effObj, conf.int=TRUE, boxes=TRUE) { # for factors
+  eff.df <- df.eff(effObj)
   ## no $ in aes() !!!!
-  result <- list(geom_line(data=eff.df, aes(x=Frag, y=fit)) )
-  if (conf.int == TRUE) {
-    result <- c(result, 
-                geom_line(data=eff.df, aes(x=Frag, y=lower, lty=2)), 
-                geom_line(data=eff.df, aes(x=Frag, y=upper, lty=2)) 
-                )
+  if (boxes==TRUE) {
+    result <- list(geom_crossbar(data=eff.df, size=0.6, 
+                                 aes(x=Frag, y=fit, ymin=lower, ymax=upper, group=Time)) 
+    )
+  } else {
+    result <- list(geom_line(data=eff.df, size=1.5, aes(x=Frag, y=fit, group=Time)) )
+    if (conf.int == TRUE) {
+      result <- c(result, 
+                  geom_line(data=eff.df, size=1.5, aes(x=Frag, y=lower, lty=2, group=Time)), 
+                  geom_line(data=eff.df, size=1.5, aes(x=Frag, y=upper, lty=2, group=Time)) 
+                  )
+    }
   }
   result
 }
@@ -652,6 +667,9 @@ ARA.plot <- qplot(X.trans, Y.trans, data=SECCa, geom = "point", size = I(3),
                   group = Chamber, colour = Chamber, shape = Chamber,
                   xlab = bquote(.(X.label)), ylab = bquote(.(Y.label))) + 
                   jaw.ggplot() + ChamberPts + TopLegend
+ARA.plot <- ggplot(data=SECCa, aes(x=X.trans, y=Y.trans)) +
+            geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) + 
+            XY.axlab + jaw.ggplot() + ChamberPts + TopLegend
 ARA.C.plot <- ARA.plot + geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$fit, group=Chamber)) +
               geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$lower, group=Chamber, lty=2)) +
               geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$upper, group=Chamber, lty=2))
@@ -659,22 +677,23 @@ ARA.C.plot <- ARA.plot + eff.C.layers(X.eff)
 ARA.facet.plot <- ARA.plot + eff.C.layers(X.TCP.eff) + facet_grid(facets=Position~Time)
 ARA.Block.plot <- ARA.plot + eff.C.layers(X.BTC.eff, conf=F) + facet_grid(facets=Block~Time)
 
-ARA.Frag.plot <- qplot(Frag, Y.trans, data=SECCa, geom = "point", size = I(3),
-                       group = Chamber, colour = Chamber, shape = Chamber,) + 
-                 jaw.ggplot() + ChamberPts + TopLegend
-ARA.Frag.plot <- ARA.Frag.plot + eff.F.layers(F.eff) + facet_grid(facets=.~Time) # optional
+ARA.Frag.plot <- ARA.plot + aes(x=Frag, y=Y.trans) + XY.axlab + xlab("Fragmentation Treatment")
+ARA.Frag.plot <- ARA.Frag.plot + eff.F.layers(F.eff) + facet_grid(facets=.~Time) +
+                 geom_jitter(size=3, aes(group=Chamber, colour=Chamber, shape=Chamber))# optional
 
-H2O.breaks9   <- seq(0, max(SECCa$H2O), length.out=10) #  9 groups
-H2O.breaks4   <- seq(0, max(SECCa$H2O), length.out=5)  #  4 groups
 SECCa$H2Obin9 <- cut(SECCa$H2O, breaks=H2O.breaks9)
 SECCa$H2Obin4 <- cut(SECCa$H2O, breaks=H2O.breaks4)
 SECCa$H2Obin4 <- factor(SECCa$H2Obin4, levels=rev(levels(SECCa$H2Obin4)) ) # arrange in decreasing order, for top-down rows in plot
-ARA.H2O.plot <- qplot(X.trans, Y.trans, data=SECCa, geom = "point", size = I(3),
-                      group = Chamber, colour = Chamber, shape = Chamber,
-                      xlab = bquote(.(X.label)), ylab = bquote(.(Y.label))) + 
-                jaw.ggplot() + ChamberPts + TopLegend
-ARA.HB.plot  <- ARA.H2O.plot + facet_grid(H2Obin4 ~ Block)
-ARA.H2O.plot <- ARA.H2O.plot + eff.layers(X.H.eff) + facet_wrap(~ H2Obin9)
+ARA.H2O.plot <- ggplot(data=SECCa, aes(x=X.trans, y=Y.trans)) +
+                geom_point(size = 3, aes(group = Chamber, 
+                               colour = Chamber, shape = Chamber)) + 
+                XY.axlab + jaw.ggplot() + ChamberPts + TopLegend
+ARA.HB.plot  <- ARA.H2O.plot + 
+                eff.layers(X.HB.eff, bin.name="H2Obin4", bin.lvls=levels(SECCa$H2Obin4)) + 
+                facet_grid(H2Obin4 ~ Block)
+ARA.H2O.plot <- ARA.H2O.plot + 
+                eff.layers(X.H.eff, bin.name="H2Obin9", bin.lvls=levels(SECCa$H2Obin9)) + 
+                facet_wrap(~ H2Obin9)
 
 print(ARA.C.plot)
 print(ARA.facet.plot)
