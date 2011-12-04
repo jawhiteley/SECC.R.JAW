@@ -241,12 +241,12 @@ if (FALSE) {                           # tree package
 ## SAVE OUTPUT
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
-  capture.output(cat(Save.header), 
+  capture.output(cat(paste("\n\nRegression Tree", Save.header)), 
 				 print(ARA.treeP),                 # model
 				 summary(ARA.treeP),               # model summary
 				 cat("\n\n"),                      # for output
 				 cat(Save.end),                    # END OUTPUT #
-				 file = Save.text
+				 file = Save.text, append=TRUE
 				)
 }
 
@@ -361,7 +361,7 @@ ARA.tree2.plot <- RegTreePlot.SECC(ARA.treeP2, minsplit) + opts(title = levels(S
 ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(SECCa$Time)[3])
 
 
-if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) {
+if (Save.results == TRUE) {
   FileName = sub(".pdf$", ".eps", Save.final)
   FileName = paste("./graphs/Figure -", Y.col, "- RegTree - 123.eps")
   ggsave(filename = FileName, plot = ARA.tree.plot )

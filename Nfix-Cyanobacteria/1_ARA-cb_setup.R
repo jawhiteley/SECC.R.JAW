@@ -38,14 +38,14 @@ vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")
 ## SETTINGS 
 ##==============================================================
 ## Specify which treatment levels to include (by index is probably easiest)
-Time.use     <- levels(SECC$Time)      # Time (index: 1-3) to include in this run
-Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]      # Chamber treatments to include
-Frag.use     <- levels(SECC$Frag)         # Frag treatments to include
-Position.use <- levels(SECC$Position)[c(1, 3)]     # Patch Positions to include
+Time.use     <- levels(SECC$Time)              # Time (index: 1-3) to include in this run
+Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]  # Chamber treatments to include
+Frag.use     <- levels(SECC$Frag)              # Frag treatments to include
+Position.use <- levels(SECC$Position)[c(1, 3)] # Patch Positions to include
 
 
 ## Output Results?
-Save.results  <- FALSE  
+Save.results  <- TRUE  
 
 
 ##==============================================================
@@ -106,8 +106,8 @@ Save.final <- Save.plots              # Destination for final plots.
 
 ## Output text
 Save.divider <-        "================================================================\n"
-Save.header  <- paste( "GLM Results for:", Y.label, "(", Y.col, ")",
-                     "\n               ~", X.label, "(", X.col, ")",
+Save.header  <- paste( "Results for: ", Y.label, "(", Y.col, ")",
+                     "\n             ~", X.label, "(", X.col, ")",
                      "\nExpt. Time:   ", paste(Time.use,     collapse = ", "),
                      "\nChamber:      ", paste(Chamber.use,  collapse = ", "),
                      "\nFragmentation:", paste(Frag.use,     collapse = ", "),
@@ -118,6 +118,8 @@ Save.end      <- paste("\n",
 					   "<============================= END ============================>",
 						sep = "\n"
 					  )
+
+if (Save.results == TRUE && is.null(Save.text) == FALSE) capture.output(cat(""), file=Save.text)
 
 ###===============================================
 ### Include Time as a factor 
@@ -176,4 +178,5 @@ if (FALSE) {  # do not run if source()d
   str( SECCa)     # check structure: are the appropriate variables factors, numeric, etc.?
   summary(SECCa)  # summary statistics
 }
+
 

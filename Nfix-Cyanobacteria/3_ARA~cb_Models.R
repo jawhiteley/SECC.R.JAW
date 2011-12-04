@@ -36,7 +36,7 @@ SECCa <- within( SECCa, {
 ##   (doesn't mean there were none in the sample)
 ## Unfortunately, this happens too often: errors in model fitting.  
 ## May have to drop some variables?
-SECC.X0 <- SECCa[SECCa$X.trans != 0, ]
+SECC.x0 <- SECCa[SECCa$X.trans != 0, ]
 UseClimateFac <- FALSE
 
 ################################################################
@@ -185,14 +185,18 @@ Y.model  <- Y.lmH
 library(glmulti)                       #  v1.0, april 2011; v1.0.3, Nov 2011
 ## library(MASS)                          # ?
 ## library(leaps)
-## Note: glmulti performs an exhaustive search of all candidate models.  
-##       2^7 = 128 candidate models (not including interactions). 256 according to glmulti
-## method="l" (leaps) uses a *much* faster algorithm, but not with factors or interactions :(
-ARA.glmulti1 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=1, fitfunc=lm, marginality = TRUE,
-                        method="h", confsetsize=256, plotty=FALSE, report=FALSE)
-print(ARA.glmulti1)
 
-if (T) {
+Save.glmulti <- "./save/ARA-cb.glmulti.R"
+if (file.exists(Save.glmulti)) { ## load saved object to speed things up
+  cat("- loading glmulti objects from previous run")
+  load(Save.glmulti)
+} else {
+  ## Note: glmulti performs an exhaustive search of all candidate models, by default.  
+  ##       2^7 = 128 candidate models (not including interactions). 256 according to glmulti
+  ## method="l" (leaps) uses a *much* faster algorithm, but not with factors or interactions :(
+  ARA.glmulti1 <- glmulti(Y.fixed, data=SECCa, crit=aic, level=1, fitfunc=lm, 
+                          marginality = TRUE, method="h", confsetsize=256, 
+                          plotty=FALSE, report=FALSE)
   ## level=2 for 2-way interactions
   ## 2^(7 + choose(7,2) ) = 268,435,456 candidate models with 2-way interactions!!
   ## 416,869,200 according to glmulti (without marginality); 286,192,513 with marginality.
@@ -209,14 +213,12 @@ if (T) {
   }
   ARA.glmulti2 <- consensus(ARA.multi, confsetsize=256) # more models use more memory!
   rm(ARA.multi)                        # clean-up
+  summary(ARA.glmulti2)
   ## save object to speed up loading for future analysis.  This is still a big file: >1 GB!
-  save(ARA.glmulti1, ARA.glmulti2, file="./save/ARA-cb.glmulti.R")
-} else {
-  ## load saved object to speed things up
-  load("./save/ARA-cb.glmulti.R")
+  save(ARA.glmulti1, ARA.glmulti2, file=Save.glmulti)
 }
+print(ARA.glmulti1)
 print(ARA.glmulti2)
-## summary(ARA.glmulti2)
 
 ARA.best2 <- as.formula(summary(ARA.glmulti2)$bestmodel)
 ARA.best2lm <- lm(ARA.best2, data=SECCa)
@@ -491,8 +493,13 @@ lines(cb.re[x.ord], ARA.cb.pred[x.ord, 2], col="red", lty=2)
 lines(cb.re[x.ord], ARA.cb.pred[x.ord, 3], col="red", lty=2)
 ## the relationship is visually clearer when partialling out higher-order interactions between Block & other experimental treatments, but the r-squared is lower!
 ## i.e. Y.model <- Y.lmH
+
+residualPlots(ARA.cb)                 # car
+
 summary(ARA.cb)                        # R^2 = 0.04 ! :(
 ARA.cb.r2 <- format(summary(ARA.cb)$adj.r.squared, digits=2)
+ARA.cb.df <- data.frame(Cells=cb.re, ARA=ARA.re, fit=ARA.cb.pred[, "fit"], 
+                        lower=ARA.cb.pred[, "lwr"], upper=ARA.cb.pred[, "upr"])
 
 
 
@@ -501,25 +508,27 @@ ARA.cb.r2 <- format(summary(ARA.cb)$adj.r.squared, digits=2)
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header), 
-                 print(ARA.glmulti2),
-				 print(Y.formula),              # model
-				 Anova(Y.model),                # model summary
-				 summary(Y.model),              # model summary
-				 cat("\n\n"),                   # for output
-				 cat(Save.end),                 # END OUTPUT #
-				 file = Save.text
+                 print(anova.full),      # Full model: variance partitioning
+				 cat("\n\n"),                      # for output
+                 print(ARA.glmulti2),    # multi-model selection
+                 print(ARA.coef2plot),   # model-averaged estimates & weights
+				 cat("\n\n"),                      # for output
+				 print(Y.formula),                   # model
+				 Anova(Y.model),                   # model summary
+				 summary(Y.model),                 # model summary
+				 cat("\n\n"),                      # for output
+				 Anova(ARA.cb),                    # partial regression
+				 summary(ARA.cb),                  # model summary
+				 cat("\n\n"),                      # for output
+				 cat(Save.end),                    # END OUTPUT #
+				 file = Save.text, append=TRUE
 				)
 }
-
-if (Save.results == TRUE && is.null(Save.plots) == FALSE && Save.plots != Save.final) dev.off()
-
 
 
 ################################################################
 ## FINAL GRAPHICS
 ################################################################
-if (Save.results == TRUE && is.null(Save.final) == FALSE && Save.plots != Save.final) pdf( file = Save.final )
-
 ## generate grid to add predicted values to (X-values in all combinations of factors).
 ## - watch length.out: if it's too long, R will choke.
 Y.pred <- expand.grid(Block    = levels(SECCa$Block) , 
@@ -695,13 +704,37 @@ ARA.H2O.plot <- ARA.H2O.plot +
                 eff.layers(X.H.eff, bin.name="H2Obin9", bin.lvls=levels(SECCa$H2Obin9)) + 
                 facet_wrap(~ H2Obin9)
 
-print(ARA.C.plot)
-print(ARA.facet.plot)
-print(ARA.Block.plot)
-print(ARA.Frag.plot)
-print(ARA.H2O.plot)
-print(ARA.HB.plot)
+## Partial Regression graph
+ARA.part.plot <- ggplot(data=ARA.cb.df, aes(x=Cells, y=ARA)) +
+                 geom_point(size=3, pch=20) + jaw.ggplot()   +
+                 xlab("Cyanobacteria Cell Density | others") + 
+                 ylab("Acetylene Reduction | others") 
+ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#990000") +
+                 geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
+                 geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
 
-
-
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
+Plots.dir <- "./graphs/"
+if (Save.results == TRUE) {
+  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells*Time*Position*Chamber.eps", sep=""), 
+         plot = ARA.facet.plot, width=5, height=4, scale=1.5)
+  ggsave(filename=paste(Plots.dir, "Figure - ARA~Frag.eps", sep=""), 
+         plot = ARA.Frag.plot, width=4, height=2, scale=2)
+  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells*Chamber.eps", sep=""), 
+         plot = ARA.C.plot, width=4, height=4, scale=1.5)
+  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*Block*Time.eps", sep=""), 
+         plot = ARA.Block.plot, width=4, height=6, scale=1.5)
+  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*H2O.eps", sep=""), 
+         plot = ARA.H2O.plot, width=4, height=4, scale=1.5)
+  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*H2O*Block.eps", sep=""), 
+         plot = ARA.HB.plot, width=8, height=6, scale=1.5)
+  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells-partial.eps", sep=""), 
+         plot = ARA.part.plot, width=4, height=4, scale=1.5)
+} else {
+  print(ARA.C.plot)
+  print(ARA.facet.plot)
+  print(ARA.Block.plot)
+  print(ARA.Frag.plot)
+  print(ARA.H2O.plot)
+  print(ARA.HB.plot)
+  print(ARA.part.plot)
+}

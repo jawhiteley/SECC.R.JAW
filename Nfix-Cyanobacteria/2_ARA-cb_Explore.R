@@ -16,7 +16,7 @@ if (FALSE) {  # do not run automatically
   source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
 }
 
-## library(lattice)    # ggplot2 with faceting is easier!
+library(lattice)                       # densityplot
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
 library(rgl)                           # 3D plots
@@ -27,7 +27,9 @@ library(car)                           # diagnostic plots & tools
 ################################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 DrawExplorationGraphs <- TRUE # Save.results  # Set to FALSE to suppress all this output
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) {
+  pdf( file = gsub("Results", "Exploration", Save.plots, fixed=TRUE) )
+}
 
 ### Map of point styles for Chamber treatments
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
@@ -368,3 +370,4 @@ if (DrawExplorationGraphs) {
   par(old.par)
 }
 
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()

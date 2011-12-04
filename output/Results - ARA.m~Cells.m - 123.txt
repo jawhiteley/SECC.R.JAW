@@ -1,0 +1,660 @@
+Results for:  Acetylene Reduction ( ARA.m ) 
+             ~ Cyanobacteria Cell Density ( Cells.m ) 
+Expt. Time:    12 months, 22 months, 24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sun Dec  4 15:32:30 2011
+
+================================================================
+Analysis of Variance Table
+
+Response: Y.trans
+                         Df  Sum Sq Mean Sq F value Pr(>F)  PropVar
+Time                      2 118.648  59.324                0.235963
+I(H2O^2)                  1  78.391  78.391                0.155902
+H2O                       1  42.719  42.719                0.084959
+Block:Time               14  30.386   2.170                0.060431
+Block                     7  28.079   4.011                0.055842
+H2O:Time                  2  17.312   8.656                0.034429
+X.trans                   1  14.235  14.235                0.028310
+Block:Time:Frag          42  12.837   0.306                0.025530
+Frag                      3  12.090   4.030                0.024045
+I(H2O^2):Block            7  10.968   1.567                0.021812
+X.trans:Block             7   9.896   1.414                0.019681
+H2O:Block:Chamber         7   8.885   1.269                0.017670
+Block:Time:Chamber       14   8.769   0.626                0.017440
+Block:Frag               21   8.679   0.413                0.017260
+I(H2O^2):Block:Time      14   8.447   0.603                0.016800
+Chamber:Position          1   7.437   7.437                0.014791
+I(H2O^2):Block:Chamber    7   6.487   0.927                0.012901
+H2O:Block:Time           14   5.274   0.377                0.010490
+X.trans:Block:Frag       21   5.175   0.246                0.010291
+Position                  1   4.666   4.666                0.009280
+X.trans:Block:Time       14   4.060   0.290                0.008075
+X.trans:I(H2O^2):Block    7   4.056   0.579                0.008066
+Time:Chamber              2   3.529   1.765                0.007019
+X.trans:Time              2   3.290   1.645                0.006543
+H2O:Block:Frag           21   3.037   0.145                0.006040
+X.trans:Time:Frag         6   2.908   0.485                0.005784
+I(H2O^2):Block:Frag      21   2.854   0.136                0.005675
+X.trans:Block:Chamber     7   2.735   0.391                0.005440
+H2O:Block                 7   2.673   0.382                0.005317
+X.trans:H2O:Block         7   2.437   0.348                0.004846
+Block:Position            7   1.997   0.285                0.003971
+I(H2O^2):Time:Frag        6   1.979   0.330                0.003936
+H2O:I(H2O^2):Block        7   1.698   0.243                0.003377
+H2O:Chamber:Frag          3   1.672   0.557                0.003326
+Frag:Position             3   1.631   0.544                0.003245
+Time:Frag                 6   1.524   0.254                0.003031
+X.trans:Chamber           1   1.496   1.496                0.002975
+X.trans:I(H2O^2)          1   1.407   1.407                0.002798
+Time:Position             2   1.366   0.683                0.002717
+Block:Chamber             7   1.319   0.188                0.002623
+I(H2O^2):Time             2   1.274   0.637                0.002533
+X.trans:Frag              3   1.270   0.423                0.002525
+H2O:I(H2O^2):Frag         3   1.149   0.383                0.002284
+H2O:Chamber               1   1.069   1.069                0.002127
+H2O:Position              1   0.982   0.982                0.001953
+I(H2O^2):Time:Chamber     2   0.969   0.484                0.001927
+X.trans:Chamber:Frag      3   0.847   0.282                0.001684
+X.trans:H2O:Time          2   0.836   0.418                0.001662
+X.trans:H2O:Frag          3   0.713   0.238                0.001418
+H2O:Time:Frag             6   0.654   0.109                0.001300
+I(H2O^2):Frag             3   0.644   0.215                0.001280
+X.trans:H2O:Chamber       1   0.595   0.595                0.001183
+X.trans:I(H2O^2):Time     2   0.537   0.268                0.001067
+H2O:Time:Chamber          2   0.502   0.251                0.000998
+H2O:Frag                  3   0.465   0.155                0.000925
+X.trans:Position          1   0.443   0.443                0.000882
+X.trans:Time:Chamber      2   0.442   0.221                0.000879
+Chamber:Frag              3   0.376   0.125                0.000749
+I(H2O^2):Chamber:Frag     3   0.369   0.123                0.000734
+H2O:I(H2O^2):Time         2   0.270   0.135                0.000537
+X.trans:I(H2O^2):Chamber  1   0.248   0.248                0.000494
+I(H2O^2):Position         1   0.237   0.237                0.000472
+X.trans:H2O:I(H2O^2)      1   0.230   0.230                0.000456
+H2O:I(H2O^2):Chamber      1   0.157   0.157                0.000313
+X.trans:I(H2O^2):Frag     3   0.157   0.052                0.000312
+H2O:I(H2O^2)              1   0.156   0.156                0.000311
+I(H2O^2):Chamber          1   0.132   0.132                0.000263
+Chamber                   1   0.034   0.034                0.000068
+X.trans:H2O               1   0.019   0.019                0.000038
+Residuals                 0   0.000                        0.000000
+
+
+consensus of 4-glmulti.analysis
+Method: g / Fitting: lm / IC used: aic
+Level: 2 / Marginality: TRUE
+From 256 models:
+Best IC: 740.604615137335
+Best model:
+[1] "Y.trans ~ 1 + Block + Time + Chamber + Frag + Position + X.trans + "     
+[2] "    H2O + I(H2O^2) + Time:Block + Chamber:Time + Position:Time + "       
+[3] "    Position:Chamber + H2O:X.trans + I(H2O^2):X.trans + Block:X.trans + "
+[4] "    Block:H2O + Block:I(H2O^2) + Time:H2O + Chamber:X.trans"             
+Evidence weight: 0.0575828976844871
+Worst IC: 776.723130322401
+16 models within 2 IC units.
+54 models to reach 95% of evidence weight.
+Convergence after 1230 generations.
+Time elapsed: 13.6003033161163 minutes.
+                                       Estimate Uncond. variance Nb models Importance
+ChamberFull Chamber:X.trans        6.091605e-02     8.008513e-04       161  0.9459112
+PositionOuter:Time22 months       -1.893507e-02     3.343636e-02       166  0.9558451
+PositionOuter:Time24 months       -3.905532e-01     3.776924e-02       166  0.9558451
+Block2:X.trans                    -7.992163e-02     2.013970e-03       182  0.9585563
+Block3:X.trans                    -4.556706e-02     1.936587e-03       182  0.9585563
+Block4:X.trans                    -1.047846e-02     2.189692e-03       182  0.9585563
+Block5:X.trans                    -3.089000e-02     1.920168e-03       182  0.9585563
+Block6:X.trans                    -2.101015e-02     1.430855e-03       182  0.9585563
+Block7:X.trans                     1.132874e-01     2.598829e-03       182  0.9585563
+Block8:X.trans                    -5.524756e-02     2.070210e-03       182  0.9585563
+H2O:Time22 months                 -1.412410e-03     3.957753e-07       179  0.9666274
+H2O:Time24 months                  2.638257e-04     3.036654e-07       179  0.9666274
+I(H2O^2):X.trans                  -4.534728e-07     2.427446e-14       154  0.9740274
+Block2:I(H2O^2)                    2.922453e-06     3.022668e-12       175  0.9741284
+Block3:I(H2O^2)                    8.569926e-08     3.572005e-12       175  0.9741284
+Block4:I(H2O^2)                   -4.592632e-06     5.083933e-12       175  0.9741284
+Block5:I(H2O^2)                    4.488475e-06     8.988482e-12       175  0.9741284
+Block6:I(H2O^2)                    6.612065e-07     2.689223e-12       175  0.9741284
+Block7:I(H2O^2)                   -4.548919e-08     2.679633e-12       175  0.9741284
+Block8:I(H2O^2)                    3.130951e-06     4.819096e-12       175  0.9741284
+Block2:H2O                        -3.967426e-03     2.696102e-06       188  0.9756644
+Block3:H2O                        -4.541685e-04              NaN       188  0.9756644
+Block4:H2O                         2.460597e-03     3.211732e-06       188  0.9756644
+Block5:H2O                        -3.373518e-03     4.434233e-06       188  0.9756644
+Block6:H2O                        -1.115849e-03     2.398487e-06       188  0.9756644
+Block7:H2O                        -5.640233e-04     2.265703e-06       188  0.9756644
+Block8:H2O                        -4.449212e-03     3.400377e-06       188  0.9756644
+H2O:X.trans                        5.455842e-04     2.970957e-08       168  0.9803047
+FragFull Corridors                 3.415881e-01     2.383793e-02       250  0.9822284
+FragPseudo-Corridors               3.732162e-01     2.276116e-02       250  0.9822284
+FragIsolated                       2.743590e-01     2.295432e-02       250  0.9822284
+ChamberFull Chamber:Time22 months  4.145153e-01     3.672769e-02       212  0.9837630
+ChamberFull Chamber:Time24 months -2.891096e-01     3.308163e-02       212  0.9837630
+ChamberFull Chamber:PositionOuter -8.111861e-01     2.740571e-02       243  0.9933637
+H2O                               -4.942699e-04     2.851346e-06       255  0.9999097
+X.trans                           -9.401430e-02     3.563394e-03       255  1.0000000
+(Intercept)                        8.166510e-01     2.920679e-01       256  1.0000000
+Block2                             3.780592e-01              NaN       256  1.0000000
+Block3                             8.708135e-01              NaN       256  1.0000000
+Block4                             3.046353e-01     3.414494e-01       256  1.0000000
+Block5                             6.384834e-01     2.614856e-01       256  1.0000000
+Block6                             4.128950e-01     2.112645e-01       256  1.0000000
+Block7                            -5.700262e-01     2.355800e-01       256  1.0000000
+Block8                             7.143626e-01     2.891741e-01       256  1.0000000
+Time22 months                     -1.359315e-01              NaN       256  1.0000000
+Time24 months                      3.400244e-01     1.658118e-01       256  1.0000000
+ChamberFull Chamber               -3.941004e-01     7.887861e-02       256  1.0000000
+PositionOuter                      8.191009e-02     4.294311e-02       256  1.0000000
+I(H2O^2)                           2.092512e-06     4.411789e-12       256  1.0000000
+Block2:Time22 months               5.080005e-01     1.164992e-01       256  1.0000000
+Block3:Time22 months              -1.064737e+00     1.076874e-01       256  1.0000000
+Block4:Time22 months               6.255693e-02              NaN       256  1.0000000
+Block5:Time22 months              -5.903068e-01     9.853173e-02       256  1.0000000
+Block6:Time22 months              -5.593113e-01              NaN       256  1.0000000
+Block7:Time22 months              -7.033722e-02              NaN       256  1.0000000
+Block8:Time22 months               3.511949e-01     1.175487e-01       256  1.0000000
+Block2:Time24 months               1.827527e+00              NaN       256  1.0000000
+Block3:Time24 months              -2.122215e-01              NaN       256  1.0000000
+Block4:Time24 months              -1.065019e-02     9.464701e-02       256  1.0000000
+Block5:Time24 months               4.054959e-01     1.192213e-01       256  1.0000000
+Block6:Time24 months               3.487308e-01     1.093197e-01       256  1.0000000
+Block7:Time24 months              -1.524839e-02     9.604561e-02       256  1.0000000
+Block8:Time24 months               4.258293e-01     1.078658e-01       256  1.0000000
+                                  +/- (alpha=0.05)                                Term          Emax
+ChamberFull Chamber:X.trans           5.567801e-02  Chamber:Cyanobacteria Cell Density  1.165941e-01
+PositionOuter:Time22 months           3.597636e-01           Position:Time (22 months)  3.408285e-01
+PositionOuter:Time24 months           3.823639e-01           Position:Time (24 months) -8.189315e-03
+Block2:X.trans                        8.829461e-02   Block2:Cyanobacteria Cell Density  8.372980e-03
+Block3:X.trans                        8.658174e-02   Block3:Cyanobacteria Cell Density  4.101468e-02
+Block4:X.trans                        9.206599e-02   Block4:Cyanobacteria Cell Density  8.158753e-02
+Block5:X.trans                        8.621392e-02   Block5:Cyanobacteria Cell Density  5.532392e-02
+Block6:X.trans                        7.442272e-02   Block6:Cyanobacteria Cell Density  5.341257e-02
+Block7:X.trans                        1.002990e-01   Block7:Cyanobacteria Cell Density  2.135864e-01
+Block8:X.trans                        8.951895e-02   Block8:Cyanobacteria Cell Density  3.427139e-02
+H2O:Time22 months                     1.237748e-03                H2O:Time (22 months) -1.746620e-04
+H2O:Time24 months                     1.084190e-03                H2O:Time (24 months)  1.348016e-03
+I(H2O^2):X.trans                      3.065368e-07 I(H2O^2):Cyanobacteria Cell Density -1.469360e-07
+Block2:I(H2O^2)                       3.420605e-06                     Block2:I(H2O^2)  6.343059e-06
+Block3:I(H2O^2)                       3.718466e-06                     Block3:I(H2O^2)  3.804165e-06
+Block4:I(H2O^2)                       4.436165e-06                     Block4:I(H2O^2) -1.564677e-07
+Block5:I(H2O^2)                       5.898627e-06                     Block5:I(H2O^2)  1.038710e-05
+Block6:I(H2O^2)                       3.226422e-06                     Block6:I(H2O^2)  3.887629e-06
+Block7:I(H2O^2)                       3.220664e-06                     Block7:I(H2O^2)  3.175175e-06
+Block8:I(H2O^2)                       4.319073e-06                     Block8:I(H2O^2)  7.450025e-06
+Block2:H2O                            3.230546e-03                          Block2:H2O -7.368798e-04
+Block3:H2O                                     NaN                          Block3:H2O           NaN
+Block4:H2O                            3.525960e-03                          Block4:H2O  5.986558e-03
+Block5:H2O                            4.143020e-03                          Block5:H2O  7.695019e-04
+Block6:H2O                            3.047028e-03                          Block6:H2O  1.931180e-03
+Block7:H2O                            2.961483e-03                          Block7:H2O  2.397460e-03
+Block8:H2O                            3.628034e-03                          Block8:H2O -8.211789e-04
+H2O:X.trans                           3.391220e-04      H2O:Cyanobacteria Cell Density  8.847061e-04
+FragFull Corridors                    3.037680e-01               Frag (Full Corridors)  6.453561e-01
+FragPseudo-Corridors                  2.968281e-01             Frag (Pseudo-Corridors)  6.700443e-01
+FragIsolated                          2.980849e-01                     Frag (Isolated)  5.724439e-01
+ChamberFull Chamber:Time22 months     3.770549e-01            Chamber:Time (22 months)  7.915701e-01
+ChamberFull Chamber:Time24 months     3.578501e-01            Chamber:Time (24 months)  6.874050e-02
+ChamberFull Chamber:PositionOuter     3.257079e-01                    Chamber:Position -4.854782e-01
+H2O                                   3.322253e-03                                 H2O  2.827984e-03
+X.trans                               1.174464e-01          Cyanobacteria Cell Density  2.343210e-02
+(Intercept)                           1.063285e+00                         (Intercept)  1.879936e+00
+Block2                                         NaN                              Block2           NaN
+Block3                                         NaN                              Block3           NaN
+Block4                                1.149664e+00                              Block4  1.454299e+00
+Block5                                1.006078e+00                              Block5  1.644561e+00
+Block6                                9.043176e-01                              Block6  1.317213e+00
+Block7                                9.549419e-01                              Block7  3.849158e-01
+Block8                                1.058004e+00                              Block8  1.772367e+00
+Time22 months                                  NaN                    Time (22 months)           NaN
+Time24 months                         8.011529e-01                    Time (24 months)  1.141177e+00
+ChamberFull Chamber                   5.525701e-01                             Chamber  1.584698e-01
+PositionOuter                         4.077130e-01                            Position  4.896230e-01
+I(H2O^2)                              4.132522e-06                            I(H2O^2)  6.225033e-06
+Block2:Time22 months                  6.715360e-01             Block2:Time (22 months)  1.179537e+00
+Block3:Time22 months                  6.456397e-01             Block3:Time (22 months) -4.190974e-01
+Block4:Time22 months                           NaN             Block4:Time (22 months)           NaN
+Block5:Time22 months                  6.175837e-01             Block5:Time (22 months)  2.727694e-02
+Block6:Time22 months                           NaN             Block6:Time (22 months)           NaN
+Block7:Time22 months                           NaN             Block7:Time (22 months)           NaN
+Block8:Time22 months                  6.745541e-01             Block8:Time (22 months)  1.025749e+00
+Block2:Time24 months                           NaN             Block2:Time (24 months)           NaN
+Block3:Time24 months                           NaN             Block3:Time (24 months)           NaN
+Block4:Time24 months                  6.052868e-01             Block4:Time (24 months)  5.946366e-01
+Block5:Time24 months                  6.793360e-01             Block5:Time (24 months)  1.084832e+00
+Block6:Time24 months                  6.505144e-01             Block6:Time (24 months)  9.992452e-01
+Block7:Time24 months                  6.097426e-01             Block7:Time (24 months)  5.944942e-01
+Block8:Time24 months                  6.461744e-01             Block8:Time (24 months)  1.072004e+00
+                                           Emin
+ChamberFull Chamber:X.trans        5.238041e-03
+PositionOuter:Time22 months       -3.786987e-01
+PositionOuter:Time24 months       -7.729171e-01
+Block2:X.trans                    -1.682162e-01
+Block3:X.trans                    -1.321488e-01
+Block4:X.trans                    -1.025445e-01
+Block5:X.trans                    -1.171039e-01
+Block6:X.trans                    -9.543287e-02
+Block7:X.trans                     1.298844e-02
+Block8:X.trans                    -1.447665e-01
+H2O:Time22 months                 -2.650157e-03
+H2O:Time24 months                 -8.203644e-04
+I(H2O^2):X.trans                  -7.600095e-07
+Block2:I(H2O^2)                   -4.981522e-07
+Block3:I(H2O^2)                   -3.632767e-06
+Block4:I(H2O^2)                   -9.028797e-06
+Block5:I(H2O^2)                   -1.410153e-06
+Block6:I(H2O^2)                   -2.565216e-06
+Block7:I(H2O^2)                   -3.266153e-06
+Block8:I(H2O^2)                   -1.188122e-06
+Block2:H2O                        -7.197972e-03
+Block3:H2O                                  NaN
+Block4:H2O                        -1.065363e-03
+Block5:H2O                        -7.516538e-03
+Block6:H2O                        -4.162877e-03
+Block7:H2O                        -3.525506e-03
+Block8:H2O                        -8.077246e-03
+H2O:X.trans                        2.064622e-04
+FragFull Corridors                 3.782010e-02
+FragPseudo-Corridors               7.638814e-02
+FragIsolated                      -2.372585e-02
+ChamberFull Chamber:Time22 months  3.746037e-02
+ChamberFull Chamber:Time24 months -6.469598e-01
+ChamberFull Chamber:PositionOuter -1.136894e+00
+H2O                               -3.816523e-03
+X.trans                           -2.114607e-01
+(Intercept)                       -2.466340e-01
+Block2                                      NaN
+Block3                                      NaN
+Block4                            -8.450288e-01
+Block5                            -3.675947e-01
+Block6                            -4.914226e-01
+Block7                            -1.524968e+00
+Block8                            -3.436418e-01
+Time22 months                               NaN
+Time24 months                     -4.611285e-01
+ChamberFull Chamber               -9.466705e-01
+PositionOuter                     -3.258029e-01
+I(H2O^2)                          -2.040010e-06
+Block2:Time22 months              -1.635355e-01
+Block3:Time22 months              -1.710377e+00
+Block4:Time22 months                        NaN
+Block5:Time22 months              -1.207890e+00
+Block6:Time22 months                        NaN
+Block7:Time22 months                        NaN
+Block8:Time22 months              -3.233592e-01
+Block2:Time24 months                        NaN
+Block3:Time24 months                        NaN
+Block4:Time24 months              -6.159370e-01
+Block5:Time24 months              -2.738401e-01
+Block6:Time24 months              -3.017836e-01
+Block7:Time24 months              -6.249910e-01
+Block8:Time24 months              -2.203451e-01
+
+
+Y.trans ~ 1 + Block + Time + Chamber + Frag + Position + X.trans + 
+    H2O + I(H2O^2) + Time:Block + Chamber:Time + Position:Time + 
+    Position:Chamber + H2O:X.trans + I(H2O^2):X.trans + Block:X.trans + 
+    Block:H2O + Block:I(H2O^2) + Time:H2O + Chamber:X.trans
+Anova Table (Type II tests)
+
+Response: Y.trans
+                  Sum Sq  Df  F value    Pr(>F)    
+Block             22.359   7   9.2502 1.956e-10 ***
+Time              81.330   2 117.7686 < 2.2e-16 ***
+Chamber            1.381   1   3.9990 0.0463691 *  
+Frag               5.966   3   5.7594 0.0007568 ***
+Position           6.719   1  19.4596 1.404e-05 ***
+X.trans            5.636   1  16.3222 6.692e-05 ***
+H2O                8.601   1  24.9098 9.869e-07 ***
+I(H2O^2)           0.646   1   1.8716 0.1722454    
+Block:Time        31.408  14   6.4971 1.462e-11 ***
+Time:Chamber       5.555   2   8.0437 0.0003903 ***
+Time:Position      2.285   2   3.3082 0.0378339 *  
+Chamber:Position   9.860   1  28.5554 1.730e-07 ***
+X.trans:H2O        6.348   1  18.3832 2.392e-05 ***
+X.trans:I(H2O^2)   4.967   1  14.3856 0.0001779 ***
+Block:X.trans      7.438   7   3.0771 0.0037569 ** 
+Block:H2O         10.204   7   4.2217 0.0001794 ***
+Block:I(H2O^2)     9.005   7   3.7254 0.0006806 ***
+Time:H2O           4.613   2   6.6799 0.0014378 ** 
+Chamber:X.trans    2.550   1   7.3862 0.0069296 ** 
+Residuals        110.840 321                       
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Call:
+lm(formula = ARA.best2, data = SECCa)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.72319 -0.31502  0.01648  0.36241  1.74035 
+
+Coefficients:
+                                    Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                        9.117e-01  4.369e-01   2.087 0.037712 *  
+Block2                             3.889e-01  4.995e-01   0.779 0.436753    
+Block3                             9.242e-01  4.861e-01   1.901 0.058175 .  
+Block4                             2.980e-01  5.655e-01   0.527 0.598577    
+Block5                             6.507e-01  4.724e-01   1.377 0.169363    
+Block6                             3.935e-01  4.337e-01   0.907 0.364954    
+Block7                            -5.998e-01  4.473e-01  -1.341 0.180878    
+Block8                             7.304e-01  4.841e-01   1.509 0.132364    
+Time22 months                     -1.930e-01  3.955e-01  -0.488 0.625933    
+Time24 months                      3.092e-01  3.771e-01   0.820 0.412851    
+ChamberFull Chamber               -3.927e-01  2.268e-01  -1.732 0.084231 .  
+FragFull Corridors                 3.047e-01  9.478e-02   3.214 0.001440 ** 
+FragPseudo-Corridors               3.653e-01  9.322e-02   3.919 0.000109 ***
+FragIsolated                       2.732e-01  9.062e-02   3.015 0.002778 ** 
+PositionOuter                      5.530e-02  1.325e-01   0.417 0.676764    
+X.trans                           -1.119e-01  4.732e-02  -2.364 0.018689 *  
+H2O                               -5.886e-04  1.332e-03  -0.442 0.658920    
+I(H2O^2)                           1.869e-06  1.441e-06   1.297 0.195397    
+Block2:Time22 months               5.077e-01  3.360e-01   1.511 0.131794    
+Block3:Time22 months              -1.087e+00  3.238e-01  -3.357 0.000881 ***
+Block4:Time22 months               7.622e-02  3.234e-01   0.236 0.813845    
+Block5:Time22 months              -5.814e-01  3.092e-01  -1.880 0.060945 .  
+Block6:Time22 months              -5.535e-01  3.318e-01  -1.668 0.096247 .  
+Block7:Time22 months              -5.908e-02  3.446e-01  -0.171 0.863979    
+Block8:Time22 months               3.569e-01  3.379e-01   1.056 0.291664    
+Block2:Time24 months               1.828e+00  3.076e-01   5.944 7.26e-09 ***
+Block3:Time24 months              -2.177e-01  3.114e-01  -0.699 0.485084    
+Block4:Time24 months              -6.490e-03  3.052e-01  -0.021 0.983045    
+Block5:Time24 months               3.918e-01  3.404e-01   1.151 0.250630    
+Block6:Time24 months               3.720e-01  3.220e-01   1.155 0.248768    
+Block7:Time24 months              -5.493e-03  3.055e-01  -0.018 0.985667    
+Block8:Time24 months               4.245e-01  3.219e-01   1.319 0.188229    
+Time22 months:ChamberFull Chamber  4.248e-01  1.793e-01   2.370 0.018382 *  
+Time24 months:ChamberFull Chamber -2.948e-01  1.750e-01  -1.685 0.092969 .  
+Time22 months:PositionOuter        1.179e-02  1.728e-01   0.068 0.945664    
+Time24 months:PositionOuter       -3.965e-01  1.806e-01  -2.195 0.028844 *  
+ChamberFull Chamber:PositionOuter -8.345e-01  1.562e-01  -5.344 1.73e-07 ***
+X.trans:H2O                        5.951e-04  1.388e-04   4.288 2.39e-05 ***
+X.trans:I(H2O^2)                  -4.939e-07  1.302e-07  -3.793 0.000178 ***
+Block2:X.trans                    -8.260e-02  4.231e-02  -1.952 0.051774 .  
+Block3:X.trans                    -5.009e-02  4.317e-02  -1.160 0.246773    
+Block4:X.trans                    -1.178e-02  4.704e-02  -0.250 0.802484    
+Block5:X.trans                    -3.356e-02  4.222e-02  -0.795 0.427217    
+Block6:X.trans                    -2.296e-02  3.775e-02  -0.608 0.543401    
+Block7:X.trans                     1.160e-01  4.588e-02   2.529 0.011929 *  
+Block8:X.trans                    -5.571e-02  4.393e-02  -1.268 0.205672    
+Block2:H2O                        -4.070e-03  1.503e-03  -2.709 0.007119 ** 
+Block3:H2O                        -4.769e-04  1.648e-03  -0.289 0.772441    
+Block4:H2O                         2.562e-03  1.703e-03   1.504 0.133465    
+Block5:H2O                        -3.673e-03  1.990e-03  -1.845 0.065904 .  
+Block6:H2O                        -9.924e-04  1.516e-03  -0.654 0.513321    
+Block7:H2O                        -4.813e-04  1.469e-03  -0.328 0.743432    
+Block8:H2O                        -4.635e-03  1.716e-03  -2.701 0.007282 ** 
+Block2:I(H2O^2)                    3.009e-06  1.610e-06   1.869 0.062477 .  
+Block3:I(H2O^2)                    1.005e-07  1.915e-06   0.052 0.958178    
+Block4:I(H2O^2)                   -4.767e-06  2.118e-06  -2.251 0.025089 *  
+Block5:I(H2O^2)                    4.980e-06  2.827e-06   1.762 0.079059 .  
+Block6:I(H2O^2)                    5.167e-07  1.611e-06   0.321 0.748705    
+Block7:I(H2O^2)                   -1.831e-07  1.597e-06  -0.115 0.908809    
+Block8:I(H2O^2)                    3.331e-06  2.081e-06   1.600 0.110558    
+Time22 months:H2O                 -1.398e-03  5.382e-04  -2.597 0.009827 ** 
+Time24 months:H2O                  2.547e-04  5.119e-04   0.497 0.619199    
+ChamberFull Chamber:X.trans        6.550e-02  2.410e-02   2.718 0.006930 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 0.5876 on 321 degrees of freedom
+Multiple R-squared: 0.7796,	Adjusted R-squared: 0.737 
+F-statistic: 18.31 on 62 and 321 DF,  p-value: < 2.2e-16 
+
+
+
+Anova Table (Type II tests)
+
+Response: ARA.re
+           Sum Sq  Df F value   Pr(>F)    
+cb.re       5.636   1  17.619 3.36e-05 ***
+Residuals 122.194 382                     
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Call:
+lm(formula = ARA.re ~ cb.re)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.68831 -0.30994  0.01078  0.37425  1.62384 
+
+Coefficients:
+              Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -1.525e-17  2.886e-02   0.000        1    
+cb.re        4.227e-02  1.007e-02   4.198 3.36e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Residual standard error: 0.5656 on 382 degrees of freedom
+Multiple R-squared: 0.04409,	Adjusted R-squared: 0.04159 
+F-statistic: 17.62 on 1 and 382 DF,  p-value: 3.36e-05 
+
+
+
+
+
+<============================= END ============================>
+
+Regression Tree Results for:  Acetylene Reduction ( ARA.m ) 
+             ~ Cyanobacteria Cell Density ( Cells.m ) 
+Expt. Time:    12 months, 22 months, 24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sun Dec  4 15:32:30 2011
+
+================================================================
+n= 384 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+  1) root 384 15617000.00 124.55270  
+    2) Time=22 months 128   631634.00  21.00794 *
+    3) Time=12 months,24 months 256 12926840.00 176.32510  
+      6) H2O< 392.345 87   742257.80  33.50201 *
+      7) H2O>=392.345 169  9496335.00 249.84940  
+       14) Frag=Continuous,Isolated 98  2928760.00 175.53740  
+         28) H2O< 607.4948 61  1152377.00 111.92720 *
+         29) H2O>=607.4948 37  1122640.00 280.40820  
+           58) Block=4,7,8 8    31447.51 111.66690 *
+           59) Block=1,2,3,5,6 29   800565.10 326.95750 *
+       15) Frag=Full Corridors,Pseudo-Corridors 71  5279408.00 352.42080  
+         30) Block=1,8 14   339981.80 126.69900 *
+         31) Block=2,3,4,5,6,7 57  4050924.00 407.86130  
+           62) X.trans< 5.483585e+08 32  1964775.00 319.17840  
+            124) H2O< 489.5207 15   447689.90 171.98620  
+              248) Block=2,5,6 8    14840.77  33.14225 *
+              249) Block=3,4 7   102375.30 330.66500 *
+            125) H2O>=489.5207 17   905351.50 449.05390 *
+           63) X.trans>=5.483585e+08 25  1512345.00 521.37530  
+            126) Block=3,4,7 16   473134.40 410.06620 *
+            127) Block=2,5,6 9   488555.50 719.25830 *
+Call:
+rpart(formula = Y.main, data = SECCa, control = rpc)
+  n= 384 
+
+          CP nsplit rel error    xerror       xstd
+1 0.15197466      0 1.0000000 1.0037558 0.11994441
+2 0.08248488      2 0.6960507 0.8321378 0.10697749
+3 0.05689327      3 0.6135658 0.8230252 0.10303918
+4 0.04186096      4 0.5566725 0.7650065 0.09909599
+5 0.03795664      5 0.5148116 0.6865765 0.09143181
+6 0.03525995      7 0.4388983 0.6923125 0.09778105
+7 0.02116115      8 0.4036383 0.6655069 0.09485192
+8 0.01860967      9 0.3824772 0.5945025 0.08029686
+9 0.01500000     10 0.3638675 0.5746120 0.07631169
+
+Node number 1: 384 observations,    complexity param=0.1519747
+  mean=124.5527, MSE=40669.28 
+  left son=2 (128 obs) right son=3 (256 obs)
+  Primary splits:
+      Time     splits as  RLR, improve=0.13181340, (0 missing)
+      H2O      < 335.4043   to the left,  improve=0.09778596, (0 missing)
+      Position splits as  RL, improve=0.06569732, (0 missing)
+      X.trans  < 667580000  to the left,  improve=0.05820594, (0 missing)
+      Block    splits as  LLRRRRLL, improve=0.04540296, (0 missing)
+  Surrogate splits:
+      H2O     < 785.0618   to the right, agree=0.740, adj=0.219, (0 split)
+      X.trans < 2637345000 to the right, agree=0.674, adj=0.023, (0 split)
+
+Node number 2: 128 observations
+  mean=21.00794, MSE=4934.641 
+
+Node number 3: 256 observations,    complexity param=0.1519747
+  mean=176.3251, MSE=50495.47 
+  left son=6 (87 obs) right son=7 (169 obs)
+  Primary splits:
+      H2O      < 392.345    to the left,  improve=0.20795860, (0 missing)
+      Position splits as  RL, improve=0.09687032, (0 missing)
+      Block    splits as  LRRRRRLL, improve=0.08070858, (0 missing)
+      X.trans  < 669322600  to the left,  improve=0.05728151, (0 missing)
+      Time     splits as  L-R, improve=0.05019641, (0 missing)
+  Surrogate splits:
+      Block    splits as  RRRRRRLR, agree=0.684, adj=0.069, (0 split)
+      Position splits as  RL, agree=0.676, adj=0.046, (0 split)
+      X.trans  < 5094947000 to the right, agree=0.672, adj=0.034, (0 split)
+
+Node number 6: 87 observations
+  mean=33.50201, MSE=8531.699 
+
+Node number 7: 169 observations,    complexity param=0.08248488
+  mean=249.8494, MSE=56191.33 
+  left son=14 (98 obs) right son=15 (71 obs)
+  Primary splits:
+      Frag    splits as  LRRL, improve=0.13564880, (0 missing)
+      X.trans < 188963700  to the left,  improve=0.08576781, (0 missing)
+      Block   splits as  LRRRRRRL, improve=0.07706222, (0 missing)
+      Time    splits as  L-R, improve=0.04938523, (0 missing)
+      H2O     < 693.9181   to the left,  improve=0.02883548, (0 missing)
+  Surrogate splits:
+      H2O     < 484.9999   to the right, agree=0.680, adj=0.239, (0 split)
+      X.trans < 905985800  to the left,  agree=0.609, adj=0.070, (0 split)
+
+Node number 14: 98 observations,    complexity param=0.04186096
+  mean=175.5374, MSE=29885.3 
+  left son=28 (61 obs) right son=29 (37 obs)
+  Primary splits:
+      H2O      < 607.4948   to the left,  improve=0.22321490, (0 missing)
+      Block    splits as  LLRLRLLL, improve=0.09716831, (0 missing)
+      X.trans  < 267861700  to the left,  improve=0.06839875, (0 missing)
+      Time     splits as  L-R, improve=0.05445948, (0 missing)
+      Position splits as  RL, improve=0.05207533, (0 missing)
+  Surrogate splits:
+      Block splits as  LLRLRLLL, agree=0.735, adj=0.297, (0 split)
+
+Node number 15: 71 observations,    complexity param=0.05689327
+  mean=352.4208, MSE=74357.86 
+  left son=30 (14 obs) right son=31 (57 obs)
+  Primary splits:
+      Block   splits as  LRRRRRRL, improve=0.168295800, (0 missing)
+      X.trans < 511705300  to the left,  improve=0.123538500, (0 missing)
+      Time    splits as  L-R, improve=0.052248670, (0 missing)
+      H2O     < 465.5265   to the left,  improve=0.044362960, (0 missing)
+      Frag    splits as  -RL-, improve=0.002792665, (0 missing)
+
+Node number 28: 61 observations
+  mean=111.9272, MSE=18891.42 
+
+Node number 29: 37 observations,    complexity param=0.01860967
+  mean=280.4082, MSE=30341.62 
+  left son=58 (8 obs) right son=59 (29 obs)
+  Primary splits:
+      Block   splits as  RRRLRRLL, improve=0.25887850, (0 missing)
+      X.trans < 1964897000 to the left,  improve=0.12064380, (0 missing)
+      H2O     < 669.8773   to the left,  improve=0.11636520, (0 missing)
+      Frag    splits as  L--R, improve=0.06404061, (0 missing)
+      Chamber splits as  LR, improve=0.03687056, (0 missing)
+
+Node number 30: 14 observations
+  mean=126.699, MSE=24284.42 
+
+Node number 31: 57 observations,    complexity param=0.03795664
+  mean=407.8613, MSE=71068.84 
+  left son=62 (32 obs) right son=63 (25 obs)
+  Primary splits:
+      X.trans < 548358500  to the left,  improve=0.14164790, (0 missing)
+      Time    splits as  L-R, improve=0.12009840, (0 missing)
+      H2O     < 497.7759   to the left,  improve=0.06331807, (0 missing)
+      Block   splits as  -LLLLRL-, improve=0.02486069, (0 missing)
+      Frag    splits as  -RL-, improve=0.01475163, (0 missing)
+  Surrogate splits:
+      Block   splits as  -LRLLLR-, agree=0.667, adj=0.24, (0 split)
+      H2O     < 398.3835   to the right, agree=0.596, adj=0.08, (0 split)
+      Chamber splits as  LR, agree=0.596, adj=0.08, (0 split)
+
+Node number 58: 8 observations
+  mean=111.6669, MSE=3930.938 
+
+Node number 59: 29 observations
+  mean=326.9575, MSE=27605.69 
+
+Node number 62: 32 observations,    complexity param=0.03795664
+  mean=319.1784, MSE=61399.2 
+  left son=124 (15 obs) right son=125 (17 obs)
+  Primary splits:
+      H2O     < 489.5207   to the left,  improve=0.31135030, (0 missing)
+      Time    splits as  L-R, improve=0.24839520, (0 missing)
+      Block   splits as  -LRRRRR-, improve=0.21733270, (0 missing)
+      X.trans < 271047200  to the right, improve=0.04592561, (0 missing)
+      Frag    splits as  -RL-, improve=0.04386242, (0 missing)
+  Surrogate splits:
+      Time     splits as  L-R, agree=0.812, adj=0.600, (0 split)
+      Block    splits as  -LRLRRR-, agree=0.781, adj=0.533, (0 split)
+      X.trans  < 43703990   to the left,  agree=0.625, adj=0.200, (0 split)
+      Frag     splits as  -RL-, agree=0.594, adj=0.133, (0 split)
+      Position splits as  LR, agree=0.562, adj=0.067, (0 split)
+
+Node number 63: 25 observations,    complexity param=0.03525995
+  mean=521.3753, MSE=60493.79 
+  left son=126 (16 obs) right son=127 (9 obs)
+  Primary splits:
+      Block    splits as  -RLLRRL-, improve=0.36410670, (0 missing)
+      Chamber  splits as  RL, improve=0.16021360, (0 missing)
+      H2O      < 514.3779   to the right, improve=0.13283580, (0 missing)
+      X.trans  < 2313716000 to the left,  improve=0.13039260, (0 missing)
+      Position splits as  LR, improve=0.06713323, (0 missing)
+  Surrogate splits:
+      H2O < 429.4567   to the right, agree=0.72, adj=0.222, (0 split)
+
+Node number 124: 15 observations,    complexity param=0.02116115
+  mean=171.9862, MSE=29845.99 
+  left son=248 (8 obs) right son=249 (7 obs)
+  Primary splits:
+      Block   splits as  -LRRLL--, improve=0.73817570, (0 missing)
+      Chamber splits as  RL, improve=0.14186810, (0 missing)
+      Frag    splits as  -RL-, improve=0.12218740, (0 missing)
+      H2O     < 468.2848   to the left,  improve=0.10839780, (0 missing)
+      Time    splits as  L-R, improve=0.05198052, (0 missing)
+  Surrogate splits:
+      H2O     < 468.2848   to the left,  agree=0.733, adj=0.429, (0 split)
+      Time    splits as  L-R, agree=0.733, adj=0.429, (0 split)
+      Frag    splits as  -RL-, agree=0.733, adj=0.429, (0 split)
+      X.trans < 361098100  to the left,  agree=0.667, adj=0.286, (0 split)
+      Chamber splits as  RL, agree=0.600, adj=0.143, (0 split)
+
+Node number 125: 17 observations
+  mean=449.0539, MSE=53255.97 
+
+Node number 126: 16 observations
+  mean=410.0662, MSE=29570.9 
+
+Node number 127: 9 observations
+  mean=719.2583, MSE=54283.94 
+
+Node number 248: 8 observations
+  mean=33.14225, MSE=1855.096 
+
+Node number 249: 7 observations
+  mean=330.665, MSE=14625.05 
+
+
+
+
+
+<============================= END ============================>
