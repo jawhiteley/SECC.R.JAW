@@ -19,10 +19,12 @@ if (FALSE) {  # do not run automatically
   Save.results  <- FALSE
 }
 
+Save.glmulti <- "./save/ARA-cb.glmulti.R"
 
 library(car)
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
+
 
 ################################################################
 ## PROCESS DATA: planned
@@ -39,6 +41,21 @@ SECCa <- within( SECCa, {
 ## May have to drop some variables?
 SECC.x0 <- SECCa[SECCa$X.trans != 0, ]
 UseClimateFac <- FALSE
+
+## generate grid to add predicted values to (X-values in all combinations of factors).
+## - watch length.out: if it's too long, R will choke.
+## - real replication is 1 anyway, so it doesn't need to be so big in this case.
+Y.pred <- expand.grid(Block    = levels(SECCa$Block) , 
+                      Time     = levels(SECCa$Time) , 
+                      Chamber  = levels(SECCa$Chamber) , 
+                      Frag     = levels(SECCa$Frag), 
+                      Position = levels(SECCa$Position), 
+                      X.trans  =seq(0, max(SECCa$X.trans), length.out=3 ),
+                      H2O      =seq(0, max(SECCa$H2O), length.out=3 ) 
+                      )
+
+
+
 
 ################################################################
 ## ANALYSIS
@@ -183,13 +200,13 @@ Y.model  <- Y.lmH
 ## MODEL SELECTION: Which TERMS do I need in the model?
 ##==============================================================
 ## multi-model averaging and inference with glmulti!
+## WARNING: this uses **A LOT** of memory (~ 2GB!!)
 library(glmulti)                       #  v1.0, april 2011; v1.0.3, Nov 2011
 ## library(MASS)                          # ?
 ## library(leaps)
 
-Save.glmulti <- "./save/ARA-cb.glmulti.R"
 if (file.exists(Save.glmulti)) { ## load saved object to speed things up
-  cat("- loading glmulti objects from previous run")
+  cat("- loading glmulti objects from previous run\n")
   load(Save.glmulti)
 } else {
   ## Note: glmulti performs an exhaustive search of all candidate models, by default.  
@@ -205,6 +222,7 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   ## Try with 'genetic' algorithm to speed things up (method="g"). ~ 30 minutes
   ## Best to run 2-4+ replicate genetic algorithms, and take consensus.
   ## use method="d" to print a summary of candidate models (no fitting)
+  ## larger confsetsize -> more memory useage?
   ARA.multi <- list()
   for (i in 1:4) {
     cat("\n================ glmulti: Genetic Algorithm Run", i, "================\n\n")
@@ -213,129 +231,139 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
                               plotty=FALSE, report=TRUE)
   }
   ARA.glmulti2 <- consensus(ARA.multi, confsetsize=256) # more models use more memory!
+
   rm(ARA.multi)                        # clean-up
-  summary(ARA.glmulti2)
-  ## save object to speed up loading for future analysis.  This is still a big file: >1 GB!
-  save(ARA.glmulti1, ARA.glmulti2, file=Save.glmulti)
-}
-print(ARA.glmulti1)
-print(ARA.glmulti2)
 
-ARA.best2 <- as.formula(summary(ARA.glmulti2)$bestmodel)
-ARA.best2lm <- lm(ARA.best2, data=SECCa)
-summary(ARA.best2lm)
+  if (F) save(ARA.glmulti1, ARA.glmulti2, file=Save.glmulti)
+
+  ## requires glmulti objects
+  ## capture output to save before deleting glmulti objects
+  ARA.pmulti1 <- capture.output(print(ARA.glmulti1))
+  ARA.pmulti2 <- capture.output(print(ARA.glmulti2))
+  ARA.best2 <- as.formula(summary(ARA.glmulti2)$bestmodel)
+  ARA.best2lm <- lm(ARA.best2, data=SECCa)
+  summary(ARA.best2lm)
 
 
-term.labels <- function(tls) {
-  tls <- gsub("X.trans", "Cyanobacteria", tls) # attr(SECC, "labels")[X.col]
-  tls <- gsub("I(H2O^2)", "H2O^2", tls, fixed=TRUE)
-  tls <- gsub("H2O", "Moisture", tls)
-  tls <- gsub("Frag", "Fragmentation", tls)
-  if (FALSE) { # ggplot2 doesn't support math expressions (yet)?
-    tls <- gsub(":", "%*%", tls)       # interactions
-    tls <- expression(tls)             # expressions
-  } else {
+  term.labels <- function(tls) {
+    tls <- gsub("X.trans", "Cyanobacteria", tls) # attr(SECC, "labels")[X.col]
+    tls <- gsub("I(H2O^2)", "H2O^2", tls, fixed=TRUE)
+    tls <- gsub("H2O", "Moisture", tls)
+    tls <- gsub("Frag", "Fragmentation", tls)
+    if (FALSE) { # ggplot2 doesn't support math expressions (yet)?
+      tls <- gsub(":", "%*%", tls)       # interactions
+      tls <- expression(tls)             # expressions
+    } else {
+    }
+    tls
   }
-  tls
-}
-getCoef.glmulti <- function(glmObj, minImportance=0) {
-  glm.coef <- as.data.frame(coef(glmObj))
-  ## from coef: these are weights of model *coefficients*, NOT *model terms*...
-  ## I think I want weights of model terms (variables, rather than levels of each factor)
-  ## ggplot will order the bars by levels of the explanatory factor
-  glm.coef$Term <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
-  glm.order <- order(glm.coef$Importance, decreasing=TRUE)
-  ## glm.coef$Term <- factor(glm.coef$Term, levels=levels(glm.coef$Term)[glm.order])
-  ## Drop terms below the threshold
-  glm.minImp <- which(glm.coef$Importance >= minImportance)
-  glm.coef <- glm.coef[glm.minImp, ]
-  ## facilitate confidence intervals on Estimates
-  glm.coef$Emax <- glm.coef$Estimate + glm.coef[, "+/- (alpha=0.05)"]
-  glm.coef$Emin <- glm.coef$Estimate - glm.coef[, "+/- (alpha=0.05)"]
-  ## Clean up labels
-  levels(glm.coef$Term) <- gsub("ChamberFull Chamber", "Chamber", levels(glm.coef$Term))
-  levels(glm.coef$Term) <- gsub("PositionOuter", "Position", levels(glm.coef$Term))
-  levels(glm.coef$Term) <- gsub("Block(.*)", "Block \\1", levels(glm.coef$Term))
-  levels(glm.coef$Term) <- gsub("Frag(.*)", "Frag (\\1)", levels(glm.coef$Term))
-  levels(glm.coef$Term) <- gsub("Time(.*)", "Time (\\1)", levels(glm.coef$Term))
-  levels(glm.coef$Term) <- term.labels(levels(glm.coef$Term))
-  glm.coef
-}
-if (F) {
-  names(ARA.glmulti2)
-  str(summary(ARA.glmulti2))
-  summary(ARA.glmulti1)$modelweights
-  weightable(ARA.glmulti1)             # models, IC values, and relative weights (for confset)
-}
-
-ARA.coef1 <- getCoef.glmulti(ARA.glmulti1)
-ARA.coef2 <- getCoef.glmulti(ARA.glmulti2)
-nrow(ARA.coef2)                        # 129 terms (128 + intercept)!
-
-## Output graphs
-par(mfrow=c(1,1))
-plot(ARA.glmulti1, type="p")           # red line at ~2 IC units above best model: should consider at least all models below this line.
-plot(ARA.glmulti1, type="w")           # red line where cumulative evidence weight = 95%
-## plot(ARA.glmulti1, type="r")           # diagnostic plots (windows only?)
-plot(ARA.glmulti1, type="s")           # term weights (v 1.0.3)
-plot(ARA.glmulti2, type="s")           # term weights (v 1.0.3)
-plot(ARA.glmulti2, type="p")
-plot(ARA.glmulti2, type="w")
-## sum of relative evidence weights over all models that include each term?
-barplot(ARA.coef1[, "Importance"], horiz=TRUE, names.arg=ARA.coef1$Term, las=2) 
-
-## ggplot2: theme settings
-bar.import <- function(glmObj) {
-  ## collect importances (see plot.glmulti( type="s" )
-  x = glmObj
-  ww = exp(-(x@crits - x@crits[1])/2)
-  ww = ww/sum(ww)
-  clartou = function(x) {
-    pieces <- sort(strsplit(x, ":")[[1]])
-    if (length(pieces) > 1) 
-      paste(pieces[1], ":", pieces[2], sep = "")
-    else x
+  getCoef.glmulti <- function(glmObj, minImportance=0) {
+    glm.coef <- as.data.frame(coef(glmObj))
+    ## from coef: these are weights of model *coefficients*, NOT *model terms*...
+    ## I think I want weights of model terms (variables, rather than levels of each factor)
+    ## ggplot will order the bars by levels of the explanatory factor
+    glm.coef$Term <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
+    glm.order <- order(glm.coef$Importance, decreasing=TRUE)
+    ## glm.coef$Term <- factor(glm.coef$Term, levels=levels(glm.coef$Term)[glm.order])
+    ## Drop terms below the threshold
+    glm.minImp <- which(glm.coef$Importance >= minImportance)
+    glm.coef <- glm.coef[glm.minImp, ]
+    ## facilitate confidence intervals on Estimates
+    glm.coef$Emax <- glm.coef$Estimate + glm.coef[, "+/- (alpha=0.05)"]
+    glm.coef$Emin <- glm.coef$Estimate - glm.coef[, "+/- (alpha=0.05)"]
+    ## Clean up labels
+    levels(glm.coef$Term) <- gsub("ChamberFull Chamber", "Chamber", levels(glm.coef$Term))
+    levels(glm.coef$Term) <- gsub("PositionOuter", "Position", levels(glm.coef$Term))
+    levels(glm.coef$Term) <- gsub("Block(.*)", "Block \\1", levels(glm.coef$Term))
+    levels(glm.coef$Term) <- gsub("Frag(.*)", "Frag (\\1)", levels(glm.coef$Term))
+    levels(glm.coef$Term) <- gsub("Time(.*)", "Time (\\1)", levels(glm.coef$Term))
+    levels(glm.coef$Term) <- term.labels(levels(glm.coef$Term))
+    glm.coef
   }
-  tet = lapply(x@formulas, function(x) sapply(attr(delete.response(terms(x)), 
-                                                   "term.labels"), clartou))
-  allt <- unique(unlist(tet))
-  imp <- sapply(allt, function(x) sum(ww[sapply(tet, function(t) x %in% t)]))
+  importance.glmulti <- function(x) {
+    ## collect importances (see plot.glmulti( type="s" )
+    ww = exp(-(x@crits - x@crits[1])/2)
+    ww = ww/sum(ww)
+    clartou = function(x) {
+      pieces <- sort(strsplit(x, ":")[[1]])
+      if (length(pieces) > 1) 
+        paste(pieces[1], ":", pieces[2], sep = "")
+      else x
+    }
+    tet = lapply(x@formulas, function(x) sapply(attr(delete.response(terms(x)), 
+                                                     "term.labels"), clartou))
+    allt <- unique(unlist(tet))
+    imp <- sapply(allt, function(x) sum(ww[sapply(tet, function(t) x %in% t)]))
+    allt <- term.labels(allt)
+    order.imp <- order(imp)
+    glm.imp <- data.frame(Term=allt[order.imp], Importance=imp[order.imp], stringsAsFactors=F)
+    glm.imp$Term <- factor(glm.imp$Term, levels=glm.imp$Term) # sorted levels?
+    glm.imp
+  }
 
-  allt <- term.labels(allt)
-  order.imp <- order(imp)
-  glm.imp <- data.frame(Term=allt[order.imp], Importance=imp[order.imp], stringsAsFactors=F)
-  glm.imp$Term <- factor(glm.imp$Term, levels=glm.imp$Term) # sorted levels?
+  if (F) {
+    summary(ARA.glmulti1)
+    summary(ARA.glmulti2)
+    names(ARA.glmulti2)
+    str(summary(ARA.glmulti2))
+    summary(ARA.glmulti1)$modelweights
+    weightable(ARA.glmulti1)             # models, IC values, and relative weights (for confset)
+  }
 
-  ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
-         list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
-              scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
-              geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
-              opts(panel.border=theme_blank(), axis.line=theme_segment(),
-                   plot.title=theme_text(size = 16, face = "bold"),
-                   title="Model-averaged importance of effects")
-         )
-}
-est.confint <- function(glmObj) {
-  ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
-  ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
-  ggplot(glmObj, aes(x=Term, y=Estimate) ) +
-  geom_hline(yintercept=0, colour="grey") + 
-  list(geom_point(),
-       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
-       coord_flip())
-}
+  ARA.coef1 <- getCoef.glmulti(ARA.glmulti1)
+  ARA.coef2 <- getCoef.glmulti(ARA.glmulti2)
+  nrow(ARA.coef2)                        # 129 terms (128 + intercept)!
+  ARA.imp1 <- importance.glmulti(ARA.glmulti1)
+  ARA.imp2 <- importance.glmulti(ARA.glmulti2)
+  ## Extract model-averaged predictions: needs a lot of memory (>600 MB)
+  ## May produce errors, but I don't really understand why :(
+  Y.multipred <- predict(ARA.glmulti2, newdata=Y.pred, se.fit=TRUE)
 
-ARA.importance1 <- bar.import(ARA.glmulti1)
-ARA.est1 <-est.confint(ARA.coef1)
-print(ARA.importance1)
-print(ARA.est1)
+  ## Output graphs
+  par(mfrow=c(1,1))
+  plot(ARA.glmulti1, type="p")           # red line at ~2 IC units above best model: should consider at least all models below this line.
+  plot(ARA.glmulti1, type="w")           # red line where cumulative evidence weight = 95%
+  ## plot(ARA.glmulti1, type="r")           # diagnostic plots (windows only?)
+  plot(ARA.glmulti1, type="s")           # term weights (v 1.0.3)
+  plot(ARA.glmulti2, type="s")           # term weights (v 1.0.3)
+  plot(ARA.glmulti2, type="p")
+  plot(ARA.glmulti2, type="w")
+  ## sum of relative evidence weights over all models that include each term?
+  barplot(ARA.coef1[, "Importance"], horiz=TRUE, names.arg=ARA.coef1$Term, las=2) 
 
-ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ]  #  sharp jump from 0.2->0.3->0.99
-ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
-ARA.importance2 <- bar.import(ARA.glmulti2) #+ opts(axis.text.y=theme_text(size=8, hjust=1))
-ARA.est2 <-est.confint(ARA.coef2plot) + opts(axis.text.y=theme_text(size=8, hjust=1))
-print(ARA.importance2)
-print(ARA.est2)
+  ## ggplot2: theme settings
+  bar.import <- function(glm.imp) {
+    ##     glm.imp <- importance.glmulti(glmObj)
+    ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
+           list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
+                scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
+                geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
+                opts(panel.border=theme_blank(), axis.line=theme_segment(),
+                     plot.title=theme_text(size = 16, face = "bold"),
+                     title="Model-averaged importance of effects")
+           )
+  }
+  est.confint <- function(glmObj) {
+    ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
+    ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
+    ggplot(glmObj, aes(x=Term, y=Estimate) ) +
+    geom_hline(yintercept=0, colour="grey") + 
+    list(geom_point(),
+         geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
+         coord_flip())
+  }
+
+  ARA.importance1 <- bar.import(ARA.imp1)
+  ARA.est1 <-est.confint(ARA.coef1)
+  print(ARA.importance1)
+  print(ARA.est1)
+
+  ARA.importance2 <- bar.import(ARA.imp2) #+ opts(axis.text.y=theme_text(size=8, hjust=1))
+  ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ]  #  sharp jump from 0.2->0.3->0.99
+  ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
+  ARA.est2 <-est.confint(ARA.coef2plot) + opts(axis.text.y=theme_text(size=8, hjust=1))
+  print(ARA.importance2)
+  print(ARA.est2)
 
 ## Important 2-way interactions:
 ## Block:Time
@@ -354,6 +382,15 @@ print(ARA.est2)
 ##   Time * Chamber * Position
 
 
+  ## save derivative objects to speed up loading for future analysis.  
+  ## The raw glmulti objects make for a big file (and a lot of memory): >1 GB!
+  save(ARA.pmulti1, ARA.pmulti2, ARA.best2, ARA.best2lm, 
+              ARA.coef1, ARA.coef2, ARA.imp1, ARA.imp2, 
+              ARA.importance1, ARA.est1, ARA.importance2, ARA.est2,
+              Y.multipred, file=Save.glmulti)
+
+  rm(ARA.glmulti1, ARA.glmulti2)         # save memory? not right away, but maybe eventually :(
+}
 
 
 
@@ -367,24 +404,34 @@ Y.model <- Y.lmH
 Y.model <- Y.lmHB
 Y.model <- ARA.best2lm
 
-## Add mixed effects extensions to avoid violating model assumptions?
-
 
 
 
 ################################################################
 ## ADD MIXED EFFECTS?
 ################################################################
+## Add mixed effects extensions to avoid violating model assumptions?
 library(nlme)
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
 
 Y.gls <- gls(Y.formula, data=SECCa, method="REML")
-Y.lme <- gls(Y.formula, data=SECCa, weights=varIdent(form = ~ 1 | Block * Time), 
-             control=lmd, method="REML")
+Y.lmeBT <- gls(formula(Y.formula), data=SECCa, weights=varIdent(form = ~ 1 | Block * Time), 
+             control=lmc, method="REML")
+Y.lme <- gls(Y.main, data=SECCa, weights=varIdent(form = ~ 1 | Block * Time), 
+             control=lmc, method="REML")
 
-anova(Y.gls, Y.lme)                    # Do random effects improve the model?
-## Y.model <- Y.lme
+anova(Y.gls, Y.lmeBT)                  # Do random effects improve the model?
+AIC(Y.gls, Y.lmeBT, Y.lme)             # By how much do random effects improve the model?
+
+## effect() produces errors if model is not specified explicitly :(
+## Error in x$formula : object of type 'symbol' is not subsettable
+## Wrapping the formula reference in formula() seems to help, 
+## but then it won't work with avPlots :(
+
+## Y.model <- Y.lmeBT
+
+
 
 
 ################################################################
@@ -412,7 +459,7 @@ RE <- diagnostics(Y.model, resType="pearson", more=TRUE) # full diagnostics, jus
 op <- par(mfrow=c(2,2))
 plot(Y.model)
 par(op)
-residualPlots(Y.model)                 # car
+if (inherits(Y.model, "lm")) residualPlots(Y.model)                 # car: lm only
 
 ## Check for spatial patterns in residuals?
 
@@ -424,19 +471,24 @@ residualPlots(Y.model)                 # car
 ################################################################
 ## ANALYSIS: GET RESULTS
 ################################################################
+cat("- Generating results & predictions\n")
 ## the anova() function performs sequential (Type I) tests: order matters.
-anova(Y.model)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
-Anova(Y.model, type=2)                 # Type II: car package**
 summary(Y.model)
-## effects of single-term deletions?
-drop1(Y.model)
-drop1(Y.lmain)
+anova(Y.model)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
+if (inherits(Y.model, "lm")) {
+  Anova(Y.model, type=2)                 # Type II: car package**
+  ## effects of single-term deletions?
+  drop1(Y.model)
+  drop1(Y.lmain)
+}
 
 ## Partial effects of each variable (Zuur et al. 2009, pg. 400)
 ## termplot() only works for main effects, not when interactions are present :(
 ## termplot(Y.model, se=T, rug=T, partial.resid=T)
+## Use effect() to get predicted effects for specific terms
+## summary(eff.obj$term) : $effect, $lower, $upper for 95% CI
 library(effects)
-plot(allEffects(Y.model), ask=FALSE)   # interesting, but messy
+if (F) plot(allEffects(Y.model), ask=FALSE)   # interesting, but messy (and slow for gls)
 
 intermean <- function (vec) {
   vec1 <- rep(NA, length(vec) -1)
@@ -457,6 +509,7 @@ F.eff     <- effect("Time:Frag", Y.model)
 X.H.eff   <- effect("X.trans:H2O:I(H2O^2)", Y.model, xlevels=list(H2O=H2O.9lvls))
 X.HB.eff  <- effect("Block:X.trans:H2O:I(H2O^2)", Y.model,
                     xlevels=list(Block=1:8, H2O=H2O.4lvls))
+
 plot(X.eff,     ask=FALSE)
 plot(X.TCP.eff, ask=FALSE)
 plot(X.BTC.eff, ask=FALSE)
@@ -487,12 +540,34 @@ if (F) {
   ARA.X.eff <- effect("X.trans", Y.model)
 }
 
-##================================================
+
+##==============================================================
+## Predictions
+##==============================================================
+if (inherits(Y.model, "lm")) {
+  Y.pred.response <- predict(Y.model, newdata=Y.pred, type="response", interval="confidence", level=0.95) # newdata must have same explanatory variable names for predict to work.
+  Y.pred$predicted <- Y.pred.response[, 1]
+  Y.pred$pred.lwr  <- Y.pred.response[, 2]
+  Y.pred$pred.upr  <- Y.pred.response[, 3]
+  Y.pred.terms <- predict(Y.model, type="terms")
+  ## type=="response" for full predictions (including interactions)
+  ## type=="terms" for partial predictions (?)
+}
+
+## Note: there is a predict() method for glmulti objects...
+Y.pred$multi.fit <- Y.multipred$averages[1]
+Y.pred$multi.lwr <- Y.multipred$averages[1] - Y.multipred$variability[, "+/- (alpha=0.05)"]
+Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (alpha=0.05)"]
+
+
+
+##==============================================================
 ## Partial regression
-##================================================
-## http://intersci.ss.uci.edu/wiki/index.php/R_partial_regression_plots ??
+##==============================================================
+## gls (Mixed Effects) model causes problems in this section
+Y.lmodel <- if (inherits(Y.model, "lm")) Y.model else ARA.best2lm
 avPlots(Y.lmH, terms= ~ X.trans * I(H2O^2), ask=FALSE) # car
-avPlots(Y.model, terms= ~ X.trans * I(H2O^2), ask=FALSE) # car
+avPlots(Y.lmodel, terms= ~ X.trans * I(H2O^2), ask=FALSE) # car
 
 if (F) {
   ## using update() gives same output as avPlots, above
@@ -518,13 +593,13 @@ RHS.part <- gsub("\\s?\\*?\\s?X\\.trans\\s?\\*?\\s?", "", RHS.part) # *-notation
 RHS.part <- gsub("\\+\\+", "+", RHS.part) # leftovers
 RHS.part <- gsub(" [^ ]+\\:\\+", "", RHS.part) # :-notation
 RHS.part <- gsub(" \\+ [^ ]+:$", "", RHS.part) # :-notation
-ARA.part <- paste("update(Y.model, .~ ", RHS.part, ")", sep="")
-cb.part  <- paste("update(Y.model, X.trans ~ ", RHS.part, ")", sep="")
-ARA.part <- eval(parse(text=ARA.part))
+ARA.part <- paste("update(Y.lmodel, .~ ", RHS.part, ")", sep="")
+cb.part  <- paste("update(Y.lmodel, X.trans ~ ", RHS.part, ")", sep="")
+ARA.part <- eval(parse(text=ARA.part)) # problems fitting with gls :(
 cb.part  <- eval(parse(text=cb.part))
 
-ARA.re   <- resid(ARA.part, type="response")
-cb.re    <- resid(cb.part, type = "response")
+ARA.re   <- resid(ARA.part, type = "response")
+cb.re    <- resid(cb.part,  type = "response")
 ARA.cb   <- lm(ARA.re ~ cb.re)
 x.ord <- order(cb.re)
 ARA.cb.pred <- predict(ARA.cb, interval="confidence", level=0.95) # 95% CI bands
@@ -553,13 +628,13 @@ ARA.cb.df <- data.frame(Cells=cb.re, ARA=ARA.re, fit=ARA.cb.pred[, "fit"],
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header), 
-                 print(anova.full),      # Full model: variance partitioning
+                 print(anova.full),    # Full model: variance partitioning
 				 cat("\n\n"),                      # for output
-                 print(ARA.glmulti2),    # multi-model selection
-                 print(ARA.coef2plot),   # model-averaged estimates & weights
+                 cat(ARA.pmulti2, fill=TRUE), # multi-model selection
+                 print(ARA.imp2),      # model-averaged estimates & weights
 				 cat("\n\n"),                      # for output
-				 print(Y.formula),                   # model
-				 Anova(Y.model),                   # model summary
+				 print(Y.formula),                 # model
+                 if (inherits(Y.model, "lm")) Anova(Y.model) else anova(Y.model),
 				 summary(Y.model),                 # model summary
 				 cat("\n\n"),                      # for output
 				 Anova(ARA.cb),                    # partial regression
@@ -574,36 +649,6 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 ################################################################
 ## FINAL GRAPHICS
 ################################################################
-## generate grid to add predicted values to (X-values in all combinations of factors).
-## - watch length.out: if it's too long, R will choke.
-Y.pred <- expand.grid(Block    = levels(SECCa$Block) , 
-                      Time     = levels(SECCa$Time) , 
-                      Chamber  = levels(SECCa$Chamber) , 
-                      Frag     = levels(SECCa$Frag), 
-                      Position = levels(SECCa$Position), 
-                      X.trans  =seq(0, max(SECCa$X.trans), length.out=10 ),
-                      H2O      =seq(0, max(SECCa$H2O), length.out=10 ) 
-                      )
-Y.pred.response <- predict(Y.model, newdata=Y.pred, type="response", interval="confidence", level=0.95)  # newdata must have same explanatory variable names for predict to work.
-Y.pred$predicted <- Y.pred.response[, 1]
-Y.pred$pred.lwr  <- Y.pred.response[, 2]
-Y.pred$pred.upr  <- Y.pred.response[, 3]
-Y.pred.terms <- predict(Y.model, type="terms")
-## type=="response" for full predictions (including interactions)
-## type=="terms" for partial predictions (?)
-
-## Note: there is a predict() method for glmulti objects...
-Y.multipred <- predict(ARA.glmulti2, se.fit=TRUE)
-Y.pred$multi.fit <- Y.multipred$averages[1]
-Y.pred$multi.lwr <- Y.multipred$averages[1] - Y.multipred$variability[, "+/- (alpha=0.05)"]
-Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (alpha=0.05)"]
-## Use effect() to get predicted effects for specific terms
-## summary(eff.obj$term) : $effect, $lower, $upper for 95% CI
-
-if (F) {                               # average predictions for subsets of terms?
-}
-
-
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
@@ -627,25 +672,6 @@ SECCa <- within( SECCa,{
 		)
 })
 
-## spaghetti plots (too many other terms)
-par(mfrow=c(1,1))
-pred.Y <- with( Y.pred, 
-               aggregate(cbind(predicted), list(Chamber = Chamber, X = X.trans), mean)
-)  # I should be getting direct predictions, not means of predictions. *****
-	# pred | augpred | ?
-	plot(SECCa$X.trans, SECCa$Y.trans, type="p",
-		ylab=Y.plotlab, xlab=X.plotlab,
-		pch=SECCa$pt, col=SECCa$colr, bg=SECCa$fill
-        )
-	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Ambient"), 
-          col = Chamber.map$col[1], 
-          lty = Chamber.map$lty[1]
-          )
-	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Full Chamber"), 
-          col = as.character(Chamber.map$col[2]), 
-          lty = Chamber.map$lty[2]
-          )
-	legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
 
 
 
@@ -758,7 +784,7 @@ ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#9
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
 
-Plots.dir <- "./graphs/"
+Plots.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {
   ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells - Importance.eps", sep=""), 
          plot = ARA.importance2, width=4, height=4, scale=1.5)

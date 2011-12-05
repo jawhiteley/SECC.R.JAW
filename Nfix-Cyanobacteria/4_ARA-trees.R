@@ -246,7 +246,9 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 summary(ARA.treeP),               # model summary
 				 cat("\n\n"),                      # for output
 				 cat(Save.end),                    # END OUTPUT #
-				 file = Save.text, append=TRUE
+				 file = gsub(paste("(", Y.col,"~", X.col, ")", sep=""), 
+                             "\\1 - RegTrees", Save.text), 
+                 append=TRUE
 				)
 }
 
@@ -363,8 +365,8 @@ ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(S
 
 if (Save.results == TRUE) {
   FileName = sub(".pdf$", ".eps", Save.final)
-  FileName = paste("./graphs/Figure -", Y.col, "- RegTree - 123.eps")
-  ggsave(filename = FileName, plot = ARA.tree.plot )
+  FileName = paste("./graphs/Figure - ", Y.col, "~", X.col, " - RegTree - 123.eps", sep="")
+  ggsave(filename = FileName, plot = ARA.tree.plot, width=6, height=6, scale=1.5)
 } else {
   print(ARA.tree.plot)
   print(ARA.tree1.plot)
