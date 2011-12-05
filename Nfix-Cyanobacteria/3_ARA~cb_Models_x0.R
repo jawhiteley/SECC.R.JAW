@@ -37,7 +37,8 @@ SECCa <- within( SECCa, {
 ##   (doesn't mean there were none in the sample)
 ## Unfortunately, this happens too often: errors in model fitting.  
 ## May have to drop some variables?
-SECC.x0 <- SECCa[SECCa$X.trans != 0, ]
+SECCa <- SECCa[SECCa$X.trans != 0, ]
+## SECCa <- SECCa[SECCa$Y.trans != 0, ] # effect() won't work (too unbalanced?)
 UseClimateFac <- FALSE
 
 ################################################################
@@ -187,7 +188,7 @@ library(glmulti)                       #  v1.0, april 2011; v1.0.3, Nov 2011
 ## library(MASS)                          # ?
 ## library(leaps)
 
-Save.glmulti <- "./save/ARA-cb.glmulti.R"
+Save.glmulti <- "./save/ARA-cb.glmulti_x0.R"
 if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   cat("- loading glmulti objects from previous run")
   load(Save.glmulti)
@@ -218,6 +219,7 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   ## save object to speed up loading for future analysis.  This is still a big file: >1 GB!
   save(ARA.glmulti1, ARA.glmulti2, file=Save.glmulti)
 }
+
 print(ARA.glmulti1)
 print(ARA.glmulti2)
 
@@ -353,6 +355,8 @@ print(ARA.est2)
 ##   Cells * H2O * I(H2O^2) * Block
 ##   Time * Chamber * Position
 
+## Removing 0-cell counts changes which interactions are important
+## Removing 0-ARA data further changes: Frag & related interactions are now important!
 
 
 
@@ -370,21 +374,6 @@ Y.model <- ARA.best2lm
 ## Add mixed effects extensions to avoid violating model assumptions?
 
 
-
-
-################################################################
-## ADD MIXED EFFECTS?
-################################################################
-library(nlme)
-lmd <- lmeControl()                    # save defaults
-lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
-
-Y.gls <- gls(Y.formula, data=SECCa, method="REML")
-Y.lme <- gls(Y.formula, data=SECCa, weights=varIdent(form = ~ 1 | Block * Time), 
-             control=lmd, method="REML")
-
-anova(Y.gls, Y.lme)                    # Do random effects improve the model?
-## Y.model <- Y.lme
 
 
 ################################################################
@@ -487,9 +476,12 @@ if (F) {
   ARA.X.eff <- effect("X.trans", Y.model)
 }
 
-##================================================
+
+
+
+##################################################
 ## Partial regression
-##================================================
+##################################################
 ## http://intersci.ss.uci.edu/wiki/index.php/R_partial_regression_plots ??
 avPlots(Y.lmH, terms= ~ X.trans * I(H2O^2), ask=FALSE) # car
 avPlots(Y.model, terms= ~ X.trans * I(H2O^2), ask=FALSE) # car
@@ -594,9 +586,9 @@ Y.pred.terms <- predict(Y.model, type="terms")
 
 ## Note: there is a predict() method for glmulti objects...
 Y.multipred <- predict(ARA.glmulti2, se.fit=TRUE)
-Y.pred$multi.fit <- Y.multipred$averages[1]
-Y.pred$multi.lwr <- Y.multipred$averages[1] - Y.multipred$variability[, "+/- (alpha=0.05)"]
-Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (alpha=0.05)"]
+Y.pred$multi.fit <- Y.multipred$averages[1, ]
+Y.pred$multi.lwr <- Y.multipred$averages[1, ] - Y.multipred$variability[, "+/- (alpha=0.05)"]
+Y.pred$multi.upr <- Y.multipred$averages[1, ] + Y.multipred$variability[, "+/- (alpha=0.05)"]
 ## Use effect() to get predicted effects for specific terms
 ## summary(eff.obj$term) : $effect, $lower, $upper for 95% CI
 
@@ -627,26 +619,26 @@ SECCa <- within( SECCa,{
 		)
 })
 
-## spaghetti plots (too many other terms)
-par(mfrow=c(1,1))
-pred.Y <- with( Y.pred, 
-               aggregate(cbind(predicted), list(Chamber = Chamber, X = X.trans), mean)
-)  # I should be getting direct predictions, not means of predictions. *****
-	# pred | augpred | ?
-	plot(SECCa$X.trans, SECCa$Y.trans, type="p",
-		ylab=Y.plotlab, xlab=X.plotlab,
-		pch=SECCa$pt, col=SECCa$colr, bg=SECCa$fill
+if (F) {## spaghetti plots (too many other terms)
+  par(mfrow=c(1,1))
+  pred.Y <- with( Y.pred, 
+                 aggregate(cbind(predicted), list(Chamber = Chamber, X = X.trans), mean)
+  )  # I should be getting direct predictions, not means of predictions. *****
+                                        # pred | augpred | ?
+  plot(SECCa$X.trans, SECCa$Y.trans, type="p",
+       ylab=Y.plotlab, xlab=X.plotlab,
+       pch=SECCa$pt, col=SECCa$colr, bg=SECCa$fill
+       )
+  lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Ambient"), 
+        col = Chamber.map$col[1], 
+        lty = Chamber.map$lty[1]
         )
-	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Ambient"), 
-          col = Chamber.map$col[1], 
-          lty = Chamber.map$lty[1]
-          )
-	lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Full Chamber"), 
-          col = as.character(Chamber.map$col[2]), 
-          lty = Chamber.map$lty[2]
-          )
-	legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
-
+  lines(predicted ~ X.trans, data=subset(Y.pred, Chamber == "Full Chamber"), 
+        col = as.character(Chamber.map$col[2]), 
+        lty = Chamber.map$lty[2]
+        )
+  legend( "topright", legend=Chamber.map$label, pch=point, col=as.character(Chamber.map$col), pt.bg=as.character(Chamber.map$bg) )
+}
 
 
 ##==============================================================
@@ -760,10 +752,6 @@ ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#9
 
 Plots.dir <- "./graphs/"
 if (Save.results == TRUE) {
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells - Importance.eps", sep=""), 
-         plot = ARA.importance2, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells - Estimates.eps", sep=""), 
-         plot = ARA.est2, width=4, height=4, scale=1.5)
   ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells*Time*Position*Chamber.eps", sep=""), 
          plot = ARA.facet.plot, width=5, height=4, scale=1.5)
   ggsave(filename=paste(Plots.dir, "Figure - ARA~Frag.eps", sep=""), 

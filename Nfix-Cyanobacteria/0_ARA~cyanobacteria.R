@@ -13,7 +13,7 @@ if (FALSE) {  # do not run automatically
   setwd("..")  # relative to this file (\rd in Vim-R)
   getwd()  # Check that we're in the right place
 
-  ## library(lattice)    # ggplot2 with faceting is easier!
+  library(lattice)    # densityplot(); X panels; ggplot2 with faceting is easier!
   library(ggplot2)
   theme_set(theme_bw())                  # change global ggplot2 theme
   library(rgl)                           # 3D plots
@@ -21,7 +21,7 @@ if (FALSE) {  # do not run automatically
   library(gvlma)                         # Global Validation of Linear Model Assumptions
   library(nlme)                          # GLMMs (older, but still works)
   ## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
-  ## library\(mgcv)   # Additive Modelling, Cross-Validation
+  library(mgcv)   # Additive Modelling, Cross-Validation
 }
 
 
