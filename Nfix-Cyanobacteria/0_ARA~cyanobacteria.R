@@ -9,19 +9,9 @@
 ################################################################
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
-  setwd("..")  # relative to this file (\rd in Vim-R)
-  getwd()  # Check that we're in the right place
-
-  library(lattice)    # densityplot(); X panels; ggplot2 with faceting is easier!
-  library(ggplot2)
-  theme_set(theme_bw())                  # change global ggplot2 theme
-  library(rgl)                           # 3D plots
-  library(car)                           # diagnostic plots & tools
-  library(gvlma)                         # Global Validation of Linear Model Assumptions
-  library(nlme)                          # GLMMs (older, but still works)
-  ## library(lme4)    # I'd rather use lme4 for GLMMs, but all my references use nlme
-  library(mgcv)   # Additive Modelling, Cross-Validation
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 }
 
 
@@ -72,14 +62,18 @@ source('./Nfix-Cyanobacteria/2_ARA-cb_Explore.R')
 ##  - Include spatial autocorrelation instead?
 if (F) source('./Nfix-Cyanobacteria/3_0_ARA~cb_MixedModel.R')
 
-## *GLMM: fit model using Cells, H2O, and experimental treatments
-##  - account for nesting of fixed factors?  How??!
-##  - Include spatial autocorrelation instead?
+## Simple Linear Models with multi-model selection
 cat("N-fixation ~ Cyanobacteria: Modelling\n")
+if (T) {                               # full dataset **
+  source('./Nfix-Cyanobacteria/3_ARA-cb_setup-Models.R')
+} else {                               # remove 0 Cell densities (non-detection)
+  source('./Nfix-Cyanobacteria/3-x0_ARA-cb_setup-Models.R')
+}
 source('./Nfix-Cyanobacteria/3_ARA~cb_Models.R')
 
 ## Regression trees: higher-order interactions & relative importance
 cat("N-fixation ~ Cyanobacteria: Regression trees\n")
+source('./Nfix-Cyanobacteria/4_ARA-cb_setup-Trees.R')
 source('./Nfix-Cyanobacteria/4_ARA-trees.R')
 
 ##  - Mantel Test: Is N-fixation similarity related to spatial distance?
@@ -107,8 +101,6 @@ if (F) source('./Nfix-Cyanobacteria/3_3_ARA~cb_Model_t3.R')
 
 
 ################################################################
-## FINAL GRAPHICS
+## END
 ################################################################
-## see individual files, which generate their own final graphics
-
 cat("N-fixation ~ Cyanobacteria: FINISHED\n\n")

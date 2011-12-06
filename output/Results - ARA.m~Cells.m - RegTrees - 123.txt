@@ -1,15 +1,15 @@
-
-
-Regression Tree Results for:  Acetylene Reduction ( ARA.m ) 
+Analysis:    Regression Trees
+Results for: Acetylene Reduction ( ARA.m ) 
              ~ Cyanobacteria Cell Density ( Cells.m ) 
 Expt. Time:    12 months, 22 months, 24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, Outer 
+Patches:       Inner, Outer
 
-Mon Dec  5 17:59:37 2011
-
+R version 2.12.0 (2010-10-15)
+Tue Dec  6 14:39:51 2011
 ================================================================
+
 n= 384 
 
 node), split, n, deviance, yval
@@ -40,236 +40,16 @@ Call:
 rpart(formula = Y.main, data = SECCa, control = rpc)
   n= 384 
 
-          CP nsplit rel error    xerror       xstd
-1 0.15197466      0 1.0000000 1.0112042 0.12123157
-2 0.08248488      2 0.6960507 0.7911387 0.10038727
-3 0.05689327      3 0.6135658 0.7704068 0.09500051
-4 0.04186096      4 0.5566725 0.7648961 0.09769977
-5 0.03795664      5 0.5148116 0.7563781 0.09773399
-6 0.03525995      7 0.4388983 0.7410429 0.09762229
-7 0.02116115      8 0.4036383 0.7237105 0.09442086
-8 0.01860967      9 0.3824772 0.7194938 0.09265124
-9 0.01500000     10 0.3638675 0.7479403 0.09767143
-
-Node number 1: 384 observations,    complexity param=0.1519747
-  mean=124.5527, MSE=40669.28 
-  left son=2 (128 obs) right son=3 (256 obs)
-  Primary splits:
-      Time     splits as  RLR, improve=0.13181340, (0 missing)
-      H2O      < 335.4043   to the left,  improve=0.09778596, (0 missing)
-      Position splits as  RL, improve=0.06569732, (0 missing)
-      X.trans  < 667580000  to the left,  improve=0.05820594, (0 missing)
-      Block    splits as  LLRRRRLL, improve=0.04540296, (0 missing)
-  Surrogate splits:
-      H2O     < 785.0618   to the right, agree=0.740, adj=0.219, (0 split)
-      X.trans < 2637345000 to the right, agree=0.674, adj=0.023, (0 split)
-
-Node number 2: 128 observations
-  mean=21.00794, MSE=4934.641 
-
-Node number 3: 256 observations,    complexity param=0.1519747
-  mean=176.3251, MSE=50495.47 
-  left son=6 (87 obs) right son=7 (169 obs)
-  Primary splits:
-      H2O      < 392.345    to the left,  improve=0.20795860, (0 missing)
-      Position splits as  RL, improve=0.09687032, (0 missing)
-      Block    splits as  LRRRRRLL, improve=0.08070858, (0 missing)
-      X.trans  < 669322600  to the left,  improve=0.05728151, (0 missing)
-      Time     splits as  L-R, improve=0.05019641, (0 missing)
-  Surrogate splits:
-      Block    splits as  RRRRRRLR, agree=0.684, adj=0.069, (0 split)
-      Position splits as  RL, agree=0.676, adj=0.046, (0 split)
-      X.trans  < 5094947000 to the right, agree=0.672, adj=0.034, (0 split)
-
-Node number 6: 87 observations
-  mean=33.50201, MSE=8531.699 
-
-Node number 7: 169 observations,    complexity param=0.08248488
-  mean=249.8494, MSE=56191.33 
-  left son=14 (98 obs) right son=15 (71 obs)
-  Primary splits:
-      Frag    splits as  LRRL, improve=0.13564880, (0 missing)
-      X.trans < 188963700  to the left,  improve=0.08576781, (0 missing)
-      Block   splits as  LRRRRRRL, improve=0.07706222, (0 missing)
-      Time    splits as  L-R, improve=0.04938523, (0 missing)
-      H2O     < 693.9181   to the left,  improve=0.02883548, (0 missing)
-  Surrogate splits:
-      H2O     < 484.9999   to the right, agree=0.680, adj=0.239, (0 split)
-      X.trans < 905985800  to the left,  agree=0.609, adj=0.070, (0 split)
-
-Node number 14: 98 observations,    complexity param=0.04186096
-  mean=175.5374, MSE=29885.3 
-  left son=28 (61 obs) right son=29 (37 obs)
-  Primary splits:
-      H2O      < 607.4948   to the left,  improve=0.22321490, (0 missing)
-      Block    splits as  LLRLRLLL, improve=0.09716831, (0 missing)
-      X.trans  < 267861700  to the left,  improve=0.06839875, (0 missing)
-      Time     splits as  L-R, improve=0.05445948, (0 missing)
-      Position splits as  RL, improve=0.05207533, (0 missing)
-  Surrogate splits:
-      Block splits as  LLRLRLLL, agree=0.735, adj=0.297, (0 split)
-
-Node number 15: 71 observations,    complexity param=0.05689327
-  mean=352.4208, MSE=74357.86 
-  left son=30 (14 obs) right son=31 (57 obs)
-  Primary splits:
-      Block   splits as  LRRRRRRL, improve=0.168295800, (0 missing)
-      X.trans < 511705300  to the left,  improve=0.123538500, (0 missing)
-      Time    splits as  L-R, improve=0.052248670, (0 missing)
-      H2O     < 465.5265   to the left,  improve=0.044362960, (0 missing)
-      Frag    splits as  -RL-, improve=0.002792665, (0 missing)
-
-Node number 28: 61 observations
-  mean=111.9272, MSE=18891.42 
-
-Node number 29: 37 observations,    complexity param=0.01860967
-  mean=280.4082, MSE=30341.62 
-  left son=58 (8 obs) right son=59 (29 obs)
-  Primary splits:
-      Block   splits as  RRRLRRLL, improve=0.25887850, (0 missing)
-      X.trans < 1964897000 to the left,  improve=0.12064380, (0 missing)
-      H2O     < 669.8773   to the left,  improve=0.11636520, (0 missing)
-      Frag    splits as  L--R, improve=0.06404061, (0 missing)
-      Chamber splits as  LR, improve=0.03687056, (0 missing)
-
-Node number 30: 14 observations
-  mean=126.699, MSE=24284.42 
-
-Node number 31: 57 observations,    complexity param=0.03795664
-  mean=407.8613, MSE=71068.84 
-  left son=62 (32 obs) right son=63 (25 obs)
-  Primary splits:
-      X.trans < 548358500  to the left,  improve=0.14164790, (0 missing)
-      Time    splits as  L-R, improve=0.12009840, (0 missing)
-      H2O     < 497.7759   to the left,  improve=0.06331807, (0 missing)
-      Block   splits as  -LLLLRL-, improve=0.02486069, (0 missing)
-      Frag    splits as  -RL-, improve=0.01475163, (0 missing)
-  Surrogate splits:
-      Block   splits as  -LRLLLR-, agree=0.667, adj=0.24, (0 split)
-      H2O     < 398.3835   to the right, agree=0.596, adj=0.08, (0 split)
-      Chamber splits as  LR, agree=0.596, adj=0.08, (0 split)
-
-Node number 58: 8 observations
-  mean=111.6669, MSE=3930.938 
-
-Node number 59: 29 observations
-  mean=326.9575, MSE=27605.69 
-
-Node number 62: 32 observations,    complexity param=0.03795664
-  mean=319.1784, MSE=61399.2 
-  left son=124 (15 obs) right son=125 (17 obs)
-  Primary splits:
-      H2O     < 489.5207   to the left,  improve=0.31135030, (0 missing)
-      Time    splits as  L-R, improve=0.24839520, (0 missing)
-      Block   splits as  -LRRRRR-, improve=0.21733270, (0 missing)
-      X.trans < 271047200  to the right, improve=0.04592561, (0 missing)
-      Frag    splits as  -RL-, improve=0.04386242, (0 missing)
-  Surrogate splits:
-      Time     splits as  L-R, agree=0.812, adj=0.600, (0 split)
-      Block    splits as  -LRLRRR-, agree=0.781, adj=0.533, (0 split)
-      X.trans  < 43703990   to the left,  agree=0.625, adj=0.200, (0 split)
-      Frag     splits as  -RL-, agree=0.594, adj=0.133, (0 split)
-      Position splits as  LR, agree=0.562, adj=0.067, (0 split)
-
-Node number 63: 25 observations,    complexity param=0.03525995
-  mean=521.3753, MSE=60493.79 
-  left son=126 (16 obs) right son=127 (9 obs)
-  Primary splits:
-      Block    splits as  -RLLRRL-, improve=0.36410670, (0 missing)
-      Chamber  splits as  RL, improve=0.16021360, (0 missing)
-      H2O      < 514.3779   to the right, improve=0.13283580, (0 missing)
-      X.trans  < 2313716000 to the left,  improve=0.13039260, (0 missing)
-      Position splits as  LR, improve=0.06713323, (0 missing)
-  Surrogate splits:
-      H2O < 429.4567   to the right, agree=0.72, adj=0.222, (0 split)
-
-Node number 124: 15 observations,    complexity param=0.02116115
-  mean=171.9862, MSE=29845.99 
-  left son=248 (8 obs) right son=249 (7 obs)
-  Primary splits:
-      Block   splits as  -LRRLL--, improve=0.73817570, (0 missing)
-      Chamber splits as  RL, improve=0.14186810, (0 missing)
-      Frag    splits as  -RL-, improve=0.12218740, (0 missing)
-      H2O     < 468.2848   to the left,  improve=0.10839780, (0 missing)
-      Time    splits as  L-R, improve=0.05198052, (0 missing)
-  Surrogate splits:
-      H2O     < 468.2848   to the left,  agree=0.733, adj=0.429, (0 split)
-      Time    splits as  L-R, agree=0.733, adj=0.429, (0 split)
-      Frag    splits as  -RL-, agree=0.733, adj=0.429, (0 split)
-      X.trans < 361098100  to the left,  agree=0.667, adj=0.286, (0 split)
-      Chamber splits as  RL, agree=0.600, adj=0.143, (0 split)
-
-Node number 125: 17 observations
-  mean=449.0539, MSE=53255.97 
-
-Node number 126: 16 observations
-  mean=410.0662, MSE=29570.9 
-
-Node number 127: 9 observations
-  mean=719.2583, MSE=54283.94 
-
-Node number 248: 8 observations
-  mean=33.14225, MSE=1855.096 
-
-Node number 249: 7 observations
-  mean=330.665, MSE=14625.05 
-
-
-
-
-
-<============================= END ============================>
-
-Regression Tree Results for:  Acetylene Reduction ( ARA.m ) 
-             ~ Cyanobacteria Cell Density ( Cells.m ) 
-Expt. Time:    12 months, 22 months, 24 months 
-Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, Outer 
-
-Mon Dec  5 18:04:39 2011
-
-================================================================
-n= 384 
-
-node), split, n, deviance, yval
-      * denotes terminal node
-
-  1) root 384 15617000.00 124.55270  
-    2) Time=22 months 128   631634.00  21.00794 *
-    3) Time=12 months,24 months 256 12926840.00 176.32510  
-      6) H2O< 392.345 87   742257.80  33.50201 *
-      7) H2O>=392.345 169  9496335.00 249.84940  
-       14) Frag=Continuous,Isolated 98  2928760.00 175.53740  
-         28) H2O< 607.4948 61  1152377.00 111.92720 *
-         29) H2O>=607.4948 37  1122640.00 280.40820  
-           58) Block=4,7,8 8    31447.51 111.66690 *
-           59) Block=1,2,3,5,6 29   800565.10 326.95750 *
-       15) Frag=Full Corridors,Pseudo-Corridors 71  5279408.00 352.42080  
-         30) Block=1,8 14   339981.80 126.69900 *
-         31) Block=2,3,4,5,6,7 57  4050924.00 407.86130  
-           62) X.trans< 5.483585e+08 32  1964775.00 319.17840  
-            124) H2O< 489.5207 15   447689.90 171.98620  
-              248) Block=2,5,6 8    14840.77  33.14225 *
-              249) Block=3,4 7   102375.30 330.66500 *
-            125) H2O>=489.5207 17   905351.50 449.05390 *
-           63) X.trans>=5.483585e+08 25  1512345.00 521.37530  
-            126) Block=3,4,7 16   473134.40 410.06620 *
-            127) Block=2,5,6 9   488555.50 719.25830 *
-Call:
-rpart(formula = Y.main, data = SECCa, control = rpc)
-  n= 384 
-
-          CP nsplit rel error    xerror       xstd
-1 0.15197466      0 1.0000000 1.0028491 0.12014363
-2 0.08248488      2 0.6960507 0.8038661 0.10025636
-3 0.05689327      3 0.6135658 0.7591181 0.09433758
-4 0.04186096      4 0.5566725 0.7638495 0.09011096
-5 0.03795664      5 0.5148116 0.7634280 0.09372580
-6 0.03525995      7 0.4388983 0.7469361 0.09192046
-7 0.02116115      8 0.4036383 0.7064326 0.09045849
-8 0.01860967      9 0.3824772 0.6537543 0.08193982
-9 0.01500000     10 0.3638675 0.6166536 0.07105675
+          CP nsplit rel error    xerror      xstd
+1 0.15197466      0 1.0000000 1.0039239 0.1201828
+2 0.08248488      2 0.6960507 0.7858317 0.1027532
+3 0.05689327      3 0.6135658 0.7500144 0.0984274
+4 0.04186096      4 0.5566725 0.7825524 0.1011701
+5 0.03795664      5 0.5148116 0.7890865 0.1072858
+6 0.03525995      7 0.4388983 0.7720311 0.1053225
+7 0.02116115      8 0.4036383 0.7602944 0.1071060
+8 0.01860967      9 0.3824772 0.7840857 0.1050430
+9 0.01500000     10 0.3638675 0.7462228 0.1018694
 
 Node number 1: 384 observations,    complexity param=0.1519747
   mean=124.5527, MSE=40669.28 

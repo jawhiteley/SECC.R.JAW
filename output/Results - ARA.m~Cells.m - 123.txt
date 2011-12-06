@@ -1,13 +1,14 @@
-Results for:  Acetylene Reduction ( ARA.m ) 
+Results for: Acetylene Reduction ( ARA.m ) 
              ~ Cyanobacteria Cell Density ( Cells.m ) 
 Expt. Time:    12 months, 22 months, 24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, Outer 
+Patches:       Inner, Outer
 
-Mon Dec  5 18:04:39 2011
-
+R version 2.12.0 (2010-10-15)
+Tue Dec  6 14:38:17 2011
 ================================================================
+
 Analysis of Variance Table
 
 Response: Y.trans

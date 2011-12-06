@@ -22,6 +22,22 @@ theme_set(theme_bw())                  # change global ggplot2 theme
 library(rgl)                           # 3D plots
 library(car)                           # diagnostic plots & tools
 
+
+################################################################
+## CUSTOM OPTIONS
+################################################################
+# explanatory vars for data exploration (and labels)
+vars.ls   <- c("ARA.m", "Cells.m", "Hcells.m", "H2O")  
+
+labels.ls <- c()
+for(i in 1:length(vars.ls) ){
+  var <- vars.ls[i]
+  labels.ls[i] <- attr(SECC, "labels")[[var]]
+}
+
+
+
+
 ################################################################
 ## EXPLORE: PLOTS
 ################################################################
@@ -56,6 +72,9 @@ SECCa <- within( SECCa,{
                               )
 })
 
+##==============================================================
+## Which Variables to use?
+##==============================================================
 ### pairplots of several variables of interest: check for collinearity, patterns, etc.
 ### see Zuur et al. books
 if (DrawExplorationGraphs) {
@@ -98,7 +117,14 @@ if (FALSE) {
 }
 
 ##==============================================================
-## The easy way, with ggplot2
+## Cell composition
+##==============================================================
+
+
+
+
+##==============================================================
+## Scatterplots: The easy way, with ggplot2
 ##==============================================================
 ### prepare plot theme for points varying by Chamber
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 

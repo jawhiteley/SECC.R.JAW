@@ -3,45 +3,32 @@
 ### Modelling: GLMM (regression)
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2011-11-23
+### Jonathan Whiteley     R v2.12     2011-12-06
 ################################################################
 ## INITIALISE
 ################################################################
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
-  setwd("..")  # relative to this file (\rd in Vim-R)
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 
   ## Load data, functions, etc.  Process data & setup config. values.  
   ## Includes rm(list=ls()) to clear memory
-  source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
+  source('./Nfix-Cyanobacteria/3_ARA-cb_setup-Models.R')
+  source('./Nfix-Cyanobacteria/3-x0_ARA-cb_setup-Models.R')
   Save.results  <- FALSE
 }
-
-Save.glmulti <- "./save/ARA-cb.glmulti.R"
 
 library(car)
 library(ggplot2)
 theme_set(theme_bw())                  # change global ggplot2 theme
 
 
+
 ################################################################
 ## PROCESS DATA: planned
 ################################################################
-## Repeated here for assurance and easy reference
-SECCa <- within( SECCa, {
-                Y.trans <- Y.log  # convenience: log10
-                X.trans <- X.log  # convenience: log10
-})
-## drop values of X == 0 
-## - detection errors where I didn't count any cells 
-##   (doesn't mean there were none in the sample)
-## Unfortunately, this happens too often: errors in model fitting.  
-## May have to drop some variables?
-SECC.x0 <- SECCa[SECCa$X.trans != 0, ]
-UseClimateFac <- FALSE
-
 ## generate grid to add predicted values to (X-values in all combinations of factors).
 ## - watch length.out: if it's too long, R will choke.
 ## - real replication is 1 anyway, so it doesn't need to be so big in this case.
@@ -53,7 +40,6 @@ Y.pred <- expand.grid(Block    = levels(SECCa$Block) ,
                       X.trans  =seq(0, max(SECCa$X.trans), length.out=3 ),
                       H2O      =seq(0, max(SECCa$H2O), length.out=3 ) 
                       )
-
 
 
 
@@ -429,7 +415,7 @@ AIC(Y.gls, Y.lmeBT, Y.lme)             # By how much do random effects improve t
 ## Wrapping the formula reference in formula() seems to help, 
 ## but then it won't work with avPlots :(
 
-## Y.model <- Y.lmeBT
+if (UseMM) Y.model <- Y.lmeBT
 
 
 
@@ -627,7 +613,7 @@ ARA.cb.df <- data.frame(Cells=cb.re, ARA=ARA.re, fit=ARA.cb.pred[, "fit"],
 ## SAVE OUTPUT
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
-  capture.output(cat(Save.header), 
+  capture.output(cat(Save.head.txt), 
                  print(anova.full),    # Full model: variance partitioning
 				 cat("\n\n"),                      # for output
                  cat(ARA.pmulti2, fill=TRUE), # multi-model selection
@@ -640,8 +626,8 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 Anova(ARA.cb),                    # partial regression
 				 summary(ARA.cb),                  # model summary
 				 cat("\n\n"),                      # for output
-				 cat(Save.end),                    # END OUTPUT #
-				 file = Save.text, append=TRUE
+				 cat(Save.end.txt),                # END OUTPUT #
+				 file = Save.text
 				)
 }
 
@@ -681,6 +667,7 @@ SECCa <- within( SECCa,{
 Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
+## Axis Labels: could also use X.plotlab, and Y.plotlab, but this is older code :P
 X.label <- paste("\"", attr(SECCa, "labels")[X.col], ": \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
 Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], ": \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- parse(text=X.label)
@@ -784,25 +771,25 @@ ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#9
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
 
-Plots.dir <- "./graphs/"               # for output
+Save.plot.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells - Importance.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells - Importance.eps", sep=""), 
          plot = ARA.importance2, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells - Estimates.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells - Estimates.eps", sep=""), 
          plot = ARA.est2, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells*Time*Position*Chamber.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells*Time*Position*Chamber.eps", sep=""), 
          plot = ARA.facet.plot, width=5, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Frag.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Frag.eps", sep=""), 
          plot = ARA.Frag.plot, width=4, height=2, scale=2)
-  ggsave(filename=paste(Plots.dir, "Figure - ARA~Cells*Chamber.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells*Chamber.eps", sep=""), 
          plot = ARA.C.plot, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*Block*Time.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*Block*Time.eps", sep=""), 
          plot = ARA.Block.plot, width=4, height=6, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*H2O.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*H2O.eps", sep=""), 
          plot = ARA.H2O.plot, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells*H2O*Block.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*H2O*Block.eps", sep=""), 
          plot = ARA.HB.plot, width=8, height=6, scale=1.5)
-  ggsave(filename=paste(Plots.dir, "Supplemental - ARA~Cells-partial.eps", sep=""), 
+  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells-partial.eps", sep=""), 
          plot = ARA.part.plot, width=4, height=4, scale=1.5)
 } else {
   print(ARA.importance2)

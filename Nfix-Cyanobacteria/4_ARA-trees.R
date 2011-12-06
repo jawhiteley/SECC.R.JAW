@@ -3,7 +3,7 @@
 ### Regression trees:
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density (& other explanatory variables)
-### Jonathan Whiteley     R v2.12     2011-11-05
+### Jonathan Whiteley     R v2.12     2011-12-06
 ################################################################
 ## INITIALISE
 ################################################################
@@ -14,7 +14,7 @@ if (FALSE) {  # do not run automatically
 
   ## Load data, functions, etc.  Process data & setup config. values.  
   ## Includes rm(list=ls()) to clear memory
-  source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
+  source('./Nfix-Cyanobacteria/4_ARA-cb_setup-Trees.R')
 }
 
 
@@ -53,6 +53,8 @@ SECCa <- within( SECCa, {
 ##   (doesn't mean there were none in the sample)
 ## SECC.X0 <- SECCa[SECCa$X.trans != 0, ]
 UseClimateFac <- FALSE                 # appears to make no difference! (equally unimportant)
+
+
 
 ################################################################
 ## ANALYSIS
@@ -241,14 +243,12 @@ if (FALSE) {                           # tree package
 ## SAVE OUTPUT
 ################################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
-  capture.output(cat(paste("\n\nRegression Tree", Save.header)), 
+  capture.output(cat(Save.head.txt), 
 				 print(ARA.treeP),                 # model
 				 summary(ARA.treeP),               # model summary
 				 cat("\n\n"),                      # for output
-				 cat(Save.end),                    # END OUTPUT #
-				 file = gsub(paste("(", Y.col,"~", X.col, ")", sep=""), 
-                             "\\1 - RegTrees", Save.text), 
-                 append=TRUE
+				 cat(Save.end.txt),                # END OUTPUT #
+				 file = Save.text
 				)
 }
 
@@ -364,8 +364,7 @@ ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(S
 
 
 if (Save.results == TRUE) {
-  FileName = sub(".pdf$", ".eps", Save.final)
-  FileName = paste("./graphs/Figure - ", Y.col, "~", X.col, " - RegTree - 123.eps", sep="")
+  FileName = paste(Save.plot.dir, "Figure - ", Y.col, "~", X.col, " - RegTree - 123.eps", sep="")
   ggsave(filename = FileName, plot = ARA.tree.plot, width=6, height=6, scale=1.5)
 } else {
   print(ARA.tree.plot)

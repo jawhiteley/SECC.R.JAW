@@ -237,6 +237,31 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
 
 
 ##================================================
+## ANALYSIS: OUTPUT
+##================================================
+SaveDir.obj   <- function () "./save/"
+SaveDir.plots <- function () "./graphs/"
+SaveDir.text  <- function () "./output/"
+Save.div  <- function () {
+              "================================================================\n" 
+}
+Save.header  <- function (head.txt="") {
+  paste(head.txt,
+        paste("", version$version.string, date(), 
+              Save.div(), "", sep = "\n"),
+        sep="\n"
+  )
+}
+Save.end <-  function () {
+  paste(      "\n", 
+              "<============================= END ============================>",
+        sep = "\n"
+        )
+}
+
+
+
+##================================================
 ## PLOTS & GRAPHS
 ##================================================
 
