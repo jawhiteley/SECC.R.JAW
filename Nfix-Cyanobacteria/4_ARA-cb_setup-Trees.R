@@ -28,7 +28,7 @@ Y.plotlab <- bquote( .(Y.label) * "  " * .(Y.units) *  "" )
 
 
 ## Save Output to Files - set to NULL to prevent output.
-Save.filename <- paste("Results - ", Y.col, "~", X.col, " - RegTrees - ",
+Save.filename <- paste("Results-", Y.col, "~", X.col, "-RegTrees-",
                        paste(which(levels(SECC$Time) == Time.use), collapse=""),
                        sep = ""
                    )

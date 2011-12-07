@@ -86,10 +86,12 @@ Y.plotlab <- bquote( .(Y.label) * "  " * .(Y.units) *  "" )
 
 ## Save Output to Files - set to NULL to prevent output.
 Save.plot.dir <- SaveDir.plots()
-Save.filename <- paste("Results - ", Y.col, "~", X.col, " - ",
+Save.filename <- paste("Results-", Y.col, "~", X.col, "-",
                        paste(which(levels(SECC$Time) == Time.use), collapse=""),
                        sep = ""
                    )
+Save.filename <- sprintf("Results-%s~%s-%s", Y.col, X.col,
+                         paste(which(levels(SECC$Time) == Time.use), collapse="") )
 Save.text  <- paste(SaveDir.text(),  Save.filename, ".txt", sep = "")
 Save.plots <- paste(SaveDir.plots(), Save.filename, ".pdf", sep = "")
 Save.final <- Save.plots              # Destination for final plots.

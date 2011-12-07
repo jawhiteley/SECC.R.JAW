@@ -773,23 +773,23 @@ ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#9
 
 Save.plot.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {
-  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells - Importance.eps", sep=""), 
+  ggsave(filename=paste(Fig.filename, "-Importance.eps", sep=""), 
          plot = ARA.importance2, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells - Estimates.eps", sep=""), 
+  ggsave(filename=paste(Fig.filename, "-Estimates.eps", sep=""), 
          plot = ARA.est2, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells*Time*Position*Chamber.eps", sep=""), 
+  ggsave(filename=paste(Fig.filename, "*Time*Position*Chamber.eps", sep=""), 
          plot = ARA.facet.plot, width=5, height=4, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Frag.eps", sep=""), 
+  ggsave(filename=sprintf("%sFigure-%s~%s", SaveDir.plots(), Y.col, "Frag.eps"),
          plot = ARA.Frag.plot, width=4, height=2, scale=2)
-  ggsave(filename=paste(Save.plot.dir, "Figure - ARA~Cells*Chamber.eps", sep=""), 
+  ggsave(filename=paste(Fig.filename, "*Chamber.eps", sep=""), 
          plot = ARA.C.plot, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*Block*Time.eps", sep=""), 
+  ggsave(filename=paste(Suppl.filename, "*Block*Time.eps", sep=""), 
          plot = ARA.Block.plot, width=4, height=6, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*H2O.eps", sep=""), 
+  ggsave(filename=paste(Suppl.filename, "*H2O.eps", sep=""), 
          plot = ARA.H2O.plot, width=4, height=4, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells*H2O*Block.eps", sep=""), 
+  ggsave(filename=paste(Suppl.filename, "*H2O*Block.eps", sep=""), 
          plot = ARA.HB.plot, width=8, height=6, scale=1.5)
-  ggsave(filename=paste(Save.plot.dir, "Supplemental - ARA~Cells-partial.eps", sep=""), 
+  ggsave(filename=paste(Suppl.filename, "-partial.eps", sep=""), 
          plot = ARA.part.plot, width=4, height=4, scale=1.5)
 } else {
   print(ARA.importance2)

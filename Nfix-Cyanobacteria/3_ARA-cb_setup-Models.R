@@ -39,6 +39,10 @@ UseMM         <- FALSE                 # Use Mixed Models?
 X.plotlab <- bquote( .(X.label) * "  " * log[10](.(X.units)) *  "" )
 Y.plotlab <- bquote( .(Y.label) * "  " * log[10](.(Y.units)) *  "" )
 
+Fig.filename <- sprintf("%sFigure-%s~%s", SaveDir.plots(), Y.col, X.col
+###                         , paste(which(levels(SECC$Time) == Time.use), collapse="") 
+)
+Suppl.filename <- sprintf("%sSupplemental-%s~%s", SaveDir.plots(), Y.col, X.col)
 
 ## Initialize Output file (following scripts *append* to this file)
 ## if (Save.results == TRUE && is.null(Save.text) == FALSE) capture.output(cat(""), file=Save.text)

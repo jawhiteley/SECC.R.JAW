@@ -364,7 +364,7 @@ ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(S
 
 
 if (Save.results == TRUE) {
-  FileName = paste(Save.plot.dir, "Figure - ", Y.col, "~", X.col, " - RegTree - 123.eps", sep="")
+  FileName = paste(Save.plot.dir, gsub("Results", "Figure", Save.filename), ".eps", sep="")
   ggsave(filename = FileName, plot = ARA.tree.plot, width=6, height=6, scale=1.5)
 } else {
   print(ARA.tree.plot)
