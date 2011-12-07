@@ -6,7 +6,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Tue Dec  6 23:49:52 2011
+Wed Dec  7 12:13:59 2011
 ================================================================
 
 Analysis of Variance Table

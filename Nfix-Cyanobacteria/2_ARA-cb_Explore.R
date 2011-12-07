@@ -132,7 +132,7 @@ Cells.plotMap <- data.frame(Var  =c("Cells", "Hcells", "Stigonema", "Nostoc", "O
                             Label=c("Total Cells", "Total Heterocysts", "Stigonema", "Nostoc", "Other"),
                             shape=c(1, 16, 15, 21, 4),
                             col  =c("#000000", "#000000", "#666666", "#000000", "#333333"),
-                            size =c(3, 2, 3, 3, 3),
+                            size =c(0, 2, 3, 3, 3),
                             lty  =c(1, 1, 1, 2, 3),
                             lcol =c("#000000", "#000000", "#999999", "#999999", "#999999"),
                             lsize=c(1, 1, 0.5, 0.5, 0.5),
@@ -141,7 +141,7 @@ Cells.plotMap <- data.frame(Var  =c("Cells", "Hcells", "Stigonema", "Nostoc", "O
 row.names(Cells.plotMap) <- Cells.plotMap$Var
 Spp.plotMap    <- Cells.plotMap[Cells.plotMap$Var %in% c("Stigonema", "Nostoc"), ]
 Hcells.plotMap <- Cells.plotMap[Cells.plotMap$Var %in% c("Hcells", "Stigonema", "Nostoc"), ]
-Hcells.plotMap <- Hcells.plotMap[c(2, 3, 1), ] # change order to match layer order :(
+## Hcells.plotMap <- Hcells.plotMap[c(2, 3, 1), ] # change order to match layer order :(
 
 format_scale <- function(x, num.scale=1000, ...)
 {
@@ -169,7 +169,8 @@ if (F) {                               # using melted df & group variable?
                    measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
                              "Other.cells") )
   Cells.df$variable <- as.character(Cells.df$variable)
-  Spp.plotMap    <- Spp.plotMap[c(2, 1), ]
+  ##   Spp.plotMap    <- Spp.plotMap[c(2, 1), ]
+
   Cells.plot <- ggplot(data=subset(Cells.df, variable %in% c("Stigonema", "Nostoc")), 
                        aes(x=Cells, y=value, group=variable)) +
                    stat_smooth(aes(group=variable, linetype=variable), colour="#999999",
@@ -179,68 +180,76 @@ if (F) {                               # using melted df & group variable?
                       scale_x_continuous(expand=c(0.01,0)) + 
                       scale_y_continuous(expand=c(0.01,0)) +
                    scale_colour_manual(name="Species", 
-                                       values=Spp.plotMap[, "col"], 
+                                       values=structure(Spp.plotMap[, "col"], 
+                                                        names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
                    scale_size_manual(name="Species", 
-                                       values=Spp.plotMap[, "size"], 
+                                       values=structure(Spp.plotMap[, "size"], 
+                                                        names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
                    scale_shape_manual(name="Species", 
-                                       values=Spp.plotMap[, "shape"], 
+                                       values=structure(Spp.plotMap[, "shape"], 
+                                                        names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
                    scale_linetype_manual(name="Species", 
-                                       values=Spp.plotMap[, "lty"], 
+                                       values=structure(Spp.plotMap[, "lty"], 
+                                                        names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"])
 
-  ## sort of works, but I still can't control the order in which layers are added,
-  ## which also controls how values are mapped: by order, rather than value
-  ## :(
+  ## sort of works, but I still can't control the order in which layers are added :(
+  ## structure() allows names to be assigned to vector of values,
+  ## so that scale values are assigned by group value, not order. :)
 }
 
 Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
-                geom_abline(intercept=0, slope=1, colour="#333333", size=1) +
+                geom_abline(intercept=0, slope=1, aes(group="Cells"), 
+                            colour="#333333", size=1) +
                 xlab(Cells.axlab) + ylab(Cells.units) +
                 scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                 scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
                 scale_colour_manual(name="Species",
-                                    values=Spp.plotMap[, "col"], 
+                                    values=structure(Spp.plotMap[, "col"], 
+                                                     names=Spp.plotMap$Var), 
                                     breaks=Spp.plotMap[, "Var"], 
                                     labels=Spp.plotMap[, "Label"]) +
                  scale_shape_manual(name="Species",
-                                    values=Spp.plotMap[, "shape"], 
+                                    values=structure(Spp.plotMap[, "shape"], 
+                                                     names=Spp.plotMap$Var), 
                                     breaks=Spp.plotMap[, "Var"], 
                                     labels=Spp.plotMap[, "Label"]) +
                  scale_size_manual(name="Species",
-                                   values=Spp.plotMap[, "size"], 
+                                   values=structure(Spp.plotMap[, "size"], 
+                                                    names=Spp.plotMap$Var), 
                                    breaks=Spp.plotMap[, "Var"], 
                                    labels=Spp.plotMap[, "Label"]) +
                  scale_linetype_manual(name="Species",
-                                       values=Spp.plotMap[, "lty"], 
+                                       values=structure(Spp.plotMap[, "lty"], 
+                                                        names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
                 coord_equal(ratio = 1) 
 Cells.plot <- Cells.plot + Spp.lines + Spp.points + jaw.ggplot() + Square.plot 
 ## jaw.ggplot() won't work in large call above
-## manual scale only seems to work because elements are added in the same *order*: not matched by *values*?
 
 ## How can I reliably produce different shapes & colours for lines, in the legend?
 HCells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Hcells))
 if (T) {
   HCells.plot <- HCells.plot +
-                    stat_smooth(aes(y=Stigonema.H), linetype=Hcells.plotMap[1, "lty"],
-                                colour=Hcells.plotMap[1, "lcol"], 
-                                size=Hcells.plotMap[1, "lsize"], 
+                    stat_smooth(aes(y=Stigonema.H), linetype=Hcells.plotMap[2, "lty"],
+                                colour=Hcells.plotMap[2, "lcol"], 
+                                size=Hcells.plotMap[2, "lsize"], 
                                 method="gam", se=FALSE) +
-                   stat_smooth(aes(y=Nostoc.H), linetype=Hcells.plotMap[2, "lty"],
-                               colour=Hcells.plotMap[2, "lcol"], 
-                               size=Hcells.plotMap[2, "lsize"], 
-                               method="gam", se=FALSE) +
-                   stat_smooth(aes(y=Hcells), linetype=Hcells.plotMap[3, "lty"],
+                   stat_smooth(aes(y=Nostoc.H), linetype=Hcells.plotMap[3, "lty"],
                                colour=Hcells.plotMap[3, "lcol"], 
                                size=Hcells.plotMap[3, "lsize"], 
+                               method="gam", se=FALSE) +
+                   stat_smooth(aes(y=Hcells), linetype=Hcells.plotMap[1, "lty"],
+                               colour=Hcells.plotMap[1, "lcol"], 
+                               size=Hcells.plotMap[1, "lsize"], 
                                method="gam", se=FALSE)
 } else {
   HCells.plot <- HCells.plot +
@@ -257,15 +266,18 @@ if (T) {
                                 size="Hcells"), 
                                method="gam", se=FALSE) +
                    scale_linetype_manual(name="Fitted vs.\nTotal Cells",
-                                         values=Hcells.plotMap[, "lty"], 
+                                         values=structure(Hcells.plotMap[, "lty"], 
+                                                          names=Hcells.plotMap$Var), 
                                          breaks=Hcells.plotMap[, "Var"], 
                                          labels=Hcells.plotMap[, "Label"]) +
                    scale_colour_manual(name="Fitted vs.\nTotal Cells",
-                                       values=Hcells.plotMap[, "lcol"], 
+                                       values=structure(Hcells.plotMap[, "lcol"], 
+                                                        names=Hcells.plotMap$Var), 
                                        breaks=Hcells.plotMap[, "Var"], 
                                        labels=Hcells.plotMap[, "Label"]) +
                    scale_size_manual(name="Fitted vs.\nTotal Cells",
-                                     values=Hcells.plotMap[, "lsize"], 
+                                     values=structure(Hcells.plotMap[, "lsize"], 
+                                                      names=Hcells.plotMap$Var), 
                                      breaks=Hcells.plotMap[, "Var"], 
                                      labels=Hcells.plotMap[, "Label"])
 }
@@ -280,15 +292,18 @@ geom_point(aes(y=Stigonema.H, colour="Stigonema",
                    scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                    scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
                    scale_shape_manual(name="Species",
-                                      values=Hcells.plotMap[, "shape"], 
+                                      values=structure(Hcells.plotMap[, "shape"], 
+                                                       names=Hcells.plotMap$Var), 
                                       breaks=Hcells.plotMap[, "Var"], 
                                       labels=Hcells.plotMap[, "Label"]) +
                    scale_colour_manual(name="Species",
-                                       values=Hcells.plotMap[, "col"], 
+                                       values=structure(Hcells.plotMap[, "col"], 
+                                                        names=Hcells.plotMap$Var), 
                                        breaks=Hcells.plotMap[, "Var"], 
                                        labels=Hcells.plotMap[, "Label"]) +
                    scale_size_manual(name="Species",
-                                     values=Hcells.plotMap[, "size"], 
+                                     values=structure(Hcells.plotMap[, "size"], 
+                                                      names=Hcells.plotMap$Var), 
                                      breaks=Hcells.plotMap[, "Var"], 
                                      labels=Hcells.plotMap[, "Label"])
 HCells.plot <- HCells.plot + jaw.ggplot() + Square.plot
@@ -297,6 +312,31 @@ if (DrawExplorationGraphs) {
   print(Cells.plot)
   print(HCells.plot)
 }
+
+## manual scale only seems to work because elements are added in the same *order*: not matched by *values*?
+if (F) {
+  ## from ggplot2 documentation http://had.co.nz/ggplot2/book/scales.r
+  huron <- data.frame(year = 1875:1972, level = LakeHuron)
+  ## legend values matched by value, not order
+  ## lines added in arbitrary order, total control over legend
+  ggplot(huron, aes(year)) +
+  geom_line(aes(y = level - 5, colour = "below")) + 
+  geom_line(aes(y = level + 5, colour = "above")) + 
+  scale_colour_manual("Direction", values=c("above" = "red", "below" = "blue"), 
+                      breaks=c("above", "below"), labels=c("Above", "Below"))
+
+  ## legend values matched by order, not value.
+  ggplot(huron, aes(year)) +
+  geom_line(aes(y = level - 5, colour = "below")) + 
+  geom_line(aes(y = level + 5, colour = "above")) + 
+  scale_colour_manual("Direction", values=c("red", "blue"), 
+                      breaks=c("above", "below"), labels=c("Above", "Below"))
+  ## legend values are matched by value only if the 'values' argument to the scale() function is *named* (c(name="value"))
+  ## how can I quickly extract a df column, with names == row.names?
+  structure(Cells.plotMap$col, names=Cells.plotMap$Var)
+}
+
+
 
 
 ##==============================================================
