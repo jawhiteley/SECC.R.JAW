@@ -320,14 +320,16 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   return(PlotMap)
 }
 
-SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, unit.mult = 1, ...) {
+SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, multiline=FALSE,
+                         unit.mult = 1, ...) {
   ax.label <- attr(SECC.df, "labels")[[col.name]] 
   ax.units <- attr(SECC.df, "units" )[[col.name]] 
-  if (unit.mult!=1) ax.units <- bquote("" %*% .(format(unit.mult, ...)) * " " * .(ax.units))
+  if (unit.mult!=1) ax.units <- bquote(""%*%.(format(unit.mult, ...)) * " " * .(ax.units))
+  sep <- if (multiline==TRUE) "\n" else " "
   axis.lab <- if (parens==TRUE) {
-    bquote( .(ax.label) * "  (" * .(ax.units) * ")" )
+    bquote( .(ax.label) * .(sep) * "(" * .(ax.units) * ")" )
   } else {
-    bquote( .(ax.label) * "  " * .(ax.units) )
+    bquote( .(ax.label) * .(sep) * " " * .(ax.units) )
   }
   axis.lab
 }
