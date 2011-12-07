@@ -9,11 +9,13 @@
 ################################################################
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 
   ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
   source('./Nfix-Cyanobacteria/1_ARA-cb_setup.R')
+  Save.results <- FALSE
 }
 
 library(lattice)                       # densityplot
@@ -35,18 +37,18 @@ for(i in 1:length(vars.ls) ){
   labels.ls[i] <- attr(SECC, "labels")[[var]]
 }
 
+DrawExplorationGraphs <- TRUE # Save.results  # Set to FALSE to suppress all this output
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) {
+  pdf( file = gsub("Results", "Exploration", Save.plots, fixed=TRUE) )
+}
+
 
 
 
 ################################################################
 ## EXPLORE: PLOTS
 ################################################################
-## make some meaningful plots of data to check for predicted (expected) patterns.
-DrawExplorationGraphs <- TRUE # Save.results  # Set to FALSE to suppress all this output
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) {
-  pdf( file = gsub("Results", "Exploration", Save.plots, fixed=TRUE) )
-}
-
+### Make some meaningful plots of data to check for predicted (expected) patterns.
 ### Map of point styles for Chamber treatments
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
@@ -116,11 +118,152 @@ if (FALSE) {
   })
 }
 
-##==============================================================
-## Cell composition
-##==============================================================
 
+##==============================================================
+## Cell Composition: which species, cell types?
+##==============================================================
+library(mgcv)                          # gam()
+Cells.scale <- 1000
+Cells.axlab  <- SECC.axislab(SECC, "Cells", unit=Cells.scale, big.mark=",")
+Cells.units  <- bquote("" %*%.(format(Cells.scale, big.mark=",")) * 
+                       " " * .(attr(SECC, "units" )[["Cells"]]) ) 
+HCells.axlab <- SECC.axislab(SECC, "Hcells", unit=Cells.scale, big.mark=",")
+Cells.df <- melt(SECCa, id=c("SampleID", "Cells"), 
+                 measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
+                           "Other.cells")  
+)
+Cells.plotMap <- data.frame(Var  =c("Cells", "Hcells", "Stigonema", "Nostoc", "Other.cells"),
+                            Label=c("Total Cells", "Total Heterocysts", "Stigonema", "Nostoc", "Other"),
+                            shape=c(1, 16, 15, 21, 4),
+                            col  =c("#000000", "#000000", "#666666", "#000000", "#333333"),
+                            size =c(3, 2, 3, 3, 3),
+                            lty  =c(1, 1, 1, 2, 3),
+                            lcol =c("#000000", "#000000", "#999999", "#999999", "#999999"),
+                            lsize=c(1, 1, 0.5, 0.5, 0.5),
+                            stringsAsFactors=FALSE
+                            )
+Spp.plotMap    <- Cells.plotMap[Cells.plotMap$Var %in% c("Stigonema", "Nostoc"), ]
+Hcells.plotMap <- Cells.plotMap[Cells.plotMap$Var %in% c("Hcells", "Stigonema", "Nostoc"), ]
+Hcells.plotMap <- Hcells.plotMap[c(2, 3, 1), ] # change order to match layer order :(
 
+format_scale <- function(x, num.scale=1000, ...)
+{
+  format(x/num.scale, trim=TRUE)
+}
+
+Square.plot <- opts(aspect.ratio = 1, 
+                    axis.title.x = theme_text(vjust = 6, size=12),
+                    axis.title.y = theme_text(angle=90, size=12))
+Spp.points <- list(geom_point(aes(y=Stigonema, group=I("Stigonema"), colour=I("Stigonema"), 
+                               shape=I("Stigonema"), size=I("Stigonema")) ),
+                geom_point(aes(y=Nostoc, group=I("Nostoc"), colour=I("Nostoc"), 
+                               shape=I("Nostoc"), size=I("Nostoc")))
+)
+Spp.lines <- list(stat_smooth(aes(y=Stigonema, linetype=I("Stigonema")), 
+                              colour="#999999", size=Spp.plotMap[1, "lsize"], 
+                              method="gam", se=FALSE),
+                  stat_smooth(aes(y=Nostoc, linetype=I("Nostoc")),
+                              colour="#999999", size=Spp.plotMap[1, "lsize"], 
+                              method="gam", se=FALSE)
+                  )
+
+Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
+                geom_abline(intercept=0, slope=1, colour="#333333", size=1) +
+                xlab(Cells.axlab) + ylab(Cells.units) +
+                scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
+                scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
+                scale_colour_manual(name="Species",
+                                    values=Spp.plotMap[, "col"], 
+                                    breaks=Spp.plotMap[, "Var"], 
+                                    labels=Spp.plotMap[, "Label"]) +
+                 scale_shape_manual(name="Species",
+                                    values=Spp.plotMap[, "shape"], 
+                                    breaks=Spp.plotMap[, "Var"], 
+                                    labels=Spp.plotMap[, "Label"]) +
+                 scale_size_manual(name="Species",
+                                   values=Spp.plotMap[, "size"], 
+                                   breaks=Spp.plotMap[, "Var"], 
+                                   labels=Spp.plotMap[, "Label"]) +
+                 scale_linetype_manual(name="Species",
+                                       values=Spp.plotMap[, "lty"], 
+                                       breaks=Spp.plotMap[, "Var"], 
+                                       labels=Spp.plotMap[, "Label"]) +
+                coord_equal(ratio = 1) 
+Cells.plot <- Cells.plot + Spp.lines + Spp.points + jaw.ggplot() + Square.plot 
+## jaw.ggplot() won't work in large call above
+## manual scale only seems to work because elements are added in the same *order*: not matched by *values*?
+
+## How can I reliably produce different shapes & colours for lines, in the legend?
+HCells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Hcells))
+if (T) {
+  HCells.plot <- HCells.plot +
+                    stat_smooth(aes(y=Stigonema.H), linetype=Hcells.plotMap[1, "lty"],
+                                colour=Hcells.plotMap[1, "lcol"], 
+                                size=Hcells.plotMap[1, "lsize"], 
+                                method="gam", se=FALSE) +
+                   stat_smooth(aes(y=Nostoc.H), linetype=Hcells.plotMap[2, "lty"],
+                               colour=Hcells.plotMap[2, "lcol"], 
+                               size=Hcells.plotMap[2, "lsize"], 
+                               method="gam", se=FALSE) +
+                   stat_smooth(aes(y=Hcells), linetype=Hcells.plotMap[3, "lty"],
+                               colour=Hcells.plotMap[3, "lcol"], 
+                               size=Hcells.plotMap[3, "lsize"], 
+                               method="gam", se=FALSE)
+} else {
+  HCells.plot <- HCells.plot +
+                    stat_smooth(aes(y=Stigonema.H, linetype=I("Stigonema"),
+                                colour=I("Stigonema"), 
+                                size=I("Stigonema")), 
+                                method="gam", se=FALSE) +
+                   stat_smooth(aes(y=Nostoc.H, linetype=I("Nostoc"),
+                                colour=I("Nostoc"), 
+                                size=I("Nostoc")), 
+                               method="gam", se=FALSE) +
+                   stat_smooth(aes(y=Hcells, linetype=I("Hcells"),
+                                colour=I("Hcells"), 
+                                size=I("Hcells")), 
+                               method="gam", se=FALSE) +
+                   scale_linetype_manual(name="Fitted vs.\nTotal Cells",
+                                         values=Hcells.plotMap[, "lty"], 
+                                         breaks=Hcells.plotMap[, "Var"], 
+                                         labels=Hcells.plotMap[, "Label"]) +
+                   scale_colour_manual(name="Fitted vs.\nTotal Cells",
+                                       values=Hcells.plotMap[, "lcol"], 
+                                       breaks=Hcells.plotMap[, "Var"], 
+                                       labels=Hcells.plotMap[, "Label"]) +
+                   scale_size_manual(name="Fitted vs.\nTotal Cells",
+                                     values=Hcells.plotMap[, "lsize"], 
+                                     breaks=Hcells.plotMap[, "Var"], 
+                                     labels=Hcells.plotMap[, "Label"])
+}
+HCells.plot <- HCells.plot +
+geom_point(aes(y=Stigonema.H, colour=I("Stigonema"), 
+               shape=I("Stigonema"), size=I("Stigonema")) ) +
+                   geom_point(aes(y=Nostoc.H, colour=I("Nostoc"), 
+                                  shape=I("Nostoc"), size=I("Nostoc")) ) +
+                   geom_point(aes(y=Hcells, colour=I("Hcells"), 
+                                  shape=I("Hcells"), size=I("Hcells")) ) +
+                   xlab(Cells.axlab) + ylab(HCells.axlab) +
+                   scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
+                   scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
+                   scale_shape_manual(name="Species",
+                                      values=Hcells.plotMap[, "shape"], 
+                                      breaks=Hcells.plotMap[, "Var"], 
+                                      labels=Hcells.plotMap[, "Label"]) +
+                   scale_colour_manual(name="Species",
+                                       values=Hcells.plotMap[, "col"], 
+                                       breaks=Hcells.plotMap[, "Var"], 
+                                       labels=Hcells.plotMap[, "Label"]) +
+                   scale_size_manual(name="Species",
+                                     values=Hcells.plotMap[, "size"], 
+                                     breaks=Hcells.plotMap[, "Var"], 
+                                     labels=Hcells.plotMap[, "Label"])
+HCells.plot <- HCells.plot + jaw.ggplot() + Square.plot
+
+if (DrawExplorationGraphs) {
+  print(Cells.plot)
+  print(HCells.plot)
+}
 
 
 ##==============================================================

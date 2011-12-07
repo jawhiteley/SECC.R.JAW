@@ -320,6 +320,18 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
   return(PlotMap)
 }
 
+SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, unit.mult = 1, ...) {
+  ax.label <- attr(SECC.df, "labels")[[col.name]] 
+  ax.units <- attr(SECC.df, "units" )[[col.name]] 
+  if (unit.mult!=1) ax.units <- bquote("" %*% .(format(unit.mult, ...)) * " " * .(ax.units))
+  axis.lab <- if (parens==TRUE) {
+    bquote( .(ax.label) * "  (" * .(ax.units) * ")" )
+  } else {
+    bquote( .(ax.label) * "  " * .(ax.units) )
+  }
+  axis.lab
+}
+
 ggPts.SECC <- function (ptMap = plotMap("Chamber"), name = "Chamber Treatment") {
   ## Add Chamber shapes & colours to a ggplot scatterplot
   require(ggplot2)
