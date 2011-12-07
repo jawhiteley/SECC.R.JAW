@@ -321,15 +321,23 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
 }
 
 SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, multiline=FALSE,
-                         unit.mult = 1, ...) {
+                         trans.func=NULL, unit.mult = 1, ...) {
   ax.label <- attr(SECC.df, "labels")[[col.name]] 
   ax.units <- attr(SECC.df, "units" )[[col.name]] 
-  if (unit.mult!=1) ax.units <- bquote(""%*%.(format(unit.mult, ...)) * " " * .(ax.units))
+  if (!is.null(trans.func)) {          # Not working :(
+    ## dynamically wrap the units in a plotmath 'function' (passed as text)?
+    ##     ax.units <- paste(trans.func, "(", deparse(ax.units), ")", sep="")
+    if (length(grep("\\(", trans.func)) <1 ) 
+      trans.func <- paste(trans.func, "(%s)", sep="")
+    ax.units <- sprintf(trans.func, deparse(ax.units))
+    ax.units <- parse(text = ax.units)
+  }
+  if (unit.mult!=1) ax.units <- bquote("" %*% .(format(unit.mult, ...)) ~ .(ax.units))
   sep <- if (multiline==TRUE) "\n" else " "
   axis.lab <- if (parens==TRUE) {
-    bquote( .(ax.label) * .(sep) * "(" * .(ax.units) * ")" )
+    bquote( .(ax.label) ~ .(paste(sep, "(", sep="")) * .(ax.units) * ")" )
   } else {
-    bquote( .(ax.label) * .(sep) * " " * .(ax.units) )
+    bquote( .(ax.label) ~ .(paste(sep, " ", sep="")) * .(ax.units) )
   }
   axis.lab
 }
