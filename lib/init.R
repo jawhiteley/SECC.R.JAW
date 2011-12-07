@@ -1,15 +1,16 @@
-### INITIALIZE
-rm(list=ls())       # house-keeping
-cat('Memory Cleared.\n')
-
-## Working Directory
+### Working Directory
 if (FALSE) {  # do not run automatically
   ## Set Working Directory: path in quotes "".
   setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")  # iMac@McGill
   setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (Mac).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 }
+
+### INITIALIZE
+rm(list=ls())       # house-keeping
+cat('Memory Cleared.\n')
 
 ## Load Functions and Libraries
 cat('Loading functions.\n')

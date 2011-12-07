@@ -95,6 +95,12 @@ SECC.cyanobacteria <- within( SECC.cyanobacteria, {
   Hcells   <- (Total.h / X..lg.squares) * sample.sq / 2
   Hcells.g <- Hcells * 2 / (Cells.dwt / 1000)
   Hcells.m <- (Hcells.g / 1000) * ARA.dwt / sample.m2
+  ## individual species
+  Stigonema   <- (Stigonema   / X..lg.squares) * sample.sq / 2
+  Stigonema.H <- (Stigonema.H / X..lg.squares) * sample.sq / 2
+  Nostoc      <- (Nostoc      / X..lg.squares) * sample.sq / 2
+  Nostoc.H    <- (Nostoc.H    / X..lg.squares) * sample.sq / 2
+  Other.cells <- (Other.cells / X..lg.squares) * sample.sq / 2
 })
 
 Cyanobacteria.full <- SECC.cyanobacteria  # save a copy, just in case.
