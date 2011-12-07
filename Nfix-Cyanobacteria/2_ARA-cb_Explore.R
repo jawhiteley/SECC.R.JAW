@@ -128,10 +128,6 @@ Cells.axlab  <- SECC.axislab(SECC, "Cells", unit=Cells.scale, big.mark=",")
 Cells.units  <- bquote("" %*%.(format(Cells.scale, big.mark=",")) * 
                        " " * .(attr(SECC, "units" )[["Cells"]]) ) 
 HCells.axlab <- SECC.axislab(SECC, "Hcells", unit=Cells.scale, big.mark=",")
-Cells.df <- melt(SECCa, id=c("SampleID", "Cells"), 
-                 measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
-                           "Other.cells")  
-)
 Cells.plotMap <- data.frame(Var  =c("Cells", "Hcells", "Stigonema", "Nostoc", "Other.cells"),
                             Label=c("Total Cells", "Total Heterocysts", "Stigonema", "Nostoc", "Other"),
                             shape=c(1, 16, 15, 21, 4),
@@ -142,6 +138,7 @@ Cells.plotMap <- data.frame(Var  =c("Cells", "Hcells", "Stigonema", "Nostoc", "O
                             lsize=c(1, 1, 0.5, 0.5, 0.5),
                             stringsAsFactors=FALSE
                             )
+row.names(Cells.plotMap) <- Cells.plotMap$Var
 Spp.plotMap    <- Cells.plotMap[Cells.plotMap$Var %in% c("Stigonema", "Nostoc"), ]
 Hcells.plotMap <- Cells.plotMap[Cells.plotMap$Var %in% c("Hcells", "Stigonema", "Nostoc"), ]
 Hcells.plotMap <- Hcells.plotMap[c(2, 3, 1), ] # change order to match layer order :(
@@ -154,18 +151,54 @@ format_scale <- function(x, num.scale=1000, ...)
 Square.plot <- opts(aspect.ratio = 1, 
                     axis.title.x = theme_text(vjust = 6, size=12),
                     axis.title.y = theme_text(angle=90, size=12))
-Spp.points <- list(geom_point(aes(y=Stigonema, group=I("Stigonema"), colour=I("Stigonema"), 
-                               shape=I("Stigonema"), size=I("Stigonema")) ),
-                geom_point(aes(y=Nostoc, group=I("Nostoc"), colour=I("Nostoc"), 
-                               shape=I("Nostoc"), size=I("Nostoc")))
+Spp.points <- list(geom_point(aes(y=Stigonema, group="Stigonema", colour="Stigonema", 
+                               shape="Stigonema", size="Stigonema") ),
+                geom_point(aes(y=Nostoc, group="Nostoc", colour="Nostoc", 
+                               shape="Nostoc", size="Nostoc"))
 )
-Spp.lines <- list(stat_smooth(aes(y=Stigonema, linetype=I("Stigonema")), 
+Spp.lines <- list(stat_smooth(aes(y=Stigonema, linetype="Stigonema"), 
                               colour="#999999", size=Spp.plotMap[1, "lsize"], 
                               method="gam", se=FALSE),
-                  stat_smooth(aes(y=Nostoc, linetype=I("Nostoc")),
+                  stat_smooth(aes(y=Nostoc, linetype="Nostoc"),
                               colour="#999999", size=Spp.plotMap[1, "lsize"], 
                               method="gam", se=FALSE)
                   )
+
+if (F) {                               # using melted df & group variable?
+  Cells.df <- melt(SECCa, id=c("SampleID", "Cells"), 
+                   measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
+                             "Other.cells") )
+  Cells.df$variable <- as.character(Cells.df$variable)
+  Spp.plotMap    <- Spp.plotMap[c(2, 1), ]
+  Cells.plot <- ggplot(data=subset(Cells.df, variable %in% c("Stigonema", "Nostoc")), 
+                       aes(x=Cells, y=value, group=variable)) +
+                   stat_smooth(aes(group=variable, linetype=variable), colour="#999999",
+                               method="gam", se=FALSE) +
+                      geom_point(aes(group=variable, 
+                                     shape=variable, colour=variable, size=variable) ) +
+                      scale_x_continuous(expand=c(0.01,0)) + 
+                      scale_y_continuous(expand=c(0.01,0)) +
+                   scale_colour_manual(name="Species", 
+                                       values=Spp.plotMap[, "col"], 
+                                       breaks=Spp.plotMap[, "Var"], 
+                                       labels=Spp.plotMap[, "Label"]) +
+                   scale_size_manual(name="Species", 
+                                       values=Spp.plotMap[, "size"], 
+                                       breaks=Spp.plotMap[, "Var"], 
+                                       labels=Spp.plotMap[, "Label"]) +
+                   scale_shape_manual(name="Species", 
+                                       values=Spp.plotMap[, "shape"], 
+                                       breaks=Spp.plotMap[, "Var"], 
+                                       labels=Spp.plotMap[, "Label"]) +
+                   scale_linetype_manual(name="Species", 
+                                       values=Spp.plotMap[, "lty"], 
+                                       breaks=Spp.plotMap[, "Var"], 
+                                       labels=Spp.plotMap[, "Label"])
+
+  ## sort of works, but I still can't control the order in which layers are added,
+  ## which also controls how values are mapped: by order, rather than value
+  ## :(
+}
 
 Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
                 geom_abline(intercept=0, slope=1, colour="#333333", size=1) +
@@ -211,17 +244,17 @@ if (T) {
                                method="gam", se=FALSE)
 } else {
   HCells.plot <- HCells.plot +
-                    stat_smooth(aes(y=Stigonema.H, linetype=I("Stigonema"),
-                                colour=I("Stigonema"), 
-                                size=I("Stigonema")), 
+                    stat_smooth(aes(y=Stigonema.H, linetype="Stigonema",
+                                colour="Stigonema", 
+                                size="Stigonema"), 
                                 method="gam", se=FALSE) +
-                   stat_smooth(aes(y=Nostoc.H, linetype=I("Nostoc"),
-                                colour=I("Nostoc"), 
-                                size=I("Nostoc")), 
+                   stat_smooth(aes(y=Nostoc.H, linetype="Nostoc",
+                                colour="Nostoc", 
+                                size="Nostoc"), 
                                method="gam", se=FALSE) +
-                   stat_smooth(aes(y=Hcells, linetype=I("Hcells"),
-                                colour=I("Hcells"), 
-                                size=I("Hcells")), 
+                   stat_smooth(aes(y=Hcells, linetype="Hcells",
+                                colour="Hcells", 
+                                size="Hcells"), 
                                method="gam", se=FALSE) +
                    scale_linetype_manual(name="Fitted vs.\nTotal Cells",
                                          values=Hcells.plotMap[, "lty"], 
@@ -237,12 +270,12 @@ if (T) {
                                      labels=Hcells.plotMap[, "Label"])
 }
 HCells.plot <- HCells.plot +
-geom_point(aes(y=Stigonema.H, colour=I("Stigonema"), 
-               shape=I("Stigonema"), size=I("Stigonema")) ) +
-                   geom_point(aes(y=Nostoc.H, colour=I("Nostoc"), 
-                                  shape=I("Nostoc"), size=I("Nostoc")) ) +
-                   geom_point(aes(y=Hcells, colour=I("Hcells"), 
-                                  shape=I("Hcells"), size=I("Hcells")) ) +
+geom_point(aes(y=Stigonema.H, colour="Stigonema", 
+               shape="Stigonema", size="Stigonema") ) +
+                   geom_point(aes(y=Nostoc.H, colour="Nostoc", 
+                                  shape="Nostoc", size="Nostoc") ) +
+                   geom_point(aes(y=Hcells, colour="Hcells", 
+                                  shape="Hcells", size="Hcells") ) +
                    xlab(Cells.axlab) + ylab(HCells.axlab) +
                    scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                    scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
