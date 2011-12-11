@@ -83,7 +83,7 @@ FINAL DATA STRUCTURE
    Block                            1-8
    Time                             1-4 (3 is empty)
    Chamber                          A (Ambient), B (Partial), C (Full)
-   Frag(mentation)                  1 (Cont.), 2 (Corr.), 3 (pseudo-corr.), 4 (isolated)
+   Frag(mentation)                  1 (Continuous), 2 (Corridors), 3 (Pseudo-corridors), 4 (Isolated)
    Pos                              I(nner), O(uter), N(orth)/S(outh), E(ast)/W(est)
 >  Position                         Inner,   Outer,   other
 ## Environmental Data               SECC.env
@@ -95,7 +95,7 @@ FINAL DATA STRUCTURE
    H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
    Growth           mm              Moss Growth (total?)*
                                     * These were all in t4 samples, 
-                                    but measured at each time-point. Repeated measures.
+                                    but measured at each time-point; Repeated measures.
 +    growth.t1      mm              * Moss Growth @ t1
 +    growth.t2      mm              * Moss Growth @ t2
 +    growth.t3      mm              * Moss Growth @ t3 (i.e. when t4 was sampled).
@@ -105,11 +105,11 @@ FINAL DATA STRUCTURE
    NO3              ?               Available Nitrates & Nitrites (NO2, NO3-) from Ion resin
    TAN              ?               Total Available Nitrogen Compounds (Ion resin)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
-   Nostoc           #/sample        Nostoc cyanobacteria cells
->  Nostoc.h         #/sample        Nostoc heterocysts
-   Stigonema        #/sample        Stigonema cyanobacteria cells
->  Stigonema.h      #/sample        Stigonema heterocysts
-   Other.cells      #/sample        Other cyanobacteria cells
+   Nostoc           cells/shoot     Nostoc cyanobacteria cells
+>  Nostoc.h         cells/shoot     Nostoc heterocysts
+   Stigonema        cells/shoot     Stigonema cyanobacteria cells
+>  Stigonema.h      cells/shoot     Stigonema heterocysts
+   Other.cells      cells/shoot     Other cyanobacteria cells
    Cells            cells/shoot     Total cyanobacteria cell density (pooled sub-samples)
    Cells.g          #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
    Cells.m          #/m^2           Total cyanobacteria cell density (pooled sub-samples)
@@ -119,8 +119,8 @@ FINAL DATA STRUCTURE
    ARA.ml           umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
    ARA.m            umol/m^2/day    Acetylene-Reduction-Assay rates (Ethylene)
    ARA.g            umol/g/day      Acetylene-Reduction-Assay rates (Ethylene)
->  Nfix             umol/m^2/day    Nitrogen-fixation rates (ARA /3)
-## Microarthropod Community data    SECC.fauna [separate data frame?]
+>  Nfix             umol/m^2/day    Nitrogen-fixation rates (= ARA /3)
+## Microarthropod Community data    SECC.fauna [separate data frame]
    [1 column/taxa]  #/g dwt         Microarthropod community data
 
 

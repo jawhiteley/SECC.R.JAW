@@ -2,15 +2,16 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Moisture Content (H2O % of moss dry wt)
-### Jonathan Whiteley     R v2.12     2011-03-29
+### Jonathan Whiteley     R v2.12     2011-10-10
 ##################################################
 ## INITIALISE
 ##################################################
 ## This script is used in a generic way for most univariate analyses
 ## Working Directory: see lib/init.R below
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("./")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 }
 
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
@@ -48,13 +49,14 @@ source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE)
 
 ## Specify which treatment levels to include (by index is probably easiest)
 Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
+Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (all available, but we'll exclude partial for simplicity?)
 Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer
 
 ## Define Labels
 Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
-Save.results  <- FALSE
+Save.results  <- TRUE
 
 
 ### Load default Labels - dependent on above settings. *****

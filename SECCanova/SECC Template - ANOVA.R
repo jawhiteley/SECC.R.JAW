@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Template for basic analyses of experimental data
 ### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-28
+### Jonathan Whiteley     R v2.12     2012-10-10
 ##################################################
 ## INITIALISE
 ##################################################
@@ -11,8 +11,9 @@
 if (FALSE) {  # do not run automatically
   setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")  # iMac@McGill
   setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
 }
 
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory

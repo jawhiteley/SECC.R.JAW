@@ -10,7 +10,8 @@ if (FALSE) {  # do not run automatically
   ## Set Working Directory: path in quotes "".
   setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")  # iMac@McGill
   setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-  setwd("./ SECC/") # relative to my usual default wd in R GUI (Mac).
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("./")       # relative to this file (\rd in Vim-R)
   getwd()           # Check that we're in the right place
 }
 
@@ -22,10 +23,10 @@ if (FALSE) {  # do not run automatically
 source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
 ## source("do.R")                      # Perform Analyses
 
+source("H2O.R")             # Water contents density Analysis
+
 source("ARA.R")             # Acetylene Reduction Assay (N-fixation) Analysis
 source("Cyanobacteria.R")   # Cyanobcateria density Analysis
-
-source("H2O.R")             # Cyanobcateria density Analysis
 
 ## OUTPUT
 source("lib/out.R")   # Produce Outputs: graphs, reports, export.
