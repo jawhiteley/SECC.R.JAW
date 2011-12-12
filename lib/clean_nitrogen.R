@@ -117,7 +117,7 @@ attr(SECC.N, "units")  <- list("NH4"     = quote(g %.% m^-2 %.% yr^-1),
 ## SAVE DATA
 ##################################################
 # leave in memory
-N.full <- SECC.N
+SECC.N.full <- SECC.N
 ##================================================
 ## MANUALLY CLEAN & PROCESS DATA
 ##================================================
@@ -132,7 +132,7 @@ SECC.N$SampleID <- SECC_sampleID(SECC.N) # important for merging!
 ## Housekeeping
 ##================================================
 ## Remove old objects from memory
-rm.objects <- c('SECC.N.raw', 'N.full')
+rm.objects <- c('SECC.N.raw')
 rm(list=rm.objects)
 ## Update list of Data_objects for importing
 ## Data_objects <- c( Data_objects[!(Data_objects %in% rm.objects)] , 'SECC.N' )

@@ -244,7 +244,8 @@ if (FALSE) {  # do not run when source()'d
 cat('- Saving data & cleaning up.\n')
 
 Load.export <- c('SECC', 'SECC.coded', 'SECC.xy', 
-                 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta')  # , 'SECC.env', 'SECC.TRH'
+                 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta',
+                 'SECC.N.full', 'SECC.moss.full')  # , 'SECC.env', 'SECC.TRH'
 save( list=Load.export, file="./save/SECC_data.R" )
 
 # Export data frames to csv, just in case.
