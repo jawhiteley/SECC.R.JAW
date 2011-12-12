@@ -38,8 +38,9 @@ Blank2rows <- which(SECC.N$Label %in% 97:192)
 Blank3rows <- which(SECC.N$Label %in% 193:288) 
 SECC.N <- within( SECC.N, 
                  {
-                   Years <- Days / 365   # Length of time capsules were in the field
-                   Label <- as.character(Label) # I want raw values, not factor levels
+				   Ndays <- Days                   # Days capsules were deployed in the field
+                   Years <- Days / 365			   # Length of time capsules were in the field
+                   Label <- as.character(Label)    # I want raw values, not factor levels
                    ## Lookup Blanks
                    NH4Blanks <- rep(NA, length(NH4))
                    NH4Blanks[Blank1rows] <- NH4[Blank1]
@@ -100,14 +101,16 @@ if (FALSE) {  # do not run when source()'d
 ##================================================
 # "SECC columns" determines which response variable columns will be merged into final data frame.
 
-attr(SECC.N, "SECC columns") <- c('NH4', 'NO3', 'TAN')
+attr(SECC.N, "SECC columns") <- c('NH4', 'NO3', 'TAN', 'Ndays')
 attr(SECC.N, "labels") <- list("NH4"     = quote("Available"~NH[4]^"+"~"-N"),
                                "NO3"     = quote("Available"~NO[3]^"-"~"-N"),
-                               "TAN"     = "Total Available Nitrogen" # In/Organic?
+                               "TAN"     = "Total Available Nitrogen", # In/Organic?
+                               "Ndays"   = "Exposure to moss N"
                                )
 attr(SECC.N, "units")  <- list("NH4"     = quote(g %.% m^-2 %.% yr^-1),
                                "NO3"     = quote(g %.% m^-2 %.% yr^-1),
-                               "TAN"     = quote(g %.% m^-2 %.% yr^-1)
+                               "TAN"     = quote(g %.% m^-2 %.% yr^-1),
+                               "Ndays"   = "days"
                                )
 
 ##################################################
