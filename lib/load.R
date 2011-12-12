@@ -21,13 +21,15 @@
 ##   -> SECC.TRH : Temperature & Relative Humidity Time Series.
 ##################################################
 if (FALSE) {        # do not run automatically
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (Mac).
+  setwd("..")       # relative to this file (\rd in Vim-R)
+  getwd()           # Check that we're in the right place
+
   rm(list=ls())     # house-keeping
-  setwd('./ SECC/') # project directory
+  source("./lib/fun.R")   # define functions
 }
-getwd()             # check current wd
 
 ## LOAD LIBRARIES
-source("./lib/fun.R")   # define functions
 require(car)            # load external package 'car', for recode()
 require(reshape)        # sort_df (sort data frame) wrapper for order
 
@@ -81,6 +83,8 @@ source("./lib/clean_ARA.R", echo=FALSE)             # Process ARA N-fixation dat
 
 source("./lib/clean_H2O.R", echo=FALSE)             # Process Moisture data.
 source("./lib/clean_decomposition.R", echo=FALSE)   # Process Decomposition data.
+source("./lib/clean_nitrogen.R", echo=FALSE)        # Process Nitrogen (ion resin capsule) data.
+source("./lib/clean_moss_growth.R", echo=FALSE)     # Process Moss Growth data.
 
 
 ##================================================

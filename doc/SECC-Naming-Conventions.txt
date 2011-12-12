@@ -7,7 +7,7 @@ NAMING CONVENTIONS
 Files:      words separated by \s - _ ; punctuation according to file system
 Objects:    Capitalized, CamelCase, terms separated by _ , suffix/prefix separated by .
 Constants:  UPPER-CASE, words separated by _ , suffix/prefix separated by .
-Tables:     Plural / collective, Capitalized, CamelCase, other Object conventions.
+Data Tables:Plural / collective, Capitalized, CamelCase, other Object conventions.
 Columns:    Singular, Capitalized, words separated by .
 [ Factors:  Capital     ]
 [ Data:     lower-case ?]
@@ -92,28 +92,28 @@ FINAL DATA STRUCTURE
    Patch.dwt         g              Dry Weight of entire patch sample (pi*12.5^2 = 490.87 cm^2)
    ARA.dwt          mg              Dry Weight of ARA sample (20 shoots)
    Cells.dwt        mg              Dry Weight of Cyanobacteria samples (2 shoots)
-   H2O              %H2O            Moisture contents (as % of Sample Dry Weight)
-   Growth           mm              Moss Growth (total?)*
+   H2O              %H2O            Moisture contents (as proportion (%) of Sample Dry Weight)
+   Growth           mm              Moss Growth (total)*
                                     * These were all in t4 samples, 
                                     but measured at each time-point; Repeated measures.
-+    growth.t1      mm              * Moss Growth @ t1
-+    growth.t2      mm              * Moss Growth @ t2
-+    growth.t3      mm              * Moss Growth @ t3 (i.e. when t4 was sampled).
++   grow01          mm              * Moss Growth @ t0--t1
++   grow12          mm              * Moss Growth @ t1--t2
++   grow23          mm              * Moss Growth @ t2--t3 (i.e. when t4 was sampled).
 >  Prod             mg dwt          Moss growth converted to biomass (productivity).
    Decomposition    %mass loss      Decomposition rates.
-   NH4              ?               Available Ammonium (NH4+) from Ion resin
-   NO3              ?               Available Nitrates & Nitrites (NO2, NO3-) from Ion resin
-   TAN              ?               Total Available Nitrogen Compounds (Ion resin)
+   NH4              mg/capsule?     Available Ammonium (NH4+) from Ion resin (Raw +/- 0.03 mg/L)
+   NO3              mg/capsule?     Available Nitrates & Nitrites (NO2, NO3-) from Ion resin (Raw +/- 0.04 mg/L)
+   TAN              mg/capsule?     Total Available Nitrogen Compounds (Ion resin)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
    Nostoc           cells/shoot     Nostoc cyanobacteria cells
->  Nostoc.h         cells/shoot     Nostoc heterocysts
+>  Nostoc.H         cells/shoot     Nostoc heterocysts
    Stigonema        cells/shoot     Stigonema cyanobacteria cells
->  Stigonema.h      cells/shoot     Stigonema heterocysts
+>  Stigonema.H      cells/shoot     Stigonema heterocysts
    Other.cells      cells/shoot     Other cyanobacteria cells
-   Cells            cells/shoot     Total cyanobacteria cell density (pooled sub-samples)
-   Cells.g          #/g dwt         Total cyanobacteria cell density (pooled sub-samples)
-   Cells.m          #/m^2           Total cyanobacteria cell density (pooled sub-samples)
->  H.cells          cells/shoot     Heterocyst cell density
+   Cells            cells/shoot     Total cyanobacteria cell density (averaged sub-samples)
+   Cells.g          #/g dwt         Total cyanobacteria cell density (averaged sub-samples)
+   Cells.m          #/m^2           Total cyanobacteria cell density (averaged sub-samples)
+>  Hcells           cells/shoot     Heterocyst cell density
    ARA              ...             value of another ARA column,
                                       assigned in analysis script?
    ARA.ml           umol/ml/day     Acetylene-Reduction-Assay rates (Ethylene)
