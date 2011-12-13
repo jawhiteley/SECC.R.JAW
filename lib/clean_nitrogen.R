@@ -1,7 +1,8 @@
 ##################################################
-# Schefferville Experiment on Climate Change (SEC-C)
-# Load, clean & process Decomposition data loaded from "./data/"
-# Jonathan Whiteley		R v2.12		2011-12-11
+## Schefferville Experiment on Climate Change (SEC-C)
+## Load, clean & process Nitrogen data from ion resin capsules 
+## loaded from "./data/"
+## Jonathan Whiteley		R v2.12		2011-12-11
 ##################################################
 ## This script is run as part of `./lib/load.R`
 

@@ -1,7 +1,7 @@
 ##################################################
-# Schefferville Experiment on Climate Change (SEC-C)
-# Load, clean & process Decomposition data loaded from "./data/"
-# Jonathan Whiteley		R v2.12		2011-12-11
+## Schefferville Experiment on Climate Change (SEC-C)
+## Load, clean & process Moss Growth data loaded from "./data/"
+## Jonathan Whiteley		R v2.12		2011-12-12
 ##################################################
 ## This script is run as part of `./lib/load.R`
 
@@ -21,7 +21,9 @@ SECC.moss.growth <- checkSECCdata(SECC.moss.growth, 'SECC.moss.growth', CheckVal
 ##################################################
 ## raw data is in mm of vertical extension from previous time point.
 ## incorporate biomass data to convert mm to productivity (g dwt)?
-## - as sample-specific as possible, with available data.
+## * as sample-specific as possible, with available data.
+## + Time 2,4 ; Block 3, 5, 6, 7, 8 ; Chamber A, C ; Frag 1, 4 ; Position I, O
+## + Some preliminary data from: Time 4, Chamber B ; Block 1, 2, 3, 6, 7, 8 ; Frag 1, 2, 3, 4 ; Position I, O, S
 SECC.moss.growth <- within( SECC.moss.growth, 
                  {
                    grow01[grow01=="."] <- NA
