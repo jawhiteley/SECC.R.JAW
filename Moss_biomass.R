@@ -51,6 +51,9 @@ Moss.biomass <- within( Moss.biomass,
 						 dwt.mg <- as.numeric(dwt.mg)
 						 Width  <- factor(Width,  levels=c("N", "W"), labels=c("<1cm", ">=1cm"))
 						 Colour <- factor(Colour, levels=c("A", "B", "D"), labels=c("Green", "Brown", "Dead"))
+						 ## manually fix ID codes
+						 Sample <- gsub("\\.0", ".O", Sample)
+						 Sample <- gsub("\\.1", ".I", Sample)
 						 ## extract treatment columns
 						 Block   <- factor(substr(Sample, 1, 1))
 						 Time    <- factor(substr(Sample, 2, 2))
@@ -61,7 +64,8 @@ Moss.biomass <- within( Moss.biomass,
 Moss.biomass <- Moss.biomass[, c("Sample", "Block", "Time", "Chamber", "Frag", "Pos", 
 								 "Total.length", "Segment", "Width", "Colour", "dwt.mg")]
 ##  Moss.biomass <- checkSECCdata(Moss.biomass) # will fail due to duplicates
-
+## levels(Moss.biomass$Pos)[levels(Moss.biomass$Pos)=="0"] <- "O"
+## levels(Moss.biomass$Pos)[levels(Moss.biomass$Pos)=="1"] <- "I"
 
 
 ################################################################
@@ -94,22 +98,37 @@ boxplot(dwt.mg ~ Colour  , data = Moss.biomass , xlab = "Colour")
 boxplot(dwt.mg ~ Segment , data = Moss.biomass , xlab = "Segment")
 boxplot(Segment ~ Colour , data = Moss.biomass , xlab = "Colour")
 boxplot(Segment ~ Width  , data = Moss.biomass , xlab = "Width")
-ar(op)
+par(op)
 
 Point.smooth <- list(geom_point(), stat_smooth(method="gam"))
 Biomass.plot <- ggplot(Moss.biomass, aes(x=Segment, y=dwt.mg)) + Point.smooth + facet_grid(facets = Time*Width ~ Block)
 print(Biomass.plot)
 
 
+
 ################################################################
 ## ANALYSIS
 ################################################################
-## Models with many variables take a while to fit ...
+Segments <- 2:3
+Moss.segments <- subset(Moss.biomass, subset = Segment %in% Segments & Pos %in% c("O", "I") )  #  & Chamber!="B"
+Moss.segmeans <-  aggregate(Moss.segments$dwt.mg, 
+							by=list(SampleID = Moss.segments$Sample,
+									Block    = Moss.segments$Block,
+									Time     = Moss.segments$Time,
+									Chamber  = Moss.segments$Chamber,
+									Frag     = Moss.segments$Frag,
+									Pos      = Moss.segments$Pos), 
+							FUN=mean)
+names(Moss.segmeans)[names(Moss.segmeans)=="x"] <- "dwt"
+Moss.segmeans <- checkSECCdata(Moss.segmeans)
 
+## Models with many variables take a while to fit ...
+cat("Fitting models to moss biomass data...\n")
 ## Nested ANOVA?
 biomass.aov <- aov(dwt.mg ~ Block * Time * Chamber * Frag * Pos * Width * Colour * Segment + Error(Time/Block/Chamber/Frag), data = Moss.biomass)
 
 biomass.lm  <- lm( dwt.mg ~ Block * Time * Chamber * Frag * Pos * Width * Colour * Segment, data = Moss.biomass)
+seg.xpt.lm  <- lm( dwt.mg ~ Block * Time * Chamber * Frag * Pos, data = Moss.segments)
 
 ## Mixed model, mostly for variance decomposition: where is most of the variance?
 lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
@@ -123,18 +142,80 @@ AIC(biomass.lm, biomass.mm, biomass.gam)
 
 summary(biomass.aov)
 summary(biomass.lm)
+summary(seg.xpt.lm)
 summary(biomass.mm)
 summary(biomass.gam)
 
 ## Anova(biomass.aov)
 Anova(biomass.lm)
-Anova(biomass.mm)
+anova(seg.xpt.lm)                      # Anova throws Error
+## Anova(biomass.mm)
 
+cat("Drawing interaction plots\n")
+## Effects plots: SLOW & buggy
+library(effects)
+if (F) {
+CxP.eff <- effect("Chamber:Pos" , seg.xpt.lm) # ***
+CxP.eff <- effect("Chamber:Pos" , biomass.lm) # ***
+plot(effect("Chamber:Pos"                     , biomass.lm)) # ***
+plot(effect("Time:Frag"                       , biomass.lm)) # ***
+plot(effect("Time:Frag:Pos"                   , biomass.lm)) # ***
+plot(effect("Block:Time:Chamber:Pos"          , biomass.lm)) # ***
+plot(effect("Block:Chamber:Frag:Segment"      , biomass.lm)) # *
+plot(effect("Block:Pos:Colour:Segment"        , biomass.lm))
+plot(effect("Block:Time:Frag:Segment"         , biomass.lm))
+plot(effect("Block:Time:Chamber:Frag:Segment" , biomass.lm))
+plot(effect("Frag:Width"                      , biomass.lm)) # *
+plot(effect("Time:Frag:Pos:Width"             , biomass.lm)) # *
+plot(effect("Time:Chamber:Frag:Colour"        , biomass.lm)) # *
+plot(effect("Time:Chamber:Pos:Segment"        , biomass.lm))
+plot(effect("Time:Frag:Pos:Segment"           , biomass.lm)) #
+plot(effect("Block:Chamber:Colour"            , biomass.lm)) # *
+plot(effect("Block:Chamber:Segment"           , biomass.lm))
+}
+
+## Interaction plots with ggplot
+Pts.Chamber <- list(geom_point(shape=1),
+			   stat_summary(aes(colour=Chamber), fun.data="mean_cl_normal", geom="line"), # colour="#888888" 
+			   stat_summary(aes(colour=Chamber), fun.data="mean_cl_normal", geom="errorbar"), # colour="#888888" 
+			   scale_colour_manual(name="Chamber Treatment", 
+								   values=c("A"="#990000", "B"="#000099", "C"="#000000"))
+			   )
+Pts.CI  <- list(geom_point(shape=1),
+			   stat_summary(fun.data="mean_cl_normal", geom="line", colour="#888888"),
+			   stat_summary(fun.data="mean_cl_normal", geom="errorbar", colour="#888888"),
+			   scale_colour_manual(name="Chamber Treatment", 
+								   values=c("A"="#990000", "B"="#000099", "C"="#000000"))
+			   )
+Pos.plot <- ggplot(Moss.segments, aes(x=Pos, y=dwt.mg))
+CP.plot  <- ggplot(Moss.segments, aes(x=Pos, y=dwt.mg, colour=Chamber, group=Chamber))
+CF.plot  <- ggplot(Moss.segments, aes(x=Frag, y=dwt.mg, colour=Chamber, group=Chamber))
+CxP.plot  <- CP.plot + Pts.Chamber + facet_grid(facets= ~ Chamber)
+BTCP.plot <- CP.plot + Pts.Chamber + jaw.ggplot() + facet_grid(facets= Block ~ Time)
+BTCF.plot <- CF.plot + Pts.Chamber + jaw.ggplot() + facet_grid(facets= Block ~ Time)
+TPCF.plot <- CF.plot + Pts.Chamber + jaw.ggplot() + facet_grid(facets= Pos ~ Time)
+Frag.plot <- CF.plot + aes(group=NULL) + Pts.CI + jaw.ggplot()
+TFP.plot  <- ggplot(Moss.segments, aes(x=Frag, y=dwt.mg, colour=Pos, group=Pos)) + 
+			 stat_summary(aes(colour=Pos), fun.data="mean_cl_normal", geom="line") +
+			 stat_summary(aes(colour=Pos), fun.data="mean_cl_normal", geom="errorbar") + 
+			 geom_point(shape=21, fill="white") + 
+			 scale_colour_manual(name="Position", 
+								 values=c("O"="#990000", "I"="#000000"), 
+								 breaks=c("O", "I")) +
+			 jaw.ggplot() + facet_grid(facets= ~ Time)
+
+
+print(CxP.plot)
+print(BTCP.plot)
+print(BTCF.plot)
+print(TPCF.plot)
+print(Frag.plot)
+print(TFP.plot)
+
+cat("Follow-up analyses\n")
 ##==============================================================
 ## Categorical Analyses
 ##==============================================================
-Segments <- 2:3
-
 Width.contingency <- with(subset(Moss.biomass, Segment %in% Segments), table(Width, Block, Time, Chamber, Frag, Pos))
 Width.Block <- with(subset(Moss.biomass, Segment %in% Segments), table(Width, Block))
 Width.BC    <- with(subset(Moss.biomass, Segment %in% Segments), table(Width, Block, Chamber))
@@ -159,6 +240,19 @@ hist(Moss.biomass[Moss.biomass$Width==">=1cm", "dwt.mg"], xlim=c(0, 20))
 hist(Wide.segments[, "dwt.mg"], xlim=c(0, 20))
 par(op)
 
+##==============================================================
+## Spatial Analysis
+##==============================================================
+## Bubble Plot of raw values / residuals in space?
+Moss.segmeans <- merge(Moss.segmeans[, c("SampleID", "dwt")], SECC.xy, by="SampleID", all.x = TRUE, all.y = FALSE)
+Moss.bubble <- ggplot(Moss.segmeans, aes(x=xE, y=yN)) + geom_point(shape=1, aes(size=dwt))
+print(Moss.bubble)
+
+## Variogram of segment biomass by distance
+Moss.vary <- gls(dwt ~ xE + yN, data = Moss.segmeans)
+Moss.variogram <- Variogram(Moss.vary, form = ~xE + yN)
+plot(Moss.variogram)
+## No spatial autocorrelation evident
 
 
 ################################################################
@@ -167,32 +261,91 @@ par(op)
 ## segments 2-4 seem roughly similar (gam, exploration graphs)
 ## The shortest stem is 4 cm, so this would capture every shoot
 ## Not surprisingly, Width & Colour make a big difference, although:
-## - Colour is pretty closely related to segment: as expected, most Green segments are near the top (1-9), most Dead ones near the bottom (segment 3+)
+## - Colour is pretty closely related to segment: 
+##   as expected, most Green segments are near the top (1-9), 
+##   most Dead ones near the bottom (segment 3+)
 ## - How are these variables correlated with Block, etc.?
 ##   - Most segments 2--4 are >=1cm
 ##   - Block 2, Chamber B was mostly <1 cm
 ##     - as were Blocks 7 & 8, Chamber B
+## Width is perhaps the single variable with the most effect on average biomass for a given 1cm segment
 
-## Grand Means: not as useful as estimates for each patch (or group of patches), but better than nothing :/
-Moss.segments <- subset(Moss.biomass, subset = Segment %in% Segments & Chamber!="B" & Pos %in% c("0", "1") )
+## There is A LOT of variation, even within a single patch.  e.g.
+Moss.segments[Moss.segments$Frag==3, ]
+summary(Moss.segments[Moss.segments$Frag==3, ])
+summary(Moss.segments)
+summary(Moss.biomass[Moss.biomass$Pos=="S", ]) # all <1cm (except for 1)
+
+## Grand Means: not as ideal as estimates for each patch (or group of patches), but better than nothing :/
 Segment.mean  <- mean(Moss.segments$dwt.mg, na.rm=TRUE)
 Wide.mean     <- mean(Wide.segments$dwt.mg, na.rm=TRUE) 
 Narrow.mean   <- mean(Narrow.segments$dwt.mg, na.rm=TRUE) 
 
 ## Moss growth data does contain notes indicating which shoots had "skinny" tips (<<1cm width)
-## - I should ensure these use a value for "skinny" shoots
+## - I should ensure these use an appropriate biomass value for "skinny" shoots
 ## - This may also explain why liner growth is roughly the same over summer vs. winter
 ##   - Summer values may reflect skinny extension, and overall lower biomass production
 ##   - Most productivity may be occuring during the winter!
 
+##==============================================================
 ### ALGORITHM to provide biomass for 1 cm of linear extension for a given patch:
 ## Basic value: average of mass of Segments 2--3
 ## Order of preference:
 ## - Values from that patch (if present in this data)
-## - Average of values from 4 nearest patches (need spatial data for this)
+## - Average of values from 4? nearest patches, up to max. 10m(?) (need spatial data for this)
 ##   - Matched by experimental treatments?
-##     Chamber, Pos, Frag? (Time?) ; Block is implicit in the nearest neighbor criteria, and therefore unnecessary
+##     Chamber, Pos, Frag? (Time?) ; 
+##     - Block is implicit in the nearest neighbor criteria, and therefore unnecessary
+##     - Chamber & Pos are important in some Blocks...
+##     - Not sure I really have enough to judge if there is a Frag effect
+##       - When in doubt, prefer Continuous patches over Isolated (more crowded)?
 ## - if "skinny" in notes:
-##   - only use values for Narrow shoots (<1cm)
+##   - only use values for Narrow shoots (<1cm); 'skinny' shoots are often even skinnier!
 ##   - use half the average value (value / 2)?  Even this might be generous!
 ##   - what I really need is an approximate weight of the main shoot, without lateral branches for these :(
+cat("Calculating Conversion Values\n")
+
+NumNeighbs <- 4                        # Number of Nearest Neighbour values to use for patch estimate.
+Moss.mg <- within( subset(SECC.xy, Time %in% 3:4 & Chamber!="B" & Pos %in% c("O", "I") ), 
+				  mg.cm <- NA )
+SECC.dist <- dist(SECC.xy[, c("xE", "yN")])
+Moss.dist <- dist(Moss.segmeans[, c("xE", "yN")]) # distance matrix of patches with biomass estimates
+Dist.matrix <- as.matrix(SECC.dist)
+ValuesDs    <- which( colnames(Dist.matrix) %in% Moss.segmeans$SampleID )
+
+for (i in 1:nrow(Moss.mg))
+{
+  IDi <- Moss.mg[i, "SampleID"]
+  iChamber <- Moss.mg[i, "Chamber"]
+  iPos     <- ifelse(iChamber=="A", ".", Moss.mg[i, "Pos"] ) # any Ambient patch will do
+  ## try for an exact match?
+  iHaveThat <- IDi %in% Moss.segmeans$SampleID
+  if (iHaveThat) 
+  {                                    # Extract patch values if exact match
+	PatchValues <- subset(Moss.segmeans, SampleID == IDi, select="dwt")
+  } else {                             # Extract other values to use for patch estimate
+	## find 4 nearest neighbours, with biomass values AND same Chamber & Position values
+	Distances   <- Dist.matrix[IDi, ValuesDs]
+	MatchDs     <- grep(sprintf("..%s-.\\.%s", iChamber, iPos), names(Distances))
+	Distances   <- Distances[MatchDs]
+	Neighbours  <- order(Distances)
+	NeiIDs      <- names(Distances[Neighbours])[1:NumNeighbs]
+	## extract nearest neighbor values
+	PatchValues <- subset(Moss.segmeans, SampleID %in% NeiIDs, select="dwt") 
+  }
+  ## Average of Patch Values (exact or neighbours)
+  PatchEstimate <- mean(PatchValues, na.rm=TRUE)
+  Moss.mg[i, "mg.cm"] <- PatchEstimate
+}
+## Moss.mg$mg.cm[is.nan(Moss.mg$mg.cm)] <- NA
+
+hist(Moss.mg$mg.cm)
+
+## Attributes (optional)
+attr(Moss.mg, "SECC columns") <- "mg.cm"
+attr(Moss.mg, "labels") <- "Moss biomass"
+attr(Moss.mg, "units")  <- quote(mg %.% cm^-1)
+
+## Save Conversion values
+cat("Saving Conversion Data\n")
+save(Moss.mg, file = sprintf("%sMoss_mg.R", SaveDir.obj()) )
