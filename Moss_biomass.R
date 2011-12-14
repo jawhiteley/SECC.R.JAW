@@ -42,6 +42,8 @@ if (F) {
 ##==============================================================
 ## Process Data
 ##==============================================================
+cat("Processing moss biomass data\n")
+
 DropRows <- grep("^[^1-8]", Moss.biomass$Sample) # illegal Sample ID values ("MISSING...")
 Moss.biomass <- Moss.biomass[-DropRows, ]
 Moss.biomass <- strip_empty_dims(Moss.biomass, dim=1, cols=c(3, 4, 5, 6)) # cols 1--2 default to value of previous row if empty in raw values.
@@ -82,6 +84,8 @@ Moss.biomass <- within( Moss.biomass,
 ################################################################
 ## EXPLORATION
 ################################################################
+cat("Exploring moss biomass data\n")
+
 summary(Moss.biomass)
 
 pairplot(Moss.biomass[, names(Moss.biomass)!="Sample"])
@@ -305,8 +309,8 @@ Narrow.mean   <- mean(Narrow.segments$dwt.mg, na.rm=TRUE)
 ##   - what I really need is an approximate weight of the main shoot, without lateral branches for these :(
 cat("Calculating Conversion Values\n")
 
-NumNeighbs <- 4                        # Number of Nearest Neighbour values to use for patch estimate.
-Moss.mg <- within( subset(SECC.xy, Time %in% 3:4 & Chamber!="B" & Pos %in% c("O", "I") ), 
+NumNeighbs <- 3                        # Number of Nearest Neighbour values to use to interpolate patch estimates.
+Moss.mg <- within( subset(SECC.xy, Time %in% 3:4 & Chamber!="B" ), 
 				  mg.cm <- NA )
 SECC.dist <- dist(SECC.xy[, c("xE", "yN")])
 Moss.dist <- dist(Moss.segmeans[, c("xE", "yN")]) # distance matrix of patches with biomass estimates
@@ -317,29 +321,40 @@ for (i in 1:nrow(Moss.mg))
 {
   IDi <- Moss.mg[i, "SampleID"]
   iChamber <- Moss.mg[i, "Chamber"]
-  iPos     <- ifelse(iChamber=="A", ".", Moss.mg[i, "Pos"] ) # any Ambient patch will do
+  iPos     <- if (iChamber=="A") "." else Moss.mg[i, "Pos"] # any Ambient patch will do
+  if (!(iPos %in% c("I", "O"))) iPos <- "." # No useable data for 'other' patches
+  ## currently match any closest patch for 'other' patches (not Inner or Outer)
+  ## - Ideally, I would average an equal number of Inner AND Outer patches,
+  ##   But hopefully this is 'good enough'
   ## try for an exact match?
   iHaveThat <- IDi %in% Moss.segmeans$SampleID
   if (iHaveThat) 
   {                                    # Extract patch values if exact match
-	PatchValues <- subset(Moss.segmeans, SampleID == IDi, select="dwt")
+	PatchValues  <- subset(Moss.segmeans, SampleID == IDi, select="dwt")
+	PatchWeights <- rep(1, length(PatchValues)) 
   } else {                             # Extract other values to use for patch estimate
 	## find 4 nearest neighbours, with biomass values AND same Chamber & Position values
 	Distances   <- Dist.matrix[IDi, ValuesDs]
 	MatchDs     <- grep(sprintf("..%s-.\\.%s", iChamber, iPos), names(Distances))
-	Distances   <- Distances[MatchDs]
-	Neighbours  <- order(Distances)
-	NeiIDs      <- names(Distances[Neighbours])[1:NumNeighbs]
+	Distances   <- sort( Distances[MatchDs] ) #     Neighbours  <- order(Distances)
+	NeiIDs      <- names(Distances)[1:NumNeighbs]
 	## extract nearest neighbor values
-	PatchValues <- subset(Moss.segmeans, SampleID %in% NeiIDs, select="dwt") 
+	PatchValues  <- subset(Moss.segmeans, SampleID %in% NeiIDs, select="dwt")[, "dwt"]
+	PatchWeights <- 1/Distances[1:NumNeighbs] 
   }
   ## Average of Patch Values (exact or neighbours)
-  PatchEstimate <- mean(PatchValues, na.rm=TRUE)
+  if (length(PatchValues) < 1)
+  {
+	PatchEstimate <- NA
+  } else {
+	PatchEstimate <- weighted.mean(PatchValues, w=PatchWeights, na.rm=TRUE)
+  }
   Moss.mg[i, "mg.cm"] <- PatchEstimate
 }
 ## Moss.mg$mg.cm[is.nan(Moss.mg$mg.cm)] <- NA
 
 hist(Moss.mg$mg.cm)
+summary(Moss.mg)
 
 ## Attributes (optional)
 attr(Moss.mg, "SECC columns") <- "mg.cm"
@@ -349,3 +364,4 @@ attr(Moss.mg, "units")  <- quote(mg %.% cm^-1)
 ## Save Conversion values
 cat("Saving Conversion Data\n")
 save(Moss.mg, file = sprintf("%sMoss_mg.R", SaveDir.obj()) )
+
