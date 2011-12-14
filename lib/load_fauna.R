@@ -21,6 +21,8 @@ if (FALSE) {        # do not run automatically
   ## LOAD LIBRARIES
   source("./lib/fun.R")   # define functions
 }
+
+cat('- Loading fauna data.\n')
 library(vegan) # for diversity metrics
 
 ##################################################

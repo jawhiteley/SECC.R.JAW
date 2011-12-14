@@ -1,10 +1,10 @@
 ################################################################
 ## Schefferville Experiment on Climate Change (SEC-C)
-## Exploration of Moss Biomass, for use in converting
-## Moss Growth to Moss Productivity
+## Exploration of Moss Biomass, 
+## and calculates for converting Moss Growth to Productivity
 ##   Moss weight data collected by Heather McIntosh: 
-##   Volunteer & work study in the Gonzalez lab.  Thanks Heather!
-## Jonathan Whiteley		R v2.12		2011-12-12
+##   Volunteer & work study in the Gonzalez lab. Thanks Heather!
+## Jonathan Whiteley		R v2.12		2011-12-14
 ################################################################
 ## INITIALIZE
 ################################################################
@@ -92,17 +92,17 @@ pairplot(Moss.biomass[, names(Moss.biomass)!="Sample"])
 
 ## Boxplots
 op <- par(mfrow=c(3, 3))
-boxplot(dwt.mg ~ Block   , data = Moss.biomass , xlab = "Block")
-boxplot(dwt.mg ~ Time    , data = Moss.biomass , xlab = "Time")
-boxplot(dwt.mg ~ Chamber , data = Moss.biomass , xlab = "Chamber")
-boxplot(dwt.mg ~ Frag    , data = Moss.biomass , xlab = "Frag")
-boxplot(dwt.mg ~ Pos     , data = Moss.biomass , xlab = "Pos")
-boxplot(dwt.mg ~ Width   , data = Moss.biomass , xlab = "Width")
-boxplot(dwt.mg ~ Colour  , data = Moss.biomass , xlab = "Colour")
-boxplot(dwt.mg ~ Segment , data = Moss.biomass , xlab = "Segment")
-boxplot(Segment ~ Colour , data = Moss.biomass , xlab = "Colour")
-boxplot(Segment ~ Width  , data = Moss.biomass , xlab = "Width")
+boxplot(dwt.mg ~ Block   , data = Moss.biomass , xlab = "Block"   , ylab = "mg / cm")
+boxplot(dwt.mg ~ Time    , data = Moss.biomass , xlab = "Time"    , ylab = "mg / cm")
+boxplot(dwt.mg ~ Chamber , data = Moss.biomass , xlab = "Chamber" , ylab = "mg / cm")
+boxplot(dwt.mg ~ Frag    , data = Moss.biomass , xlab = "Frag"    , ylab = "mg / cm")
+boxplot(dwt.mg ~ Pos     , data = Moss.biomass , xlab = "Pos"     , ylab = "mg / cm")
+boxplot(dwt.mg ~ Width   , data = Moss.biomass , xlab = "Width"   , ylab = "mg / cm")
+boxplot(dwt.mg ~ Colour  , data = Moss.biomass , xlab = "Colour"  , ylab = "mg / cm")
+boxplot(Segment ~ Colour , data = Moss.biomass , xlab = "Colour"  , ylab = "Segment")
+boxplot(Segment ~ Width  , data = Moss.biomass , xlab = "Width"   , ylab = "Segment")
 par(op)
+boxplot(dwt.mg ~ Segment , data = Moss.biomass , xlab = "Segment" , ylab = "mg / cm")
 
 Point.smooth <- list(geom_point(), stat_smooth(method="gam"))
 Biomass.plot <- ggplot(Moss.biomass, aes(x=Segment, y=dwt.mg)) + Point.smooth + facet_grid(facets = Time*Width ~ Block)
@@ -127,7 +127,7 @@ names(Moss.segmeans)[names(Moss.segmeans)=="x"] <- "dwt"
 Moss.segmeans <- checkSECCdata(Moss.segmeans)
 
 ## Models with many variables take a while to fit ...
-cat("Fitting models to moss biomass data...\n")
+cat("Fitting models to moss biomass data.  This may take a few minutes...\n")
 ## Nested ANOVA?
 biomass.aov <- aov(dwt.mg ~ Block * Time * Chamber * Frag * Pos * Width * Colour * Segment + Error(Time/Block/Chamber/Frag), data = Moss.biomass)
 
@@ -363,5 +363,7 @@ attr(Moss.mg, "units")  <- quote(mg %.% cm^-1)
 
 ## Save Conversion values
 cat("Saving Conversion Data\n")
-save(Moss.mg, file = sprintf("%sMoss_mg.R", SaveDir.obj()) )
+Filename <- sprintf( "%sMoss_mg.%%s", SaveDir.obj() )
+save(Moss.mg, file = sprintf(Filename, "R") )
+write.csv(Moss.mg, file = sprintf(Filename, "csv"), row.names = FALSE) 
 

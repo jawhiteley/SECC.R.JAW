@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2011-08-21
+# Jonathan Whiteley		R v2.12		2011-12-14
 ##================================================
 ## All Data files in './data' are loaded into memory.
 ## Load scripts for manual processing are source()'d
@@ -46,7 +46,7 @@ Data_files <- dir('./data/')  # get list of file names.
 Data_objects <- NULL          # empty object to hold vector of object names.
 for (File_name in Data_files) {
   File_path <- paste("./data/", File_name, sep="")
-  temp <- read.csv(File_path)  # na.strings = c("NA", "-", "", ".")
+  temp <- read.csv(File_path)  # stringsAsFactors = FALSE, na.strings = c("NA", "-", "", ".")
   Object_name <- cleanVarName(File_name)
   # remove file extension from the object name  
   Object_name <- gsub("\\.csv\\b", "", Object_name, perl=TRUE ) 
@@ -105,7 +105,7 @@ for (DataObject in merge.SECC) {
 ##################################################
 ## do this here to allow generation of new data objects to be merged into SECC
 ## These objects themselves will not be merged into SECC (not included in merge.SECC, above)
-cat('- Loading fauna data.\n')
+
 source("./lib/load_fauna.R", echo=FALSE)    # Load Fauna data.
 
 source("./lib/clean_spatial.R", echo=FALSE) # Load Spatial data.
