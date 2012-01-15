@@ -367,12 +367,15 @@ jaw.ggplot <- function(x) {
     x <- x + opts(legend.key = theme_rect(colour = NA)) # remove rectangle from legend keys.
     return(x)
   } else {
-    require(ggplot2)
     ## add common custom options to ggplot2 objects as a template.
     ## useage: MYggPlot + jaw.ggplot()
     ## I got tired of copying the same code over & over again.
     plotTemplate <- list(theme_bw(),   # change to white background colour scheme.
-                         opts(legend.key = theme_rect(colour = NA)) # remove rectangle from legend keys.
+                         opts(legend.key = theme_rect(colour = NA), # remove rectangle from legend keys.
+                              ## move axis labels away from axis text :/
+                              axis.title.x = theme_text(size = 12, vjust=0, hjust=0.55),
+                              axis.title.y = theme_text(size = 12, vjust=0.3, hjust=0.5, angle = 90)
+                              )
     )
     return(plotTemplate)
   }

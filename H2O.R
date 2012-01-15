@@ -184,9 +184,11 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-CxP.plot <- CxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
+
+## Frag x Pos Interaction
 
 Y.lim <- c(-100, 900)
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
@@ -214,7 +216,9 @@ FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
 FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-FxP.plot <- FxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+FxP.plot <- FxP.plot + scale_x_discrete(labels = c(1, 2, 3, 4), 
+                                        breaks = levels(plot.means$Frag))
+FxP.plot <- FxP.plot + jaw.ggplot()
 print(FxP.plot)
 
 

@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+
+<picture version='3' xmlns:rgml='http://r-project.org/RGML' source='hexagon.eps' date='2012-01-14 21:41:29' creator='R (2.12.0)' >
+
+<path type='fill' id='1'>
+	<context>
+		<rgb r='1.0' g='1.0' b='1.0'/>
+		<style lwd='10.0' lty=''/>
+	</context>
+
+	<move y='10.0' x='952.59'/>
+	<line y='1639.92' x='11.5469'/>
+	<line y='3269.84' x='952.59'/>
+	<line y='3269.84' x='2834.66'/>
+	<line y='1639.92' x='3775.69'/>
+	<line y='10.0' x='2834.66'/>
+	<line y='10.0' x='952.59'/>
+	<line y='10.0' x='952.59'/>
+</path>
+
+<path type='stroke' id='2'>
+	<context>
+		<rgb r='0.0' g='0.0' b='0.0'/>
+		<style lwd='20.0' lty=''/>
+	</context>
+
+	<move y='10.0' x='952.59'/>
+	<line y='1639.92' x='11.5469'/>
+	<line y='3269.84' x='952.59'/>
+	<line y='3269.84' x='2834.66'/>
+	<line y='1639.92' x='3775.69'/>
+	<line y='10.0' x='2834.66'/>
+	<line y='10.0' x='952.59'/>
+	<line y='10.0' x='952.59'/>
+</path>
+
+<summary count='2' ymax='3269.84' ymin='10.0' xmax='3775.69' xmin='11.5469'/>
+
+</picture>

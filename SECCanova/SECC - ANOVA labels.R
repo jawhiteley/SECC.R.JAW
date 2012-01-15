@@ -44,3 +44,16 @@ Save.end      <- paste("\n",
 						sep = "\n"
 					  )
 
+## Load eps graphics for Plots
+library(grImport)
+setwd("./save/")
+fragIcons <- PostScriptTrace("Frag-Black-icons.eps")
+fragIcons <- readPicture("Frag-Black-icons.eps.xml")
+Hex <- PostScriptTrace("hexagon.eps")
+Hex <- readPicture("hexagon.eps.xml")
+setwd("..")
+FragIcon1 <- fragIcons[49:50]          # 1. Continuous 
+FragIcon2 <- fragIcons[29:48]          # 2. Corridors
+FragIcon3 <- fragIcons[ 9:28]          # 3. Pseudo-corridors
+FragIcon4 <- fragIcons[ 1:8 ]          # 4. Isolated
+
