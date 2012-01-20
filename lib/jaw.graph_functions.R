@@ -380,3 +380,15 @@ jaw.ggplot <- function(x) {
     return(plotTemplate)
   }
 }
+
+## custom function for grImport "Pictures" as x axis tick labels
+## http://stackoverflow.com/questions/8905101/how-can-i-use-a-graphic-imported-with-grimport-as-axis-tick-labels-in-ggplot2-u
+picture_axis <- function (pics, icon.size = unit(1, "lines"), ...) {
+  structure(
+      function(label, x = 0.5, y = 0.5, ...) {
+         absoluteGrob(
+           do.call("gList", mapply(symbolsGrob, pics[label], x, y, SIMPLIFY = FALSE)),
+           height = icon.size)
+    }
+)}
+

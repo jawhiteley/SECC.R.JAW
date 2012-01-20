@@ -190,11 +190,16 @@ print(CxP.plot)
 
 ## Frag x Pos Interaction
 
-Y.lim <- c(-100, 900)
+Y.lim <- c(-100, 1000)
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
 levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
 plot.means$error <- as.numeric(msd["Time:Chamber:Frag:Position"]/2)
 levels(plot.means$Chamber)[2] <- "Chamber"
+FragIconList <- list(FragIcon1 = FragIcon1,
+                     FragIcon2 = FragIcon2,
+                     FragIcon3 = FragIcon3,
+                     FragIcon4 = FragIcon4
+                     )
 
 FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
                     geom = "point", ylim = Y.lim, size = I(3), 
@@ -204,21 +209,27 @@ FxP.plot <- qplot(Frag, x, data = plot.means, group = Position,
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = Chamber~Time)
-FxP.plot <- FxP.plot + geom_line(aes(group = Position), size = 0.8)
-FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
-                                         width = 0.2, size = 0.5)
-FxP.plot <- FxP.plot + scale_colour_manual(name = Position.label,
-                                           values = Position.map$col, 
-                                           breaks = Position.map$label)
-FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
-                                         values = Position.map$bg, 
-                                         breaks = Position.map$label)
-FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
-                                           values = Position.map$pch, 
-                                           breaks = Position.map$label)
-FxP.plot <- FxP.plot + scale_x_discrete(labels = c(1, 2, 3, 4), 
-                                        breaks = levels(plot.means$Frag))
-FxP.plot <- FxP.plot + jaw.ggplot()
+FxP.plot <- FxP.plot + 
+geom_line(aes(group = Position), size = 0.8) +
+geom_errorbar(aes(ymin = x - error, ymax = x + error), width = 0.2, size = 0.5) +
+scale_colour_manual(name = Position.label,
+                    values = Position.map$col, 
+                    breaks = Position.map$label) +
+scale_fill_manual(name = Position.label,
+                  values = Position.map$bg, 
+                  breaks = Position.map$label) +
+scale_shape_manual(name = Position.label,
+                   values = Position.map$pch, 
+                   breaks = Position.map$label) +
+scale_x_discrete(labels = c(1, 2, 3, 4), 
+                 breaks = levels(plot.means$Frag)) + jaw.ggplot() 
+## Add imported graphics as x-axis tick labels :D
+## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+FxP.plot <- FxP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 3, 4), 
+                                        breaks = levels(plot.means$Frag)) +
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+)
 print(FxP.plot)
 
 
