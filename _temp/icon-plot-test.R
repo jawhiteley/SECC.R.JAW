@@ -278,13 +278,24 @@ pictures  <- list(FragIcon1 = FragIcon1,
                   FragIcon3 = FragIcon3,
                   FragIcon4 = FragIcon4
                   )
+picture_text_axis <- function (pics, icon.size = unit(1, "lines"), labels, lab.gp = gpar(), ...) {
+  structure(
+      function(label, x = 0.5, y = 0.5, ...) {
+         absoluteGrob(
+           do.call("gList", mapply(symbolsGrob, pics[label], x, y, SIMPLIFY = FALSE)),
+           height = icon.size)
+  ##          textGrob(labels, x, y, gp = lab.gp)  # this replaces pictures above instead of overlaying.
+    }
+)}
 
 FxP.icons <- FxP.plot + 
 scale_x_discrete(labels = names(pictures), 
                  breaks = levels(plot.means$Frag)) +
 opts(axis.ticks.margin = unit(0.2, "lines"),
-     axis.text.x = picture_axis(pictures, icon.size = unit(1.4, "lines")) 
+     ##      axis.text.x = picture_axis(pictures, icon.size = unit(1.4, "lines")) 
+     axis.text.x = picture_text_axis(pictures, icon.size = unit(1.4, "lines"), labels = 1:4, lab.gp = gpar(col = c("white", "black", "black", "black")) ) +
 )
+## Overlay text on top of icons?  Or add a 'legend' for symbols?
 
 print(FxP.icons)
 

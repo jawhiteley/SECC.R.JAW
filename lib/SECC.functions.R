@@ -357,3 +357,23 @@ ggPts.SECC <- function (ptMap = plotMap("Chamber"), name = "Chamber Treatment") 
   ## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
 }
 
+SECCicons <- function() 
+{ ## Load eps graphics for plot labels
+  require(grImport)
+  setwd("./save/")     # The loading functions create temp files and I want them to go here.
+  FragIcons <- PostScriptTrace("Frag-Black-icons.eps")
+  FragIcons <- readPicture("Frag-Black-icons.eps.xml")
+  Hex <- PostScriptTrace("hexagon.eps")
+  Hex <- readPicture("hexagon.eps.xml")
+  setwd("..")
+  FragIcon1 <- FragIcons[49:50]        # 1. Continuous 
+  FragIcon2 <- FragIcons[29:48]        # 2. Corridors
+  FragIcon3 <- FragIcons[ 9:28]        # 3. Pseudo-corridors
+  FragIcon4 <- FragIcons[ 1:8 ]        # 4. Isolated
+  IconList <- list(FragIcon1 = FragIcon1,
+                   FragIcon2 = FragIcon2,
+                   FragIcon3 = FragIcon3,
+                   FragIcon4 = FragIcon4,
+                   Hex = Hex
+                   )
+}
