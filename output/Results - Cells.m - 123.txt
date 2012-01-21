@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun May  8 13:20:45 2011
+Fri Jan 20 21:04:19 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -389,10 +389,10 @@ Time        Ambient Full Chamber
 
 
 95% Minimum Significant Ranges (MSR):
-             Time           Chamber              Frag      Time:Chamber 
-         45.04299          25.35604          30.96041          60.70397 
-        Time:Frag      Chamber:Frag Time:Chamber:Frag 
-         66.61416          50.75780         104.19890 
+             Time           Chamber              Frag      Time:Chamber         Time:Frag 
+         45.04299          25.35604          30.96041          60.70397          66.61416 
+     Chamber:Frag Time:Chamber:Frag 
+         50.75780         104.19890 
 
 
 <============================= END ============================>

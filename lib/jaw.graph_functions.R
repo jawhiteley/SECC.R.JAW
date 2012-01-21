@@ -357,7 +357,8 @@ panel.lines2 <- function (x, y, col = par("col"), bg = NA, pch = par("pch"),
 ## GGPLOT2 custom options
 ##================================================
 
-jaw.ggplot <- function(x) {
+jaw.ggplot <- function(x) 
+{
   require(ggplot2)
   if (FALSE) {
     if (class(x)!="ggplot") return(x)
@@ -372,6 +373,9 @@ jaw.ggplot <- function(x) {
     ## I got tired of copying the same code over & over again.
     plotTemplate <- list(theme_bw(),   # change to white background colour scheme.
                          opts(legend.key = theme_rect(colour = NA), # remove rectangle from legend keys.
+                              ## move axis tick labels closer to ticks
+                              axis.ticks.length = unit(0.3, "lines"), 
+                              axis.ticks.margin  = unit(0.3, "lines"),
                               ## move axis labels away from axis text :/
                               axis.title.x = theme_text(size = 12, vjust=0, hjust=0.55),
                               axis.title.y = theme_text(size = 12, vjust=0.3, hjust=0.5, angle = 90)

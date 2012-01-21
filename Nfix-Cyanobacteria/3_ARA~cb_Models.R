@@ -317,39 +317,51 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   ## sum of relative evidence weights over all models that include each term?
   barplot(ARA.coef1[, "Importance"], horiz=TRUE, names.arg=ARA.coef1$Term, las=2) 
 
-  ## ggplot2: theme settings
-  bar.import <- function(glm.imp) {
-    ##     glm.imp <- importance.glmulti(glmObj)
-    ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
-           list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
-                scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
-                geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
-                opts(panel.border=theme_blank(), axis.line=theme_segment(),
-                     plot.title=theme_text(size = 16, face = "bold"),
-                     title="Model-averaged importance of effects")
-           )
-  }
-  est.confint <- function(glmObj) {
-    ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
-    ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
-    ggplot(glmObj, aes(x=Term, y=Estimate) ) +
-    geom_hline(yintercept=0, colour="grey") + 
-    list(geom_point(),
-         geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
-         coord_flip())
-  }
 
-  ARA.importance1 <- bar.import(ARA.imp1)
-  ARA.est1 <-est.confint(ARA.coef1)
-  print(ARA.importance1)
-  print(ARA.est1)
 
-  ARA.importance2 <- bar.import(ARA.imp2) #+ opts(axis.text.y=theme_text(size=8, hjust=1))
-  ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ]  #  sharp jump from 0.2->0.3->0.99
-  ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
-  ARA.est2 <-est.confint(ARA.coef2plot) + opts(axis.text.y=theme_text(size=8, hjust=1))
-  print(ARA.importance2)
-  print(ARA.est2)
+  ## save derivative objects to speed up loading for future analysis.  
+  ## The raw glmulti objects make for a big file (and a lot of memory): >1 GB!
+  save(ARA.pmulti1, ARA.pmulti2, ARA.best2, ARA.best2lm, 
+              ARA.coef1, ARA.coef2, ARA.imp1, ARA.imp2, 
+              ## ARA.importance1, ARA.est1, ARA.importance2, ARA.est2,
+              Y.multipred, file=Save.glmulti)
+
+  rm(ARA.glmulti1, ARA.glmulti2)         # save memory? not right away, but maybe eventually :(
+}
+## ggplot2: theme settings
+bar.import <- function(glm.imp) {
+  ##     glm.imp <- importance.glmulti(glmObj)
+  ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
+  list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
+       scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
+       geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
+       opts(panel.border=theme_blank(), axis.line=theme_segment(),
+            plot.title=theme_text(size = 16, face = "bold"),
+            title="Model-averaged importance of effects")
+       )
+}
+est.confint <- function(glmObj) {
+  ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
+  ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
+  ggplot(glmObj, aes(x=Term, y=Estimate) ) +
+  geom_hline(yintercept=0, colour="grey") + 
+  list(geom_point(),
+       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
+       coord_flip())
+}
+
+ARA.importance1 <- bar.import(ARA.imp1) + jaw.ggplot()
+ARA.est1 <- est.confint(ARA.coef1) + jaw.ggplot()
+print(ARA.importance1)
+print(ARA.est1)
+
+ARA.importance2 <- bar.import(ARA.imp2) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
+ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ] #  sharp jump from 0.2->0.3->0.99
+ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
+ARA.est2 <- est.confint(ARA.coef2plot) + jaw.ggplot() + 
+opts(axis.text.y=theme_text(size=8, hjust=1))
+print(ARA.importance2)
+print(ARA.est2)
 
 ## Important 2-way interactions:
 ## Block:Time
@@ -366,17 +378,6 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
 ## Implied Higher-order interactions:
 ##   Cells * H2O * I(H2O^2) * Block
 ##   Time * Chamber * Position
-
-
-  ## save derivative objects to speed up loading for future analysis.  
-  ## The raw glmulti objects make for a big file (and a lot of memory): >1 GB!
-  save(ARA.pmulti1, ARA.pmulti2, ARA.best2, ARA.best2lm, 
-              ARA.coef1, ARA.coef2, ARA.imp1, ARA.imp2, 
-              ARA.importance1, ARA.est1, ARA.importance2, ARA.est2,
-              Y.multipred, file=Save.glmulti)
-
-  rm(ARA.glmulti1, ARA.glmulti2)         # save memory? not right away, but maybe eventually :(
-}
 
 
 
@@ -423,6 +424,7 @@ if (UseMM) Y.model <- Y.lmeBT
 ################################################################
 ## CHECK ASSUMPTIONS: MODEL VALIDATION
 ################################################################
+cat("- Validating model\n")
 ## see Zuur et al. 2007, 2009 books, 
 ##  and [Quick-R](http://www.statmethods.net/stats/rdiagnostics.html)
 ## Regression (ANOVA): Normality; Homogeneity; Independence; Fixed X*
@@ -745,8 +747,22 @@ ARA.facet.plot <- ARA.plot + eff.C.layers(X.TCP.eff) + facet_grid(facets=Positio
 ARA.Block.plot <- ARA.plot + eff.C.layers(X.BTC.eff, conf=F) + facet_grid(facets=Block~Time)
 
 ARA.Frag.plot <- ARA.plot + aes(x=Frag, y=Y.trans) + XY.axlab + xlab("Fragmentation Treatment")
-ARA.Frag.plot <- ARA.Frag.plot + eff.F.layers(F.eff) + facet_grid(facets=.~Time) +
-                 geom_jitter(size=3, aes(group=Chamber, colour=Chamber, shape=Chamber))# optional
+ARA.Frag.plot <- ARA.Frag.plot + 
+  geom_jitter(size=3, aes(group=Chamber, colour=Chamber, shape=Chamber)) + # optional
+  eff.F.layers(F.eff) + facet_grid(facets=.~Time)
+
+## Load eps graphics for plot labels
+library(grImport)
+FragIcons <- SECCicons()[1:4]       # Frag 1:4
+
+## Add imported graphics as x-axis tick labels :D
+## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+ARA.Frag.plot <- ARA.Frag.plot + scale_x_discrete(labels = names(FragIcons),
+                                                  breaks = levels(SECCa$Frag)) +
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIcons, icon.size = unit(1.4, "lines")) 
+)
+
 
 SECCa$H2Obin9 <- cut(SECCa$H2O, breaks=H2O.breaks9)
 SECCa$H2Obin4 <- cut(SECCa$H2O, breaks=H2O.breaks4)

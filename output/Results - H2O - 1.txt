@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Thu Jan 19 23:08:57 2012
+Fri Jan 20 21:03:02 2012
 
 ================================================================
 ================  Patch scale Results  =========================

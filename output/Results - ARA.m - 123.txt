@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Thu May  5 17:38:09 2011
+Fri Jan 20 21:03:57 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -328,22 +328,16 @@ Time        Ambient Full Chamber
 
 
 95% Minimum Significant Ranges (MSR):
-                      Time                    Chamber 
-                  5.159716                   1.683026 
-                      Frag                   Position 
-                  2.060138                   1.198133 
-              Time:Chamber                  Time:Frag 
-                  4.016436                   3.210886 
-              Chamber:Frag              Time:Position 
-                  3.370561                   2.652873 
-          Chamber:Position              Frag:Position 
-                  2.008533                   3.210886 
-         Time:Chamber:Frag      Time:Chamber:Position 
-                  6.889020                   4.173507 
-        Time:Frag:Position      Chamber:Frag:Position 
-                  6.444563                   5.007347 
-Time:Chamber:Frag:Position 
-                  9.828822 
+                      Time                    Chamber                       Frag 
+                  5.159716                   1.683026                   2.060138 
+                  Position               Time:Chamber                  Time:Frag 
+                  1.198133                   4.016436                   3.210886 
+              Chamber:Frag              Time:Position           Chamber:Position 
+                  3.370561                   2.652873                   2.008533 
+             Frag:Position          Time:Chamber:Frag      Time:Chamber:Position 
+                  3.210886                   6.889020                   4.173507 
+        Time:Frag:Position      Chamber:Frag:Position Time:Chamber:Frag:Position 
+                  6.444563                   5.007347                   9.828822 
 
 
 ================================================================
@@ -456,10 +450,10 @@ Time        Ambient Full Chamber
 
 
 95% Minimum Significant Ranges (MSR):
-             Time           Chamber              Frag      Time:Chamber 
-         5.626706          1.774241          2.172564          4.247646 
-        Time:Frag      Chamber:Frag Time:Chamber:Frag 
-         4.674471          3.561793          7.311879 
+             Time           Chamber              Frag      Time:Chamber         Time:Frag 
+         5.626706          1.774241          2.172564          4.247646          4.674471 
+     Chamber:Frag Time:Chamber:Frag 
+         3.561793          7.311879 
 
 
 <============================= END ============================>

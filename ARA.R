@@ -162,7 +162,7 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-CxP.plot <- CxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
 
