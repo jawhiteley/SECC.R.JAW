@@ -20,13 +20,20 @@ if (FALSE) {  # do not run automatically
 #source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
 
 ## DO
-source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
+source("./SECC-Data-Template.R")       # Generate Template Data Frame & files.
 ## source("do.R")                      # Perform Analyses
 
-source("H2O.R")             # Water contents density Analysis
+if (TRUE)
+{
+  source("_CH1-ARA-cb.R")              # Chapter 1 analyses: ARA ~ Cyanobacteria
 
-source("ARA.R")             # Acetylene Reduction Assay (N-fixation) Analysis
-source("Cyanobacteria.R")   # Cyanobcateria density Analysis
+} else {
+  source("H2O.R")                      # Water contents density Analysis
+
+  source("ARA.R")                      # Acetylene Reduction Assay (N-fixation) Analysis
+  source("Cyanobacteria.R")            # Cyanobcateria density Analysis
+}
+
 
 ## OUTPUT
-source("lib/out.R")   # Produce Outputs: graphs, reports, export.
+source("lib/out.R")                    # Produce Outputs: graphs, reports, export.
