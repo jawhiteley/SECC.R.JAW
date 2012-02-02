@@ -88,10 +88,14 @@ if (FALSE) {  # do not run when source()'d
 
 ###===============================================
 ### CHECK Calculations
+  summary(SECC.N[, c("NO3", "NH4", "TAN")])
   # Histograms
   hist(SECC.N[, c("NO3", "NH4", "TAN")])
   boxplot(SECC.N[, c("NO3", "NH4", "TAN")])
   boxplot(log10(SECC.N[, c("NO3", "NH4", "TAN")] +1))
+  boxplot(log10(SECC.N$NO3 +1)~SECC.N$Block)
+  boxplot(log10(SECC.N$NH4 +1)~SECC.N$Block)
+  boxplot(log10(SECC.N$TAN +1)~SECC.N$Block)
 
   summary(SECC.N, na.rm = TRUE)
 }
