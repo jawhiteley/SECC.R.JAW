@@ -46,9 +46,6 @@ Position.use <- levels(SECC$Position)           # Patch Positions to include
 ##   patches, so they were deployed for a much shorter period
 ##   (see Ndays column).
 
-## Define Labels
-Y.units <- bquote( log(.(Y.units)) )  # sqrt(.(Y.units), 4)  # store as quote(expression) *****
-
 ## Output Results to File?
 Save.results  <- TRUE  
 
@@ -78,16 +75,25 @@ SECC <- within( SECC, {
                ARA.g[ ARA.g  < 0] <- 0
 			   Nfix <- ARA.m * Nfix.ARA.ratio
                Nyrs <- Ndays / 365
+               NH4 <- NH4 * Nyrs
+               NO3 <- NO3 * Nyrs
+               TAN <- TAN * Nyrs
 })
+attr(SECC, "units")[[Y.col]] <- bquote(g %.% m^-2)
 
+## Define Labels
+Y.units <- attr(SECC, "units")[[Y.col]]
+Y.units <- bquote( log(.(Y.units)) )  # sqrt(.(Y.units), 4)  # store as quote(expression) *****
 
 ### Load default Labels - dependent on above settings. *****
 source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
 
+
 ##================================================
 ## CUSTOM LABELS
 ##================================================
-
+Save.filename <- gsub("TAN", "TAN-time", Save.filename, fixed=TRUE)
+Save.text     <- gsub("TAN", "TAN-time", Save.text,     fixed=TRUE)
 
 
 
@@ -96,6 +102,7 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ##################################################
 ## No data from t1-2
 cat("\n\n\nProcessing Time:", Time.use, "\n")
+cat("* without controlling for duration of sampling\n")
 
 ## RUN STANDARD nested ANOVA
 source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
@@ -128,10 +135,6 @@ if (FALSE)
 ##################################################
 if (F)
 {
-  ARA.N <- qplot(y = log1p(ARA.m), x = log1p(TAN), data = subset(SECCp, log1p(TAN) < 0.2) )
-  print(ARA.N)
-  mean(SECCp[SECCp$Position=="other", "Ndays"]) #  57.6 days =  58 days
-  mean(SECCp[SECCp$Position!="other", "Ndays"]) # 395.4 days = 395 days
 }
 
 
@@ -140,7 +143,7 @@ if (F)
 ### PUBLICATION GRAPHS
 ##################################################
 
-Y.lim <- c(-0.01, 0.1)
+Y.lim <- c(0.0, 0.04)
 Plot.Title <- bquote("Patch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 
@@ -188,5 +191,5 @@ CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "-Time - CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
 }

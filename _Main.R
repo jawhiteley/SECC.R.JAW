@@ -32,6 +32,9 @@ if (TRUE)
 
   source("ARA.R")                      # Acetylene Reduction Assay (N-fixation) Analysis
   source("Cyanobacteria.R")            # Cyanobcateria density Analysis
+
+  source("N-available.R")              # Available Nitrogen (NH4 + NO3)
+  source("N-available-time.R")         # Available Nitrogen, without duration (time) of exposure
 }
 
 
