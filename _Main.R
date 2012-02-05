@@ -26,6 +26,8 @@ source("./SECC-Data-Template.R")       # Generate Template Data Frame & files.
 if (TRUE)
 {
   source("_CH1-ARA-cb.R")              # Chapter 1 analyses: ARA ~ Cyanobacteria
+  source("_CH2-Fauna.R")               # Chapter 2 analyses: Fauna community analysis
+  source("_CH3-Synthesis.R")           # Chapter 3 analyses: ARA ~ Everything else
 
 } else {
   source("H2O.R")                      # Water contents density Analysis
