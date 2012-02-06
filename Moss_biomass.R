@@ -1,7 +1,7 @@
 ################################################################
 ## Schefferville Experiment on Climate Change (SEC-C)
 ## Exploration of Moss Biomass, 
-## and calculates for converting Moss Growth to Productivity
+## and calculations for converting Moss Growth to Productivity
 ##   Moss weight data collected by Heather McIntosh: 
 ##   Volunteer & work study in the Gonzalez lab. Thanks Heather!
 ## Jonathan Whiteley		R v2.12		2011-12-14
@@ -269,8 +269,8 @@ plot(Moss.variogram)
 ##   as expected, most Green segments are near the top (1-9), 
 ##   most Dead ones near the bottom (segment 3+)
 ## - How are these variables correlated with Block, etc.?
-##   - Most segments 2--4 are >=1cm
-##   - Block 2, Chamber B was mostly <1 cm
+##   - Most segments 2--4 are >=1 cm wide
+##   - Block 2, Chamber B was mostly <1 cm wide
 ##     - as were Blocks 7 & 8, Chamber B
 ## Width is perhaps the single variable with the most effect on average biomass for a given 1cm segment
 
@@ -333,7 +333,7 @@ for (i in 1:nrow(Moss.mg))
 	PatchValues  <- subset(Moss.segmeans, SampleID == IDi, select="dwt")
 	PatchWeights <- rep(1, length(PatchValues)) 
   } else {                             # Extract other values to use for patch estimate
-	## find 4 nearest neighbours, with biomass values AND same Chamber & Position values
+	## find nearest neighbours, with biomass values AND same Chamber & Position values
 	Distances   <- Dist.matrix[IDi, ValuesDs]
 	MatchDs     <- grep(sprintf("..%s-.\\.%s", iChamber, iPos), names(Distances))
 	Distances   <- sort( Distances[MatchDs] ) #     Neighbours  <- order(Distances)
