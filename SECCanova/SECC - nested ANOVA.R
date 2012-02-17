@@ -17,6 +17,8 @@
 library(lattice)    # mostly for xyplot
 library(ggplot2)    # grammar of graphics?
 ## library(effects)    # attractive interaction plots.  Does not work with aovlist.
+## contrast defaults: calcualte SS & ANOVA tables like in SPSS, most stats software & books
+options(contrasts=c("contr.sum","contr.poly"))
 
 if ( exists('SECC') == FALSE ) stop(
 	"No SECC data found to analyze!  Don't forget to source(./lib/init.R)"
@@ -223,7 +225,8 @@ hist(Ymc.residuals) # plot residuals
 cat("\n\n")
 print(Yp.model)                 # for output
 print( summary(Yp.aov) )        # summary statistics
-model.tables(Yp.aov, "means")   # effect sizes
+Yp.mtab <- try( model.tables(Yp.aov, "means")   # effect sizes
+               , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
 # Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
 with( SECCp, interaction.plot(Frag, Chamber, Y.trans,
@@ -262,7 +265,9 @@ msd.CxFxP <- msd["Chamber:Frag:Position"]
 cat("\n\n")
 print(Ymc.model)                # for output
 print( summary(Ymc.aov) )       # summary statistics
-model.tables(Ymc.aov, "means")  # effect sizes
+Ymc.mtab <- try( model.tables(Ymc.aov, "means")   # effect sizes
+               , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
+
 # Interaction Plots
 par(mfrow=c(1,1))   # panel of figures: 1 rows & 1 columns
 with( SECCmc, interaction.plot( Frag, Chamber, Y.trans,
@@ -286,14 +291,14 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 print(Yp.model),                 # model
 				 summary(Yp.aov),                 # model summary
 				 cat("\n\n"),                     # for output
-				 model.tables(Yp.aov, "means"),   # effect sizes
+				 Yp.mtab,                         # effect sizes
 				 cat(Header.msd),
 				 print(msd),
 				 cat(Save.mc.header),             # Meta-Community Results #
 				 print(Ymc.model),                # model
 				 summary(Ymc.aov),                # model summary
 				 cat("\n\n"),                     # for output
-				 model.tables(Ymc.aov, "means"),  # effect sizes
+				 Ymc.mtab,                        # effect sizes
 				 cat(Header.msd),
 				 print(msd.mc),
 				 cat(Save.end),                   # END OUTPUT #

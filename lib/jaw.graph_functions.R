@@ -8,7 +8,8 @@
 ##================================================
 ## MULTIPLE COMPARISONS
 ##================================================
-MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD"), mode.df=c("pairwise", "MSE", "manual"), n=NULL ){
+MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD"), mode.df=c("pairwise", "MSE", "manual"), n=NULL )
+{
   ## Planned Multiple Comparisons using Least Significant Differences (LSD)
   ## -> comparison intervals for graphical display.
   ## Expects a model of class 'aov' and/or 'lm'? (aovlist)
@@ -32,7 +33,9 @@ MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD
   }
   if(mode.df == "pairwise"){
     ##  n <- replications( model$terms , data )	# sample sizes, according to model structure (formula).  
-    ## I couldn't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  replications() returns a nasty list if the data are unbalanced :(
+    ## I couldn't find an easy way to derive this directly from an aov object passed in, so this is the only reason that data is required as an argument (& formula?).  
+    ## replications() returns a nasty list if the data are unbalanced :(
+    ## but model.tables fails if contrasts are non-orthogonal (unbalanced) :(
     tables <- model.tables(model, "means")
     means <- tables$tables
     n <- tables$n	# sample sizes, according to model structure (formula).  
