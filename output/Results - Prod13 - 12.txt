@@ -1,0 +1,117 @@
+Nested ANOVA Results for:  ( Prod13 ) 
+Transformation used:      Y 
+Expt. Time:    t3, t4 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sun Feb 19 20:53:13 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Time * Chamber * Frag * Position
+~1 | Block/Time/Chamber/Frag
+                           numDF denDF   F-value p-value
+(Intercept)                    1    90 192.14243  <.0001
+Time                           1     6   0.71395  0.4305
+Chamber                        1    13  54.03109  <.0001
+Frag                           3    78   1.92571  0.1323
+Position                       1    90  70.97370  <.0001
+Time:Chamber                   1    13   2.26710  0.1561
+Time:Frag                      3    78   0.48494  0.6937
+Chamber:Frag                   3    78   1.87716  0.1403
+Time:Position                  1    90   0.06516  0.7991
+Chamber:Position               1    90  67.22606  <.0001
+Frag:Position                  3    90   1.26800  0.2902
+Time:Chamber:Frag              3    78   0.63303  0.5959
+Time:Chamber:Position          1    90   1.90766  0.1706
+Time:Frag:Position             3    90   0.01605  0.9972
+Chamber:Frag:Position          3    90   2.05134  0.1123
+Time:Chamber:Frag:Position     3    90   0.49656  0.6856
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
+
+Linear Hypotheses:
+                                             Estimate Std. Error z value Pr(>|z|)    
+Full Chamber.Inner - Ambient.Inner == 0       0.08046    0.26683   0.302    0.990    
+Ambient.Outer - Ambient.Inner == 0           -0.01499    0.26129  -0.057    1.000    
+Full Chamber.Outer - Ambient.Inner == 0      -2.92679    0.26567 -11.017   <1e-05 ***
+Ambient.Outer - Full Chamber.Inner == 0      -0.09545    0.27308  -0.350    0.985    
+Full Chamber.Outer - Full Chamber.Inner == 0 -3.00724    0.25614 -11.741   <1e-05 ***
+Full Chamber.Outer - Ambient.Outer == 0      -2.91179    0.27187 -10.710   <1e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+ model: Y.trans ~ Time * Chamber * Frag * Position
+
+ Time*Chamber*Frag*Position effect
+, , Frag = Continuous, Position = Inner
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 3.857952     2.684638
+  t4 3.354284     2.934129
+
+, , Frag = Full Corridors, Position = Inner
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 2.037016     3.399926
+  t4 2.779869     3.260207
+
+, , Frag = Pseudo-Corridors, Position = Inner
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 1.901194     3.062868
+  t4 2.582822     2.977981
+
+, , Frag = Isolated, Position = Inner
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 3.494603     2.587274
+  t4 3.635669     3.396236
+
+, , Frag = Continuous, Position = Outer
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 3.312291    1.0534704
+  t4 3.169197    0.7410867
+
+, , Frag = Full Corridors, Position = Outer
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 2.313130  -0.02153265
+  t4 3.324390  -0.46153072
+
+, , Frag = Pseudo-Corridors, Position = Outer
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 2.330728  0.027575434
+  t4 3.117824 -0.003633962
+
+, , Frag = Isolated, Position = Outer
+
+    Chamber
+Time  Ambient Full Chamber
+  t3 2.332929   -0.2259544
+  t4 3.587527   -0.7577756
+
+
+
+<============================= END ============================>

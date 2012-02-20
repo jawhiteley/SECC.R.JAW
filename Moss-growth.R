@@ -50,19 +50,26 @@ SECC <- within( SECC.moss.full,
                {
                  grow02 <- grow01 + grow12
                  grow03 <- grow01 + grow12 + grow23
+                 grow13 <- grow12 + grow23
                  Prod02 <- Prod01 + Prod12
                  Prod03 <- Prod01 + Prod12 + Prod23
+                 Prod13 <- Prod12 + Prod23
                }
 )
 
 attr(SECC, "labels")[["grow02"]] <- "Moss growth 18 months"
 attr(SECC, "labels")[["grow03"]] <- "Moss growth 24 months"
+attr(SECC, "labels")[["grow03"]] <- "Moss growth 12-24 months"
+attr(SECC, "units" )[["grow13"]] <- attr(SECC, "units" )[["grow01"]]
 attr(SECC, "units" )[["grow02"]] <- attr(SECC, "units" )[["grow01"]]
 attr(SECC, "units" )[["grow03"]] <- attr(SECC, "units" )[["grow01"]]
+attr(SECC, "units" )[["grow13"]] <- attr(SECC, "units" )[["grow01"]]
 attr(SECC, "labels")[["Prod02"]] <- "Moss Productivity 18 months"
 attr(SECC, "labels")[["Prod03"]] <- "Moss Productivity 24 months"
+attr(SECC, "labels")[["Prod13"]] <- "Moss Productivity 12-24 months"
 attr(SECC, "units" )[["Prod02"]] <- attr(SECC, "units" )[["Prod01"]]
 attr(SECC, "units" )[["Prod03"]] <- attr(SECC, "units" )[["Prod01"]]
+attr(SECC, "units" )[["Prod13"]] <- attr(SECC, "units" )[["Prod01"]]
 
 ## SECC <- checkSECCdata(SECC)            # too many non-standard IDs
 SECC <- recodeSECC(SECC)               # drops t3
@@ -93,7 +100,7 @@ SECC <- within( SECC,
 ##  which avoids pseudo-replication, but also does not measure the effect of Time.
 
 ### Response Variable *****
-Ycols <- c('Prod01', 'Prod12', 'Prod23')
+Ycols <- c('Prod01', 'Prod12', 'Prod23', 'Prod13')
 Y.col <- 'Prod01'     # Column to analyze as response variable           *****
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
@@ -108,6 +115,7 @@ Y.effects <- list()
 ### loop each variable / measurement time period
 for (Y.col in Ycols)
 {
+  cat("\n\n\n======== Processing Variable:", Y.col, "========\n")
 
 ### Load default settings (based on response variable) *****
   source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
@@ -207,7 +215,9 @@ rownames(CxP.data) <- NULL
 CxP.labels <- attr(SECC, "labels")[which(names(attr(SECC, "labels")) %in% 
                                          unique(CxP.data$Var) )]
 CxP.TimeP <- substring(CxP.labels, gregexpr("[0-9-]+ months", CxP.labels) )
-CxP.data$Panel <- factor(CxP.data$Var, labels = paste(c("August", "June", "August"), CxP.TimeP, sep="\n") )
+Months <- c("August", "June", "August")
+Months <- c(Months, rep( "", len = length(CxP.TimeP) - length(Months) ) )
+CxP.data$Panel <- factor(CxP.data$Var, labels = paste(Months, CxP.TimeP, sep="\n") )
 CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
 
 
