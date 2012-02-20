@@ -1,11 +1,11 @@
-Nested ANOVA Results for:  ( Prod13 ) 
+Nested ANOVA Results for: Moss Productivity 12-24 months ( Prod13 ) 
 Transformation used:      Y 
 Expt. Time:    t3, t4 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Feb 19 20:53:13 2012
+Sun Feb 19 21:06:36 2012
 
 ================================================================
 ================  Patch scale Results  =========================

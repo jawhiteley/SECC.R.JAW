@@ -1,8 +1,8 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
-### Moisture Content (H2O % of moss dry wt)
-### Jonathan Whiteley     R v2.12     2011-10-10
+### Decomposition (mass loss in 1 year)
+### Jonathan Whiteley     R v2.12     2012-02-20
 ##################################################
 ## INITIALISE
 ##################################################
@@ -105,9 +105,33 @@ source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested 
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
+FragIconList <- list(FragIcon1 = FragIcon1,
+                     FragIcon2 = FragIcon2,
+                     FragIcon3 = FragIcon3,
+                     FragIcon4 = FragIcon4
+                     )
 
-Y.lim <- c(0, 0.5)
-Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
+decomp.plotcalcs <- function(plot.means)
+{
+  plot.data <- within(plot.means, 
+                      {
+                        lower <- x - error
+                        upper <- x + error
+                        xtr <- sin(x)^2
+                        lwr <- sin(lower)^2
+                        upr <- sin(upper)^2
+                        if (exists("Time")) levels(Time) <- 
+                          paste(c("August", "June", "August"), 
+                                levels(Time), sep="\n")
+                        if (exists("Chamber")) levels(Chamber)[2] <- "Chamber"
+                      }
+  )
+}
+
+Y.lim <- c(0, 0.20)
+Y.plotlab <- bquote( .(attr(SECC, "labels")[["Decomposition"]]) * 
+                    " (proportion mass loss / year)")
+Plot.Title <- bquote("Patch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
 Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
@@ -115,21 +139,20 @@ Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 
 ## 3-way interaction plot!!
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time, Frag=SECCp$Frag), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
 plot.means$error <- as.numeric(msd["Chamber:Frag:Position"]/2)
-## levels(plot.means$Chamber)[2] <- "Chamber"
+plot.data <- decomp.plotcalcs(plot.means)
 
-CxPxF.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
+CxPxF.plot <- qplot(Frag, xtr, data = plot.data, group = Position, 
                     geom = "point", ylim = Y.lim, size = I(3), 
                     colour = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
-                    facets = .~Frag)
+                    facets = .~ Chamber)
 ## CxPxF.plot <- CxPxF.plot + geom_point(aes(Chamber, x), size = 2)
 CxPxF.plot <- CxPxF.plot + geom_line(aes(group = Position), size = 0.8)
-CxPxF.plot <- CxPxF.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+CxPxF.plot <- CxPxF.plot + geom_errorbar(aes(ymin = lwr, ymax = upr), 
                                          width = 0.2, size = 0.5)
 CxPxF.plot <- CxPxF.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
@@ -140,7 +163,14 @@ CxPxF.plot <- CxPxF.plot + scale_fill_manual(name = Position.label,
 CxPxF.plot <- CxPxF.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-CxPxF.plot <- CxPxF.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+CxPxF.plot <- CxPxF.plot + jaw.ggplot()
+## Add imported graphics as x-axis tick labels :D
+## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+CxPxF.plot <- CxPxF.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 3, 4), 
+                                            breaks = levels(plot.means$Frag)) +
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+)
 print(CxPxF.plot)
 
 
@@ -149,9 +179,9 @@ plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber,
                                             Position=SECCp$Position), 
                         mean)
 plot.means$error <- as.numeric(msd["Chamber:Position"]/2)
-## levels(plot.means$Chamber)[2] <- "Chamber"
+plot.data <- decomp.plotcalcs(plot.means)
 
-CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
+CxP.plot <- qplot(Chamber, xtr, data = plot.data, group = Position, 
                     geom = "point", ylim = Y.lim, size = I(3), 
                     colour = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
@@ -160,7 +190,7 @@ CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position,
                     legend = FALSE)
 ## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
 CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
-CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lwr, ymax = upr), 
                                          width = 0.2, size = 0.5)
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
@@ -171,12 +201,12 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-CxP.plot <- CxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 3, scale = 1.5)
 }
 
