@@ -1,0 +1,67 @@
+Nested ANOVA Results for: Moss growth  0-12 months ( grow01 ) 
+Transformation used:      Y 
+Expt. Time:    t3, t4 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Mon Feb 20 12:31:42 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position
+~1 | Block/Chamber/Frag
+                      numDF denDF   F-value p-value
+(Intercept)               1    55 168.63413  <.0001
+Chamber                   1     7  22.12826  0.0022
+Frag                      3    42   0.70991  0.5515
+Position                  1    55  20.15263  <.0001
+Chamber:Frag              3    42   0.33857  0.7975
+Chamber:Position          1    55  25.45678  <.0001
+Frag:Position             3    55   0.37451  0.7717
+Chamber:Frag:Position     3    55   0.39866  0.7545
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
+
+Linear Hypotheses:
+                                             Estimate Std. Error z value Pr(>|z|)    
+Full Chamber.Inner - Ambient.Inner == 0        0.1702     0.7110   0.239    0.995    
+Ambient.Outer - Ambient.Inner == 0             0.3040     0.7110   0.428    0.974    
+Full Chamber.Outer - Ambient.Inner == 0       -4.7207     0.7110  -6.639   <1e-06 ***
+Ambient.Outer - Full Chamber.Inner == 0        0.1337     0.7052   0.190    0.998    
+Full Chamber.Outer - Full Chamber.Inner == 0  -4.8909     0.7052  -6.936   <1e-06 ***
+Full Chamber.Outer - Ambient.Outer == 0       -5.0247     0.7052  -7.126   <1e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+ model: Y.trans ~ Chamber * Frag * Position
+
+ Chamber*Frag*Position effect
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         6.23500         4.5425         5.734369  6.68125
+  Full Chamber    5.85625         5.9325         6.595000  5.49250
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient         6.21750         5.5950             5.75  6.84875
+  Full Chamber    1.63875         0.8025             0.16  1.71125
+
+
+
+<============================= END ============================>

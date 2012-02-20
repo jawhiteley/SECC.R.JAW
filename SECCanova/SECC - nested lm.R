@@ -296,8 +296,10 @@ Yp.mcp <- glht(CxP.fit, linfct = K)
 ## Anyway, it's working now.
 
 summary(Yp.mcp)
-Yp.ci <- confint(Yp.mcp)                        # estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
+## estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
+Yp.ci <- confint(Yp.mcp)
 plot(Yp.ci)                           # This is the data I want, but not quite the graph layout I want?
+print(Yp.ci)
 Yp.ci$confint[, 3] - Yp.ci$confint[, 1] # uneven confidence widths, due to uneven sample sizes
 
 par(op)

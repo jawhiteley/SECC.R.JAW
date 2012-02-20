@@ -59,8 +59,7 @@ SECC <- within( SECC.moss.full,
 
 attr(SECC, "labels")[["grow02"]] <- "Moss growth 18 months"
 attr(SECC, "labels")[["grow03"]] <- "Moss growth 24 months"
-attr(SECC, "labels")[["grow03"]] <- "Moss growth 12-24 months"
-attr(SECC, "units" )[["grow13"]] <- attr(SECC, "units" )[["grow01"]]
+attr(SECC, "labels")[["grow13"]] <- "Moss growth 12-24 months"
 attr(SECC, "units" )[["grow02"]] <- attr(SECC, "units" )[["grow01"]]
 attr(SECC, "units" )[["grow03"]] <- attr(SECC, "units" )[["grow01"]]
 attr(SECC, "units" )[["grow13"]] <- attr(SECC, "units" )[["grow01"]]
@@ -100,7 +99,7 @@ SECC <- within( SECC,
 ##  which avoids pseudo-replication, but also does not measure the effect of Time.
 
 ### Response Variable *****
-Ycols <- c('Prod01', 'Prod12', 'Prod23', 'Prod13')
+Ycols <- c('grow01', 'grow12', 'grow23', 'grow13')
 Y.col <- 'Prod01'     # Column to analyze as response variable           *****
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
