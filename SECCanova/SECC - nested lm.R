@@ -14,9 +14,9 @@
 ##################################################
 ## INITIALISE
 ##################################################
-## library(nlme)       # non-linear (& nested) linear models - convergence problems
+library(nlme)       # non-linear (& nested) linear models - convergence problems?
 library(lme4)       # linear models with S4 classes
-library(lattice)    # mostly for xyplot
+library(lattice)    # mostly for xyplot / effects plots
 library(ggplot2)    # grammar of graphics?
 
 if ( exists('SECC') == FALSE ) stop(
@@ -150,11 +150,13 @@ for( i in 1:length(Dataset.list) ){
 
 ## Including Time as a factor?
 if ( length(unique(SECCp$Time)) > 1 ) {
-  Yp.model   <- Y.trans ~ Time*Chamber*Frag*Position
+  Yp.fixed   <- Y.trans ~ Time*Chamber*Frag*Position
   Yp.random  <- ~ 1 | Block/Time/Chamber/Frag
+  Yp.error   <- "Block/Time/Chamber/Frag"
 } else {
-  Yp.model  <- Y.trans ~ Chamber*Frag*Position
-  Yp.random <- ~ 1 | Block/Chamber/Frag 
+  Yp.fixed   <- Y.trans ~ Chamber*Frag*Position
+  Yp.random  <- ~ 1 | Block/Chamber/Frag 
+  Yp.error   <- "Block/Chamber/Frag"
 }
 
 
@@ -166,15 +168,19 @@ if ( length(unique(SECCp$Time)) > 1 ) {
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
 
-Yp.lme  <- lme( Yp.model, random = Yp.random, data=SECCp, method="REML", 
+## NB: using variables in the call can cause problems when working with the saved object later, if those variables have changed, or are not saved with the fitted object :(
+Yp.lme  <- lme( Yp.fixed, random = Yp.random, data=SECCp, method="REML", 
               control = lmc, na.action = na.omit)  # Linear model with nested error terms??
 
-Yp.lmer <- lmer( Y.trans ~ Chamber*Frag*Position + (1 | Block/Chamber/Frag), data=SECCp, REML = TRUE)  # Linear model with nested error terms??
+Yp.lmer <- lmer(as.formula(paste(deparse(Yp.fixed), "+ (", substring(deparse(Yp.random), 2), ")") ), 
+                data=SECCp, REML = TRUE)  # Linear model with nested error terms??
 ## Frag*Position is causing the problem!!
 
-Yp.lm <- lm( Y.trans ~ Chamber*Frag*Position, data=SECCp)  # Linear model with nested error terms??
+Yp.lm <- lm( Yp.fixed, data=SECCp)  # Linear model (no nested error terms??)
 
-Yp.aov <- aov( Y.trans ~ Chamber*Frag*Position + Error(Block/Chamber/Frag), data=SECCp)
+## Yp.aov <- aov(Y.trans ~ Time*Chamber*Frag*Position + Error(Block/Time/Chamber/Frag), data=SECCp)
+Yp.aov <- aov(as.formula(paste(deparse(Yp.fixed), " + Error(", Yp.error, ")", sep="" ) ), 
+              data=SECCp)
 
 Yp.fit <- Yp.lme
 
@@ -218,9 +224,14 @@ hist(Yp.residuals)  # plot residuals
 ## Patch analyses
 # names(Yp.aov)
 cat("\n\n")
-print(Yp.model)                 # for output
-print( summary(Yp.fit) )        # summary statistics
-if( isTRUE( paste("anova", class(Yp.fit), sep=".") %in% methods(anova) ) ) print( anova(Yp.fit) )
+print(Yp.fixed)                 # for output
+if( isTRUE( paste("anova", class(Yp.fit), sep=".") %in% methods(anova) ) ) 
+{
+  Yp.summary <- anova(Yp.fit)
+} else {
+  Yp.summary <- summary(Yp.fit)
+}
+print( Yp.summary )        # summary output
 Yp.mtab <- try( model.tables(Yp.fit, "means")   # effect sizes
                , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
 # Interaction Plots
@@ -252,8 +263,9 @@ plot(Yp.glht)
 X.grid <- expand.grid(Chamber = unique(SECCp$Chamber), Position = unique(SECCp$Position))
 X <- model.matrix(~ Chamber * Position, data = X.grid)
 ## X.pred <- predict(Yp.fit, newdata = X.grid) # only for the full set of interactions, not subset :(
+## following example in vignette, but it doesn't really make sense ...
 Tukey <- contrMat(table(SECCp[, c("Chamber", "Position")]), "Tukey") # is this useful?
-Tukey <- contrMat(table(SECCp[, "Chamber"]), "Tukey")
+Tukey <- contrMat(table(SECCp[, "Position"]), "Tukey")
 Tukey0 <- matrix(0, nrow = nrow(Tukey), ncol = ncol(Tukey)) 
 K1 <- cbind( Tukey, Tukey0 )
 rownames(K1) <- paste(levels(SECCp$Chamber)[1], rownames(K1), sep=":")
@@ -267,15 +279,21 @@ colnames(K) <- c(colnames(Tukey), colnames(Tukey))
 ## fake factor for Chamber x Position interaction
 SECCp$CxP <- with(SECCp, interaction(Chamber, Position) )
 CxP.fit <- lme(Y.trans ~ CxP, random = Yp.random, data = SECCp) #  with or without intercept?
-Yp.mcp <- glht(CxP.fit, linfct = mcp(CxP="Tukey"))
-K <- mcp(CxP="Tukey")                  # differences between each combination of factors
+## K <- mcp(CxP="Tukey")                  # differences between each combination of factors
+CxP.mcp <- glht(CxP.fit, linfct = mcp(CxP="Tukey"))
+CxP.ci  <- confint(CxP.mcp)
 
 ## custom contrasts to get estimates & CI of factor levels, not differences
-CxP.fit <- lme(Y.trans ~ Chamber * Position, random = Yp.random, data = SECCp) #  with or without intercept?
+CxP.fit <- lme(Y.trans ~ Chamber * Position, random = Yp.random, data = SECCp,
+               control = lmc, na.action = na.omit) #  with or without intercept?
+CxP.ci1 <- confint(glht(CxP.fit, linfct = K)) # differences between levels of one factor, nested within another factor.  Doesn't really make sense :(
+
 rownames(X.grid) <- paste(X.grid[, 1], X.grid[, 2], sep=":")
-K <- model.matrix(~ Chamber * Position, data = X.grid)
+K <- model.matrix(~ Chamber * Position, data = X.grid) # set up contrasts
 Yp.mcp <- glht(CxP.fit, linfct = K)
 ## this produces the right type of information, but there's something wrong, because the estimate for Ambient:Inner is way too high.
+## - model.matrix?  Following the examples in the vignette led to some strange results, but I found better examples in the raw source (Sweave files) of the generalsiminf.Rnw vignette (the code is not shown in the pdf version, but it's exactly what I needed).
+## Anyway, it's working now.
 
 summary(Yp.mcp)
 Yp.ci <- confint(Yp.mcp)                        # estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
@@ -292,10 +310,16 @@ if (!inherits(Yp.fit, "aovlist"))
   library(effects)    # attractive interaction plots.  Does not work with aovlist.
 
   Yp.effects <- allEffects(Yp.fit)
-  plot(Yp.effects, "Chamber:Frag:Position")
+  if ( length(grep("Time", deparse(Yp.fixed), fixed = TRUE)) > 0 ) {
+    plot(effect("Time:Chamber:Frag:Position", Yp.fit))
+    print( plot(effect("Time:Chamber:Position", Yp.fit), 
+                multiline = TRUE, x.var = "Chamber", z.var = "Position") )
+  }
+  print( plot(effect("Chamber:Frag:Position", Yp.fit),
+              multiline = TRUE, x.var = "Frag", z.var = "Position") )
   CxP.eff <- effect("Chamber:Position", Yp.fit)
-  CxPs   <- summary(CxP.eff)
-  plot(CxP.eff)
+  CxPs    <- summary(CxP.eff)
+  print( plot(CxP.eff) )
   if (F)
   {
     CxP.eff2 <- effect("Chamber:Position", CxP.fit) # model with only interaction terms...
@@ -323,11 +347,14 @@ if (F)
 ##################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header, Save.patch.header, sep=""),
-				 print(Yp.model),                 # model
-				 summary(Yp.fit),                 # model summary
-				 cat("\n\n"),                     # for output
-				 Yp.mtab,                         # effect sizes
-				 cat(Save.end),                   # END OUTPUT #
+				 print(Yp.fixed),                  # model
+				 print(Yp.random),                 # model
+				 print(Yp.summary),                # results summary
+				 cat("\n\n"),                      # for output
+                 summary(CxP.mcp),     # multiple comparisons of Chamber x Position interaction
+				 cat("\n\n"),                      # for output
+				 print(Yp.effects),                # effect sizes
+				 cat(Save.end),                    # END OUTPUT #
 				 file = Save.text
 				)
 }
