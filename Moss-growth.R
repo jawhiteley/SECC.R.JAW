@@ -99,8 +99,8 @@ SECC <- within( SECC,
 ##  which avoids pseudo-replication, but also does not measure the effect of Time.
 
 ### Response Variable *****
-Ycols <- c('grow01', 'grow12', 'grow23', 'grow13')
-Y.col <- 'Prod01'     # Column to analyze as response variable           *****
+Ycols <- c('Prod01', 'Prod12', 'Prod23', 'Prod13')
+Y.col <- 'Prod01'     # Column to analyze as response variable
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
 ### container for results at each measurement time period

@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Feb 19 21:05:09 2012
+Mon Feb 20 12:37:11 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -35,10 +35,10 @@ Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
 Full Chamber.Inner - Ambient.Inner == 0       0.03362    0.26023   0.129    0.999    
 Ambient.Outer - Ambient.Inner == 0            0.08343    0.26023   0.321    0.989    
-Full Chamber.Outer - Ambient.Inner == 0      -1.64426    0.26023  -6.319   <1e-07 ***
+Full Chamber.Outer - Ambient.Inner == 0      -1.64426    0.26023  -6.319   <1e-06 ***
 Ambient.Outer - Full Chamber.Inner == 0       0.04981    0.25809   0.193    0.997    
-Full Chamber.Outer - Full Chamber.Inner == 0 -1.67787    0.25809  -6.501   <1e-07 ***
-Full Chamber.Outer - Ambient.Outer == 0      -1.72768    0.25809  -6.694   <1e-07 ***
+Full Chamber.Outer - Full Chamber.Inner == 0 -1.67787    0.25809  -6.501   <1e-06 ***
+Full Chamber.Outer - Ambient.Outer == 0      -1.72768    0.25809  -6.694   <1e-06 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
