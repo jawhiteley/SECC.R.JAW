@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2011-08-21
+# Jonathan Whiteley		R v2.12		2012-03-17
 ##================================================
 ## Faunal data is loaded into 'SECC.fauna'
 ## Fauna data is kept separate mostly because 
@@ -12,10 +12,11 @@
 ## may be included in 'SECC' data frame 
 ## for univariate analyses.
 ##################################################
-if (FALSE) {        # do not run automatically
+if (FALSE) {       d# do not run automatically
   source("./lib/init.R")   # load basic objects (needed for environmental data)
   rm(list=ls())     # house-keeping
   setwd('./ SECC/') # project directory
+  setwd('../')      # relative to this file (\rd in Vim-R)
   getwd()           # check current wd
 
   ## LOAD LIBRARIES
@@ -25,108 +26,96 @@ if (FALSE) {        # do not run automatically
 cat('- Loading fauna data.\n')
 library(vegan) # for diversity metrics
 
+cleanSpNames <- function(sp.names = NULL, ...)
+{
+  new.names <- gsub("\\s", "_", sp.names)
+  new.names <- make.names(new.names, ...)
+  new.names
+}
+
+
 ##################################################
 ## LOAD DATA FILES
 ##################################################
 cat('  - Loading fauna data files.\n')
 
 SECC.fauna.raw <- read.csv("./data/fauna_t4_raw.csv", na.strings = c("NA", "", "."), as.is=TRUE)
+Fauna.JAW.raw <- read.csv("./data/fauna_JAW_raw.csv", na.strings = c("NA", "", "."), as.is=TRUE)
+Fauna.ZL.raw  <- read.csv("./data/fauna_ZL_raw.csv",  na.strings = c("NA", "", "."), as.is=TRUE)
+Fauna.species <- read.csv("./data/fauna_JAW-ZL_species.csv",  
+                          na.strings = c("NA", "", "-"), as.is=TRUE)
 
-if (FALSE) {
-  str(SECC.fauna.raw)
-  head(SECC.fauna.raw)
+Fauna.dataframes <- c("Fauna.JAW.raw", "Fauna.ZL.raw")
 
-  str(SECC.fauna)
-  head(SECC.fauna)
-}
+for (dat in Fauna.dataframes)
+{
+  SECC.fauna.raw <- get(dat)
 
 ##################################################
-## CLEAN INPUT
+### CLEAN INPUT
 ##################################################
-cat('  - Cleaning raw input.\n')
-## strip rows with empty species names
-SECC.fauna.raw <- SECC.fauna.raw[!is.na(SECC.fauna.raw$ID), ]
+  cat('  -', dat, ': Cleaning raw input.\n')
+  ## strip rows with empty species names
+  SECC.fauna.raw <- SECC.fauna.raw[!is.na(SECC.fauna.raw$ID), ]
 
-## clean species names
-IDs.formal <- SECC.fauna.raw$ID
-IDs.formal <- sub( "\\s\\(imm\\)$", "" , IDs.formal)
-IDs.formal <- sub( "\\s\\(beetle\\)", "" , IDs.formal)
-IDs.formal <- sub( "\\s\\(Diptera\\?\\)", "" , IDs.formal)
-IDs.formal <- sub( "beetle", "Coleoptera spp." , IDs.formal)
-SECC.fauna.raw$ID <- IDs.formal
+  ## Drop extra 'meta-data' columns (this is all in 'Fauna.species' now)
+  SECC.fauna <- SECC.fauna.raw[, c(1, grep("^X\\d", colnames(SECC.fauna.raw)) )]
 
-## Make species labels R-friendly (prepare for transposing to column names)
-## rownames(SECC.fauna) <- cleanVarName(SECC.fauna$ID)
-sp.names   <- make.names(SECC.fauna.raw$ID, unique = TRUE)
-rownames(SECC.fauna.raw) <- sp.names
-SECC.fauna.raw$ID <- sp.names
-
-##================================================
-## Extract meta-data
-##================================================
-cat('  - Extracting fauna species metadata.\n')
-## clone first metadata columns to 'SECC.fauna.meta': species records, aliases, taxanomic categories, etc.
-SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
+  if (FALSE) 
+  {                                    # 'Meta-data' is now in 'Fauna.species'
+    ##================================================
+    ## Extract meta-data
+    ##================================================
+    cat('  - Extracting fauna species metadata.\n')
+    ## clone first metadata columns to 'SECC.fauna.meta': species records, aliases, taxanomic categories, etc.
+    SECC.fauna.meta <- SECC.fauna.raw[, -grep("^X\\d", colnames(SECC.fauna.raw))]
                                         # keep only columns that do not start with "X" and a number (these are sample IDs).
-## strip empty rows from meta-data
-SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.fauna.meta))
+    ## strip empty rows from meta-data
+    SECC.fauna.meta <- strip_empty_dims(SECC.fauna.meta, dim=1, cols = 2:ncol(SECC.fauna.meta))
 
-## Mdata.cols <- intersect( colnames(SECC.fauna.raw), colnames(SECC.fauna.meta))[-1]
-Mdata.cols <- which( colnames(SECC.fauna.raw) %in% colnames(SECC.fauna.meta))[-1]
-## strip species metadata columns
-SECC.fauna <- SECC.fauna.raw[, -Mdata.cols]
-
+    ## Mdata.cols <- intersect( colnames(SECC.fauna.raw), colnames(SECC.fauna.meta))[-1]
+    Mdata.cols <- which( colnames(SECC.fauna.raw) %in% colnames(SECC.fauna.meta))[-1]
+    ## strip species metadata columns
+    SECC.fauna <- SECC.fauna.raw[, -Mdata.cols]
+  }
 
 
 ##################################################
-## PROCESS DATA
+### PROCESS DATA
 ##################################################
-cat('  - Processing fauna data.\n')
-## strip empty columns (NA or 0s)
-SECC.fauna <- strip_empty_dims(SECC.fauna, dim=2)
-sp.rows <- which(SECC.fauna$ID %in% SECC.fauna.meta$ID)
-cols.0  <- which( apply( SECC.fauna[sp.rows, ], 2, function(x) all(x==0) ) )
-SECC.fauna <- SECC.fauna[, -cols.0]
+  cat('  -', dat, ': Processing fauna data.\n')
+  ## strip empty (NAs or 0s) columns (samples) 
+  SECC.fauna <- strip_empty_dims(SECC.fauna, dim=2)
+  sp.rows <- (grep("comments", SECC.fauna$ID, ignore.case = TRUE) +1):NROW(SECC.fauna)
+  cols.0  <- which( apply( SECC.fauna[sp.rows, ], 2, function(x) all(x==0) ) )
+  if (length(cols.0) > 0) SECC.fauna <- SECC.fauna[, -cols.0]
 
-## strip 0-only rows
-sample.cols <- 2:ncol(SECC.fauna)
-rows.0 <- which( apply( SECC.fauna[, sample.cols], 1, function(x) all(x==0) ) )
-SECC.fauna <- SECC.fauna[-rows.0, ]
+  ## strip 0-only rows (species)
+  sample.cols <- 2:ncol(SECC.fauna)
+  rows.0 <- which( apply( SECC.fauna[, sample.cols], 1, function(x) all(x==0) ) )
+  if (length(rows.0) > 0) SECC.fauna <- SECC.fauna[-rows.0, ]
+
+  ## Make species labels R-friendly (prepare for transposing to column names)
+  ## rownames(SECC.fauna) <- cleanVarName(SECC.fauna$ID)
+  sp.names   <- cleanSpNames(SECC.fauna$ID, unique = TRUE)
+  rownames(SECC.fauna) <- sp.names
+  SECC.fauna$ID <- sp.names
 
 
-##================================================
-## Transpose input data table
-##================================================
-cat('    - Transposing fauna data.\n')
-sample.IDs <- colnames(SECC.fauna)[-1]
-## SECC.fauna.mat <- as.matrix(SECC.fauna)
-SECC.fauna.t <- t(SECC.fauna[, -1])         # omit ID column (replaced by rownames)
-SECC.fauna.t <- cbind(SampleID = sample.IDs, SECC.fauna.t)
-rownames(SECC.fauna.t) <- NULL  # remove annoying rownames (stored in sample.IDs)
-## colnames(SECC.fauna.t)[1] <- "SampleID"
-SECC.fauna.df <- as.data.frame(SECC.fauna.t, stringsAsFactors = FALSE)
+  ##================================================
+  ## Transpose input data table
+  ##================================================
+  cat('    -', dat, ': Transposing fauna data.\n')
+  sample.IDs <- colnames(SECC.fauna)[-1]
+  ## SECC.fauna.mat <- as.matrix(SECC.fauna)
+  SECC.fauna.t <- t(SECC.fauna[, -1])         # omit ID column (replaced by rownames)
+  SECC.fauna.t <- cbind(SampleID = sample.IDs, SECC.fauna.t)
+  rownames(SECC.fauna.t) <- NULL  # remove annoying rownames (stored in sample.IDs)
+  ##   colnames(SECC.fauna.t)[-1] <- sp.names
+  SECC.fauna.df <- as.data.frame(SECC.fauna.t, stringsAsFactors = FALSE)
 
-## Convert character columns to appropriate data type
-if (FALSE) {
-  ## This does not work as expected
-  ## I can either coerce everything, replacing character columns with NULL (omit else)
-  ## or it returns the original object with the else statement.
-  ## grr.
-  ## ANSWER: Can not mix data types in a matrix (as returned by apply).  dur.  That's what data frames are for!
-  SECC.fauna.df <- apply(SECC.fauna.df, 2, function(x) {
-                         if (any(is.na(as.numeric(x))) == FALSE) as.numeric(x) else x
-    ## convert to numeric if ALL values are numeric (no NAs introduced by coercion). 
-  })
-  str(SECC.fauna.df)
-  head(SECC.fauna.df)
-
-  cols.num <- which( apply(SECC.fauna.t, 2, function(x) any(!is.na(as.numeric(x)))) )
-  SECC.fauna.num <- apply(SECC.fauna.t[, cols.num], 2, function(x) as.numeric(x) )
-  SECC.fauna.df <- cbind(SECC.fauna.t[, -cols.num], SECC.fauna.num)  # merge numeric & non-numeric columns
-  SECC.fauna.df <- as.data.frame(SECC.fauna.df)
-}
-
-for (i in 1:ncol(SECC.fauna.df)) {
+  ## Convert character columns to appropriate data type
+  for (i in 1:ncol(SECC.fauna.df)) {
     coli <- SECC.fauna.df[[i]]
     if (suppressWarnings( any(is.na(as.numeric(coli))) ) == FALSE) {
       coli <- as.numeric(coli)
@@ -136,40 +125,170 @@ for (i in 1:ncol(SECC.fauna.df)) {
       coli <- as.factor(coli)
     }
     SECC.fauna.df[[i]] <- coli
-}
+  }
 
-## Same for Meta-data
-for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character data) - all rows should be unique.
-    coli <- SECC.fauna.meta[[i]]
-    if (suppressWarnings( any(is.na(as.numeric(coli))) ) == FALSE) {
-      coli <- as.numeric(coli)
-    } else if (suppressWarnings( any(is.na(as.logical(coli))) ) == FALSE) {
-      coli <- as.logical(coli)
-    } else if (suppressWarnings( any(is.na((coli))) ) == FALSE) {
-      coli <- as.factor(coli)
+  if(F)
+  {                                      ## Same for Meta-data
+    for (i in 2:ncol(SECC.fauna.meta)) {    # skip first column (leave as character data) - all rows should be unique.
+      coli <- SECC.fauna.meta[[i]]
+      if (suppressWarnings( any(is.na(as.numeric(coli))) ) == FALSE) {
+        coli <- as.numeric(coli)
+      } else if (suppressWarnings( any(is.na(as.logical(coli))) ) == FALSE) {
+        coli <- as.logical(coli)
+      } else if (suppressWarnings( any(is.na((coli))) ) == FALSE) {
+        coli <- as.factor(coli)
+      }
+      SECC.fauna.meta[[i]] <- coli
     }
-    SECC.fauna.meta[[i]] <- coli
+
+    ## This does not work as expected
+    ## I can either coerce everything, replacing character columns with NULL (omit else)
+    ## or it returns the original object with the else statement.
+    ## grr.
+    ## ANSWER: Can not mix data types in a matrix (as returned by apply).  dur.  That's what data frames are for!
+    SECC.fauna.df <- apply(SECC.fauna.df, 2, function(x) {
+                           if (any(is.na(as.numeric(x))) == FALSE) as.numeric(x) else x
+    ## convert to numeric if ALL values are numeric (no NAs introduced by coercion). 
+                          })
+    str(SECC.fauna.df)
+    head(SECC.fauna.df)
+
+    cols.num <- which( apply(SECC.fauna.t, 2, function(x) any(!is.na(as.numeric(x)))) )
+    SECC.fauna.num <- apply(SECC.fauna.t[, cols.num], 2, function(x) as.numeric(x) )
+    SECC.fauna.df <- cbind(SECC.fauna.t[, -cols.num], SECC.fauna.num)  # merge numeric & non-numeric columns
+    SECC.fauna.df <- as.data.frame(SECC.fauna.df)
+  }
+
+  ##================================================
+  ## Check & clean data structure
+  ##================================================
+  cat('    -', dat, ': Checking & Cleaning fauna data structure.\n')
+  ## Check SECC structure & overwrite un-transposed data frame if successful
+  SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
+  SECC.fauna <- within(SECC.fauna, 
+                       {
+                         Comments[is.na(Comments)] <- ""
+                         ## re-generate Sample IDs
+                         SampleID <- SECC_sampleID(SECC.fauna)
+                       })
+
+  if (F)
+  {
+    ## remove missing sp IDs from meta-data
+    SECC.fauna.meta <- SECC.fauna.meta[which( SECC.fauna.meta$ID %in% intersect(colnames(SECC.fauna), SECC.fauna.meta$ID) ), ]
+    SECC.fauna.meta$sp_alias <- cleanSpNames(SECC.fauna.meta$sp_alias, unique = FALSE)
+  }
+
+  assign(gsub("\\.raw", "", dat), SECC.fauna) # result to new object name without ".raw" @ end
+}                                      # END Processing individual data frames...
+
+##################################################
+## MERGE JAW & ZL data
+##################################################
+## JAW: Mesostigs & Collembola from Frag 1, 2, & 4; Blocks 1, 3, 5, 7; t4
+##  ZL: All microarthropods    from a subset of Blocks 1, 3, 5, 7; t1, t4
+cat('  - Merging data sets.\n')
+
+## STANDARDIZE species names using metadata
+fauna_sp_alias  <- function (SECC.fauna = NULL, raw.sp.col = "JAW.sp.ID")
+{
+  col.class <- lapply(SECC.fauna, function(x) class(x) )
+  sp.cols   <- which(col.class == "numeric")
+  ## convert species names into same friendly format used for column names
+  Species.labels <- within( Fauna.species,
+                        {
+                          sp_alias <- cleanSpNames(sp_alias)
+                        })
+  Species.labels[[raw.sp.col]] <- cleanSpNames( Species.labels[[raw.sp.col]] )
+  Species.raw <- colnames(SECC.fauna)[sp.cols]
+  Species.match <- match(Species.raw, Species.labels[[raw.sp.col]])
+  Species.new <- Species.labels$sp_alias[ Species.match ]
+  colnames(SECC.fauna)[sp.cols] <- Species.new
+  ## there are likely now duplicate column names: these need to be aggregated
+  SECC.fauna.new <- SECC.fauna[, -sp.cols]
+  fcols <- seq_along( colnames(SECC.fauna.new) )
+  Species.labels.new <- na.omit( unique(Species.new) ) # species not in the master list are dropped
+  for (sp in Species.labels.new)
+  {
+    sp.col <- which( colnames(SECC.fauna) == sp )
+    if (length(sp.col) > 1)
+    {
+      sp.new <- apply(SECC.fauna[, sp.col], 1, sum)
+    } else {
+      sp.new <- SECC.fauna[, sp.col]
+    }
+    SECC.fauna.new <- cbind(SECC.fauna.new, sp.new)
+  }
+  colnames(SECC.fauna.new)[-fcols] <- Species.labels.new
+
+  SECC.fauna.new
 }
 
+Fauna.JAW.std <- fauna_sp_alias(Fauna.JAW, raw = "JAW.sp.ID")
+Fauna.ZL.std  <- fauna_sp_alias(Fauna.ZL , raw = "ZL.sp.ID" )
+
+## Prepare combined sample x species matrix
+col.class <- lapply(Fauna.JAW.std, function(x) class(x) )
+sp.cols   <- which(col.class == "numeric")
+fcols     <- seq_along(col.class)[-sp.cols]
+xp.cols   <- c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')
+All.spp <- union(colnames(Fauna.JAW.std)[-fcols], colnames(Fauna.ZL.std)[-fcols])
+All.spp <- All.spp[order( match(All.spp, cleanSpNames(Fauna.species$sp_alias) ) )]
+All.samples <- union(Fauna.JAW.std$SampleID, Fauna.ZL.std$SampleID)
+
+SECC.fauna <- merge( Fauna.JAW.std[, xp.cols], Fauna.ZL.std[, xp.cols], all = TRUE)
+SECC.fauna$Time <- factor(SECC.fauna$Time, levels = c(1, 2, 4) )
+SECC.fauna <- SECC.fauna[order(SECC.fauna$Time, SECC.fauna$Block, SECC.fauna$Chamber, SECC.fauna$Frag, SECC.fauna$Pos), ]
+## SECC.fauna.mat <- matrix(NA, nrow = NROW(SECC.fauna), ncol = length(All.spp))
+## SECC.fauna.mat <- as.data.frame(SECC.fauna.mat)
+## colnames(SECC.fauna.mat) <- All.spp
+## SECC.fauna <- cbind(SECC.fauna, SECC.fauna.mat)
+
+## Keep Max. count in each cell
+dframes <- c('Fauna.JAW.std', 'Fauna.ZL.std')
+for (sp in All.spp)
+{
+  sp.counts <- rep(NA, length.out = NROW(SECC.fauna) )
+  for (IDsample in SECC.fauna$SampleID)
+  {
+    Counts <- 0                        # default
+    for (datn in dframes)
+    {
+      dat   <- get(datn)
+      IDrow <- which(dat$SampleID == IDsample)
+      Counts <- c(Counts, dat[IDrow, sp])
+    }
+    ##     browser()
+    ##     Count <- if (length(Counts) > 0) max(Counts, na.rm = TRUE) else 0
+    IDrow <- which(SECC.fauna$SampleID == IDsample)
+    sp.counts[IDrow] <- max(Counts, na.rm = TRUE)
+  }
+  SECC.fauna <- cbind(SECC.fauna, sp.counts)
+}
+colnames(SECC.fauna) <- c(xp.cols, All.spp)
+
+
+if(F)
+{
+  ## clean species names
+  IDs.formal <- SECC.fauna$ID
+  IDs.formal <- sub( "\\s\\(imm\\)$", "" , IDs.formal)
+  IDs.formal <- sub( "\\s\\(beetle\\)", "" , IDs.formal)
+  IDs.formal <- sub( "\\s\\(Diptera\\?\\)", "" , IDs.formal)
+  IDs.formal <- sub( "beetle", "Coleoptera spp." , IDs.formal)
+  SECC.fauna$ID <- IDs.formal
+}
 
 ##================================================
-## Check & clean data structure
+## Extract meta-data
 ##================================================
-cat('    - Checking & Cleaning fauna data structure.\n')
-## Check SECC structure & overwrite un-transposed data frame if successful
-SECC.fauna <- checkSECCdata(SECC.fauna.df, "SECC.fauna.df")
-SECC.fauna <- within(SECC.fauna, {
-    Comments[is.na(Comments)] <- ""
-    ## re-generate Sample IDs
-    SampleID <- SECC_sampleID(SECC.fauna)
-  })
-## SECC.fauna <- within(SECC.fauna, {
-##                      SampleID <- paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
-##   })
+cat('  - Extracting fauna species metadata.\n')
+Species.labels <- unique(Fauna.species$sp_alias)
+Meta.sp.rows   <- match(Species.labels, Fauna.species$sp_alias)
+SECC.fauna.meta <- Fauna.species[Meta.sp.rows, c("sp_alias", "Major.Taxa", "Taxonomic.Group")]
+colnames(SECC.fauna.meta) <- gsub( "sp_alias", "Lowest.Level.ID", colnames(SECC.fauna.meta) )
+rownames(SECC.fauna.meta) <- SECC.fauna.meta$Lowest.Level.ID
 
-## remove missing sp IDs from meta-data
-SECC.fauna.meta <- SECC.fauna.meta[which( SECC.fauna.meta$ID %in% intersect(colnames(SECC.fauna), SECC.fauna.meta$ID) ), ]
-SECC.fauna.meta$sp_alias <- make.names(SECC.fauna.meta$sp_alias, unique = FALSE)
 
 
 
@@ -254,4 +373,4 @@ rownames(SECC.fauna) <- SECC.fauna$SampleID
 
 
 ## House-keeping
-rm(list=c('coli', 'rows.0', 'cols.0', 'i', 'IDs.formal', 'Mdata.cols', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.raw', 'SECC.fauna.dwt', 'SECC.fauna.g', 'sp.rows'))
+rm(list=c('coli', 'rows.0', 'cols.0', 'i', 'sample.IDs', 'SECC.fauna.t', 'SECC.fauna.df', 'SECC.fauna.raw', 'SECC.fauna.dwt', 'SECC.fauna.g', 'sp', 'sp.names', 'sp.rows', 'Species.labels', 'fcols', 'xp.cols', 'sp.cols', 'sp.counts', 'col.class', 'Counts', 'dat', 'datn', 'dframes', 'Meta.sp.rows', 'Taxa.groups')) # , 'IDs.formal', 'Mdata.cols'
