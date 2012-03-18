@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Load, clean & process data files stored in "./data/"
-# Jonathan Whiteley		R v2.12		2012-03-17
+# Jonathan Whiteley		R v2.12		2012-03-18
 ##================================================
 ## Faunal data is loaded into 'SECC.fauna'
 ## Fauna data is kept separate mostly because 
@@ -287,7 +287,9 @@ Species.labels <- unique(Fauna.species$sp_alias)
 Meta.sp.rows   <- match(Species.labels, Fauna.species$sp_alias)
 SECC.fauna.meta <- Fauna.species[Meta.sp.rows, c("sp_alias", "Major.Taxa", "Taxonomic.Group")]
 colnames(SECC.fauna.meta) <- gsub( "sp_alias", "Lowest.Level.ID", colnames(SECC.fauna.meta) )
-rownames(SECC.fauna.meta) <- SECC.fauna.meta$Lowest.Level.ID
+SECC.fauna.meta$ID <- cleanSpNames(SECC.fauna.meta$Lowest.Level.ID) # column name friendly format for lookups with variable names in other data frames
+rownames(SECC.fauna.meta) <- SECC.fauna.meta$ID
+SECC.fauna.meta <- SECC.fauna.meta[, c("ID", "Lowest.Level.ID", "Major.Taxa", "Taxonomic.Group")]
 
 
 
@@ -296,7 +298,7 @@ rownames(SECC.fauna.meta) <- SECC.fauna.meta$Lowest.Level.ID
 ## CALCULATIONS
 ##################################################
 cat('  - Calculating fauna data.\n')
-SECC.fauna.c <- SECC.fauna  # save count data
+SECC.fauna.counts <- SECC.fauna  # save count data
 
 ##================================================
 ## Convert species counts to # / g dwt
@@ -336,12 +338,13 @@ SECC.fauna.sum <- within(SECC.fauna.sum, {
 ### Prostigs
 ### Other
     for (taxa in Taxa.groups) {
-      assign( taxa, apply(SECC.fauna[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == taxa)] ], 1, sum) )
+      taxa.cols <- SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == taxa)]
+      taxa.cols <- intersect(colnames(SECC.fauna), taxa.cols)
+      assign( taxa, apply(SECC.fauna[, taxa.cols], 1, sum) )
     }
-    rm(taxa)
 
 ### Uropodina (non-predatory Mesostigs)
-    Uropodina <- apply(SECC.fauna[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Major.Taxa == "  Uropodina")] ], 1, sum)
+    Uropodina <- apply(SECC.fauna[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Major.Taxa == "Uropodina")] ], 1, sum)
 ### Mesostig.preds = Mesostigs - Uropodina
     Mesostig.preds <- Mesostigmata - Uropodina
 ### Predators = Mesostigs.preds + Prostigs
@@ -351,7 +354,10 @@ SECC.fauna.sum <- within(SECC.fauna.sum, {
 ### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
     fauna.jaw <- Mesostigmata + Collembola
 ### fauna = all (-Other) * including ZL data?
-    fauna <- apply(SECC.fauna[, SECC.fauna.meta$ID], 1, sum)
+    taxa.cols <- intersect(colnames(SECC.fauna), SECC.fauna.meta$ID)
+    taxa.cols <- setdiff(taxa.cols, SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == "Other")])
+    fauna <- apply(SECC.fauna[, taxa.cols], 1, sum)
+    rm(taxa, taxa.cols)
 })
 SECC.fauna.sum <- SECC.fauna.sum[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos',
                               'Mesostigmata', 'Collembola', 'Prostigmata', 'Other',

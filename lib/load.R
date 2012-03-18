@@ -238,13 +238,14 @@ if (FALSE) {  # do not run when source()'d
 # Save data to native R file "./save/SECC_data.R", or leave in memory:
 # + SECC       - data from experimental patches.  **Main table for analysis**
 # + SECC.env   - Environmental data corresponding to SECC.
-# + SECC.fauna - Microarthropod community data corresponding to SECC.
+# + SECC.fauna - Microarthropod community data corresponding to SECC patches.
+# + SECC.fauna.counts - Microarthropod species counts corresponding to SECC patches.
 # + SECC.TRH   - Temperature & Relative Humidity (time-series) data.
 # + [Other]
 cat('- Saving data & cleaning up.\n')
 
 Load.export <- c('SECC', 'SECC.coded', 'SECC.xy', 
-                 'SECC.fauna', 'SECC.fauna.sum', 'SECC.fauna.meta',
+                 'SECC.fauna', 'SECC.fauna.counts', 'SECC.fauna.sum', 'SECC.fauna.meta',
                  'SECC.N.full', 'SECC.moss.full')  # , 'SECC.env', 'SECC.TRH'
 save( list=Load.export, file="./save/SECC_data.R" )
 
