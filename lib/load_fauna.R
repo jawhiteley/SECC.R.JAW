@@ -322,6 +322,7 @@ for (i in which( sapply(SECC.fauna.g, is.numeric) ) ) {
 }
 
 SECC.fauna <- SECC.fauna.g
+SECC.fauna <- SECC.fauna[order(SECC.fauna$Time, SECC.fauna$Block, SECC.fauna$Chamber, SECC.fauna$Frag, SECC.fauna$Pos), ]
 
 
 ##================================================
