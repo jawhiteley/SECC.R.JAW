@@ -2,15 +2,16 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Aggregate Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2011-08-22
+### Jonathan Whiteley     R v2.12     2012-03-18
 ###===============================================
-### Species identified to morphospecies (usually family-level)
+### ** Typically called from 'Fauna.R'  **
+###    - all the pre-processing & filtering happens there.
+### Species identified to morphospecies (usually family or genus level)
 ### Counts / sample converted to # / g dwt of moss substrate (using 'Patch.dwt' column)
 ##################################################
 ## INITIALISE
 ##################################################
 ## This script is used in a generic way for most univariate analyses
-## Typically called from 'Fauna.R' - all the pre-processing & filtering happens there.
 
 if (FALSE) {  # do not run automatically
   ## Working Directory: see lib/init.R below
@@ -56,13 +57,13 @@ if (FALSE) {
   SECC <- SECC.df   # restore
 }
 
-SECC <- SECC.sp.sum # temporary for compatibility with code
+SECC <- SECC.sp.sum                    # temporary for compatibility with code
 SECC <- checkSECCdata(SECC, 'SECC.sp.sum')
 SECC <- recodeSECC( SECC )
 
 ### ANOVA Response Variable *****
-Y.col <- 'Richness'     # Column to analyze as response variable           *****
-Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
+if (!exists('Y.col')) Y.col <- 'Richness' # Column to analyze as response variable           *****
+if (!exists('Y.use')) Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
 
 ##================================================
 ## CUSTOM CALCULATIONS 
@@ -88,7 +89,7 @@ Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: In
 Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
-Save.results  <- FALSE
+Save.results  <- TRUE
 
 
 ### Load default Labels - dependent on above settings. *****
@@ -105,7 +106,8 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ##################################################
 source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
 
-if (FALSE) {
+if (FALSE) 
+{
 
 ### Run analysis on each Time point in sequence.
 for ( Time.i in 1:length(levels(SECC$Time)) ) {
@@ -144,14 +146,26 @@ Sub.msd <- "95% comparison intervals (MSR)"
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
 Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+FragIconList <- list(FragIcon1 = FragIcon1,
+                     FragIcon2 = FragIcon2,
+                     FragIcon4 = FragIcon4
+                     )
 
 ## prepare summary data for plot
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
 levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means$error <- as.numeric(msd["Chamber:Frag:Position"]/2)
-levels(plot.means$Chamber)[2] <- "Chamber"
+plot.means <- within(plot.means, 
+                     {
+                       error <- as.numeric(msd["Chamber:Frag:Position"]/2)
+                       upper <- x + error
+                       lower <- x - error
+                       levels(Chamber)[2] <- "Chamber"
+                     })
 
-Y.lim <- c(-1, 20)
+## if (!exists('Y.lim')) Y.lim <- c(-1, 20)
+Y.lim <- with(plot.means, range(lower, upper))
+Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+
 FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
                     geom = "point", ylim = Y.lim, size = I(3), 
                     colour = Position, shape = Position,
@@ -161,7 +175,7 @@ FxP.plot <- qplot(Frag, x, data = plot.means, group = Position,
                     legend = FALSE,
                     facets = .~Chamber)
 FxP.plot <- FxP.plot + geom_line(aes(group = Position), size = 0.8)
-FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                          width = 0.2, size = 0.5)
 FxP.plot <- FxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
@@ -172,7 +186,14 @@ FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
 FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
-FxP.plot <- FxP.plot + theme_bw() + opts(legend.key = theme_rect(colour = NA))
+FxP.plot <- FxP.plot + jaw.ggplot()
+## Add imported graphics as x-axis tick labels :D
+## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+FxP.plot <- FxP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
+                                        breaks = levels(plot.means$Frag)) +
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+)
 print(FxP.plot)
 
 

@@ -1,7 +1,7 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Analyses of Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2011-08-22
+### Jonathan Whiteley     R v2.12     2012-03-18
 ###===============================================
 ### Species identified to morphospecies (usually family-level)
 ### Counts / sample converted to # / g dwt of moss substrate (using 'Patch.dwt' column)
@@ -29,9 +29,11 @@ library(ggplot2)	# load external package
 ## t4 samples only: I'm not really using the other data yet anyway.
 Samples.fauna <- which(SECC.fauna$Time == 4)
 Vars.fauna    <- setdiff(colnames(SECC.fauna), 
-                         SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group %in% c("Other", "Prostigmata")]
+                         SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group 
+                                            %in% c("Other", "Prostigmata")]
 )
 Spp.fauna <- intersect(SECC.fauna.meta$ID, Vars.fauna)
+Spp.cols  <- intersect(colnames(SECC.fauna), SECC.fauna.meta$ID)
 
 
 ##################################################
@@ -45,72 +47,48 @@ Fauna.meta <- SECC.fauna.meta[which(SECC.fauna.meta$ID %in% Spp.fauna), ]
 
 
 ##================================================
-## Summary variables for univariate analyses
-## suitable for merging into main SECC dataframe
-##================================================
-## Could have been done partly using aggregate() if the species were rows instead of columns :P
-SECC.sp.sum <- Fauna.sp[, c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos')]
-Taxa.groups <- unique(Fauna.meta$Taxonomic.Group)
-
-SECC.sp.sum <- within(SECC.sp.sum, {
-### Mesostigs
-### Collembola
-### Prostigs
-### Other
-    for (taxa in Taxa.groups) {
-      assign( taxa, apply(Fauna.sp[, Fauna.meta$ID[which(Fauna.meta$Taxonomic.Group == taxa)] ], 1, sum) )
-    }
-    rm(taxa)
-
-### Uropodina (non-predatory Mesostigs)
-    Uropodina <- apply(Fauna.sp[, Fauna.meta$ID[which(Fauna.meta$Major.Taxa == "  Uropodina")] ], 1, sum)
-### Mesostig.preds = Mesostigs - Uropodina
-    Mesostig.preds <- Mesostigmata - Uropodina
-### Predators = Mesostigs.preds + Prostigs
-    Predators <- Mesostig.preds + ifelse(exists('Prostigmata'), Prostigmata, 0)
-### Grazers = Collembola + Uropodina (+ Oribatids)
-    Grazers <- Collembola + Uropodina
-### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
-    fauna.jaw <- Mesostigmata + Collembola
-### fauna = all (-Other) * including ZL data?
-    fauna <- apply(Fauna.sp[, Fauna.meta$ID], 1, sum)
-})
-Cols.sp.sum <- c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos',
-                 'Mesostigmata', 'Collembola', 'Prostigmata', 'Other',
-                 'Uropodina', 'Mesostig.preds', 'Predators', 'Grazers', 
-                 'fauna.jaw', 'fauna')
-SECC.sp.sum <- SECC.sp.sum[, Cols.sp.sum[which( sapply(Cols.sp.sum, function(x) x %in% colnames(SECC.sp.sum)) )]]  # manually reorder columns 
-
-
-##================================================
 ## Aggregate 'morphospecies' records into 'species'
 ##================================================
 ## Aggregate count data by morphospecies with "confidence" 
 ## (i.e. lumping things together that are probably the same)
-SECC.sp <- data.frame(SampleID = Fauna.sp[['SampleID']])
+SECC.sp <- Fauna.sp[, c('SampleID', Spp.fauna)]
 
-Taxa.groups <- rev( unique(Fauna.meta$sp_alias) )
-SECC.sp <- within(SECC.sp, {
-    for (taxa in Taxa.groups) {
-      taxa.sp <- Fauna.meta$ID[which(Fauna.meta$sp_alias == taxa)]
-      taxa.sp <- intersect(taxa.sp, colnames(Fauna.sp))
-      if (length(taxa.sp) > 0) {
-        assign( taxa, 
-               if (length(taxa.sp) > 1) 
-                 apply(Fauna.sp[, taxa.sp], 1, sum) 
-               else 
-                 Fauna.sp[, taxa.sp] 
-        )
-      }
-    }
-    rm(taxa, taxa.sp)
-})
+if (F)
+{                                      # now handled when loaded & data sets merged (JAW + ZL)
+  SECC.sp <- data.frame(SampleID = Fauna.sp[['SampleID']])
+
+  Taxa.groups <- rev( unique(Fauna.meta$sp_alias) )
+  SECC.sp <- within(SECC.sp, 
+                    {
+                      for (taxa in Taxa.groups) {
+                        taxa.sp <- Fauna.meta$ID[which(Fauna.meta$sp_alias == taxa)]
+                        taxa.sp <- intersect(taxa.sp, colnames(Fauna.sp))
+                        if (length(taxa.sp) > 0) {
+                          assign( taxa, 
+                                 if (length(taxa.sp) > 1) 
+                                   apply(Fauna.sp[, taxa.sp], 1, sum) 
+                                 else 
+                                   Fauna.sp[, taxa.sp] 
+                          )
+                        }
+                      }
+                      rm(taxa, taxa.sp)
+                    })
+}
+
 rownames(SECC.sp) <- SECC.sp$SampleID
 SECC.sp <- SECC.sp[, -1]    # Data matrix only: remove SampleID column, leave IDs in rownames
   
 ## Data matrix only: more convenient name :P
 Fauna <- SECC.sp  
 
+
+##================================================
+## Summary variables for univariate analyses
+## suitable for merging into main SECC dataframe
+##================================================
+## Already calculated in`/lib/load_fauna.R`
+SECC.sp.sum <- SECC.fauna.sum[Samples.fauna, ]
 
 ##================================================
 ## Species Richness & Diversity metrics
@@ -121,31 +99,43 @@ SECC.sp.sum <- within(SECC.sp.sum, {
     Evenness <- diversity(SECC.sp, index = "invsimpson")
 })
 
+attr(SECC.sp.sum, "labels") <- attr(SECC, "labels")        # starting point
+attr(SECC.sp.sum, "units" ) <- attr(SECC, "units" )        # starting point
+attr(SECC.sp.sum, "labels")[["Richness"]] <- "Morphospecies Richness"
+attr(SECC.sp.sum, "units" )[["Richness"]] <- quote("(# observed taxa)")
+attr(SECC.sp.sum, "labels")[["Evenness"]] <- "Inverse Simpson's Index"
+attr(SECC.sp.sum, "units" )[["Evenness"]] <- quote("(# effective taxa)")
+attr(SECC.sp.sum, "labels")[["Predators"]] <- "Predators (Mesostigmata + Prostigmata)"
+attr(SECC.sp.sum, "units" )[["Predators"]] <- quote("#" %.% g^-1)
+attr(SECC.sp.sum, "labels")[["Grazers"]]   <- "Grazers (fungivorous Acari + Collembola)"
+attr(SECC.sp.sum, "units" )[["Grazers"]]   <- quote("#" %.% g^-1)
 
 
 
 ##################################################
 ## DATA EXPLORATION
 ##################################################
-if (FALSE) {
+if (FALSE) 
+{
 
-  Fauna.bip <- qplot(Collembola, Mesostig.preds, data = SECC.fauna.sum,
-                     ) + theme_bw() # group = Chamber, shape = Pos, colour = Chamber
+  library(mgcv)                        # for GAMs
+  Fauna.bip <- qplot(Grazers, Predators, data = SECC.fauna.sum,
+                     ) + stat_smooth(aes(x = Grazers), method = "gam") + jaw.ggplot() # group = Chamber, shape = Pos, colour = Chamber
   print(Fauna.bip)
   Fauna.bip <- Fauna.bip + facet_grid(facets = Chamber~Pos)
   print(Fauna.bip)
 
   ## check variation & transformations
-boxplot( Fauna            , main = "raw data")
-boxplot( sqrt( Fauna )    , main = "sqrt")
-boxplot( Fauna ^0.25      , main = "4th rt")
-boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
-boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
-boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
-boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
+  boxplot( Fauna            , main = "raw data")
+  boxplot( sqrt( Fauna )    , main = "sqrt")
+  boxplot( Fauna ^0.25      , main = "4th rt")
+  boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
+  boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
+  boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
+  boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
 
-with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
-with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
+  with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
+  with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
 
 }
 
@@ -154,8 +144,21 @@ with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", leve
 ## UNIVARIATE ANALYSES (ANOVAs)
 ##################################################
 
+Y.col <- 'Richness' # Column to analyze as response variable           *****
+Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
 source('Fauna-univariate.R')
 
+Y.col <- 'Evenness'
+Y.use <- 'Y'
+source('Fauna-univariate.R')
+
+Y.col <- 'Predators'
+Y.use <- 'Y'
+source('Fauna-univariate.R')
+
+Y.col <- 'Grazers'
+Y.use <- 'Y'
+source('Fauna-univariate.R')
 
 
 
@@ -190,43 +193,47 @@ Fauna.plot <- ordiplot( Fauna.mds, type="text" )
 ## Distance/Similarity matrix (included in MDS call)
 Fauna.dist <- vegdist( Fauna.trans, method = "bray")
 
+ANOSIM.results <- capture.output(      # to make saving easier @ end
 ## ANOSIM by single factor
-Fauna.Chamber.anosim <- anosim( Fauna.dist, SECC.fauna$Chamber )
-Fauna.Chamber.anosim # Look at results
+  Fauna.Chamber.anosim <- anosim( Fauna.dist, Fauna.sp$Chamber )
+, Fauna.Chamber.anosim # Look at results
 
-Fauna.Pos.anosim <- anosim( Fauna.dist, SECC.fauna$Pos )
-Fauna.Pos.anosim # Look at results
+,Fauna.Pos.anosim <- anosim( Fauna.dist, Fauna.sp$Pos )
+,Fauna.Pos.anosim # Look at results
 
-Fauna.Frag.anosim <- anosim( Fauna.dist, SECC.fauna$Frag )
-Fauna.Frag.anosim # Look at results
+,Fauna.Frag.anosim <- anosim( Fauna.dist, Fauna.sp$Frag )
+,Fauna.Frag.anosim # Look at results
 
-for (lvl in levels(SECC.fauna$Chamber)) {
+## ANOSIM within main factors
+,for (lvl in levels(Fauna.sp$Chamber)) {
   cat("Chamber:", lvl, "\n")
-  Fauna.data <- Fauna.trans[which(SECC.fauna$Chamber == lvl), ]
+  Fauna.data <- Fauna.trans[which(Fauna.sp$Chamber == lvl), ]
   Fauna.d <- vegdist(Fauna.data, method = "bray")
   ## Chamber x Pos
   cat("Chamber:", lvl, "x Pos",  "\n")
-  Fauna.CxP.anosim <- anosim( Fauna.d, SECC.fauna$Pos )
+  Fauna.CxP.anosim <- anosim( Fauna.d, Fauna.sp$Pos )
   print(Fauna.CxP.anosim) # Look at results
   ## Chamber x Frag
   cat("Chamber:", lvl, "x Frag",  "\n")
-  Fauna.CxF.anosim <- anosim( Fauna.d, SECC.fauna$Frag )
+  Fauna.CxF.anosim <- anosim( Fauna.d, Fauna.sp$Frag )
   print(Fauna.CxF.anosim) # Look at results
 }
 
-for (lvl in levels(SECC.fauna$Frag)) {
+,for (lvl in levels(Fauna.sp$Frag)) {
   cat("Frag:", lvl, "\n")
-  Fauna.data <- Fauna.trans[which(SECC.fauna$Frag == lvl), ]
+  Fauna.data <- Fauna.trans[which(Fauna.sp$Frag == lvl), ]
   Fauna.d <- vegdist(Fauna.data, method = "bray")
   ## Frag x Pos
   cat("Frag:", lvl, "x Pos",  "\n")
-  Fauna.FxP.anosim <- anosim( Fauna.d, SECC.fauna$Pos )
+  Fauna.FxP.anosim <- anosim( Fauna.d, Fauna.sp$Pos )
   print(Fauna.FxP.anosim) # Look at results
   ## Frag x Chamber
   cat("Frag:", lvl, "x Chamber",  "\n")
-  Fauna.FxC.anosim <- anosim( Fauna.d, SECC.fauna$Chamber )
+  Fauna.FxC.anosim <- anosim( Fauna.d, Fauna.sp$Chamber )
   print(Fauna.FxC.anosim) # Look at results
 }
+)
+cat( paste(ANOSIM.results, collapse = "\n") )
 
 
 ##################################################
@@ -236,8 +243,8 @@ for (lvl in levels(SECC.fauna$Frag)) {
 stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
 MDS.pts <- as.data.frame(Fauna.mds$points)
 colnames(MDS.pts) <- c('x', 'y')
-MDS.pts <- cbind(MDS.pts, Time = SECC.fauna$Time, Chamber = SECC.fauna$Chamber, 
-                 Frag = SECC.fauna$Frag, Pos = SECC.fauna$Pos
+MDS.pts <- cbind(MDS.pts, Time = Fauna.sp$Time, Chamber = Fauna.sp$Chamber, 
+                 Frag = Fauna.sp$Frag, Pos = Fauna.sp$Pos
 )
 
 ## plot symbol map
@@ -262,7 +269,7 @@ Fauna.plot <- qplot(x, y, data = MDS.pts, group = Chamber,
 Fauna.plot <- Fauna.plot + scale_shape_manual(name = Position.label,
                                               values = Position.map$pch, 
                                               breaks = Position.map$label,
-                                              labels = c("Wet", "Dry")
+                                              labels = c("Inner (Wet)", "Outer (Dry)")
                                               )
 Fauna.plot <- Fauna.plot + scale_colour_manual(name = Chamber.label,
                                                values = Chamber.map$col, 
@@ -278,18 +285,25 @@ Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(),
                                 legend.position = "right",
                                 legend.direction = "vertical"
                                 )
+Fauna.plot <- Fauna.plot + geom_text(aes(label = stress.label, x = max(x)*0.5, y = max(y) ), 
+                                     size = I(4), colour = "black", hjust = 0, vjust = 1)
 print(Fauna.plot)
-mtext( stress.label , side=3, line=0, adj=1 ) # kludge: trying to copy or save the graph now with make R crash.
+grid.text(label = stress.label, x = 0.8, y = 0.95, just = "left", hjust = 0, vjust = 1)
+
+## mtext( stress.label , side=3, line=0, adj=1 ) # kludge: trying to copy or save the graph now will make R crash.
 
 Fauna.plot.frag <- Fauna.plot + facet_grid(facets = Frag~.)
 print(Fauna.plot.frag)
 
 
 ##================================================
-## Save graphs
+## Save Multivariate Results
 ##================================================
-if (FALSE) {
-  ggsave(filename="Fauna_mds_plot.eps", plot = Fauna.plot)
+if (TRUE) {
+  cat(  paste(ANOSIM.results, collapse = "\n")
+      , file = "./output/Fauna - Multivariate.txt"
+  )
+  ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot)
 }
 
 

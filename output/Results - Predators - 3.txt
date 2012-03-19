@@ -1,0 +1,154 @@
+Nested ANOVA Results for: Predators (Mesostigmata + Prostigmata) ( Predators ) 
+Transformation used:      Y 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sun Mar 18 23:05:25 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  3 204.94  68.314               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    1 48.194  48.194  2.4129 0.2182
+Residuals  3 59.920  19.973               
+
+Error: Block:Chamber:Frag
+             Df  Sum Sq Mean Sq F value  Pr(>F)  
+Frag          2   6.127   3.064  0.2915 0.75232  
+Chamber:Frag  2 129.750  64.875  6.1717 0.01435 *
+Residuals    12 126.140  10.512                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Error: Within
+                      Df  Sum Sq Mean Sq F value   Pr(>F)   
+Position               1  29.202  29.202  4.0668 0.058905 . 
+Chamber:Position       1  93.681  93.681 13.0464 0.001993 **
+Frag:Position          2  76.254  38.127  5.3097 0.015399 * 
+Chamber:Frag:Position  2  22.124  11.062  1.5406 0.241217   
+Residuals             18 129.251   7.181                    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+Tables of means
+Grand mean
+         
+6.215198 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+       7.217        5.213 
+
+ Frag 
+Frag
+    Continuous Full Corridors       Isolated 
+         5.909          6.716          6.020 
+
+ Position 
+Position
+Inner Outer 
+6.995 5.435 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Isolated
+  Ambient      4.758      8.034          8.859   
+  Full Chamber 7.060      5.399          3.181   
+
+ Chamber:Position 
+              Position
+Chamber        Inner Outer
+  Ambient      6.600 7.834
+  Full Chamber 7.390 3.036
+
+ Frag:Position 
+                Position
+Frag             Inner Outer
+  Continuous     4.908 6.910
+  Full Corridors 8.450 4.983
+  Isolated       7.627 4.413
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Isolated
+  Ambient      3.161      7.512          9.128   
+  Full Chamber 6.655      9.389          6.127   
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Isolated
+  Ambient      6.356      8.556          8.591   
+  Full Chamber 7.465      1.409          0.235   
+
+
+95% Minimum Significant Ranges (MSR):
+              Chamber                  Frag              Position          Chamber:Frag 
+             2.989445              3.110495              1.792439              5.288474 
+     Chamber:Position         Frag:Position Chamber:Frag:Position 
+             3.230619              4.370942              7.140348 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Chamber * Frag + Error(Block/Chamber)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  3 102.47  34.157               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    1 24.097 24.0970  2.4129 0.2182
+Residuals  3 29.960  9.9867               
+
+Error: Within
+             Df Sum Sq Mean Sq F value  Pr(>F)  
+Frag          2  3.064   1.532  0.2915 0.75232  
+Chamber:Frag  2 64.875  32.437  6.1717 0.01435 *
+Residuals    12 63.070   5.256                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+
+Tables of means
+Grand mean
+         
+6.215198 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+       7.217        5.213 
+
+ Frag 
+Frag
+    Continuous Full Corridors       Isolated 
+         5.909          6.716          6.020 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Isolated
+  Ambient      4.758      8.034          8.859   
+  Full Chamber 7.060      5.399          3.181   
+
+95% Minimum Significant Ranges (MSR):
+     Chamber         Frag Chamber:Frag 
+    3.103390     3.265370     5.708946 
+
+
+<============================= END ============================>

@@ -1,0 +1,144 @@
+
+Call:
+anosim(dat = Fauna.dist, grouping = Fauna.sp$Chamber) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.05622 
+      Significance: 0.013 
+
+Based on  999  permutations
+
+
+Call:
+anosim(dat = Fauna.dist, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.01428 
+      Significance: 0.202 
+
+Based on  999  permutations
+
+
+Call:
+anosim(dat = Fauna.dist, grouping = Fauna.sp$Frag) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: -0.01586 
+      Significance: 0.789 
+
+Based on  999  permutations
+
+Chamber: A 
+Chamber: A x Pos 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: -0.01399 
+      Significance: 0.565 
+
+Based on  999  permutations
+
+Chamber: A x Frag 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Frag) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.07924 
+      Significance: 0.053 
+
+Based on  999  permutations
+
+Chamber: C 
+Chamber: C x Pos 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.1631 
+      Significance: 0.012 
+
+Based on  999  permutations
+
+Chamber: C x Frag 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Frag) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.063 
+      Significance: 0.104 
+
+Based on  999  permutations
+
+Frag: 1 
+Frag: 1 x Pos 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.01786 
+      Significance: 0.325 
+
+Based on  999  permutations
+
+Frag: 1 x Chamber 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.05944 
+      Significance: 0.237 
+
+Based on  999  permutations
+
+Frag: 2 
+Frag: 2 x Pos 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: -0.01172 
+      Significance: 0.519 
+
+Based on  999  permutations
+
+Frag: 2 x Chamber 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.3383 
+      Significance: 0.014 
+
+Based on  999  permutations
+
+Frag: 4 
+Frag: 4 x Pos 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Pos) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.1624 
+      Significance: 0.039 
+
+Based on  999  permutations
+
+Frag: 4 x Chamber 
+
+Call:
+anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber) 
+Dissimilarity: bray 
+
+ANOSIM statistic R: 0.1572 
+      Significance: 0.096 
+
+Based on  999  permutations

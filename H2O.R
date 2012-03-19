@@ -22,7 +22,7 @@ source('./lib/init.R')
 ##################################################
 
 ### Response Variable *****
-Y.col <- 'H2O'     # Column to analyze as response variable           *****
+Y.col <- 'H2O'  # Column to analyze as response variable           *****
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
 ##================================================
