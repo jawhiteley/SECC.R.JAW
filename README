@@ -1,0 +1,51 @@
+SECC: The Schefferville Experiment on Climate Change (and Habitat Fragmentation / Isolation)
+================================================================
+
+This repository contains data and analysis from my a field experiment set up in Schefferville, Quebec,
+as part of Jonathan Whiteley's PhD thesis at McGill University (Montreal, QC, Canada), with Dr. Andrew Gonzalez and Dr. Zoë Lindo.
+This repository also contains processing and analysis scripts, written in the [R statistical computing language][R].
+
+    [R]: http://r-project.org
+
+Raw data files in `csv` format are stored in the `/data` directory.  
+Scripts to process and load the raw data into a format ready for analysis are in the `/lib` directory, along with most functions used throughout the project.
+The processed data and other objects are stored in the `/save` directory for fast loading.  
+**More detailed instructions on using the data and files in this repository can be found in files in the `/doc` directory.**
+
+*Scripts can load all data and functions simply by running the code in `/lib/init.R`, or the following line of R code* (after setting the working directory to the root `SECC` directory for the project):
+
+    setwd('./ SECC/')       # replace the path with what works on your system
+    source('./lib/init.R')
+
+The code in `/lib/init.R` includes `rm(list=ls())` to clear all memory.  
+Therefore, the code above should be one of the first lines in a script (after setting the working directory), without relying on other objects in memory.  
+If other objects are required, I suggest saving them to disk (e.g. to `/save`), and load them after running `/lib/init.R`.
+
+
+The organization of the source code in this project is loosely based on the approach used by the [`ProjectTemplate` package in R](http://www.johnmyleswhite.com/notebook/2010/08/26/projecttemplate/)
+
+    This repository, including data and source code, is Copyright (C) 2011  Jonathan Whiteley
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+For questions, or comments, feel free to contact the primary author of this code:
+
+Jonathan Whiteley  
+Department of Biology  
+McGill University  
+1205 Docteur Penfield Ave.  
+Montréal, QC    H3A 1B1  
+
+jonathan.whiteley@mail.mcgill.ca  
