@@ -1,3 +1,5 @@
+ARA cyanobacteria regression models
+================================
 - Regressions: ARA vs. Cyanobacteria - GLM(M)
   - GLMM: What's the best (linear) model?
   - GAMM: check for non-linearity?
@@ -11,9 +13,9 @@
   + Include H2O
     ~ as a covariate?
     + as another explanatory variable
-    - partial regression (after removing effects of moisture?)
-    ~ quadratic term (is the relationship unimodal?  P-value actually smaller than linear term)
-  - Include Block as a fixed effect, rather than random effect?
+    + partial regression (after removing effects of moisture?)
+    + quadratic term (is the relationship unimodal?  P-value actually smaller than linear term)
+  + Include Block as a fixed effect, rather than random effect?
     - If there is an effect, we should know about it and be able to look at possible interactions.
     - This does not preclude allowing variances to change across Blocks, or other LMM extensions.
   ~ Separate Analyses for each Time point.
@@ -29,27 +31,41 @@
     - more unexplained noise in Chambers (Inner vs. Outer)?
   - Include only Stigonema (or Nostoc) in analysis & see if it makes a difference
     - can individual species by included as explanatory variables as well as the total, to compare relative importance?
+    - they are largely colinear, except maybe at small abundances.
   - Bootstrapping to overcome "Fixed X" violation?
 
 - adjust cyanobacteria counts in rows with 'faint' in the Notes
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
 
-- Load    Moss Growth Data
-- Analyze Moss Growth Data (repeated measures in time)
+Microarthropods: Fauna
+================================
+~ Constrained ordination?
+- Nestedness?
+- Other multivariate analyses?
 
-~ Analyze Fauna Data
+Ecosystem Processes
+================================
 
-- Load    Ion Resin Data
-- Analyze Ion Resin Data
++ Load    Moss Growth Data
+~ Analyze Moss Growth Data (repeated measures in time)
+  - Repeated measures / Nested analysis of year 1 vs. year 2
+  - Convert Productivity to g / area / time
+  - Estimate amount of "standing stock" of Moss, in g / area
+    - use Decomp. mass loss rates to calculate Decomp. in g / area / time.
+    - Compare Decomposition & Production : balance under various experimental conditions?
+
++ Load    Ion Resin Data
++ Analyze Ion Resin Data
+
+
+
+Project, Functions
+================================
 
 - fix SECCstr to handle errors with aggregated data sets (line 304)
 - check why checkSECCdata() does not catch invalid SampleID's :(
 
-
-- investigate multcomp package for multiple comparisons
-X investigate gplots package for plotmeans function? (see Quick-R).
-  - just use ggplot2
 
 - allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
 
