@@ -62,6 +62,7 @@ Ecosystem Processes
 
 Project, Functions
 ================================
+- Add Latex export of tables to ANOVA output
 
 - fix SECCstr to handle errors with aggregated data sets (line 304)
 - check why checkSECCdata() does not catch invalid SampleID's :(

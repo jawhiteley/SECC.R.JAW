@@ -1,7 +1,7 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Analyses of Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2012-03-18
+### Jonathan Whiteley     R v2.12     2012-04-01
 ###===============================================
 ### Species identified to morphospecies (usually family-level)
 ### Counts / sample converted to # / g dwt of moss substrate (using 'Patch.dwt' column)
@@ -141,7 +141,7 @@ if (FALSE)
 
 
 ##################################################
-## UNIVARIATE ANALYSES (ANOVAs)
+### UNIVARIATE ANALYSES (ANOVAs)
 ##################################################
 
 Y.col <- 'Richness' # Column to analyze as response variable           *****
@@ -162,6 +162,10 @@ source('Fauna-univariate.R')
 
 
 
+
+##################################################
+### MULTIVARIATE ANALYSES
+##################################################
 
 ##################################################
 ## NMDS
@@ -236,6 +240,88 @@ ANOSIM.results <- capture.output(      # to make saving easier @ end
 cat( paste(ANOSIM.results, collapse = "\n") )
 
 
+################################################################
+### CONSTRAINED ORDINATION: FITTING ENVIRONMENTAL VARIABLES
+################################################################
+## Extract matching ordination rows from Environmental data, *in same order*
+Fauna.sort <- match( rownames(Fauna.trans), SECC$SampleID )
+Fauna.sort <- na.omit(Fauna.sort)
+Fauna.env <- SECC[Fauna.sort, ]
+## Process standardized environmental variables
+Fauna.env <- within(Fauna.env,
+                    {
+                      Stigonema.g <- Stigonema / Cells.dwt
+                      Nostoc.g <- Nostoc / Cells.dwt
+                      Other.cells.g <- Other.cells / Cells.dwt
+                      Trt <- paste(Chamber, Frag, Position, sep="\n")
+                    })
+
+## a posteriori fitting of environmental variables to nMDS (not really constrained ordination)
+## Samples               : Same experimental subset, or ALL available?
+## Response Variables    : Fauna species [SECC.fauna]
+## Explanatory Variables : H2O, Temperature?, Patch.dwt ; Cells.g, Stigonema.g, Nostoc.g, ARA.g ; Decomposition, Productivity (all time periods), NH4, NO3, TAN
+##    Experimental Factors (if subset of samples)?  <- partial these out?
+
+Fauna.fit <- envfit(Fauna.mds ~ Block + Chamber + Frag + Position + 
+                    H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + 
+                    Decomposition + Prod01 + Prod12 + Prod23 + 
+                    NH4 + NO3 + TAN
+                    , data = Fauna.env, perm = 1000, na.rm = TRUE)
+Fauna.fit
+
+## Add environmental variables to ordination
+ordiplot( Fauna.mds, type="points", display = "sites")
+ordispider(Fauna.mds, Fauna.env$Trt, label = TRUE, col = "red")
+plot(Fauna.fit, p.max = 0.025, adj = 0.5, srt = 0, cex = 1)
+ordiplot( Fauna.mds, type="text", display = "species", xlim = c(-1, 2), ylim = c(-1, 2) )
+plot(Fauna.fit, p.max = 0.05, adj = 0.5, srt = 0, cex = 1)
+
+
+
+##==============================================================
+## CCA
+##==============================================================
+## Missing env values (productivity) 
+Env.rows     <- apply(Fauna.env, 1, function (x) !any(is.na(x)) )
+Fauna.envs   <- Fauna.env[which(Env.rows), ]
+Fauna.subset <- Fauna.trans[which(Env.rows), ]
+
+Fauna.cca <- cca(Fauna.subset ~ Block + Chamber + Frag + Position + 
+                 H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + 
+                 Decomposition + Prod01 + Prod12 + Prod23 + 
+                 NH4 + NO3 + TAN 
+                 , data = Fauna.envs)
+Fauna.cca
+summary(Fauna.cca)
+## First 2 axes don't seem to capture much
+## the nMDS seems to be a better overall fit than the Gaussian model of CCA?
+## Permutation-based tests: SLOW
+CCA.anova.terms <- anova(Fauna.cca, by = "term",   step = 200) # Permutation-based tests
+CCA.anova.mar   <- anova(Fauna.cca, by = "margin", step = 99 ) # *marginal* effects of each term (in a model with all other terms)
+## Plots
+ordiplot(Fauna.cca, type="text")
+ordiplot(Fauna.cca, type="text", 
+         display = c("species", "bp"), scaling = 2, 
+         xlim = c(-2, 2), ylim = c(-2, 2)) # zoom in, but still messy.
+refCol <- "#AAAAAA" 
+refLty <- 3
+rect(-0.5, -0.5, 0.5, 0.5, col = NA, border = refCol, lty = refLty)
+
+## without experimental factors
+Fauna.cca1 <- cca(Fauna.subset ~  
+                 H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + 
+                 Decomposition + Prod01 + Prod12 + Prod23 + 
+                 NH4 + NO3 + TAN 
+                 , data = Fauna.envs)
+Fauna.cca1
+summary(Fauna.cca1)
+ordiplot(Fauna.cca1, type="text")
+ordiplot(Fauna.cca1, type="text", 
+         display = c("species", "bp"), scaling = 2, 
+         xlim = c(-2, 2), ylim = c(-2, 2)) # zoom in, but still messy.
+
+
+
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
@@ -301,6 +387,12 @@ print(Fauna.plot.frag)
 ##================================================
 if (TRUE) {
   cat(  paste(ANOSIM.results, collapse = "\n")
+      , "\n\n", "======== Environmental Variables a posteriori fit to nMDS ========", "\n"
+      , paste(capture.output(print(Fauna.fit)), collape="\n")
+      , "\n\n", "======== CCA ========", "\n"
+      , paste(capture.output(summary(Fauna.cca)), collape="\n")
+      , "\n\n", "======== Permutation tests of CCA terms ========", "\n"
+      , paste(capture.output(print(CCA.anova.terms)), collape="\n")
       , file = "./output/Fauna - Multivariate.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot)

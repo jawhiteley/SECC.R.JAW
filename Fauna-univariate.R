@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Aggregate Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2012-03-18
+### Jonathan Whiteley     R v2.12     2012-04-01
 ###===============================================
 ### ** Typically called from 'Fauna.R'  **
 ###    - all the pre-processing & filtering happens there.
@@ -99,6 +99,7 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ## CUSTOM LABELS
 ##================================================
 
+attr(SECC, "labels")[["Frag"]] <- "Habitat Isolation" # different interpretation, particularly as far as the fauna is concerned.
 
 
 ##################################################
@@ -140,7 +141,7 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
-Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
+Plot.Title <- bquote(.(Time.label) * "\nPatch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
@@ -151,7 +152,7 @@ FragIconList <- list(FragIcon1 = FragIcon1,
                      FragIcon4 = FragIcon4
                      )
 
-## prepare summary data for plot
+## 3-way interaction: NS
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
 levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
 plot.means <- within(plot.means, 
@@ -166,17 +167,65 @@ plot.means <- within(plot.means,
 Y.lim <- with(plot.means, range(lower, upper))
 Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
 
-FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
-                    colour = Position, shape = Position,
+CFP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
+                    geom = "line", ylim = Y.lim, size = I(0.8), 
+                    colour = Position, fill = Position, 
+                    shape = Position, # lty = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Frag"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = .~Chamber)
-FxP.plot <- FxP.plot + geom_line(aes(group = Position), size = 0.8)
-FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+CFP.plot <- CFP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                          width = 0.2, size = 0.5)
+CFP.plot <- CFP.plot + geom_point(aes(group = Position), size = 3)
+CFP.plot <- CFP.plot + scale_colour_manual(name = Position.label,
+                                           values = Position.map$col, 
+                                           breaks = Position.map$label)
+CFP.plot <- CFP.plot + scale_fill_manual(name = Position.label,
+                                         values = Position.map$bg, 
+                                         breaks = Position.map$label)
+CFP.plot <- CFP.plot + scale_shape_manual(name = Position.label,
+                                           values = Position.map$pch, 
+                                           breaks = Position.map$label)
+## CFP.plot <- CFP.plot + scale_linetype_manual(name = Position.label,
+##                                              values = Position.map$lty, 
+##                                              breaks = Position.map$label)
+CFP.plot <- CFP.plot + jaw.ggplot()
+## Add imported graphics as x-axis tick labels :D
+## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+CFP.plot <- CFP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
+                                        breaks = levels(plot.means$Frag)) +
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+)
+print(CFP.plot)
+
+
+## Frag x Position
+plot.means <- aggregate(SECCp$Y.trans, list(Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
+levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
+plot.means <- within(plot.means, 
+                     {
+                       error <- as.numeric(msd["Frag:Position"]/2)
+                       upper <- x + error
+                       lower <- x - error
+                     })
+
+Y.lim <- with(plot.means, range(lower, upper))
+Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+
+FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
+                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  colour = Position, fill = Position, 
+                  shape = Position, # lty = Position,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Frag"]],
+                  ylab = Y.plotlab,
+                  legend = FALSE)
+FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                     width = 0.2, size = 0.5)
+FxP.plot <- FxP.plot + geom_point(aes(group = Position), size = 3)
 FxP.plot <- FxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label)
@@ -184,22 +233,68 @@ FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
                                          values = Position.map$bg, 
                                          breaks = Position.map$label)
 FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
-                                           values = Position.map$pch, 
-                                           breaks = Position.map$label)
+                                          values = Position.map$pch, 
+                                          breaks = Position.map$label)
+## FxP.plot <- FxP.plot + scale_linetype_manual(name = Position.label,
+##                                              values = Position.map$lty, 
+##                                              breaks = Position.map$label)
 FxP.plot <- FxP.plot + jaw.ggplot()
 ## Add imported graphics as x-axis tick labels :D
 ## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
 FxP.plot <- FxP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
                                         breaks = levels(plot.means$Frag)) +
-opts(axis.ticks.margin = unit(0.2, "lines"),
-     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
-)
+     opts(axis.ticks.margin = unit(0.2, "lines"),
+          axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+     )
 print(FxP.plot)
+
+
+## Chamber x Position
+plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
+levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
+plot.means <- within(plot.means, 
+                     {
+                       error <- as.numeric(msd["Chamber:Position"]/2)
+                       upper <- x + error
+                       lower <- x - error
+                       levels(Chamber)[2] <- "Chamber"
+                     })
+
+Y.lim <- with(plot.means, range(lower, upper))
+Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+
+CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
+                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  colour = Position, fill = Position, 
+                  shape = Position, # lty = Position,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Chamber"]],
+                  ylab = Y.plotlab,
+                  legend = FALSE)
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                     width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_point(aes(group = Position), size = 3)
+CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
+                                           values = Position.map$col, 
+                                           breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
+                                         values = Position.map$bg, 
+                                         breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
+                                          values = Position.map$pch, 
+                                          breaks = Position.map$label)
+## CxP.plot <- CxP.plot + scale_linetype_manual(name = Position.label,
+##                                              values = Position.map$lty, 
+##                                              breaks = Position.map$label)
+CxP.plot <- CxP.plot + jaw.ggplot()
+print(CxP.plot)
 
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 6, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 3, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 4, scale = 1.5)
+  ##   ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.5)
 }
 
 
