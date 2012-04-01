@@ -287,21 +287,23 @@ msd.mc.C <- msd.mc["Chamber"]
 ## SAVE OUTPUT
 ##################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
+  library(xtable)                      # generate LaTeX tables
   capture.output(cat(Save.header, Save.patch.header, sep=""),
-				 print(Yp.model),                 # model
-				 summary(Yp.aov),                 # model summary
-				 cat("\n\n"),                     # for output
-				 Yp.mtab,                         # effect sizes
+				 print(Yp.model),                  # model
+				 summary(Yp.aov),                  # model summary
+				 xtable(summary(Yp.aov)),          # LaTeX output
+				 cat("\n\n"),                      # for output
+				 Yp.mtab,                          # effect sizes
 				 cat(Header.msd),
 				 print(msd),
-				 cat(Save.mc.header),             # Meta-Community Results #
-				 print(Ymc.model),                # model
-				 summary(Ymc.aov),                # model summary
-				 cat("\n\n"),                     # for output
-				 Ymc.mtab,                        # effect sizes
+				 cat(Save.mc.header),              # Meta-Community Results #
+				 print(Ymc.model),                 # model
+				 summary(Ymc.aov),                 # model summary
+				 cat("\n\n"),                      # for output
+				 Ymc.mtab,                         # effect sizes
 				 cat(Header.msd),
 				 print(msd.mc),
-				 cat(Save.end),                   # END OUTPUT #
+				 cat(Save.end),                    # END OUTPUT #
 				 file = Save.text
 				)
 }

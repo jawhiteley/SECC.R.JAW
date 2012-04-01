@@ -14,7 +14,7 @@ anosim(dat = Fauna.dist, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.01428 
-      Significance: 0.177 
+      Significance: 0.184 
 
 Based on  999  permutations
 
@@ -24,7 +24,7 @@ anosim(dat = Fauna.dist, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01586 
-      Significance: 0.792 
+      Significance: 0.801 
 
 Based on  999  permutations
 
@@ -36,7 +36,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01399 
-      Significance: 0.591 
+      Significance: 0.573 
 
 Based on  999  permutations
 
@@ -47,7 +47,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.07924 
-      Significance: 0.055 
+      Significance: 0.039 
 
 Based on  999  permutations
 
@@ -59,7 +59,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1631 
-      Significance: 0.009 
+      Significance: 0.01 
 
 Based on  999  permutations
 
@@ -70,7 +70,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.063 
-      Significance: 0.084 
+      Significance: 0.094 
 
 Based on  999  permutations
 
@@ -82,7 +82,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.01786 
-      Significance: 0.298 
+      Significance: 0.309 
 
 Based on  999  permutations
 
@@ -93,7 +93,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.05944 
-      Significance: 0.24 
+      Significance: 0.236 
 
 Based on  999  permutations
 
@@ -105,7 +105,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01172 
-      Significance: 0.524 
+      Significance: 0.477 
 
 Based on  999  permutations
 
@@ -116,7 +116,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.3383 
-      Significance: 0.015 
+      Significance: 0.014 
 
 Based on  999  permutations
 
@@ -128,7 +128,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1624 
-      Significance: 0.042 
+      Significance: 0.043 
 
 Based on  999  permutations
 
@@ -139,7 +139,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1572 
-      Significance: 0.098 
+      Significance: 0.103 
 
 Based on  999  permutations
  
@@ -149,19 +149,19 @@ Based on  999  permutations
  ***VECTORS 
   
                    NMDS1     NMDS2     r2   Pr(>r)     
- H2O            0.988455 -0.151518 0.4577 0.000999 *** 
- Patch.dwt      0.540704 -0.841213 0.0277 0.560440     
- Cells.g        0.301939  0.953327 0.0324 0.520480     
- Stigonema.g    0.251426  0.967876 0.0411 0.424575     
- Nostoc.g       0.160135 -0.987095 0.0494 0.306693     
- ARA.g          0.997377  0.072376 0.1326 0.059940 .   
- Decomposition  0.998848  0.047980 0.0844 0.171828     
- Prod01         0.714963 -0.699162 0.1144 0.094905 .   
- Prod12         0.983726  0.179673 0.2222 0.008991 **  
- Prod23         0.934150 -0.356880 0.2593 0.004995 **  
- NH4            0.666384  0.745609 0.0401 0.438561     
- NO3           -0.463574  0.886058 0.0414 0.429570     
- TAN            0.400956  0.916098 0.0374 0.454545     
+ H2O            0.988128 -0.153633 0.4583 0.000999 *** 
+ Patch.dwt      0.536976 -0.843597 0.0280 0.593407     
+ Cells.g        0.298618  0.954373 0.0328 0.523477     
+ Stigonema.g    0.249532  0.968366 0.0416 0.447552     
+ Nostoc.g       0.157302 -0.987551 0.0482 0.288711     
+ ARA.g          0.997469  0.071100 0.1328 0.043956 *   
+ Decomposition  0.999372  0.035434 0.0847 0.176823     
+ Prod01         0.713399 -0.700758 0.1145 0.075924 .   
+ Prod12         0.984499  0.175392 0.2224 0.006993 **  
+ Prod23         0.933511 -0.358549 0.2595 0.007992 **  
+ NH4            0.670420  0.741982 0.0397 0.427572     
+ NO3           -0.461387  0.887199 0.0412 0.435564     
+ TAN            0.403866  0.914818 0.0370 0.464535     
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  
  P values based on 1000 permutations. 
@@ -170,31 +170,31 @@ Based on  999  permutations
   
  Centroids: 
                           NMDS1   NMDS2 
- Block1                 -0.1212 -0.4548 
+ Block1                 -0.1237 -0.4548 
  Block2                                 
- Block3                 -0.0066  0.3887 
+ Block3                 -0.0048  0.3892 
  Block4                                 
- Block5                 -0.1515  0.2094 
+ Block5                 -0.1503  0.2098 
  Block6                                 
- Block7                  0.2851 -0.1876 
+ Block7                  0.2845 -0.1874 
  Block8                                 
- ChamberAmbient          0.2850 -0.0880 
+ ChamberAmbient          0.2854 -0.0890 
  ChamberPartial Chamber                 
- ChamberFull Chamber    -0.3019  0.0839 
- FragContinuous          0.1605 -0.1029 
- FragFull Corridors      0.0467  0.0598 
+ ChamberFull Chamber    -0.3023  0.0854 
+ FragContinuous          0.1606 -0.1037 
+ FragFull Corridors      0.0466  0.0601 
  FragPseudo-Corridors                   
- FragIsolated           -0.2214  0.0303 
- PositionInner           0.3082 -0.0996 
+ FragIsolated           -0.2213  0.0315 
+ PositionInner           0.3084 -0.0992 
  Positionother                          
- PositionOuter          -0.3251  0.0956 
+ PositionOuter          -0.3253  0.0957 
   
  Goodness of fit: 
               r2  Pr(>r)   
- Block    0.1126 0.12687   
- Chamber  0.0764 0.03596 * 
- Frag     0.0249 0.70330   
- Position 0.0897 0.02897 * 
+ Block    0.1125 0.11788   
+ Chamber  0.0767 0.02797 * 
+ Frag     0.0249 0.70929   
+ Position 0.0897 0.02098 * 
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  
  P values based on 1000 permutations. 
@@ -435,21 +435,21 @@ Based on  999  permutations
  Model: cca(formula = Fauna.subset ~ Block + Chamber + Frag + Position + H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + Decomposition + Prod01 + Prod12 + Prod23 + NH4 + NO3 + TAN, data = Fauna.envs) 
                Df  Chisq      F N.Perm Pr(>F)    
  Block          3 0.2863 3.3128    199  0.005 ** 
- Chamber        1 0.0503 1.7445    199  0.020 *  
- Frag           2 0.0711 1.2330    199  0.090 .  
- Position       1 0.0434 1.5076    199  0.050 *  
+ Chamber        1 0.0503 1.7445    199  0.035 *  
+ Frag           2 0.0711 1.2330    199  0.115    
+ Position       1 0.0434 1.5076    199  0.065 .  
  H2O            1 0.1336 4.6388    199  0.005 ** 
- Patch.dwt      1 0.0566 1.9651    199  0.060 .  
+ Patch.dwt      1 0.0566 1.9651    199  0.025 *  
  Cells.g        1 0.0328 1.1390    199  0.295    
  Stigonema.g    1 0.0433 1.5015    199  0.125    
- Nostoc.g       1 0.0122 0.4223    199  0.740    
- ARA.g          1 0.0236 0.8200    199  0.465    
+ Nostoc.g       1 0.0122 0.4223    199  0.745    
+ ARA.g          1 0.0236 0.8200    199  0.575    
  Decomposition  1 0.0811 2.8152    199  0.005 ** 
- Prod01         1 0.0361 1.2523    199  0.215    
- Prod12         1 0.0191 0.6623    199  0.770    
+ Prod01         1 0.0361 1.2523    199  0.265    
+ Prod12         1 0.0191 0.6623    199  0.695    
  Prod23         1 0.0187 0.6473    199  0.695    
- NH4            1 0.0957 3.3217    199  0.005 ** 
- NO3            1 0.0526 1.8259    199  0.100 .  
+ NH4            1 0.0957 3.3217    199  0.010 ** 
+ NO3            1 0.0526 1.8259    199  0.085 .  
  Residual      24 0.6915                         
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  
