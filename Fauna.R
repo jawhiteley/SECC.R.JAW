@@ -350,7 +350,7 @@ Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
 ## Build plot in ggplot
 Fauna.plot <- qplot(x, y, data = MDS.pts, group = Chamber,
                     shape = Pos, colour = Chamber, size = I(3), lwd = I(1.5),
-                    xlab = NULL, ylab = NULL,
+                    xlab = NULL, ylab = NULL
                     )   # facets=Frag~Time
 Fauna.plot <- Fauna.plot + scale_shape_manual(name = Position.label,
                                               values = Position.map$pch, 
@@ -362,6 +362,8 @@ Fauna.plot <- Fauna.plot + scale_colour_manual(name = Chamber.label,
                                                breaks = Chamber.map$label,
                                                labels = c("Ambient", "Chamber")
                                                )
+Fauna.plot <- Fauna.plot + scale_x_continuous(breaks = -4:4, limits = c(-3.7, 1.3))
+Fauna.plot <- Fauna.plot + scale_y_continuous(breaks = -4:4, limits = c(-2.7, 2.3))
 ## options: see theme_get() for available theme options.
 Fauna.plot <- Fauna.plot + theme_bw() + coord_equal()
 Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(), 
@@ -374,7 +376,7 @@ Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(),
 Fauna.plot <- Fauna.plot + geom_text(aes(label = stress.label, x = max(x)*0.5, y = max(y) ), 
                                      size = I(4), colour = "black", hjust = 0, vjust = 1)
 print(Fauna.plot)
-grid.text(label = stress.label, x = 0.8, y = 0.95, just = "left", hjust = 0, vjust = 1)
+grid.text(label = stress.label, x = 0.85, y = 0.85, just = "left", hjust = 0, vjust = 1)
 
 ## mtext( stress.label , side=3, line=0, adj=1 ) # kludge: trying to copy or save the graph now will make R crash.
 
@@ -395,7 +397,7 @@ if (TRUE) {
       , paste(capture.output(print(CCA.anova.terms)), collape="\n")
       , file = "./output/Fauna - Multivariate.txt"
   )
-  ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot)
+  ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
 }
 
 
