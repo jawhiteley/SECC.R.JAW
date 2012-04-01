@@ -257,7 +257,7 @@ plot.means <- within(plot.means,
                        error <- as.numeric(msd["Chamber:Position"]/2)
                        upper <- x + error
                        lower <- x - error
-                       levels(Chamber)[2] <- "Chamber"
+                       levels(Chamber)[2] <- "Chamber\n"
                      })
 
 Y.lim <- with(plot.means, range(lower, upper))
@@ -289,7 +289,8 @@ CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
 CxP.plot <- CxP.plot + jaw.ggplot() +
   ## adjust x-axis labelling to allow the plot to line up better next to corresponding FxP plot
   opts(axis.ticks.margin = unit(0.2, "lines"),
-       plot.margin = unit(c(1, 1, 1.4, 0.5), "lines")
+        axis.text.x = theme_text(lineheight = 1.1, vjust = 1) # trial & error 
+  ## plot.margin = unit(c(1, 1, 1.4, 0.5), "lines")  # this lines up exactly, but moves the axis title up as well: that's not what I want.
   )
 print(CxP.plot)
 
