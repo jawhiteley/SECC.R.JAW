@@ -146,18 +146,22 @@ if (FALSE)
 
 Y.col <- 'Richness' # Column to analyze as response variable           *****
 Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
+Y.lim1 <- c(0, 20)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
 Y.col <- 'Evenness'
 Y.use <- 'Y'
+Y.lim1 <- c(0, 10)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
 Y.col <- 'Predators'
 Y.use <- 'Y'
+Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
 Y.col <- 'Grazers'
 Y.use <- 'Y'
+Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
 

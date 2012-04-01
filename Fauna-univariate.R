@@ -212,8 +212,13 @@ plot.means <- within(plot.means,
                        lower <- x - error
                      })
 
-Y.lim <- with(plot.means, range(lower, upper))
-Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+if (exists('Y.lim1'))
+{
+  Y.lim <- Y.lim1
+} else {
+  Y.lim <- with(plot.means, range(lower, upper))
+  Y.lim <- c(floor(Y.lim[1]/5), ceiling(Y.lim[2]/5) ) *5
+}
 
 FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
                   geom = "line", ylim = Y.lim, size = I(0.8), 
@@ -260,8 +265,13 @@ plot.means <- within(plot.means,
                        levels(Chamber)[2] <- "Chamber\n"
                      })
 
-Y.lim <- with(plot.means, range(lower, upper))
-Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+if (exists('Y.lim1'))
+{
+  Y.lim <- Y.lim1
+} else {
+  Y.lim <- with(plot.means, range(lower, upper))
+  Y.lim <- c(floor(Y.lim[1]/5), ceiling(Y.lim[2]/5) ) *5
+}
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
                   geom = "line", ylim = Y.lim, size = I(0.8), 
