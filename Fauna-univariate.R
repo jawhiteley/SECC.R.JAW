@@ -286,7 +286,11 @@ CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
 ## CxP.plot <- CxP.plot + scale_linetype_manual(name = Position.label,
 ##                                              values = Position.map$lty, 
 ##                                              breaks = Position.map$label)
-CxP.plot <- CxP.plot + jaw.ggplot()
+CxP.plot <- CxP.plot + jaw.ggplot() +
+  ## adjust x-axis labelling to allow the plot to line up better next to corresponding FxP plot
+  opts(axis.ticks.margin = unit(0.2, "lines"),
+       plot.margin = unit(c(1, 1, 1.4, 0.5), "lines")
+  )
 print(CxP.plot)
 
 
