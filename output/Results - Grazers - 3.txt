@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Apr  1 17:06:56 2012
+Mon Apr  2 19:49:40 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -37,7 +37,7 @@ Residuals             18 671.42   37.30
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Apr  1 17:06:57 2012
+% Mon Apr  2 19:49:41 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
