@@ -57,7 +57,7 @@ SECC_sampleID <- function( factors=NULL ) {
   return(SampleIDs)
 }
 
-SECC_aggregate <- function( dataf = NULL , trt = "Frag", drop.trt = FALSE, ... ) {
+SECC_aggregate <- function( dataf = NULL , trt = "Frag", drop.trt = FALSE, FUN = mean, ... ) {
   ## aggregate full SECC data to means for each level of specified treatment
   ## - default: Frag (for Meta-Community scale data)
   ## optional: specify a drop argument to aggregate across all other levels, 
@@ -97,7 +97,7 @@ SECC_aggregate <- function( dataf = NULL , trt = "Frag", drop.trt = FALSE, ... )
   }
   
   data.agg <- with(dataf,
-                  aggregate(dataf[, agg.cols], by=agg.by, mean, na.rm = TRUE, ... )
+                  aggregate(dataf[, agg.cols], by=agg.by, FUN, na.rm = TRUE, ... )
                   )
   ## note that the mean of only NAs is NaN.
   return(data.agg)
