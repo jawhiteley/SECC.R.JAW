@@ -2,20 +2,21 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Standard Nested ANOVA of experimental data
 ### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-26
+### Jonathan Whiteley     R v2.12     2012-04-12
 ##################################################
 ##
 ##  This script is used to carry out standard
 ##  nested analysis of variance, according to
 ##  the structure of the SECC Experiment.
 ##  Calling scripts should configure settings
+##  AND aggregate data to the `Frag` treatment level
 ##  before source()'ing this file.
 ##
 ##################################################
 ## INITIALISE
 ##################################################
 library(lattice)    # mostly for xyplot
-library(ggplot2)    # grammar of graphics?
+## library(ggplot2)    # grammar of graphics?
 ## library(effects)    # attractive interaction plots.  Does not work with aovlist.
 ## contrast defaults: calcualte SS & ANOVA tables like in SPSS, most stats software & books
 options(contrasts=c("contr.sum","contr.poly"))
@@ -27,39 +28,31 @@ if ( exists('Y.col') == FALSE ) stop(
 	"Please specify a data column to analyze (Y.col)."
    )
 
-##================================================
-## Standard Labels
-##================================================
-
-Header.msd  <- "\n95% Minimum Significant Ranges (MSR):\n"
-
+## Should already have the following in memory:
+## SECCa : SECC data aggregated to Frag treatment
 
 ##################################################
 ## PROCESS DATA: planned
 ##################################################
 ## strip empty rows (rows with only NAs)
-SECC.use <- strip_empty_dims( SECC, dim = 1, col.class = "numeric" )  
+SECC.use <- strip_empty_dims( SECCa, dim = 1, col.class = "numeric" )  
 
 ## Filter data for analysis, according to settings above.
 SECC.use <- SECC.use[SECC.use$Time     %in% Time.use     &
                      SECC.use$Chamber  %in% Chamber.use  &
-                     SECC.use$Frag     %in% Frag.use     &
-                     SECC.use$Position %in% Position.use 
+                     SECC.use$Frag     %in% Frag.use
                      , ]
 ## drop unused factor levels (for plotting)
 SECC.use <- within( SECC.use, {
   Time     <- factor(Time,     levels = Time.use)
   Chamber  <- factor(Chamber,  levels = Chamber.use)
   Frag     <- factor(Frag,     levels = Frag.use)
-  Position <- factor(Position, levels = Position.use)
 })
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
 ## Meta-community (regional) -level analyses (ignoring position):
-SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
-
-## aggregate 'other' patch Positions
-SECCp  <- SECC_aggregate( SECC.use, trt = 'Position' )
+## SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
+SECCmc <- SECC.use
 
 
 ##=================================================
@@ -95,10 +88,6 @@ for ( dataset in Dataset.list ){
 ## CHECK DATA
 ##################################################
 if (FALSE) {  # do not run if source()d
-  head(SECCp)     # have a peek at the first 6 rows & columns: is this what you expected?
-  str( SECCp)     # check structure: are the appropriate variables factors, numeric, etc.?
-  summary(SECCp)  # summary statistics
-  ## Regional analyses
   head(SECCmc)    # have a peek at the first 6 rows & columns: is this what you expected?
   str( SECCmc)    # check structure: are the appropriate variables factors, numeric, etc.?
   summary(SECCmc) # summary statistics
@@ -113,8 +102,8 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots
 
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Patch analyses
-with( SECCp, plot(Y.trans ~ Chamber * Frag * Position, 
-                  main=Dataset.labels[1], ylab = Y.tlabel
+with( SECCmc, plot(Y.trans ~ Chamber * Frag, 
+                  main=Dataset.labels[2], ylab = Y.tlabel
                   )
      )  # fixed effects only, no nesting
 ##* PROMPT *##
@@ -122,8 +111,10 @@ with( SECCp, plot(Y.trans ~ Chamber * Frag * Position,
 plot.new()  # empty panel
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Is the response variable normally-distributed? Check skew in histograms, eyeball linearity on QQ-plots
-for( i in 1:length(Dataset.list) ){
-    dataset <- Dataset.list[i]
+## for( i in 1:length(Dataset.list) ){
+##     dataset <- Dataset.list[i]
+i <- 2
+dataset <- "SECCmc"
     with( get(dataset), {
         hist( Y,      sub = Dataset.labels[i] )
         hist( Y.log,  sub = Dataset.labels[i] )
@@ -138,7 +129,7 @@ for( i in 1:length(Dataset.list) ){
         qqnorm( Y.4rt,  main = "4th-root-transformed", sub = Dataset.labels[i] )
         qqline( Y.4rt,  col="grey50" )
     })
-}
+## }
 
 
 
@@ -152,12 +143,9 @@ for( i in 1:length(Dataset.list) ){
 
 ## Including Time as a factor?
 if ( length(Time.use) > 1 ) {
-  Yp.model <- Y.trans ~ Time*Chamber*Frag*Position +Error(Block/Time/Chamber/Frag)
+  ## Nested Fixed Effects, with error term for ANOVA using aov() 
   Ymc.model <- Y.trans ~ Time*Chamber*Frag +Error(Block/Time/Chamber)
 } else {
-  ## Nested Fixed Effects, with error term for ANOVA using aov() 
-  Yp.model <- Y.trans ~ Chamber*Frag*Position +Error(Block/Chamber/Frag)
-  ## ignoring effect of position: 'regional' effects only
   Ymc.model <- Y.trans ~ Chamber*Frag +Error(Block/Chamber)
 }
 
@@ -165,8 +153,8 @@ if ( length(Time.use) > 1 ) {
 ##################################################
 ## ANALYSIS: design
 ##################################################
-Yp.aov <- aov( Yp.model, data=SECCp )   # simple ANOVA with nested fixed effects.  Nesting means an object of type "aovlist" is produced* (therefore regular TukeyHSD & other functions won't work )
-Ymc.aov <- aov( Ymc.model, data=SECCmc )    # regional effects only.
+## simple ANOVA with nested fixed effects.  Nesting means an object of type "aovlist" is produced* (therefore regular TukeyHSD & other functions won't work )
+Ymc.aov <- aov( Ymc.model, data=SECCmc )
 
 
 ##################################################
@@ -178,26 +166,6 @@ Ymc.aov <- aov( Ymc.model, data=SECCmc )    # regional effects only.
     ## possibility of Block gradient (7&8 SW -> 1-6 E:N), which also corresponds roughly to order of samples.
 ## Patch analyses
 ## trellis plots: any pattern across blocks, within frag & chambers?
-xyplot(Y.trans ~ Block | Frag + Chamber, data=SECCp, 
-       pch=21, col="black", bg="grey", cex=0.8,
-       main = Dataset.labels[1]
-       )
-par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
-## homogeneity of variances?
-with( SECCp, plot(Y.trans ~ Chamber*Frag*Position) )    # fixed effects only, no nesting
-##* PROMPT *##
-## plot.new()  # put next plot in empty panel?
-## normal distribution?
-Yp.residuals <- resid(Yp.aov$Within)
-with(SECCp, qqnorm( Yp.residuals, main="Residuals", sub=Dataset.labels[1] ) )   # are residuals normally distributed?
-qqline(Yp.residuals,  col="grey50")
-par( mfrow=c(1,1) )
-hist(Yp.residuals)  # plot residuals
-# with(SECCp, shapiro.test( Yp.residuals ) )    # normality?
-
-
-##================================================
-## REGIONAL analyses
 xyplot( Y.trans ~ Block | Frag + Chamber, data=SECCmc, 
        pch=21, col="black", bg="grey", cex=0.8,
        main = Dataset.labels[2]
@@ -220,46 +188,6 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## ANALYSIS: GET RESULTS
 ##################################################
-## Patch analyses
-# names(Yp.aov)
-cat("\n\n")
-print(Yp.model)                 # for output
-print( summary(Yp.aov) )        # summary statistics
-Yp.mtab <- try( model.tables(Yp.aov, "means")   # effect sizes
-               , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
-# Interaction Plots
-par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
-with( SECCp, interaction.plot(Frag, Chamber, Y.trans,
-                              ylab = paste("mean of", Y.use)
-                              )
-     )
-with( SECCp, interaction.plot(Position, Chamber, Y.trans,
-                              ylab=paste("mean of", Y.use)
-                              )
-     )
-with( SECCp, interaction.plot(Position, Frag, Y.trans,
-                              ylab=paste("mean of", Y.use)
-                              )
-     )
-
-if (FALSE) {    # effects package doesn't work with aovlist either :(
-  Yp.effects <- allEffects(Yp.aov)
-  plot(Yp.effect, "Chamber:Frag")
-  plot(Yp.effect, "Chamber:Position")
-  plot(Yp.effect, "Chamber:Frag:Position")
-}
-
-
-##________________________________________________
-## (un)planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
-# Chamber x Pos Interaction
-msd <- MSD( Yp.aov, alpha=0.05, method="unplanned" )  # compute MSRs based on a 5% error rate (alpha), 2-tailed.  mode.df="manual" if unbalanced data ( provide n as an estimate).
-msd.CxP <- msd["Chamber:Position"]
-msd.FxP <- msd["Frag:Position"]
-msd.CxFxP <- msd["Chamber:Frag:Position"]
-
-
-##================================================
 ## Regional analyses
 ## names(Ymc.aov)
 cat("\n\n")
@@ -288,23 +216,16 @@ msd.mc.C <- msd.mc["Chamber"]
 ##################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   library(xtable)                      # generate LaTeX tables
-  capture.output(cat(Save.header, Save.patch.header, sep=""),
-				 print(Yp.model),                  # model
-				 summary(Yp.aov),                  # model summary
-				 xtable(summary(Yp.aov)),          # LaTeX output
-				 cat("\n\n"),                      # for output
-				 Yp.mtab,                          # effect sizes
-				 cat(Header.msd),
-				 print(msd),
-				 cat(Save.mc.header),              # Meta-Community Results #
+  capture.output(cat(Save.header, Save.mc.header, sep=""),
 				 print(Ymc.model),                 # model
 				 summary(Ymc.aov),                 # model summary
+				 xtable(summary(Ymc.aov)),         # LaTeX output
 				 cat("\n\n"),                      # for output
 				 Ymc.mtab,                         # effect sizes
 				 cat(Header.msd),
 				 print(msd.mc),
 				 cat(Save.end),                    # END OUTPUT #
-				 file = Save.text
+				 file = Save.mc.text
 				)
 }
 
@@ -313,89 +234,6 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 ##################################################
 ## POLISHED GRAPHICS (almost FINAL)
 ##################################################
-
-if (exists("Y.lim") == FALSE) Y.lim <- c( 0, max(SECCp$Y.trans) ) # consistent scale of Y axis
-
-Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
-Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
-Frag.map <- plotMap( factor = "Frag", labels = levels(SECC$Frag) )
-Frag.map <- Frag.map[ levels(SECC$Frag) %in% Frag.use, ]
-Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
-Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
-
-if (length(Time.use) > 1) {
-  Time.label <- ""
-} else {
-  Time.label <- paste(Time.use, ": ", sep="")
-}
-Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
-Sub.msd <- "95% comparison intervals (MSR)" 
-
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-
-
-## Patch results: Chamber x Position
-with( SECCp, {
-  ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(msd["Chamber:Position"]/2),
-                       nrow = length(levels(Chamber)),  # rows: x-axis
-                       ncol = length(levels(Position))  # cols: y-axis
-                       )
-  plotMeans( Y.trans, Chamber, Position, 
-            error.bars = "custom", level = plot.error, ylim = Y.lim,
-            cex = 2, lwd = 2, lty = Position.map$lty, pch = Position.map$pch,
-            col = as.character(Position.map$col),
-            bg  = as.character(Position.map$bg),
-            main = Plot.Title,
-            sub  = Sub.msd,
-            xlab = attr(SECC, "labels")[["Chamber"]],
-            ylab = Y.plotlab
-            )   
-  ## as.character() is needed for string arguments (color hex strings), if they are stored as factors().
-})
-
-## Patch results: Frag x Position (significant in t4)
-with( SECCp, {
-  ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(msd.FxP/2),
-                       nrow = length(levels(Frag)),
-                       ncol = length(levels(Position))
-                       )
-  plotMeans( Y.trans, Frag, Position, 
-            error.bars = "custom", level = plot.error, ylim = Y.lim,
-            cex = 2, lwd = 2, lty = Position.map$lty, pch = Position.map$pch,
-            col = as.character(Position.map$col),
-            bg  = as.character(Position.map$bg),
-            main = Plot.Title,
-            sub  = Sub.msd,
-            xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.plotlab
-            )
-})
-
-## Patch results: Chamber x Frag
-par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
-with( SECCp, {
-  ## using custom plotMeans function, with custom error bars (LSD)
-  plot.error <- matrix( as.numeric(msd["Chamber:Frag"]/2),
-                       nrow = length(levels(Frag)),
-                       ncol = length(levels(Chamber))
-                       )
-  plotMeans( Y.trans , Frag , Chamber, 
-            error.bars="custom", level=plot.error, ylim = Y.lim,
-            cex = 2, lwd = 2, lty=Chamber.map$lty, pch=Chamber.map$pch,
-            col=as.character(Chamber.map$col),
-            bg=as.character(Chamber.map$bg),
-            main = Plot.Title,
-            sub  = Sub.msd,
-            xlab = attr(SECC, "labels")[["Frag"]],
-            ylab = Y.plotlab
-            )   
-})
-
-
-
-##================================================
 ## META-COMMUNITY results
 Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% Comparison Intervals")
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )

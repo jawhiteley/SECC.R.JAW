@@ -17,11 +17,13 @@ Save.filename <- paste("Results - ", Y.col, " - ",
                        sep = ""
                    )
 Save.text  <- paste("./output/", Save.filename, ".txt", sep = "")
+Save.mc.text  <- paste("./output/", Save.filename, " - Frag", ".txt", sep = "")
 Save.plots <- paste("./graphs/", Save.filename, ".pdf", sep = "")
 Save.final <- paste("./graphs/", "Figure - ", Y.col, sep = "")    # Destination for final plots.
 
 
 ## Output text
+Header.msd   <- "\n95% Minimum Significant Ranges (MSR):\n"
 Save.divider <-        "================================================================\n"
 Save.header  <- paste( "Nested ANOVA Results for:", Y.label, "(", Y.col, ")",
                      "\nTransformation used:     ", Y.use,
