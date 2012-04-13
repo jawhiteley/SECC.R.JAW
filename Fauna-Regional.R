@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Aggregate Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2012-04-01
+### Jonathan Whiteley     R v2.12     2012-04-12
 ###===============================================
 ### ** Typically called from 'Fauna.R'  **
 ###    - all the pre-processing & filtering happens there.
@@ -33,46 +33,33 @@ if (FALSE) {  # do not run automatically
 ## SECC.sp.sum     summary data for filtered data
 
 
-## Most scripts assume analysis on 'SECC' data frame, 
-## but relevant fauna data is stored in 'SECC.fauna'
-SECC.df <- SECC     # temporary storage for this script (restored at the end)
-if (FALSE) {
-  SECC <- SECC.df   # restore
-}
-
-### ANOVA Response Variable *****
-if (!exists('Y.col')) Y.col <- 'Richness' # Column to analyze as response variable           *****
-if (!exists('Y.use')) Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
-
 ##==============================================================
 ## Process Data
 ##==============================================================
 ## Aggregate Fauna counts across regions / meta-communities (Frag treatments)
-MCID <- substr(rownames(Fauna), 1, 5)
-Factors.mc <- data.frame(SampleID = rownames(Fauna), # for recoding & checking
-                         Block   = substr(MCID, 1, 1),
-                         Time    = substr(MCID, 2, 2),
-                         Chamber = substr(MCID, 3, 3),
-                         Frag    = substr(MCID, 5, 5),
-                         Pos     = substr(rownames(Fauna), 7, 7) # for recoding only.
-                         )
-Factors.mc <- checkSECCdata( Factors.mc, "Fauna.factors" )
-Factors.mc <- recodeSECC( Factors.mc )
-## the lack of some Pos values will trigger warnings.  That's ok, it doesn't really matter.
-if ( any( MCID != substr(Factors.mc$SampleID, 1, 5) ) )
-  ## check that things were not rearranged
-  stop("Fauna factors were rearranged during processing!")
-## Keep only necessary columns, and every other row (aggregated)
-Factors.mc <- Factors.mc[seq(1, NROW(Factors.mc), by = 2), c("Block", "Time", "Chamber", "Frag")]
+SECC.fauna.coded <- checkSECCdata(SECC.fauna[Samples.fauna, ], "SECC.fauna")
+SECC.fauna.coded <- recodeSECC(SECC.fauna.coded)
+## the lack of some Pos values may trigger warnings.  That's ok, it doesn't really matter.
 
-Fauna.mc <- aggregate(Fauna, by = list(Sample = MCID), FUN = sum)
-rownames(Fauna.mc) <- Fauna.mc$Sample
-Fauna.mc <- Fauna.mc[, -1] ## drop 'Sample' column
+MCID <- substr(rownames(SECC.fauna.coded), 1, 5)
+SECC.fauna.mc <- aggregate(SECC.fauna.coded[, Spp.cols], 
+                      by = list(Block   = SECC.fauna.coded$Block,
+                                Time    = SECC.fauna.coded$Time,
+                                Chamber = SECC.fauna.coded$Chamber,
+                                Frag    = SECC.fauna.coded$Frag, 
+                                Sample  = MCID # @ end for sorting
+                                ), FUN = sum)
+rownames(SECC.fauna.mc) <- SECC.fauna.mc$Sample
+Factors.mc    <- SECC.fauna.mc[,  (1:4)] # keep trt columns
+SECC.fauna.mc <- SECC.fauna.mc[, -(1:5)] # drop trt columns
+Fauna.mc      <- SECC.fauna.mc[, Spp.fauna]
 ## assuming both data frames are still in the same order...
-Fauna.mc.sum <- within(Factors.mc, {
-        Richness <- apply(Fauna.mc, 1, function(x) length(which(x>0)) )  # observed # spp.
-        Evenness <- diversity(Fauna.mc, index = "invsimpson")
-                         })
+Fauna.mc.sum <- within(Factors.mc, 
+                       {
+                         ## Note that this is now GAMMA (regional) richness
+                         Richness <- apply(SECC.fauna.mc, 1, function(x) length(which(x>0)) )  # observed # spp.
+                         Evenness <- diversity(SECC.fauna.mc, index = "invsimpson")
+                       })
 
 ## Calculate Group totals
 ##  as in lib/load_fauna.R
@@ -85,12 +72,12 @@ Fauna.mc.sum <- within(Fauna.mc.sum, {
 ### Other
     for (taxa in Taxa.groups) {
       taxa.cols <- SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == taxa)]
-      taxa.cols <- intersect(colnames(Fauna.mc), taxa.cols)
-      assign( taxa, apply(Fauna.mc[, taxa.cols], 1, sum) )
+      taxa.cols <- intersect(colnames(SECC.fauna.mc), taxa.cols)
+      assign( taxa, apply(SECC.fauna.mc[, taxa.cols], 1, sum) )
     }
 
 ### Uropodina (non-predatory Mesostigs)
-    Uropodina <- apply(Fauna.mc[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Major.Taxa == "Uropodina")] ], 1, sum)
+    Uropodina <- apply(SECC.fauna.mc[, SECC.fauna.meta$ID[which(SECC.fauna.meta$Major.Taxa == "Uropodina")] ], 1, sum)
 ### Mesostig.preds = Mesostigs - Uropodina
     Mesostig.preds <- Mesostigmata - Uropodina
 ### Predators = Mesostigs.preds + Prostigs
@@ -100,9 +87,9 @@ Fauna.mc.sum <- within(Fauna.mc.sum, {
 ### fauna.jaw = Mesostigs + Collembola (+ Prostigs?)
     fauna.jaw <- Mesostigmata + Collembola
 ### fauna = all (-Other) * including ZL data?
-    taxa.cols <- intersect(colnames(Fauna.mc), SECC.fauna.meta$ID)
+    taxa.cols <- intersect(colnames(SECC.fauna.mc), SECC.fauna.meta$ID)
     taxa.cols <- setdiff(taxa.cols, SECC.fauna.meta$ID[which(SECC.fauna.meta$Taxonomic.Group == "Other")])
-    fauna <- apply(Fauna.mc[, taxa.cols], 1, sum)
+    fauna <- apply(SECC.fauna.mc[, taxa.cols], 1, sum)
     rm(taxa, taxa.cols)
 })
 Fauna.mc.sum <- Fauna.mc.sum[, c('Block', 'Time', 'Chamber', 'Frag',
@@ -111,6 +98,10 @@ Fauna.mc.sum <- Fauna.mc.sum[, c('Block', 'Time', 'Chamber', 'Frag',
                               'fauna.jaw', 'fauna',
                               'Richness', 'Evenness')]  # manually reorder columns 
 
+attr(Fauna.mc.sum, "labels") <- attr(SECC.sp.sum, "labels") # :)
+attr(Fauna.mc.sum,  "units") <- attr(SECC.sp.sum,  "units") # :)
+attr(SECC.fauna.coded, "labels") <- attr(SECC.sp.sum, "labels") # :)
+attr(SECC.fauna.coded,  "units") <- attr(SECC.sp.sum,  "units") # :)
 
 ##################################################
 ## DATA EXPLORATION
@@ -120,10 +111,12 @@ if (FALSE) {
 
   plot(Fauna.mc.sum[, which( sapply(Fauna.mc.sum, is.numeric) )])
 
-  MC.Rich.Frag <- ggplot(SECC.mc.sum, aes(x = Frag, y = Richness, colour = Chamber)) +
+  MC.Rich.Frag <- ggplot(Fauna.mc.sum, aes(x = Frag, y = Richness, colour = Chamber)) +
     stat_summary(fun.data = "mean_cl_boot")
   print(MC.Rich.Frag)
-
+  ## Looks like there might be an interesting interaction, but too much noise (sample size too small) :(
+  ## Ambient treatment apppears to lose gamma richness with isolation; Chamber *increases*?
+  ## suggests lack of nestedness...
 
 }
 
@@ -134,6 +127,20 @@ if (FALSE) {
 ##################################################
 ## CONFIGURE BASIC ANALYSIS
 ##################################################
+## Most scripts assume analysis on 'SECC' data frame, 
+## but relevant fauna data is stored in 'SECC.fauna'
+SECC.df <- SECC     # temporary storage for this script (restored at the end)
+if (FALSE) {
+  SECC <- SECC.df   # restore
+}
+
+SECC  <- Fauna.mc.sum                  # for attributes
+SECCa <- Fauna.mc.sum                  # Meta-Community (Frag) scale data
+
+### ANOVA Response Variable *****
+if (!exists('Y.col')) Y.col <- 'Richness' # Column to analyze as response variable           *****
+if (!exists('Y.use')) Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
+
 
 
 
@@ -149,13 +156,13 @@ source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE)
 Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include: A, C
 Frag.use     <- levels(SECC$Frag)[c(1, 2, 4)]   # Fragmentation treatments to include: 1, 2, 4
-Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer
+## Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer
 
 ## Define Labels
 Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
 
 ## Output Results?
-Save.results  <- TRUE
+Save.results  <- FALSE
 
 
 ### Load default Labels - dependent on above settings. *****
@@ -171,7 +178,7 @@ attr(SECC, "labels")[["Frag"]] <- "Habitat Isolation" # different interpretation
 ##################################################
 ### RUN STANDARD nested ANOVA
 ##################################################
-source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+source("./SECCanova/SECC - nested ANOVA Frag.R", echo = FALSE)
 
 if (FALSE) 
 {
@@ -210,70 +217,21 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 Plot.Title <- bquote(.(Time.label) * "\nPatch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 
-Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
-Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
-Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+Chamber.label <- "Chamber\nTreatment" # attr(SECC, "labels")[["Chamber"]]
+Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
+Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
+Chamber.map$label[2] <- "Chamber"
 FragIconList <- list(FragIcon1 = FragIcon1,
                      FragIcon2 = FragIcon2,
                      FragIcon4 = FragIcon4
                      )
 
-## 3-way interaction: NS
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
+## Chamber x Frag
+plot.means <- aggregate(SECCmc$Y.trans, list(Chamber=SECCmc$Chamber, Frag=SECCmc$Frag, Time=SECCmc$Time), mean)
 levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
 plot.means <- within(plot.means, 
                      {
-                       error <- as.numeric(msd["Chamber:Frag:Position"]/2)
-                       upper <- x + error
-                       lower <- x - error
-                       levels(Chamber)[2] <- "Chamber"
-                     })
-
-## if (!exists('Y.lim')) Y.lim <- c(-1, 20)
-Y.lim <- with(plot.means, range(lower, upper))
-Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
-
-CFP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
-                    geom = "line", ylim = Y.lim, size = I(0.8), 
-                    colour = Position, fill = Position, 
-                    shape = Position, # lty = Position,
-                    main = Plot.Title, sub = Sub.msd,
-                    xlab = attr(SECC, "labels")[["Frag"]],
-                    ylab = Y.plotlab,
-                    legend = FALSE,
-                    facets = .~Chamber)
-CFP.plot <- CFP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
-                                         width = 0.2, size = 0.5)
-CFP.plot <- CFP.plot + geom_point(aes(group = Position), size = 3)
-CFP.plot <- CFP.plot + scale_colour_manual(name = Position.label,
-                                           values = Position.map$col, 
-                                           breaks = Position.map$label)
-CFP.plot <- CFP.plot + scale_fill_manual(name = Position.label,
-                                         values = Position.map$bg, 
-                                         breaks = Position.map$label)
-CFP.plot <- CFP.plot + scale_shape_manual(name = Position.label,
-                                           values = Position.map$pch, 
-                                           breaks = Position.map$label)
-## CFP.plot <- CFP.plot + scale_linetype_manual(name = Position.label,
-##                                              values = Position.map$lty, 
-##                                              breaks = Position.map$label)
-CFP.plot <- CFP.plot + jaw.ggplot()
-## Add imported graphics as x-axis tick labels :D
-## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
-CFP.plot <- CFP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
-                                        breaks = levels(plot.means$Frag)) +
-opts(axis.ticks.margin = unit(0.2, "lines"),
-     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
-)
-print(CFP.plot)
-
-
-## Frag x Position
-plot.means <- aggregate(SECCp$Y.trans, list(Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means <- within(plot.means, 
-                     {
-                       error <- as.numeric(msd["Frag:Position"]/2)
+                       error <- as.numeric(msd.mc["Chamber:Frag"]/2)
                        upper <- x + error
                        lower <- x - error
                      })
@@ -286,96 +244,43 @@ if (exists('Y.lim1'))
   Y.lim <- c(floor(Y.lim[1]/5), ceiling(Y.lim[2]/5) ) *5
 }
 
-FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
+CxF.plot <- qplot(Frag, x, data = plot.means, group = Chamber, 
                   geom = "line", ylim = Y.lim, size = I(0.8), 
-                  colour = Position, fill = Position, 
-                  shape = Position, # lty = Position,
+                  colour = Chamber, fill = Chamber, 
+                  shape = Chamber, # lty = Chamber,
                   main = Plot.Title, sub = Sub.msd,
                   xlab = attr(SECC, "labels")[["Frag"]],
                   ylab = Y.plotlab,
                   legend = FALSE)
-FxP.plot <- FxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+CxF.plot <- CxF.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                      width = 0.2, size = 0.5)
-FxP.plot <- FxP.plot + geom_point(aes(group = Position), size = 3)
-FxP.plot <- FxP.plot + scale_colour_manual(name = Position.label,
-                                           values = Position.map$col, 
-                                           breaks = Position.map$label)
-FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
-                                         values = Position.map$bg, 
-                                         breaks = Position.map$label)
-FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
-                                          values = Position.map$pch, 
-                                          breaks = Position.map$label)
-## FxP.plot <- FxP.plot + scale_linetype_manual(name = Position.label,
-##                                              values = Position.map$lty, 
-##                                              breaks = Position.map$label)
-FxP.plot <- FxP.plot + jaw.ggplot()
+CxF.plot <- CxF.plot + geom_point(aes(group = Chamber), size = 3)
+CxF.plot <- CxF.plot + scale_colour_manual(name = Chamber.label,
+                                           values = Chamber.map$col, 
+                                           breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + scale_fill_manual(name = Chamber.label,
+                                         values = Chamber.map$bg, 
+                                         breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + scale_shape_manual(name = Chamber.label,
+                                          values = Chamber.map$pch, 
+                                          breaks = Chamber.map$label)
+## CxF.plot <- CxF.plot + scale_linetype_manual(name = Chamber.label,
+##                                              values = Chamber.map$lty, 
+##                                              breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + jaw.ggplot()
 ## Add imported graphics as x-axis tick labels :D
 ## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
-FxP.plot <- FxP.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
+CxF.plot <- CxF.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
                                         breaks = levels(plot.means$Frag)) +
      opts(axis.ticks.margin = unit(0.2, "lines"),
           axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
      )
-print(FxP.plot)
-
-
-## Chamber x Position
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means <- within(plot.means, 
-                     {
-                       error <- as.numeric(msd["Chamber:Position"]/2)
-                       upper <- x + error
-                       lower <- x - error
-                       levels(Chamber)[2] <- "Chamber\n"
-                     })
-
-if (exists('Y.lim1'))
-{
-  Y.lim <- Y.lim1
-} else {
-  Y.lim <- with(plot.means, range(lower, upper))
-  Y.lim <- c(floor(Y.lim[1]/5), ceiling(Y.lim[2]/5) ) *5
-}
-
-CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                  geom = "line", ylim = Y.lim, size = I(0.8), 
-                  colour = Position, fill = Position, 
-                  shape = Position, # lty = Position,
-                  main = Plot.Title, sub = Sub.msd,
-                  xlab = attr(SECC, "labels")[["Chamber"]],
-                  ylab = Y.plotlab,
-                  legend = FALSE)
-CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
-                                     width = 0.2, size = 0.5)
-CxP.plot <- CxP.plot + geom_point(aes(group = Position), size = 3)
-CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
-                                           values = Position.map$col, 
-                                           breaks = Position.map$label)
-CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
-                                         values = Position.map$bg, 
-                                         breaks = Position.map$label)
-CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
-                                          values = Position.map$pch, 
-                                          breaks = Position.map$label)
-## CxP.plot <- CxP.plot + scale_linetype_manual(name = Position.label,
-##                                              values = Position.map$lty, 
-##                                              breaks = Position.map$label)
-CxP.plot <- CxP.plot + jaw.ggplot() +
-  ## adjust x-axis labelling to allow the plot to line up better next to corresponding FxP plot
-  opts(axis.ticks.margin = unit(0.2, "lines"),
-        axis.text.x = theme_text(lineheight = 1.1, vjust = 1) # trial & error 
-  ## plot.margin = unit(c(1, 1, 1.4, 0.5), "lines")  # this lines up exactly, but moves the axis title up as well: that's not what I want.
-  )
-print(CxP.plot)
+print(CxF.plot)
 
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 3, height = 4, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 4, scale = 1.5)
-  ##   ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 6, height = 4, scale = 1.5)
 }
 
 

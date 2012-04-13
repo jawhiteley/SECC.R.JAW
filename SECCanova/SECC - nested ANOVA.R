@@ -401,8 +401,8 @@ Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% Compariso
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 
 ## Chamber Main Effects
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Chamber)) )
-with( SECCp, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCmc$Chamber)) )
+with( SECCmc, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Chamber, 
             error.bars="custom", level=plot.error, ylim = Y.lim, 
@@ -417,8 +417,8 @@ with( SECCp, {
 })
 
 ## Fragmentation Main Effects
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Frag)) )
-with( SECCp, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCmc$Frag)) )
+with( SECCmc, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Frag, 
             error.bars="custom", level=plot.error, ylim = Y.lim, 

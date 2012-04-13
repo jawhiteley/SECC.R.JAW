@@ -18,8 +18,8 @@ if (FALSE) {  # do not run automatically
 source('./lib/init.R')
 
 ## Load packages
-library(vegan)	# load external package
-library(ggplot2)	# load external package
+library(vegan)
+library(ggplot2)
 
 
 ##################################################
@@ -163,6 +163,14 @@ Y.col <- 'Grazers'
 Y.use <- 'Y'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
+
+if (FALSE)
+{                                      # Totally NS: sample sizes too small to detect anything meaningful
+  Y.col <- 'Richness' # Column to analyze as response variable           *****
+  Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
+  Y.lim1 <- c(0, 26)  # consistent Y limits :/
+  source('Fauna-regional.R')
+}
 
 
 
@@ -396,9 +404,10 @@ Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) +
     jaw.ggplot()
 print(Spp.corplot)
 
-
+## Scatter plot; any fitted line should be a Model II regression
 PredGraz.cor    <- cor(SECC.sp.sum$Predators, SECC.sp.sum$Grazers)
 PredGraz.cortxt <- sprintf("r = %.3f", PredGraz.cor)
+Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
 
 PredGraz.corplot <- ggplot(SECC.sp.sum, 
                            aes(x = Grazers, y = Predators)

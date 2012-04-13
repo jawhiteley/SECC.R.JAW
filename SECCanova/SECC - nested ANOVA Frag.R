@@ -62,7 +62,7 @@ SECCmc <- SECC.use
 Y.tlabel <- paste( Y.use, ": ", Y.label, sep=""  )  # label for transformation plots
 
 ## Transformations, calculated columns, etc.  May depend on the results of exploratory graphs (& assumptions), below.
-for ( dataset in Dataset.list ){
+for ( dataset in Dataset.list[2] ){
   DataObject <- get(dataset)
   DataObject <- within( DataObject, {
 	## Generic Response Variable (used in remainder of script)
@@ -111,10 +111,8 @@ with( SECCmc, plot(Y.trans ~ Chamber * Frag,
 plot.new()  # empty panel
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Is the response variable normally-distributed? Check skew in histograms, eyeball linearity on QQ-plots
-## for( i in 1:length(Dataset.list) ){
-##     dataset <- Dataset.list[i]
-i <- 2
-dataset <- "SECCmc"
+for( i in 2:length(Dataset.list) ){
+  dataset <- Dataset.list[i]
     with( get(dataset), {
         hist( Y,      sub = Dataset.labels[i] )
         hist( Y.log,  sub = Dataset.labels[i] )
@@ -129,7 +127,7 @@ dataset <- "SECCmc"
         qqnorm( Y.4rt,  main = "4th-root-transformed", sub = Dataset.labels[i] )
         qqline( Y.4rt,  col="grey50" )
     })
-## }
+}
 
 
 
@@ -190,7 +188,6 @@ hist(Ymc.residuals) # plot residuals
 ##################################################
 ## Regional analyses
 ## names(Ymc.aov)
-cat("\n\n")
 print(Ymc.model)                # for output
 print( summary(Ymc.aov) )       # summary statistics
 Ymc.mtab <- try( model.tables(Ymc.aov, "means")   # effect sizes
@@ -234,13 +231,30 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 ##################################################
 ## POLISHED GRAPHICS (almost FINAL)
 ##################################################
+## if (exists("Y.lim") == FALSE) 
+  Y.lim <- c( 0, max(SECCmc$Y.trans) ) # consistent scale of Y axis
+
+Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
+Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
+Frag.map <- plotMap( factor = "Frag", labels = levels(SECC$Frag) )
+Frag.map <- Frag.map[ levels(SECC$Frag) %in% Frag.use, ]
+Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+
+if (length(Time.use) > 1) {
+  Time.label <- ""
+} else {
+  Time.label <- paste(Time.use, ": ", sep="")
+}
+Sub.msd <- "95% comparison intervals (MSR)" 
+
 ## META-COMMUNITY results
 Plot.Title <- bquote(.(Time.label) * "Meta-Community means " %+-% "95% Comparison Intervals")
 par( mfrow=c(1,1), lty=1, cex=1, lwd=1 )
 
 ## Chamber Main Effects
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Chamber)) )
-with( SECCp, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCmc$Chamber)) )
+with( SECCmc, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Chamber, 
             error.bars="custom", level=plot.error, ylim = Y.lim, 
@@ -255,8 +269,8 @@ with( SECCp, {
 })
 
 ## Fragmentation Main Effects
-plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCp$Frag)) )
-with( SECCp, {
+plot.error <- rep( as.numeric(msd.mc.C/2), length(levels(SECCmc$Frag)) )
+with( SECCmc, {
   ## using custom plotMeans function, with custom error bars (LSD)
   plotMeans( Y.trans , Frag, 
             error.bars="custom", level=plot.error, ylim = Y.lim, 
