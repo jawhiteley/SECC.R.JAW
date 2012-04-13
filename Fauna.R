@@ -405,6 +405,19 @@ Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) +
 print(Spp.corplot)
 
 ## Scatter plot; any fitted line should be a Model II regression
+library(lmodel2)
+PredGraz.lm2 <- lmodel2(Predators ~ Grazers, data = SECC.sp.sum, nperm = 999)
+PredGraz.abline <- PredGraz.lm2$regression.results
+lm2.row <- which( PredGraz.abline == "MA" ) 
+PredGraz.abline <- PredGraz.abline[lm2.row, ]
+PredGraz.abline <- within(PredGraz.abline,
+                          {
+                            b.lower <- PredGraz.lm2$confidence.intervals[lm2.row, 4]
+                            a.lower <- mean(PredGraz.lm2$y) - b.lower * mean(PredGraz.lm2$x)
+                            b.upper <- PredGraz.lm2$confidence.intervals[lm2.row, 5]
+                            a.upper <- mean(PredGraz.lm2$y) - b.upper * mean(PredGraz.lm2$x)
+                          })
+
 PredGraz.cor    <- cor(SECC.sp.sum$Predators, SECC.sp.sum$Grazers)
 PredGraz.cortxt <- sprintf("r = %.3f", PredGraz.cor)
 Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
@@ -414,6 +427,19 @@ PredGraz.corplot <- ggplot(SECC.sp.sum,
                            ) + 
                  xlab(bquote("Grazers (" * .( attr(SECC.sp.sum, "units")[["Grazers"]]) * ")")) +
                  ylab(bquote("Predators (" * .( attr(SECC.sp.sum, "units")[["Predators"]]) * ")")) +
+                 ##                  stat_quantile(quantiles = 0.5, colour = "#666666") +
+                 geom_abline(intercept = PredGraz.abline[1, 2],
+                             slope = PredGraz.abline[1, 3],
+                             colour = "#999999", size = 0.5
+                             ) +
+                 geom_abline(intercept = PredGraz.abline[1, 6],
+                             slope = PredGraz.abline[1, 7],
+                             colour = "#999999", size = 0.4, lty = "dotted"
+                             ) +
+                 geom_abline(intercept = PredGraz.abline[1, 8],
+                             slope = PredGraz.abline[1, 9],
+                             colour = "#999999", size = 0.4, lty = "dotted"
+                             ) +
                  geom_point(aes(shape = Pos, colour = Chamber), size = 2.5) + 
                  scale_shape_manual(name = Position.label,
                                     values = Position.map$pch, 
@@ -425,7 +451,6 @@ PredGraz.corplot <- ggplot(SECC.sp.sum,
                                      breaks = Chamber.map$label,
                                      labels = c("Ambient", "Chamber")
                                      ) +
-                 stat_quantile(quantiles = 0.5, colour = "#666666") +
                  geom_text(aes(x = max(Grazers), 
                                y = max(Predators),
                                label = PredGraz.cortxt
