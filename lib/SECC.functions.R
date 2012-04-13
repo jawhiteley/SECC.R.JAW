@@ -437,7 +437,8 @@ simper <- function( data, groups, method="bray") {
         var.sim <- mean( bray.sim[[vari]] )
         SD.sim  <-   sd( bray.sim[[vari]] )
         Result.group <- rbind(Result.group,
-                              data.frame(Variable = vari, Mean.Value = mean(gvdata[1]), 
+                              data.frame(Variable = vari, 
+                                         Mean.Value = mean(gvdata[1], na.rm = TRUE), 
                                          Avg.Sim = var.sim, SD.sim = SD.sim,
                                          Avg_SD = var.sim / SD.sim,
                                          Perc.Sim = var.sim / group.sim, 
@@ -446,7 +447,7 @@ simper <- function( data, groups, method="bray") {
         )
       }
       attr(Result.group, "Average Bray-Curtis Similarity") <- group.sim
-      colnames(Result.pair)[2] <- paste("Mean", group, sep = "_")
+      colnames(Result.group)[2] <- paste("Mean", group, sep = "_")
       ## sort result
       Result.group <- Result.group[ order(Result.group$Avg.Sim, decreasing = TRUE), ]
       Result.group$Cum.Perc  <- cumsum(Result.group$Perc.Sim)
@@ -488,8 +489,10 @@ simper <- function( data, groups, method="bray") {
         SD.dist  <-   sd( bray.jk[[vari]] )
         Result.pair <- rbind(Result.pair,
                               data.frame(Variable = vari, 
-                                         Mean.Value.1 = mean(gdata[which(groups == pair[1]), vari]), 
-                                         Mean.Value.2 = mean(gdata[which(groups == pair[2]), vari]), 
+                                         Mean.Value.1 = mean(gdata[which(groups == pair[1]), vari], 
+                                                             na.rm = TRUE), 
+                                         Mean.Value.2 = mean(gdata[which(groups == pair[2]), vari],
+                                                             na.rm = TRUE), 
                                          Avg.Dist = var.dist, SD.dist = SD.dist,
                                          Avg_SD = var.dist / SD.dist,
                                          Perc.Dist = var.dist / pair.dist, 
@@ -519,6 +522,7 @@ simper <- function( data, groups, method="bray") {
 	# - cumulative percent
 	#
 	# Same columns for each single group: to account for variable contributing to similarity within a particular group.
+    class(Result) <- c(class(Result), "jaw.simper")
 	
     return(Result)
 
@@ -531,3 +535,7 @@ simper <- function( data, groups, method="bray") {
     }
 }
 
+print.jaw.simper <- function(simp, ...)
+{
+  print.default(simp, ...)
+}

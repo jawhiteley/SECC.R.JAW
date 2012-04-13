@@ -178,13 +178,16 @@ if (FALSE)
 ##################################################
 ### MULTIVARIATE ANALYSES
 ##################################################
+## Transformation
+Fauna.trans <- log( Fauna +1 ) 
+
+## Distance/Similarity matrix (included in MDS call)
+Fauna.dist <- vegdist(Fauna.trans, method = "bray")
+
 
 ##################################################
 ## NMDS
 ##################################################
-## Transformation
-Fauna.trans <- log( Fauna +1 ) 
-
 ## Distance/Similarity matrix (included in MDS call)
 ## Compute MDS
 Fauna.mds  <- metaMDS( Fauna.trans, distance = "bray", autotransform = FALSE, k = 2)
@@ -206,10 +209,8 @@ Fauna.plot <- ordiplot( Fauna.mds, type="text" )
 ##################################################
 ## ANOSIM
 ##################################################
-## Distance/Similarity matrix (included in MDS call)
-Fauna.dist <- vegdist( Fauna.trans, method = "bray")
-
 ANOSIM.results <- capture.output(      # to make saving easier @ end
+
 ## ANOSIM by single factor
   Fauna.Chamber.anosim <- anosim( Fauna.dist, Fauna.sp$Chamber )
 , Fauna.Chamber.anosim # Look at results
@@ -220,7 +221,7 @@ ANOSIM.results <- capture.output(      # to make saving easier @ end
 ,Fauna.Frag.anosim <- anosim( Fauna.dist, Fauna.sp$Frag )
 ,Fauna.Frag.anosim # Look at results
 
-## ANOSIM within main factors
+## ANOSIM within main factors (interactions)
 ,for (lvl in levels(Fauna.sp$Chamber)) {
   cat("Chamber:", lvl, "\n")
   Fauna.data <- Fauna.trans[which(Fauna.sp$Chamber == lvl), ]
@@ -251,6 +252,43 @@ ANOSIM.results <- capture.output(      # to make saving easier @ end
 )
 cat( paste(ANOSIM.results, collapse = "\n") )
 
+##==============================================================
+## SIMPER (slow)
+## using my version of the simper algorithm in SECC.functions, which uses a few slow `for` loops
+any( rownames(Fauna.trans) != rownames(Fauna.sp) ) # just checking: should be FALSE ;)
+Chamber.simp <- simper(Fauna.trans, Fauna.sp$Chamber)
+ChamberFrag <- paste(Fauna.sp$Chamber, Fauna.sp$Frag, sep=".")
+ChamberPosn <- paste(Fauna.sp$Chamber, Fauna.sp$Pos , sep=".")
+ChamberFrag.simp <- simper(Fauna.trans, ChamberFrag)
+ChamberPosn.simp <- simper(Fauna.trans, ChamberPosn)
+
+
+
+##==============================================================
+## CCA
+##==============================================================
+Fauna.ca <- cca(Fauna.trans)
+ordiplot(Fauna.ca, scaling = 2, type = "text", xlim = c(-2, 12))
+## Different species pop out vs. the SIMPER analyses; different distance metric
+## Although the graphs are nice and show complex relationships easily,
+## I'm losing confidence that CA / CCA is the most appropriate for this data.
+
+
+
+##==============================================================
+## PCoA
+##==============================================================
+## Yay, I get to use Bray-Curtis distances again :D
+## Borcard et al. (2011) pg. 142
+Fauna.pcoa <- cmdscale(Fauna.dist, k = 2, eig = TRUE)
+Fauna.pcoa.spscores <- wascores(Fauna.pcoa$points[, 1:2], Fauna.trans)
+
+ordiplot(Fauna.pcoa, type = "text")
+text(Fauna.pcoa.spscores, rownames(Fauna.pcoa.spscores), cex = 0.8, col = "red", srt = 20)
+
+
+
+
 
 ################################################################
 ### CONSTRAINED ORDINATION: FITTING ENVIRONMENTAL VARIABLES
@@ -268,7 +306,7 @@ Fauna.env <- within(Fauna.env,
                       Trt <- paste(Chamber, Frag, Position, sep="\n")
                     })
 
-## a posteriori fitting of environmental variables to nMDS (not really constrained ordination)
+## Post Hoc fit of environmental variables to nMDS (not really constrained ordination)
 ## Samples               : Same experimental subset, or ALL available?
 ## Response Variables    : Fauna species [SECC.fauna]
 ## Explanatory Variables : H2O, Temperature?, Patch.dwt ; Cells.g, Stigonema.g, Nostoc.g, ARA.g ; Decomposition, Productivity (all time periods), NH4, NO3, TAN
@@ -336,7 +374,7 @@ ordiplot(Fauna.cca1, type="text",
 ##================================================
 ## Correlations
 ##================================================
-library(plyr)
+## library(plyr)
 
 cols.numeric <- sapply(SECC.sp.sum, function (x) class(x) == "numeric")
 Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "pearson")
@@ -404,60 +442,7 @@ Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) +
     jaw.ggplot()
 print(Spp.corplot)
 
-## Scatter plot; any fitted line should be a Model II regression
-library(lmodel2)
-PredGraz.lm2 <- lmodel2(Predators ~ Grazers, data = SECC.sp.sum, nperm = 999)
-PredGraz.abline <- PredGraz.lm2$regression.results
-lm2.row <- which( PredGraz.abline == "MA" ) 
-PredGraz.abline <- PredGraz.abline[lm2.row, ]
-PredGraz.abline <- within(PredGraz.abline,
-                          {
-                            b.lower <- PredGraz.lm2$confidence.intervals[lm2.row, 4]
-                            a.lower <- mean(PredGraz.lm2$y) - b.lower * mean(PredGraz.lm2$x)
-                            b.upper <- PredGraz.lm2$confidence.intervals[lm2.row, 5]
-                            a.upper <- mean(PredGraz.lm2$y) - b.upper * mean(PredGraz.lm2$x)
-                          })
 
-PredGraz.cor    <- cor(SECC.sp.sum$Predators, SECC.sp.sum$Grazers)
-PredGraz.cortxt <- sprintf("r = %.3f", PredGraz.cor)
-Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
-
-PredGraz.corplot <- ggplot(SECC.sp.sum, 
-                           aes(x = Grazers, y = Predators)
-                           ) + 
-                 xlab(bquote("Grazers (" * .( attr(SECC.sp.sum, "units")[["Grazers"]]) * ")")) +
-                 ylab(bquote("Predators (" * .( attr(SECC.sp.sum, "units")[["Predators"]]) * ")")) +
-                 ##                  stat_quantile(quantiles = 0.5, colour = "#666666") +
-                 geom_abline(intercept = PredGraz.abline[1, 2],
-                             slope = PredGraz.abline[1, 3],
-                             colour = "#999999", size = 0.5
-                             ) +
-                 geom_abline(intercept = PredGraz.abline[1, 6],
-                             slope = PredGraz.abline[1, 7],
-                             colour = "#999999", size = 0.4, lty = "dotted"
-                             ) +
-                 geom_abline(intercept = PredGraz.abline[1, 8],
-                             slope = PredGraz.abline[1, 9],
-                             colour = "#999999", size = 0.4, lty = "dotted"
-                             ) +
-                 geom_point(aes(shape = Pos, colour = Chamber), size = 2.5) + 
-                 scale_shape_manual(name = Position.label,
-                                    values = Position.map$pch, 
-                                    breaks = Position.map$label,
-                                    labels = c("Inner (Wet)", "Outer (Dry)")
-                                    ) +
-                 scale_colour_manual(name = Chamber.label,
-                                     values = Chamber.map$col, 
-                                     breaks = Chamber.map$label,
-                                     labels = c("Ambient", "Chamber")
-                                     ) +
-                 geom_text(aes(x = max(Grazers), 
-                               y = max(Predators),
-                               label = PredGraz.cortxt
-                               ), hjust = 1, vjust = 1) +
-                 jaw.ggplot() + coord_equal()
-
-print(PredGraz.corplot)
 
 
 ##================================================
@@ -519,16 +504,16 @@ Fauna.plot <- qplot(x, y, data = MDS.pts, group = Chamber,
                     shape = Pos, colour = Chamber, size = I(3), lwd = I(1.5),
                     xlab = NULL, ylab = NULL
                     )   # facets=Frag~Time
-Fauna.plot <- Fauna.plot + scale_shape_manual(name = Position.label,
-                                              values = Position.map$pch, 
-                                              breaks = Position.map$label,
-                                              labels = c("Inner (Wet)", "Outer (Dry)")
-                                              )
 Fauna.plot <- Fauna.plot + scale_colour_manual(name = Chamber.label,
                                                values = Chamber.map$col, 
                                                breaks = Chamber.map$label,
                                                labels = c("Ambient", "Chamber")
                                                )
+Fauna.plot <- Fauna.plot + scale_shape_manual(name = Position.label,
+                                              values = Position.map$pch, 
+                                              breaks = Position.map$label,
+                                              labels = c("Inner (Wet)", "Outer (Dry)")
+                                              )
 Fauna.plot <- Fauna.plot + scale_x_continuous(breaks = -4:4, limits = c(-3.7, 1.3))
 Fauna.plot <- Fauna.plot + scale_y_continuous(breaks = -4:4, limits = c(-2.7, 2.3))
 ## options: see theme_get() for available theme options.
@@ -552,13 +537,107 @@ print(Fauna.plot.frag)
 
 
 
+##==============================================================
+## Species correlations
+## Scatter plot; fitted line should be a Model II regression (Major Axis)
+library(lmodel2)
+PredGraz.lm2 <- lmodel2(Predators ~ Grazers, data = SECC.sp.sum, nperm = 999)
+PredGraz.abline <- PredGraz.lm2$regression.results
+lm2.row <- which( PredGraz.abline == "MA" ) 
+PredGraz.abline <- PredGraz.abline[lm2.row, ]
+PredGraz.abline <- within(PredGraz.abline,
+                          {
+                            b.lower <- PredGraz.lm2$confidence.intervals[lm2.row, 4]
+                            a.lower <- mean(PredGraz.lm2$y) - b.lower * mean(PredGraz.lm2$x)
+                            b.upper <- PredGraz.lm2$confidence.intervals[lm2.row, 5]
+                            a.upper <- mean(PredGraz.lm2$y) - b.upper * mean(PredGraz.lm2$x)
+                          })
+PredGraz.ribbon <- data.frame(x = c(0, mean(PredGraz.lm2$x), 40),
+                              y = c(PredGraz.abline[1, 2],
+                                    PredGraz.abline[1, 2] +
+                                    mean(PredGraz.lm2$x) * PredGraz.abline[1, 3],
+                                    PredGraz.abline[1, 2] +
+                                    40 * PredGraz.abline[1, 3]
+                                    ),
+                              lower = c(mean(PredGraz.lm2$y) - 
+                                        PredGraz.abline[1, "b.upper"] * mean(PredGraz.lm2$x),
+                                        mean(PredGraz.lm2$y),
+                                        mean(PredGraz.lm2$y) + 
+                                        PredGraz.abline[1, "b.lower"] * 
+                                        (40 - mean(PredGraz.lm2$x))
+                                        ),
+                              upper = c(mean(PredGraz.lm2$y) - 
+                                        PredGraz.abline[1, "b.lower"] * mean(PredGraz.lm2$x),
+                                        mean(PredGraz.lm2$y),
+                                        mean(PredGraz.lm2$y) + 
+                                        PredGraz.abline[1, "b.upper"] * 
+                                        (40 - mean(PredGraz.lm2$x))
+                                        )
+                              )
+
+PredGraz.cor    <- cor(SECC.sp.sum$Predators, SECC.sp.sum$Grazers)
+PredGraz.cortxt <- sprintf("r = %.3f", PredGraz.cor)
+Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
+
+PredGraz.corplot <- ggplot(SECC.sp.sum, 
+                           ## aes(x = Grazers, y = Predators)
+                           ) + 
+                geom_ribbon(aes(x = x, ymin = lower, ymax = upper), data = PredGraz.ribbon,
+                            fill = "#999999", alpha = 0.5
+                ) +
+                geom_line(aes(x = x, y = y),
+                          data = PredGraz.ribbon,
+                          colour = "#666666", size = 0.4
+                          ) +
+                geom_point(aes(x = Grazers, y = Predators,
+                               shape = Pos, colour = Chamber), 
+                            size = 2.5) + 
+                scale_colour_manual(name = Chamber.label,
+                                    values = Chamber.map$col, 
+                                    breaks = Chamber.map$label,
+                                    labels = c("Ambient", "Chamber")
+                                    ) +
+                scale_shape_manual(name = Position.label,
+                                   values = Position.map$pch, 
+                                   breaks = Position.map$label,
+                                   labels = c("Inner (Wet)", "Outer (Dry)")
+                                   ) +
+                xlab(bquote("Grazers (" * .( attr(SECC.sp.sum, "units")[["Grazers"]]) * ")")) +
+                ylab(bquote("Predators (" * .( attr(SECC.sp.sum, "units")[["Predators"]]) * ")")) +
+                geom_text(aes(x = max(Grazers), 
+                              y = max(Predators),
+                              label = PredGraz.cortxt
+                              ), data = SECC.sp.sum, hjust = 1, vjust = 1) +
+                jaw.ggplot() + coord_equal()
+## WHY isn't the legend drawing properly??!? might be due to a different version of Chamber.map or Position.map previously used from the ANOVA scripts.  Seems to work fine here...
+print(PredGraz.corplot)
+
+if (FALSE)
+{
+                  geom_abline(intercept = PredGraz.abline[1, 2],
+                              slope = PredGraz.abline[1, 3],
+                              colour = "#666666", size = 0.4
+                              ) +
+                                 geom_abline(intercept = PredGraz.abline[1, 6],
+                                             slope = PredGraz.abline[1, 7],
+                                             colour = "#999999", size = 0.4, lty = "dashed"
+                                             ) +
+                                 geom_abline(intercept = PredGraz.abline[1, 8],
+                                             slope = PredGraz.abline[1, 9],
+                                             colour = "#999999", size = 0.4, lty = "dashed"
+                                             ) +
+                xlim(c(0, 40)) 
+}
+
+
+
 
 ##================================================
 ## Save Multivariate Results
 ##================================================
 if (TRUE) {
   cat(  paste(ANOSIM.results, collapse = "\n")
-      , "\n\n", "======== Environmental Variables a posteriori fit to nMDS ========", "\n"
+      , "\n\n", "======== Environmental Variables Post Hoc fit to nMDS ========", "\n"
       , paste(capture.output(print(Fauna.fit)), collape="\n")
       , "\n\n", "======== CCA ========", "\n"
       , paste(capture.output(summary(Fauna.cca)), collape="\n")
@@ -567,6 +646,7 @@ if (TRUE) {
       , file = "./output/Fauna - Multivariate.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
+  ggsave(filename="./graphs/Figure - Fauna-Correlation.eps", plot = PredGraz.corplot, width = 6, height = 4)
 }
 
 
