@@ -4,7 +4,7 @@ anosim(dat = Fauna.dist, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.05622 
-      Significance: 0.008 
+      Significance: 0.015 
 
 Based on  999  permutations
 
@@ -14,7 +14,7 @@ anosim(dat = Fauna.dist, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.01428 
-      Significance: 0.179 
+      Significance: 0.195 
 
 Based on  999  permutations
 
@@ -24,7 +24,7 @@ anosim(dat = Fauna.dist, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01586 
-      Significance: 0.788 
+      Significance: 0.795 
 
 Based on  999  permutations
 
@@ -36,7 +36,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01399 
-      Significance: 0.573 
+      Significance: 0.548 
 
 Based on  999  permutations
 
@@ -47,7 +47,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.07924 
-      Significance: 0.047 
+      Significance: 0.058 
 
 Based on  999  permutations
 
@@ -59,7 +59,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1631 
-      Significance: 0.009 
+      Significance: 0.008 
 
 Based on  999  permutations
 
@@ -70,7 +70,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Frag)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.063 
-      Significance: 0.093 
+      Significance: 0.105 
 
 Based on  999  permutations
 
@@ -82,7 +82,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.01786 
-      Significance: 0.327 
+      Significance: 0.289 
 
 Based on  999  permutations
 
@@ -93,7 +93,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.05944 
-      Significance: 0.236 
+      Significance: 0.234 
 
 Based on  999  permutations
 
@@ -105,7 +105,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: -0.01172 
-      Significance: 0.505 
+      Significance: 0.551 
 
 Based on  999  permutations
 
@@ -116,7 +116,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.3383 
-      Significance: 0.009 
+      Significance: 0.012 
 
 Based on  999  permutations
 
@@ -128,7 +128,7 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Pos)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1624 
-      Significance: 0.044 
+      Significance: 0.04 
 
 Based on  999  permutations
 
@@ -139,29 +139,29 @@ anosim(dat = Fauna.d, grouping = Fauna.sp$Chamber)
 Dissimilarity: bray 
 
 ANOSIM statistic R: 0.1572 
-      Significance: 0.094 
+      Significance: 0.096 
 
 Based on  999  permutations
  
 
- ======== Environmental Variables a posteriori fit to nMDS ======== 
+ ======== Environmental Variables Post Hoc fit to nMDS ======== 
   
  ***VECTORS 
   
                    NMDS1     NMDS2     r2   Pr(>r)     
- H2O            0.988577 -0.150718 0.4582 0.000999 *** 
- Patch.dwt      0.545107 -0.838366 0.0275 0.558442     
- Cells.g        0.301428  0.953489 0.0325 0.512488     
- Stigonema.g    0.251786  0.967783 0.0411 0.431568     
- Nostoc.g       0.156530 -0.987673 0.0483 0.314685     
- ARA.g          0.997104  0.076053 0.1330 0.051948 .   
- Decomposition  0.999192  0.040198 0.0848 0.176823     
- Prod01         0.713417 -0.700740 0.1146 0.080919 .   
- Prod12         0.983759  0.179492 0.2228 0.005994 **  
- Prod23         0.931497 -0.363749 0.2600 0.005994 **  
- NH4            0.667477  0.744630 0.0399 0.396603     
- NO3           -0.459975  0.887932 0.0412 0.427572     
- TAN            0.401974  0.915651 0.0373 0.437562     
+ H2O            0.987784 -0.155829 0.4617 0.000999 *** 
+ Patch.dwt      0.514542 -0.857465 0.0289 0.575425     
+ Cells.g        0.285783  0.958294 0.0356 0.451548     
+ Stigonema.g    0.245346  0.969436 0.0426 0.378621     
+ Nostoc.g       0.213509 -0.976941 0.0278 0.516484     
+ ARA.g          0.996349  0.085379 0.1364 0.044955 *   
+ Decomposition  0.998576 -0.053351 0.0852 0.153846     
+ Prod01         0.733392 -0.679806 0.1136 0.083916 .   
+ Prod12         0.985497  0.169692 0.2244 0.008991 **  
+ Prod23         0.913030 -0.407893 0.2625 0.004995 **  
+ NH4            0.702394  0.711789 0.0344 0.466533     
+ NO3           -0.535165  0.844747 0.0324 0.524476     
+ TAN            0.434929  0.900465 0.0290 0.523477     
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  
  P values based on 1000 permutations. 
@@ -170,31 +170,31 @@ Based on  999  permutations
   
  Centroids: 
                           NMDS1   NMDS2 
- Block1                 -0.1251 -0.4546 
+ Block1                 -0.1267 -0.3983 
  Block2                                 
- Block3                 -0.0048  0.3903 
+ Block3                  0.0024  0.3889 
  Block4                                 
- Block5                 -0.1491  0.2104 
+ Block5                 -0.1385  0.1917 
  Block6                                 
- Block7                  0.2843 -0.1895 
+ Block7                  0.2778 -0.1967 
  Block8                                 
- ChamberAmbient          0.2850 -0.0885 
+ ChamberAmbient          0.2819 -0.0912 
  ChamberPartial Chamber                 
- ChamberFull Chamber    -0.3020  0.0849 
- FragContinuous          0.1606 -0.1025 
- FragFull Corridors      0.0466  0.0608 
+ ChamberFull Chamber    -0.2934  0.1016 
+ FragContinuous          0.1589 -0.1031 
+ FragFull Corridors      0.0514  0.0851 
  FragPseudo-Corridors                   
- FragIsolated           -0.2214  0.0297 
- PositionInner           0.3079 -0.0988 
+ FragIsolated           -0.2166  0.0265 
+ PositionInner           0.3099 -0.0783 
  Positionother                          
- PositionOuter          -0.3249  0.0953 
+ PositionOuter          -0.3214  0.0888 
   
  Goodness of fit: 
               r2  Pr(>r)   
- Block    0.1130 0.13586   
- Chamber  0.0765 0.03497 * 
- Frag     0.0249 0.71828   
- Position 0.0895 0.02198 * 
+ Block    0.1018 0.16583   
+ Chamber  0.0762 0.03497 * 
+ Frag     0.0256 0.71828   
+ Position 0.0882 0.01798 * 
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  
  P values based on 1000 permutations. 
@@ -435,21 +435,21 @@ Based on  999  permutations
  Model: cca(formula = Fauna.subset ~ Block + Chamber + Frag + Position + H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + Decomposition + Prod01 + Prod12 + Prod23 + NH4 + NO3 + TAN, data = Fauna.envs) 
                Df  Chisq      F N.Perm Pr(>F)    
  Block          3 0.2863 3.3128    199  0.005 ** 
- Chamber        1 0.0503 1.7445    199  0.010 ** 
- Frag           2 0.0711 1.2330    199  0.075 .  
- Position       1 0.0434 1.5076    199  0.070 .  
+ Chamber        1 0.0503 1.7445    199  0.015 *  
+ Frag           2 0.0711 1.2330    199  0.095 .  
+ Position       1 0.0434 1.5076    199  0.060 .  
  H2O            1 0.1336 4.6388    199  0.005 ** 
- Patch.dwt      1 0.0566 1.9651    199  0.035 *  
- Cells.g        1 0.0328 1.1390    199  0.320    
- Stigonema.g    1 0.0433 1.5015    199  0.120    
- Nostoc.g       1 0.0122 0.4223    199  0.740    
- ARA.g          1 0.0236 0.8200    199  0.520    
- Decomposition  1 0.0811 2.8152    199  0.005 ** 
- Prod01         1 0.0361 1.2523    199  0.210    
- Prod12         1 0.0191 0.6623    199  0.770    
- Prod23         1 0.0187 0.6473    199  0.670    
- NH4            1 0.0957 3.3217    199  0.030 *  
- NO3            1 0.0526 1.8259    199  0.105    
+ Patch.dwt      1 0.0566 1.9651    199  0.030 *  
+ Cells.g        1 0.0328 1.1390    199  0.265    
+ Stigonema.g    1 0.0433 1.5015    199  0.125    
+ Nostoc.g       1 0.0122 0.4223    199  0.720    
+ ARA.g          1 0.0236 0.8200    199  0.525    
+ Decomposition  1 0.0811 2.8152    199  0.015 *  
+ Prod01         1 0.0361 1.2523    199  0.180    
+ Prod12         1 0.0191 0.6623    199  0.700    
+ Prod23         1 0.0187 0.6473    199  0.710    
+ NH4            1 0.0957 3.3217    199  0.005 ** 
+ NO3            1 0.0526 1.8259    199  0.075 .  
  Residual      24 0.6915                         
  --- 
  Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1  

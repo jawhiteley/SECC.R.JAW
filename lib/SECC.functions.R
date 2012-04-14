@@ -379,6 +379,37 @@ SECCicons <- function()
 }
 
 
+SECCplotDataANOVA <- function(SECCdata, 
+                              by.agg = list(Chamber = SECCdata$Chamber), 
+                              FUN.agg = mean, 
+                              error.msd, ...)
+{
+  if (class(SECCdata) == "data.frame") SECCdata <- SECCdata$Y.trans
+  plot.means <- aggregate(SECCdata, by = by.agg, FUN = FUN.agg, ... )
+  if ("Time" %in% colnames(plot.means))
+    levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
+  plot.means <- within(plot.means, 
+                       {
+                         error <- as.numeric(error.msd/2)
+                         upper <- x + error
+                         lower <- x - error
+                         if (Y.use == "Y.log")
+                         {
+                           x <- 10^x
+                           lower <- 10^lower
+                           upper <- 10^upper
+                         }
+                         if (Y.use == "Y.sqrt")
+                         {
+                           x <- x^2
+                           lower <- lower^2
+                           upper <- upper^2
+                         }
+                       })
+  plot.means
+}
+
+
 
 
 ##################################################

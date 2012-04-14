@@ -52,13 +52,13 @@ SECC.fauna.mc <- aggregate(SECC.fauna.coded[, Spp.cols],
 rownames(SECC.fauna.mc) <- SECC.fauna.mc$Sample
 Factors.mc    <- SECC.fauna.mc[,  (1:4)] # keep trt columns
 SECC.fauna.mc <- SECC.fauna.mc[, -(1:5)] # drop trt columns
-Fauna.mc      <- SECC.fauna.mc[, Spp.fauna]
+Fauna.mc      <- SECC.fauna.mc[, Spp.fauna] # exclude Prostigs + Other
 ## assuming both data frames are still in the same order...
 Fauna.mc.sum <- within(Factors.mc, 
                        {
                          ## Note that this is now GAMMA (regional) richness
-                         Richness <- apply(SECC.fauna.mc, 1, function(x) length(which(x>0)) )  # observed # spp.
-                         Evenness <- diversity(SECC.fauna.mc, index = "invsimpson")
+                         Richness <- apply(Fauna.mc, 1, function(x) length(which(x>0)) )  # observed # spp.
+                         Evenness <- diversity(Fauna.mc, index = "invsimpson")
                        })
 
 ## Calculate Group totals

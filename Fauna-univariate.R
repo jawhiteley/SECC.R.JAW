@@ -152,16 +152,14 @@ FragIconList <- list(FragIcon1 = FragIcon1,
                      FragIcon4 = FragIcon4
                      )
 
+
 ## 3-way interaction: NS
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means <- within(plot.means, 
-                     {
-                       error <- as.numeric(msd["Chamber:Frag:Position"]/2)
-                       upper <- x + error
-                       lower <- x - error
-                       levels(Chamber)[2] <- "Chamber"
-                     })
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, 
+                                     Position=SECCp$Position, Time=SECCp$Time), 
+                                error = msd["Chamber:Frag:Position"]
+                                )
+levels(plot.means$Chamber)[2] <- "Chamber"
 
 ## if (!exists('Y.lim')) Y.lim <- c(-1, 20)
 Y.lim <- with(plot.means, range(lower, upper))
@@ -203,14 +201,11 @@ print(CFP.plot)
 
 
 ## Frag x Position
-plot.means <- aggregate(SECCp$Y.trans, list(Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means <- within(plot.means, 
-                     {
-                       error <- as.numeric(msd["Frag:Position"]/2)
-                       upper <- x + error
-                       lower <- x - error
-                     })
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Frag=SECCp$Frag, Position=SECCp$Position, 
+                                     Time=SECCp$Time), 
+                                error = msd["Frag:Position"]
+                                )
 
 if (exists('Y.lim1'))
 {
@@ -255,15 +250,13 @@ print(FxP.plot)
 
 
 ## Chamber x Position
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means <- within(plot.means, 
-                     {
-                       error <- as.numeric(msd["Chamber:Position"]/2)
-                       upper <- x + error
-                       lower <- x - error
-                       levels(Chamber)[2] <- "Chamber\n"
-                     })
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, Position=SECCp$Position, 
+                                     Time=SECCp$Time), 
+                                error = msd["Chamber:Position"]
+                                )
+levels(plot.means$Chamber)[2] <- "Chamber"
+
 
 if (exists('Y.lim1'))
 {

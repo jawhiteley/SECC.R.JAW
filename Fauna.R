@@ -137,6 +137,8 @@ if (FALSE)
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
 
+  pairplot(SECC.sp.sum[, which(sapply(SECC.sp.sum, class) == "numeric")])
+  pairplot(SECC.sp.sum[, c("Richness", "Evenness", "fauna.jaw")])
 }
 
 
@@ -160,7 +162,7 @@ Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
 Y.col <- 'Grazers'
-Y.use <- 'Y'
+Y.use <- 'Y.sqrt'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
 

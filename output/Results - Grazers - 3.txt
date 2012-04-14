@@ -1,11 +1,11 @@
 Nested ANOVA Results for: Grazers (fungivorous Acari + Collembola) ( Grazers ) 
-Transformation used:      Y 
+Transformation used:      Y.sqrt 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Thu Apr 12 22:52:59 2012
+Fri Apr 13 21:55:16 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -14,47 +14,47 @@ Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
-Residuals  3 788.57  262.86               
+Residuals  3 15.206  5.0687               
 
 Error: Block:Chamber
-          Df Sum Sq Mean Sq F value Pr(>F)
-Chamber    1 270.93  270.93   1.257 0.3439
-Residuals  3 646.61  215.54               
+          Df  Sum Sq Mean Sq F value Pr(>F)
+Chamber    1  9.5703  9.5703  2.3299 0.2243
+Residuals  3 12.3228  4.1076               
 
 Error: Block:Chamber:Frag
-             Df Sum Sq Mean Sq F value Pr(>F)
-Frag          2 108.86  54.432  0.7685 0.4852
-Chamber:Frag  2 101.00  50.500  0.7130 0.5098
-Residuals    12 849.95  70.829               
+             Df  Sum Sq Mean Sq F value Pr(>F)
+Frag          2  1.6660  0.8330  0.5651 0.5827
+Chamber:Frag  2  5.9789  2.9894  2.0281 0.1743
+Residuals    12 17.6878  1.4740               
 
 Error: Within
-                      Df Sum Sq Mean Sq F value  Pr(>F)   
-Position               1   6.24    6.24  0.1673 0.68738   
-Chamber:Position       1 448.83  448.83 12.0326 0.00274 **
-Frag:Position          2 377.28  188.64  5.0572 0.01808 * 
-Chamber:Frag:Position  2  44.88   22.44  0.6016 0.55858   
-Residuals             18 671.42   37.30                   
+                      Df  Sum Sq Mean Sq F value    Pr(>F)    
+Position               1  1.5424  1.5424  1.7804 0.1987393    
+Chamber:Position       1 14.0874 14.0874 16.2610 0.0007812 ***
+Frag:Position          2 14.5224  7.2612  8.3815 0.0026754 ** 
+Chamber:Frag:Position  2  2.8661  1.4331  1.6542 0.2190295    
+Residuals             18 15.5940  0.8663                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Thu Apr 12 22:53:00 2012
+% Fri Apr 13 21:55:17 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
   \hline
  & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
   \hline
-Residuals & 3 & 788.57 & 262.86 &  &  \\ 
-  Chamber   & 1 & 270.93 & 270.93 & 1.26 & 0.3439 \\ 
-  Residuals1 & 3 & 646.61 & 215.54 &  &  \\ 
-  Frag         & 2 & 108.86 & 54.43 & 0.77 & 0.4852 \\ 
-  Chamber:Frag & 2 & 101.00 & 50.50 & 0.71 & 0.5098 \\ 
-  Residuals    & 12 & 849.95 & 70.83 &  &  \\ 
-  Position              & 1 & 6.24 & 6.24 & 0.17 & 0.6874 \\ 
-  Chamber:Position      & 1 & 448.83 & 448.83 & 12.03 & 0.0027 \\ 
-  Frag:Position         & 2 & 377.28 & 188.64 & 5.06 & 0.0181 \\ 
-  Chamber:Frag:Position & 2 & 44.88 & 22.44 & 0.60 & 0.5586 \\ 
-  Residuals             & 18 & 671.42 & 37.30 &  &  \\ 
+Residuals & 3 & 15.21 & 5.07 &  &  \\ 
+  Chamber   & 1 & 9.57 & 9.57 & 2.33 & 0.2243 \\ 
+  Residuals1 & 3 & 12.32 & 4.11 &  &  \\ 
+  Frag         & 2 & 1.67 & 0.83 & 0.57 & 0.5827 \\ 
+  Chamber:Frag & 2 & 5.98 & 2.99 & 2.03 & 0.1743 \\ 
+  Residuals    & 12 & 17.69 & 1.47 &  &  \\ 
+  Position              & 1 & 1.54 & 1.54 & 1.78 & 0.1987 \\ 
+  Chamber:Position      & 1 & 14.09 & 14.09 & 16.26 & 0.0008 \\ 
+  Frag:Position         & 2 & 14.52 & 7.26 & 8.38 & 0.0027 \\ 
+  Chamber:Frag:Position & 2 & 2.87 & 1.43 & 1.65 & 0.2190 \\ 
+  Residuals             & 18 & 15.59 & 0.87 &  &  \\ 
    \hline
 \end{tabular}
 \end{center}
@@ -64,63 +64,63 @@ Residuals & 3 & 788.57 & 262.86 &  &  \\
 Tables of means
 Grand mean
          
-11.68101 
+3.060652 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-      14.057        9.305 
+       3.507        2.614 
 
  Frag 
 Frag
     Continuous Full Corridors       Isolated 
-         9.767         13.447         11.829 
+         2.856          3.307          3.019 
 
  Position 
 Position
- Inner  Outer 
-12.042 11.320 
+Inner Outer 
+3.240 2.881 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Isolated
-  Ambient      10.092     16.807         15.271  
-  Full Chamber  9.442     10.087          8.386  
+  Ambient      2.811      3.924          3.787   
+  Full Chamber 2.901      2.689          2.252   
 
  Chamber:Position 
               Position
-Chamber        Inner  Outer 
-  Ambient      11.359 16.754
-  Full Chamber 12.724  5.887
+Chamber        Inner Outer
+  Ambient      3.145 3.870
+  Full Chamber 3.335 1.893
 
  Frag:Position 
                 Position
-Frag             Inner  Outer 
-  Continuous      6.432 13.102
-  Full Corridors 14.411 12.483
-  Isolated       15.281  8.376
+Frag             Inner Outer
+  Continuous     2.296 3.416
+  Full Corridors 3.647 2.966
+  Isolated       3.777 2.262
 
  Chamber:Frag:Position 
 , , Position = Inner
 
               Frag
 Chamber        Continuous Full Corridors Isolated
-  Ambient       4.545     15.221         14.312  
-  Full Chamber  8.320     13.601         16.250  
+  Ambient      1.980      3.772          3.682   
+  Full Chamber 2.611      3.521          3.873   
 
 , , Position = Outer
 
               Frag
 Chamber        Continuous Full Corridors Isolated
-  Ambient      15.639     18.393         16.230  
-  Full Chamber 10.565      6.573          0.522  
+  Ambient      3.642      4.076          3.892   
+  Full Chamber 3.191      1.857          0.632   
 
 
 95% Minimum Significant Ranges (MSR):
               Chamber                  Frag              Position          Chamber:Frag 
-             9.820287              8.074210              4.085300             13.727800 
+            1.3556832             1.1647698             0.6225959             1.9803455 
      Chamber:Position         Frag:Position Chamber:Frag:Position 
-             7.363177              9.962184             16.274172 
+            1.1221413             1.5182276             2.4801688 
 
 
 ================================================================
@@ -130,44 +130,44 @@ Y.trans ~ Chamber * Frag + Error(Block/Chamber)
 
 Error: Block
           Df Sum Sq Mean Sq F value Pr(>F)
-Residuals  3 394.28  131.43               
+Residuals  3 7.5339  2.5113               
 
 Error: Block:Chamber
           Df Sum Sq Mean Sq F value Pr(>F)
-Chamber    1 135.47  135.47   1.257 0.3439
-Residuals  3 323.30  107.77               
+Chamber    1 2.8662  2.8662  1.2292 0.3485
+Residuals  3 6.9953  2.3317               
 
 Error: Within
              Df Sum Sq Mean Sq F value Pr(>F)
-Frag          2  54.43  27.216  0.7685 0.4852
-Chamber:Frag  2  50.50  25.250  0.7130 0.5098
-Residuals    12 424.98  35.415               
+Frag          2 0.7215 0.36077  0.5616 0.5846
+Chamber:Frag  2 1.3870 0.69349  1.0796 0.3706
+Residuals    12 7.7083 0.64236               
 
 
 Tables of means
 Grand mean
-         
-11.68101 
+        
+3.24764 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-      14.057        9.305 
+       3.593        2.902 
 
  Frag 
 Frag
     Continuous Full Corridors       Isolated 
-         9.767         13.447         11.829 
+         3.012          3.425          3.305 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Isolated
-  Ambient      10.092     16.807         15.271  
-  Full Chamber  9.442     10.087          8.386  
+  Ambient      3.018      3.932          3.830   
+  Full Chamber 3.007      2.919          2.780   
 
 95% Minimum Significant Ranges (MSR):
      Chamber         Frag Chamber:Frag 
-   10.194597     8.476233    14.819259 
+    1.499568     1.141567     1.995837 
 
 
 <============================= END ============================>
