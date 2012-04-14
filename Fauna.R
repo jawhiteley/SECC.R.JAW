@@ -192,11 +192,15 @@ if (FALSE)
 ### MULTIVARIATE ANALYSES
 ##################################################
 ## Transformation
-Fauna.trans <- log( Fauna +1 ) 
+Fauna.log  <- log( Fauna +1 ) 
+Fauna.hell <- decostand( Fauna, method = "hellinger" ) 
+
+Fauna.trans <- Fauna.log
 
 ## Distance/Similarity matrix (can be included in MDS call)
 Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
-Fauna.hell  <- vegdist(Fauna.trans, method = "bray")
+Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard")
+Fauna.held  <- vegdist(Fauna.hell,  method = "bray")
 Fauna.chord <- vegdist(Fauna.trans, method = "bray")
 
 Fauna.dist <- Fauna.bray               # default
@@ -226,48 +230,130 @@ Fauna.plot <- ordiplot( Fauna.mds, type="text" )
 ##################################################
 ## ANOSIM
 ##################################################
-ANOSIM.results <- capture.output(      # to make saving easier @ end
+## Chamber, Pos, Frag, 
+## Frag:1x2, Frag:2x4, Frag:1x4, 
+## Chamber:A x Pos, Chamber:A x Frag,
+## Chamber:C x Pos, Chamber:C x Frag,
+## Pos:I x Frag, Pos:O x Frag,
+## X Chamber:A x Pos:I x Frag,
+## Chamber:C x Pos:I x Frag,
+## Chamber:C x Pos:O x Frag,
+## split = ",\\s\\n?\\s*", fixed = FALSE)[[1]]
 
-## ANOSIM by single factor
-  Fauna.Chamber.anosim <- anosim( Fauna.dist, Fauna.sp$Chamber )
-, Fauna.Chamber.anosim # Look at results
-
-,Fauna.Pos.anosim <- anosim( Fauna.dist, Fauna.sp$Pos )
-,Fauna.Pos.anosim # Look at results
-
-,Fauna.Frag.anosim <- anosim( Fauna.dist, Fauna.sp$Frag )
-,Fauna.Frag.anosim # Look at results
-
-## ANOSIM within main factors (interactions)
-,for (lvl in levels(Fauna.sp$Chamber)) {
-  cat("Chamber:", lvl, "\n")
-  Fauna.data <- Fauna.trans[which(Fauna.sp$Chamber == lvl), ]
-  Fauna.d <- vegdist(Fauna.data, method = "bray")
-  ## Chamber x Pos
-  cat("Chamber:", lvl, "x Pos",  "\n")
-  Fauna.CxP.anosim <- anosim( Fauna.d, Fauna.sp$Pos )
-  print(Fauna.CxP.anosim) # Look at results
-  ## Chamber x Frag
-  cat("Chamber:", lvl, "x Frag",  "\n")
-  Fauna.CxF.anosim <- anosim( Fauna.d, Fauna.sp$Frag )
-  print(Fauna.CxF.anosim) # Look at results
+## Assemble a data frame of specific group comparisions x distance metrics
+ANOSIM.results <- data.frame(Groups = c())
+dist.methods <- c("bray", "jaccard")
+dist.trans <- c()                      # transformations?
+for (dista in dist.methods)
+{
+  cat("ANOSIM: using method = \'", dista, "\'\n", sep="")
+  dist.g <- c()                        # group labels
+  dist.R <- c()
+  dist.p <- c()
+  ## ANOSIM by single factor
+  cat("- Single Factor ANOSIMs\n")
+  Fauna.d <- vegdist(Fauna.trans, method = dista)
+  Fauna.Chamber.anosim <- anosim( Fauna.d, Fauna.sp$Chamber )
+  Fauna.Pos.anosim     <- anosim( Fauna.d, Fauna.sp$Pos )
+  Fauna.Frag.anosim    <- anosim( Fauna.d, Fauna.sp$Frag )
+  dist.R <- c(dist.R, 
+              Fauna.Chamber.anosim$statistic,
+              Fauna.Pos.anosim$statistic,
+              Fauna.Frag.anosim$statistic
+              )
+  dist.p <- c(dist.p, 
+              Fauna.Chamber.anosim$signif,
+              Fauna.Pos.anosim$signif,
+              Fauna.Frag.anosim$signif
+              )
+  dist.g <- c(dist.g, "Chamber", "Pos", "Frag")
+  ## Pairs of Frag levels
+  cat("- among Frag levels\n")
+  for (lvl in c("1x2", "2x4", "1x4")) 
+  {
+    g.rows <- which(Fauna.sp$Frag %in% strsplit(lvl, "x")[[1]])
+    g.lvls <- Fauna.sp[g.rows, c("Frag")]
+    Fauna.data <- Fauna.trans[g.rows, ]
+    Fauna.d <- vegdist(Fauna.data, method = dista)
+    Fauna.Fraglvl.anosim <- anosim( Fauna.d, g.lvls )
+    dist.R <- c(dist.R, Fauna.Fraglvl.anosim$statistic)
+    dist.p <- c(dist.p, Fauna.Fraglvl.anosim$signif)
+    dist.g <- c(dist.g, paste("Frag:", lvl, sep="") )
+  }
+  ## ANOSIM within main factors (interactions)
+  cat("- ANOSIM within levels of main factors (2-way interactions)\n")
+  cat("  - ANOSIM within Chamber\n")
+  for (lvl in levels(Fauna.sp$Chamber)) 
+  {
+    g.rows <- which(Fauna.sp$Chamber == lvl) 
+    g.lvls <- Fauna.sp[g.rows, c("Chamber")] 
+    Fauna.data <- Fauna.trans[g.rows, ]
+    Fauna.d <- vegdist(Fauna.data, method = dista)
+    ## Chamber x Pos
+    Fauna.CxP.anosim <- anosim( Fauna.d, Fauna.sp$Pos[g.rows] )
+    ## Chamber x Frag
+    Fauna.CxF.anosim <- anosim( Fauna.d, Fauna.sp$Frag[g.rows] )
+    dist.R <- c(dist.R, 
+                Fauna.CxP.anosim$statistic,
+                Fauna.CxF.anosim$statistic
+                )
+    dist.p <- c(dist.p, 
+                Fauna.CxP.anosim$signif,
+                Fauna.CxF.anosim$signif
+                )
+    dist.g <- c(dist.g, 
+                paste("Chamber:", lvl, " x Pos",  sep = ""),
+                paste("Chamber:", lvl, " x Frag", sep = "")
+                )
+  }
+  cat("  - ANOSIM within Pos\n")
+  for (lvl in levels(Fauna.sp$Pos)) 
+  {
+    g.rows <- which(Fauna.sp$Pos == lvl) 
+    g.lvls <- Fauna.sp[g.rows, c("Pos")] 
+    Fauna.data <- Fauna.trans[g.rows, ]
+    Fauna.d <- vegdist(Fauna.data, method = dista)
+    ## Pos x Frag
+    Fauna.PxF.anosim <- anosim( Fauna.d, Fauna.sp$Frag[g.rows] )
+    dist.R <- c(dist.R, 
+                Fauna.PxF.anosim$statistic
+                )
+    dist.p <- c(dist.p, 
+                Fauna.PxF.anosim$signif
+                )
+    dist.g <- c(dist.g, 
+                paste("Pos:", lvl, " x Frag",  sep = "")
+                )
+  }
+  cat("  - ANOSIM: Frag within Chamber x Pos\n")
+  for (lvl in levels(Fauna.sp$Pos))
+  {
+    g.rows <- which(Fauna.sp$Pos == lvl & Fauna.sp$Chamber == "C") 
+    g.lvls <- Fauna.sp[g.rows, c("Frag")] 
+    Fauna.data <- Fauna.trans[g.rows, ]
+    Fauna.d <- vegdist(Fauna.data, method = dista)
+    ## Chamber x Pos x Frag
+    Fauna.CxPxF.anosim <- anosim( Fauna.d, Fauna.sp$Frag[g.rows] )
+    dist.R <- c(dist.R, 
+                Fauna.CxPxF.anosim$statistic
+                )
+    dist.p <- c(dist.p, 
+                Fauna.CxPxF.anosim$signif
+                )
+    dist.g <- c(dist.g, 
+                paste("Chamber:C x Pos:", lvl, " x Frag",  sep = "")
+                )
+  }
+  cat("Assembling ANOSIM results for method: ", dista, "\n")
+  if (nrow(ANOSIM.results) != length(dist.g)) 
+    ANOSIM.results <- data.frame(Groups = dist.g)      # labels
+  ##   ANOSIM.results$Groups <- dist.g      # labels
+  ANOSIM.results <- cbind(ANOSIM.results, dist.R, dist.p)
+  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.R"] <- paste(dista, ".R", sep="")
+  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.p"] <- paste(dista, ".p", sep="")
 }
 
-,for (lvl in levels(Fauna.sp$Frag)) {
-  cat("Frag:", lvl, "\n")
-  Fauna.data <- Fauna.trans[which(Fauna.sp$Frag == lvl), ]
-  Fauna.d <- vegdist(Fauna.data, method = "bray")
-  ## Frag x Pos
-  cat("Frag:", lvl, "x Pos",  "\n")
-  Fauna.FxP.anosim <- anosim( Fauna.d, Fauna.sp$Pos )
-  print(Fauna.FxP.anosim) # Look at results
-  ## Frag x Chamber
-  cat("Frag:", lvl, "x Chamber",  "\n")
-  Fauna.FxC.anosim <- anosim( Fauna.d, Fauna.sp$Chamber )
-  print(Fauna.FxC.anosim) # Look at results
-}
-)
-cat( paste(ANOSIM.results, collapse = "\n") )
+
 
 ##==============================================================
 ## SIMPER (slow)
@@ -276,8 +362,11 @@ any( rownames(Fauna.trans) != rownames(Fauna.sp) ) # just checking: should be FA
 Chamber.simp <- simper(Fauna.trans, Fauna.sp$Chamber)
 ChamberFrag <- paste(Fauna.sp$Chamber, Fauna.sp$Frag, sep=".")
 ChamberPosn <- paste(Fauna.sp$Chamber, Fauna.sp$Pos , sep=".")
+FragPosn    <- paste(Fauna.sp$Frag, Fauna.sp$Pos , sep=".")
 ChamberFrag.simp <- simper(Fauna.trans, ChamberFrag)
 ChamberPosn.simp <- simper(Fauna.trans, ChamberPosn)
+Chamber.rows     <- which(Fauna.sp$Chamber == "C")
+CxFragPos.simp   <- simper(Fauna.trans[Chamber.rows, ], FragPosn[Chamber.rows])
 
 
 
@@ -407,6 +496,17 @@ Compo.plot <- ggplot(SECC.sp.CxP, aes(x = Position, y = Abundance, fill = Group)
     jaw.ggplot()
 
 print(Compo.plot)
+
+
+
+
+################################################################
+### SPATIAL ANALYSIS
+################################################################
+## Mantel test: Are similarities spatially correlated?
+## correlgoram: At what scale are similarities correlated?
+## Partial Mantel Test: differences among treatment groups, after removing effect of space?
+
 
 
 
