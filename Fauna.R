@@ -89,6 +89,11 @@ Fauna <- SECC.sp
 ##================================================
 ## Already calculated in`/lib/load_fauna.R`
 SECC.sp.sum <- SECC.fauna.sum[Samples.fauna, ]
+## filter additional data frames to match
+Fauna.xy <- SECC.xy[which(SECC.xy$SampleID %in% rownames(Fauna)), ]
+SECC.env <- SECC[which(SECC$SampleID %in% rownames(Fauna)), ]
+## Merge with SECC data for direct comparisons
+SECC.sum <- merge(SECC.env, recodeSECC(SECC.sp.sum), all = TRUE)
 
 ##================================================
 ## Species Richness & Diversity metrics
@@ -126,13 +131,19 @@ if (FALSE)
   print(Fauna.bip)
 
   ## check variation & transformations
+  ##   boxplot( Fauna            , horizontal = TRUE, show.names = FALSE, main = "raw data")
   boxplot( Fauna            , main = "raw data")
   boxplot( sqrt( Fauna )    , main = "sqrt")
   boxplot( Fauna ^0.25      , main = "4th rt")
   boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
+  boxplot( log1p(Fauna)     , main = "log_e(X +1)")
   boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
   boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
+  boxplot( decostand( Fauna, method = 'max' )   , main = "max") 
   boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
+  ##   boxplot( decostand( Fauna, method = 'standardize' )   , main = "standardize") # problems (warnings)
+  boxplot( decostand( Fauna, method = 'hellinger' )   , main = "hellinger") 
+  ## Chord transformation?
 
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
@@ -183,8 +194,12 @@ if (FALSE)
 ## Transformation
 Fauna.trans <- log( Fauna +1 ) 
 
-## Distance/Similarity matrix (included in MDS call)
-Fauna.dist <- vegdist(Fauna.trans, method = "bray")
+## Distance/Similarity matrix (can be included in MDS call)
+Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
+Fauna.hell  <- vegdist(Fauna.trans, method = "bray")
+Fauna.chord <- vegdist(Fauna.trans, method = "bray")
+
+Fauna.dist <- Fauna.bray               # default
 
 
 ##################################################
@@ -267,27 +282,131 @@ ChamberPosn.simp <- simper(Fauna.trans, ChamberPosn)
 
 
 ##==============================================================
-## CCA
+## CA
 ##==============================================================
 Fauna.ca <- cca(Fauna.trans)
 ordiplot(Fauna.ca, scaling = 2, type = "text", xlim = c(-2, 12))
 ## Different species pop out vs. the SIMPER analyses; different distance metric
 ## Although the graphs are nice and show complex relationships easily,
-## I'm losing confidence that CA / CCA is the most appropriate for this data.
+## I'm losing confidence that CA / CCA is the most appropriate for this data,
+## or, I need a different transformation for it.
 
 
 
 ##==============================================================
 ## PCoA
 ##==============================================================
-## Yay, I get to use Bray-Curtis distances again :D
+## Yay, I get to use whatever distance measure I want :D
 ## Borcard et al. (2011) pg. 142
 Fauna.pcoa <- cmdscale(Fauna.dist, k = 2, eig = TRUE)
-Fauna.pcoa.spscores <- wascores(Fauna.pcoa$points[, 1:2], Fauna.trans)
+Fauna.pcoa.spscores <- wascores(Fauna.pcoa$points[, 1:2], Fauna.trans) # species 'scores'
 
 ordiplot(Fauna.pcoa, type = "text")
 text(Fauna.pcoa.spscores, rownames(Fauna.pcoa.spscores), cex = 0.8, col = "red", srt = 20)
 
+
+
+
+################################################################
+## Correlations
+################################################################
+## library(plyr)
+
+cols.numeric <- sapply(SECC.sp.sum, function (x) class(x) == "numeric")
+Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "pearson")
+Spp.cor <- cor(SECC.sp)
+summary(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE) # lower triangle of the correlation matrix (lower.tri) :D
+Spp.meancor       <- mean(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
+Spp.meancor.sd    <- sd(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
+Spp.meancor.error <- sd(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE) / 
+                    sqrt( length( which(!is.na(Spp.cor[lower.tri(Spp.cor)])) ) )
+Spp.cortest       <- t.test( Spp.cor[lower.tri(Spp.cor)] )
+## Most species are positively correlated :P
+library(MASS)
+truehist(Spp.cor[lower.tri(Spp.cor)], xlim = c(-1, 1), col = "#999999",
+         xlab = "Species correlations", ylab = "frequency")
+abline(v = 0, lty = "dashed", lwd = 3, col = "#333333")
+
+## Correlations *within groups* (Predators, Grazers, etc.)?
+## data.frame with:  column of correlation values, column of Group (including "Between Groups")
+Spp.cort  <- Spp.cor
+Spp.cort[upper.tri(Spp.cort, diag = TRUE)] <- NA
+Spp.cordf <- reshape(data = as.data.frame(Spp.cort), 
+                     varying = list(colnames(Spp.cor)),
+                     times = colnames(Spp.cor),
+                     timevar = "Species2",
+                     idvar = "Species1",
+                     ids = rownames(Spp.cor),
+                     v.names = "cor",
+                     direction = "long"
+                     )
+Spp.cordf <- subset(Spp.cordf, !is.na(cor) )
+Spp.cordf <- within(Spp.cordf[, c("cor", "Species1", "Species2")], {
+                    Group1 <- match(Species1, SECC.fauna.meta$ID)
+                    Group1 <- SECC.fauna.meta$Taxonomic.Group[Group1]
+                    Taxa <- match(Species1, SECC.fauna.meta$ID)
+                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
+                    Group1 <- ifelse(Taxa == "Uropodina", Taxa, Group1)
+                    Group2 <- match(Species2, SECC.fauna.meta$ID)
+                    Group2 <- SECC.fauna.meta$Taxonomic.Group[Group2]
+                    Taxa <- match(Species2, SECC.fauna.meta$ID)
+                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
+                    Group2 <- ifelse(Taxa == "Uropodina", Taxa, Group2)
+                    ## 1 column of between Group labels
+                    Group <- ifelse(Group1 == Group2, Group1, "Between Groups")
+                    Group <- ifelse(Group %in% c("Mesostigmata", "Prostigmata"), "Predators", Group)
+                    Group <- ifelse(Group %in% c("Collembola", "Uropodina"), "Grazers", Group)
+                    rm(Taxa)
+                     })
+
+## Predators are essentially uncorrelated (~0), Grazers & Between Groups are slightly +vely correlated (~0.05)
+Graz.cortest <- t.test( subset(Spp.cordf, Group == "Grazers", select = "cor") )
+Pred.cortest <- t.test( subset(Spp.cordf, Group == "Predators", select = "cor") )
+Btwn.cortest <- t.test( subset(Spp.cordf, Group == "Between Groups", select = "cor") )
+Spp.cortest
+Graz.cortest
+Pred.cortest
+Btwn.cortest
+
+## Stacked bar graph :D
+Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) + 
+    xlim(-1, 1) + xlab("Species correlation") + ylab("frequency") +
+    geom_bar(binwidth = 0.1, colour = "#333333", lwd = 0.2) + 
+    scale_fill_manual(values = c("#CCCCCC", "#999999", "#444444"), 
+                      breaks = c("Predators", "Grazers", "Between Groups")) +
+    geom_vline(xintercept = 0, colour = "#666666", lwd = 1, lty = "dashed") +
+    jaw.ggplot()
+print(Spp.corplot)
+
+pairplot(SECC.sum[, c("Predators", "Grazers", "Cells.g")])
+## scatterplot of group abundances in Final Publication Graphs below
+
+
+##================================================
+## Composition
+##================================================
+
+SECC.sp.CxP <- checkSECCdata(SECC.sp.sum, 'SECC.sp.sum')
+SECC.sp.CxP <- recodeSECC( SECC.sp.CxP )
+SECC.sp.CxP <- reshape(data = SECC.sp.CxP, 
+                       idvar = colnames(SECC.sp.sum)[!cols.numeric], 
+                       varying = list(c("Predators", "Grazers")),
+                       times = c("Predators", "Grazers"),
+                       v.names = "Abundance", timevar = "Group",
+                       direction = "long"
+                       )
+SECC.sp.CxP <- aggregate(Abundance ~ Chamber + Position + Group, 
+                         data = SECC.sp.CxP, 
+                         FUN = mean)
+
+Compo.plot <- ggplot(SECC.sp.CxP, aes(x = Position, y = Abundance, fill = Group)) + 
+    geom_bar(stat="identity", position = "fill", colour = NA) +
+    scale_fill_manual(values = c("Predators" = "#444444", "Grazers" = "#AAAAAA"),
+                      breaks = c("Predators", "Grazers")) +
+    facet_wrap(~ Chamber) + 
+    jaw.ggplot()
+
+print(Compo.plot)
 
 
 
@@ -298,7 +417,7 @@ text(Fauna.pcoa.spscores, rownames(Fauna.pcoa.spscores), cex = 0.8, col = "red",
 ## Extract matching ordination rows from Environmental data, *in same order*
 Fauna.sort <- match( rownames(Fauna.trans), SECC$SampleID )
 Fauna.sort <- na.omit(Fauna.sort)
-Fauna.env <- SECC[Fauna.sort, ]
+Fauna.env  <- SECC[Fauna.sort, ]
 ## Process standardized environmental variables
 Fauna.env <- within(Fauna.env,
                     {
@@ -373,106 +492,6 @@ ordiplot(Fauna.cca1, type="text",
          xlim = c(-2, 2), ylim = c(-2, 2)) # zoom in, but still messy.
 
 
-##================================================
-## Correlations
-##================================================
-## library(plyr)
-
-cols.numeric <- sapply(SECC.sp.sum, function (x) class(x) == "numeric")
-Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "pearson")
-Spp.cor <- cor(SECC.sp)
-summary(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE) # lower triangle of the correlation matrix (lower.tri) :D
-Spp.meancor       <- mean(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
-Spp.meancor.sd    <- sd(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
-Spp.meancor.error <- sd(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE) / 
-                    sqrt( length( which(!is.na(Spp.cor[lower.tri(Spp.cor)])) ) )
-Spp.cortest       <- t.test( Spp.cor[lower.tri(Spp.cor)] )
-## Most species are positively correlated :P
-library(MASS)
-truehist(Spp.cor[lower.tri(Spp.cor)], xlim = c(-1, 1), col = "#999999",
-         xlab = "Species correlations", ylab = "frequency")
-abline(v = 0, lty = "dashed", lwd = 3, col = "#333333")
-
-## Correlations *within groups* (Predators, Grazers, etc.)?
-## data.frame with:  column of correlation values, column of Group (including "Between Groups")
-Spp.cort  <- Spp.cor
-Spp.cort[upper.tri(Spp.cort, diag = TRUE)] <- NA
-Spp.cordf <- reshape(data = as.data.frame(Spp.cort), 
-                     varying = list(colnames(Spp.cor)),
-                     times = colnames(Spp.cor),
-                     timevar = "Species2",
-                     idvar = "Species1",
-                     ids = rownames(Spp.cor),
-                     v.names = "cor",
-                     direction = "long"
-                     )
-Spp.cordf <- subset(Spp.cordf, !is.na(cor) )
-Spp.cordf <- within(Spp.cordf[, c("cor", "Species1", "Species2")], {
-                    Group1 <- match(Species1, SECC.fauna.meta$ID)
-                    Group1 <- SECC.fauna.meta$Taxonomic.Group[Group1]
-                    Taxa <- match(Species1, SECC.fauna.meta$ID)
-                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
-                    Group1 <- ifelse(Taxa == "Uropodina", Taxa, Group1)
-                    Group2 <- match(Species2, SECC.fauna.meta$ID)
-                    Group2 <- SECC.fauna.meta$Taxonomic.Group[Group2]
-                    Taxa <- match(Species2, SECC.fauna.meta$ID)
-                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
-                    Group2 <- ifelse(Taxa == "Uropodina", Taxa, Group2)
-                    ## 1 column of between Group labels
-                    Group <- ifelse(Group1 == Group2, Group1, "Between Groups")
-                    Group <- ifelse(Group %in% c("Mesostigmata", "Prostigmata"), "Predators", Group)
-                    Group <- ifelse(Group %in% c("Collembola", "Uropodina"), "Grazers", Group)
-                    rm(Taxa)
-                     })
-
-## Predators are essentially uncorrelated (~0), Grazers & Between Groups are slightly +vely correlated (~0.05)
-Graz.cortest <- t.test( subset(Spp.cordf, Group == "Grazers", select = "cor") )
-Pred.cortest <- t.test( subset(Spp.cordf, Group == "Predators", select = "cor") )
-Btwn.cortest <- t.test( subset(Spp.cordf, Group == "Between Groups", select = "cor") )
-Spp.cortest
-Graz.cortest
-Pred.cortest
-Btwn.cortest
-
-## Stacked bar graph :D
-Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) + 
-    xlim(-1, 1) + xlab("Species correlation") + ylab("frequency") +
-    geom_bar(binwidth = 0.1, colour = "#333333", lwd = 0.2) + 
-    scale_fill_manual(values = c("#CCCCCC", "#999999", "#444444"), 
-                      breaks = c("Predators", "Grazers", "Between Groups")) +
-    geom_vline(xintercept = 0, colour = "#666666", lwd = 1, lty = "dashed") +
-    jaw.ggplot()
-print(Spp.corplot)
-
-
-
-
-##================================================
-## Composition
-##================================================
-
-SECC.sp.CxP <- checkSECCdata(SECC.sp.sum, 'SECC.sp.sum')
-SECC.sp.CxP <- recodeSECC( SECC.sp.CxP )
-SECC.sp.CxP <- reshape(data = SECC.sp.CxP, 
-                       idvar = colnames(SECC.sp.sum)[!cols.numeric], 
-                       varying = list(c("Predators", "Grazers")),
-                       times = c("Predators", "Grazers"),
-                       v.names = "Abundance", timevar = "Group",
-                       direction = "long"
-                       )
-SECC.sp.CxP <- aggregate(Abundance ~ Chamber + Position + Group, 
-                         data = SECC.sp.CxP, 
-                         FUN = mean)
-
-Compo.plot <- ggplot(SECC.sp.CxP, aes(x = Position, y = Abundance, fill = Group)) + 
-    geom_bar(stat="identity", position = "fill", colour = NA) +
-    scale_fill_manual(values = c("Predators" = "#444444", "Grazers" = "#AAAAAA"),
-                      breaks = c("Predators", "Grazers")) +
-    facet_wrap(~ Chamber) + 
-    jaw.ggplot()
-
-print(Compo.plot)
-
 
 
 
@@ -544,6 +563,13 @@ print(Fauna.plot.frag)
 ## Scatter plot; fitted line should be a Model II regression (Major Axis)
 library(lmodel2)
 PredGraz.lm2 <- lmodel2(Predators ~ Grazers, data = SECC.sp.sum, nperm = 999)
+if (FALSE)
+{
+  ## Model 2 regression: axes / order of variables does not matter!
+  GrazPred.lm2 <- lmodel2(Grazers ~ Predators, data = SECC.sp.sum, nperm = 999)
+  plot(PredGraz.lm2)
+  plot(GrazPred.lm2)
+}
 PredGraz.abline <- PredGraz.lm2$regression.results
 lm2.row <- which( PredGraz.abline == "MA" ) 
 PredGraz.abline <- PredGraz.abline[lm2.row, ]
