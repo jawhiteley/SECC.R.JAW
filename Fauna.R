@@ -192,16 +192,17 @@ if (FALSE)
 ### MULTIVARIATE ANALYSES
 ##################################################
 ## Transformation
-Fauna.log   <- log( Fauna +1 ) 
+Fauna.log   <- log( Fauna +1 )         # or log1p
 Fauna.max   <- decostand( Fauna, method = "max" ) 
 Fauna.hell  <- decostand( Fauna, method = "hellinger" ) 
 Fauna.chord <- decostand( Fauna, method = "normalize" ) ## Chord transformation
+Fauna.pa    <- decostand( Fauna, method = "pa" ) 
 
 Fauna.trans <- Fauna.log
 
 ## Distance/Similarity matrix (can be included in MDS call)
 Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
-Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard")
+Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard", binary = TRUE) # presence/absence data
 Fauna.hellD <- vegdist(Fauna.hell,  method = "euclidean")
 Fauna.chorD <- vegdist(Fauna.chord, method = "euclidean") ## Chord Distance
 
@@ -229,7 +230,7 @@ stressplot(Fauna.mds3, main=stress.label)
 Fauna.plot <- ordiplot( Fauna.mds, type="text", main = "Bray-Curtis Distance" )
 
 ## Alternate transformations & distances
-Jacc.mds   <- metaMDS( Fauna,       distance = "jaccard",   autotransform = FALSE, k = 2)
+Jacc.mds   <- metaMDS( Fauna.pa,    distance = "jaccard",   autotransform = FALSE, k = 2)
 Chord.mds  <- metaMDS( Fauna.chord, distance = "euclidean", autotransform = FALSE, k = 2)
 HellD.mds  <- metaMDS( Fauna.hell,  distance = "euclidean", autotransform = FALSE, k = 2)
 ordiplot( Jacc.mds, type="text" , main = "Jaccard Distance" )
@@ -253,8 +254,8 @@ ordiplot( HellD.mds, type="text", main = "Hellinger Distance" )
 
 ## Assemble a data frame of specific group comparisions x distance metrics
 ANOSIM.results <- data.frame(Groups = c())
-dist.methods <- c("bray", "bray", "euclidean", "euclidean", "jaccard", "jaccard")
-dist.trans   <- c("",     "log",  "hell",      "chord",     "",        "log") # transformations
+dist.methods <- c("bray", "bray", "euclidean", "euclidean", "jaccard")
+dist.trans   <- c("",     "log",  "hell",      "chord",     "pa") # transformations
 for (d in 1:length(dist.methods))
 {
   dista <- dist.methods[d]
@@ -629,6 +630,24 @@ MDS.pts <- cbind(MDS.pts, Time = Fauna.sp$Time, Chamber = Fauna.sp$Chamber,
                  Frag = Fauna.sp$Frag, Pos = Fauna.sp$Pos
 )
 
+## Data for spider plot
+MDS.spider <- MDS.pts[which(MDS.pts$Chamber == "C" & MDS.pts$Pos == "O"), ]
+MDS.centroids <- MDS.spider[0, ]
+for(f in levels(MDS.spider$Frag))
+{
+  g.pts <- MDS.spider[MDS.spider$Frag == f,]
+  centrx <- mean(g.pts$x)
+  centry <- mean(g.pts$y)
+  MDS.centroids <- rbind(MDS.centroids, 
+                         data.frame(x = centrx, y = centry,
+                                    Time = 4, Chamber = "C",
+                                    Frag = f, Pos = "O")
+  )
+}
+c.rows <- match(MDS.spider$Frag, MDS.centroids$Frag)
+MDS.spider$xend <- MDS.centroids$x[c.rows]
+MDS.spider$yend <- MDS.centroids$y[c.rows]
+
 ## plot symbol map
 ## Inner = full
 ## Outer = open
@@ -644,10 +663,22 @@ Position.label <- attr(SECC, "labels")[["Pos"]] # "Patch\nPosition"
 Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
 
 ## Build plot in ggplot
-Fauna.plot <- qplot(x, y, data = MDS.pts, group = Chamber,
-                    shape = Pos, colour = Chamber, size = I(3), lwd = I(1.5),
-                    xlab = NULL, ylab = NULL
-                    )   # facets=Frag~Time
+## including grouping variables (shape, colour, etc.) in the default aes() (or qplot) causes geom_text() to look REALLY UGLY
+Fauna.plot <- ggplot(data = MDS.pts, aes(x = x, y = y) ) +  
+                 ## Add spider plots of outer chamber patches (under the points)
+                 geom_segment(aes(x = x, y = y, xend = xend, yend = yend, 
+                                  colour = Chamber), data = MDS.spider) +  # , alpha = 0.6
+                 ## I want to overlay on the spider plot (behind the points):
+                 ## - a hexagon with a red outline ('outer chamber')
+                 ## - an icon of the frag treatment (a la grimport)
+                 ## complicated examples:
+                 ## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+                 ## http://stackoverflow.com/questions/8905101/how-can-i-use-a-graphic-imported-with-grimport-as-axis-tick-labels-in-ggplot2-u
+                 ## I don't have time to figure this out now, so I might just add those manually in Illustrator
+                 ## Add colour-coded points on top of spider plot :D
+                 geom_point(aes(group = Chamber, shape = Pos, colour = Chamber), 
+                           size = 3, lwd = 1.5) +
+                 xlab(NULL) + ylab(NULL)
 Fauna.plot <- Fauna.plot + scale_colour_manual(name = Chamber.label,
                                                values = Chamber.map$col, 
                                                breaks = Chamber.map$label,
@@ -658,10 +689,11 @@ Fauna.plot <- Fauna.plot + scale_shape_manual(name = Position.label,
                                               breaks = Position.map$label,
                                               labels = c("Inner (Wet)", "Outer (Dry)")
                                               )
-Fauna.plot <- Fauna.plot + scale_x_continuous(breaks = -4:4, limits = c(-3.7, 1.3))
-Fauna.plot <- Fauna.plot + scale_y_continuous(breaks = -4:4, limits = c(-2.7, 2.3))
+Fauna.plot <- Fauna.plot + 
+                scale_x_continuous(breaks = -4:4, limits = c(-3.7, 1.3)) +
+                scale_y_continuous(breaks = -4:4, limits = c(-2.7, 2.3))
 ## options: see theme_get() for available theme options.
-Fauna.plot <- Fauna.plot + theme_bw() + coord_equal()
+Fauna.plot <- Fauna.plot + jaw.ggplot() + coord_equal()
 Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(), 
                                 axis.text.x = theme_blank(), 
                                 axis.text.y = theme_blank(), 
@@ -669,11 +701,12 @@ Fauna.plot <- Fauna.plot + opts(axis.ticks = theme_blank(),
                                 legend.position = "right",
                                 legend.direction = "vertical"
                                 )
-Fauna.plot <- Fauna.plot + geom_text(aes(label = stress.label, x = max(x)*0.5, y = max(y) ), 
-                                     size = I(4), colour = "black", hjust = 0, vjust = 1)
+Fauna.plot <- Fauna.plot + geom_text(aes(label = stress.label, x = -3.5, y = max(y) ), 
+                                     size = 4, colour = "black", hjust = 0, vjust = 1)
 print(Fauna.plot)
-grid.text(label = stress.label, x = 0.85, y = 0.85, just = "left", hjust = 0, vjust = 1)
 
+## this is where I really want the stress label, but ggplot doesn't seem to be able to do this easily :(
+## grid.text(label = stress.label, x = 0.85, y = 0.85, just = "left", hjust = 0, vjust = 1)
 ## mtext( stress.label , side=3, line=0, adj=1 ) # kludge: trying to copy or save the graph now will make R crash.
 
 Fauna.plot.frag <- Fauna.plot + facet_grid(facets = Frag~.)
@@ -786,9 +819,10 @@ if (FALSE)
 ##================================================
 ## Save Multivariate Results
 ##================================================
-if (TRUE) {
+if (TRUE) 
+{
   ANOSIM.table <- xtable(ANOSIM.results[, c("Groups", "bray_.p", 
-                                                   "bray_log.p", "jaccard_.p")], 
+                                                   "bray_log.p", "jaccard_pa.p")], 
                                 digits = 3) # bray, bray_log, jaccard **** 
   capture.output(  cat("ANOSIM results\n")
       , print(ANOSIM.results), cat("\n\n")
@@ -803,7 +837,8 @@ if (TRUE) {
       , file = "./output/Fauna - Multivariate.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
-  ggsave(filename="./graphs/Figure - Fauna-Correlation.eps", plot = PredGraz.corplot, width = 6, height = 4)
+  ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 4)
+  ## semi-transparency (`alpha = `) is not supported in eps.  But it is in pdf ;)
 }
 
 
