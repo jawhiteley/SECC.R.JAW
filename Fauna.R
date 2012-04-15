@@ -92,8 +92,9 @@ SECC.sp.sum <- SECC.fauna.sum[Samples.fauna, ]
 ## filter additional data frames to match
 Fauna.xy <- SECC.xy[which(SECC.xy$SampleID %in% rownames(Fauna)), ]
 SECC.env <- SECC[which(SECC$SampleID %in% rownames(Fauna)), ]
-## Merge with SECC data for direct comparisons
-SECC.sum <- merge(SECC.env, recodeSECC(SECC.sp.sum), all = TRUE)
+## This also keeps the same *order*, assuming the rownames all match
+Fauna.xy <- SECC.xy[rownames(Fauna), ]
+SECC.env <- SECC[rownames(Fauna), ]
 
 ##================================================
 ## Species Richness & Diversity metrics
@@ -115,6 +116,8 @@ attr(SECC.sp.sum, "units" )[["Predators"]] <- quote("#" %.% g^-1)
 attr(SECC.sp.sum, "labels")[["Grazers"]]   <- "Grazers (fungivorous Acari + Collembola)"
 attr(SECC.sp.sum, "units" )[["Grazers"]]   <- quote("#" %.% g^-1)
 
+## Merge with SECC data for direct comparisons
+SECC.sum <- merge(SECC.env, recodeSECC(SECC.sp.sum), all = TRUE)
 
 
 ##################################################
@@ -149,7 +152,22 @@ if (FALSE)
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
 
   pairplot(SECC.sp.sum[, which(sapply(SECC.sp.sum, class) == "numeric")])
-  pairplot(SECC.sp.sum[, c("Richness", "Evenness", "fauna.jaw")])
+  pairplot(SECC.sum[, c("Richness", "Evenness", "fauna.jaw", "H2O")])
+
+  ## Species Occurences
+  sp.pr <- apply(Fauna > 0, 2, sum)
+  sort(sp.pr)
+  sp.refr <- 100*sp.pr/nrow(Fauna)
+  par(mfrow = c(1, 2))
+  hist(sp.pr, right = FALSE, main = "Species Occurences", xlab = "Number of occurences", ylab = "Number of species", col = "grey", border = NA)
+  hist(sp.refr, right = FALSE, main = "Species Relative Frequencies", xlab = "Frequencey of occurences (%)", ylab = "Number of species", col = "grey", border = NA)
+  par(mfrow = c(1,1))
+
+  ## Blocks 1 & 7 are kind of diversity hotspots
+  qplot(xE, yN, data = Fauna.xy, size = SECC.sp.sum$Richness, shape = 20, alpha = 0.1 )
+  with(SECC.sum, plot(Richness ~ Block) )
+  with(SECC.sum, plot(Evenness ~ Block) )
+  ## although it looks like drying may have been less severe in block 3 (remember, it got flooded during spring); fewer low-richness patches
 }
 
 
@@ -204,7 +222,8 @@ Fauna.trans <- Fauna.log
 Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
 Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard", binary = TRUE) # presence/absence data
 Fauna.hellD <- vegdist(Fauna.hell,  method = "euclidean")
-Fauna.chorD <- vegdist(Fauna.chord, method = "euclidean") ## Chord Distance
+Fauna.chorD <- vegdist(Fauna.chord, method = "euclidean") # Chord Distance
+Fauna.euclD <- vegdist(Fauna, method = "euclidean") # euclidean Distance
 
 Fauna.dist <- Fauna.bray               # default
 
@@ -264,13 +283,13 @@ for (d in 1:length(dist.methods))
   Fauna.t <- paste("Fauna", trans, sep=".")
   if (Fauna.t == "Fauna.") Fauna.t <- "Fauna"
   Fauna.t <- get( Fauna.t )
-  cat("ANOSIM: using distance = \'", dista, "\', ", 
-      ifelse(trans == "", "[no]", trans), " transformation\n", 
+  cat("ANOSIM: using distance: \'", dista, "\', with transformation: \'", 
+      ifelse(trans == "", "[none]", trans), "\'\n", 
       sep="")
   dist.g <- c()                        # group labels
   dist.R <- c()
   dist.p <- c()
-  ## ANOSIM by single factor
+  ## ANOSIM by single factor (basically useless, since Frag is NS as a main factor)
   cat("- Single Factor ANOSIMs\n")
   Fauna.d <- vegdist(Fauna.trans, method = dista)
   Fauna.Chamber.anosim <- anosim( Fauna.d, Fauna.sp$Chamber )
@@ -525,11 +544,42 @@ print(Compo.plot)
 ################################################################
 ### SPATIAL ANALYSIS
 ################################################################
+## Test for spatial trend
+Fauna.rda <- rda(Fauna.hell, Fauna.xy[, c("xE", "yN")]) 
+anova(Fauna.rda)
+## Yes; not sure what this means, however
+ordiplot(Fauna.rda, type = "t")
+
 ## Mantel test: Are similarities spatially correlated?
+Fauna.xydist <- vegdist(Fauna.xy[, c("xE", "yN")], "euclidean", upper = TRUE)
+Mantel.bray  <- mantel(Fauna.bray, Fauna.xydist, permutations = 1000)
+Mantel.jacc  <- mantel(Fauna.jacc, Fauna.xydist, permutations = 1000)
+Mantel.hell  <- mantel(Fauna.hellD, Fauna.xydist, permutations = 1000)
+Mantel.chord <- mantel(Fauna.chorD, Fauna.xydist, permutations = 1000)
+Mantel.euc   <- mantel(Fauna.euclD, Fauna.xydist, permutations = 1000)
+## No? Yes, for Chord & Euclidean; No for everything else.
+
 ## correlgoram: At what scale are similarities correlated?
+Fauna.det <- resid(lm(as.matrix(Fauna.chorD) ~ ., data = Fauna.xy[, c("xE", "yN")]))
+Fauna.ddist <- vegdist(Fauna.det, method = "euclidean")
+( Fauna.correlog <- mantel.correlog(Fauna.ddist, XY = Fauna.xy[, c("xE", "yN")], nperm = 99) )
+plot(Fauna.correlog)
+## strongly negative correlation around distance class 2 (index 13).  Otherwise, nothing.
+## This corresponds to 9--18 m (Fauna.correlog$break.pts)
+
 ## Partial Mantel Test: differences among treatment groups, after removing effect of space?
+## Not much point, if there seems to be very little effect of space.
+Mantelp.design <- sapply( Fauna.env[, c("Chamber", "Frag", "Pos")], as.numeric )
+Mantelp.design <- sapply( as.data.frame(Mantelp.design), factor )
+Mantelp.design <- sapply( as.data.frame(Mantelp.design), as.numeric ) # use smallest numbers, rather than leftover factor levels from reduced set.
+Mantelp.dist   <- vegdist(Mantelp.design, method = "manhattan")
 
-
+## Partial out TREATMENTS: is there an effect of space?
+Mantelp.bray  <- mantel.partial(Fauna.bray, Fauna.xydist, Mantelp.dist, permutations = 1000)
+Mantelp.chord <- mantel.partial(Fauna.chorD, Fauna.xydist, Mantelp.dist, permutations = 1000)
+## Partial out SPACE: are there treatment differences? This isn't really the best way to answer this question (rather than a mixed-effects model that includes spatial autocorrelation)
+Mantels.bray  <- mantel.partial(Fauna.bray, Mantelp.dist, Fauna.xydist, permutations = 1000)
+Mantels.chord <- mantel.partial(Fauna.chorD, Mantelp.dist, Fauna.xydist, permutations = 1000)
 
 
 
@@ -837,7 +887,7 @@ if (TRUE)
       , file = "./output/Fauna - Multivariate.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
-  ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 4)
+  ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 2.8) # short height to push x-axis label a little closer to the axis (coord_equal bug?)
   ## semi-transparency (`alpha = `) is not supported in eps.  But it is in pdf ;)
 }
 
