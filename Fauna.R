@@ -136,11 +136,11 @@ if (FALSE)
   boxplot( sqrt( Fauna )    , main = "sqrt")
   boxplot( Fauna ^0.25      , main = "4th rt")
   boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
-  boxplot( log1p(Fauna)     , main = "log_e(X +1)")
+  boxplot( log1p(Fauna)     , main = "log1p(X)")
   boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
   boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
-  boxplot( decostand( Fauna, method = 'max' )   , main = "max") 
-  boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") 
+  boxplot( decostand( Fauna, method = 'max' )         , main = "max") 
+  boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") ## Chord transformation
   ##   boxplot( decostand( Fauna, method = 'standardize' )   , main = "standardize") # problems (warnings)
   boxplot( decostand( Fauna, method = 'hellinger' )   , main = "hellinger") 
   ## Chord transformation?
@@ -192,16 +192,18 @@ if (FALSE)
 ### MULTIVARIATE ANALYSES
 ##################################################
 ## Transformation
-Fauna.log  <- log( Fauna +1 ) 
-Fauna.hell <- decostand( Fauna, method = "hellinger" ) 
+Fauna.log   <- log( Fauna +1 ) 
+Fauna.max   <- decostand( Fauna, method = "max" ) 
+Fauna.hell  <- decostand( Fauna, method = "hellinger" ) 
+Fauna.chord <- decostand( Fauna, method = "normalize" ) ## Chord transformation
 
 Fauna.trans <- Fauna.log
 
 ## Distance/Similarity matrix (can be included in MDS call)
 Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
 Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard")
-Fauna.held  <- vegdist(Fauna.hell,  method = "bray")
-Fauna.chord <- vegdist(Fauna.trans, method = "bray")
+Fauna.hellD <- vegdist(Fauna.hell,  method = "euclidean")
+Fauna.chorD <- vegdist(Fauna.chord, method = "euclidean") ## Chord Distance
 
 Fauna.dist <- Fauna.bray               # default
 
@@ -215,15 +217,24 @@ Fauna.mds  <- metaMDS( Fauna.trans, distance = "bray", autotransform = FALSE, k 
 Fauna.mds3 <- metaMDS( Fauna.trans, distance = "bray", autotransform = FALSE, k = 3)
 
 ## Check MDS quality (Stress)
-stress.label <- paste( "Stress = ", round( Fauna.mds$stress, 1), "%", sep="" )
+## stress.label <- paste( "Stress = ", round( Fauna.mds$stress, 1), "%", sep="" )
+## has vegan changed?  stress values now seem to be <1, rather than in % ?!?
+stress.label <- paste( "Stress = ", round( Fauna.mds$stress, 2), sep="" )
 stressplot(Fauna.mds, main=stress.label)
 
-stress.label <- paste( "Stress = ", round( Fauna.mds3$stress, 1), "%", sep="" )
+stress.label <- paste( "Stress = ", round( Fauna.mds3$stress, 2), sep="" )
 stressplot(Fauna.mds3, main=stress.label)
 
 ## Look at the pretty graph
-Fauna.plot <- ordiplot( Fauna.mds, type="text" )
+Fauna.plot <- ordiplot( Fauna.mds, type="text", main = "Bray-Curtis Distance" )
 
+## Alternate transformations & distances
+Jacc.mds   <- metaMDS( Fauna,       distance = "jaccard",   autotransform = FALSE, k = 2)
+Chord.mds  <- metaMDS( Fauna.chord, distance = "euclidean", autotransform = FALSE, k = 2)
+HellD.mds  <- metaMDS( Fauna.hell,  distance = "euclidean", autotransform = FALSE, k = 2)
+ordiplot( Jacc.mds, type="text" , main = "Jaccard Distance" )
+ordiplot( Chord.mds, type="text", main = "Chord Distance" )
+ordiplot( HellD.mds, type="text", main = "Hellinger Distance" )
 
 
 
@@ -242,11 +253,19 @@ Fauna.plot <- ordiplot( Fauna.mds, type="text" )
 
 ## Assemble a data frame of specific group comparisions x distance metrics
 ANOSIM.results <- data.frame(Groups = c())
-dist.methods <- c("bray", "jaccard")
-dist.trans <- c()                      # transformations?
-for (dista in dist.methods)
+dist.methods <- c("bray", "bray", "euclidean", "euclidean", "jaccard", "jaccard")
+dist.trans   <- c("",     "log",  "hell",      "chord",     "",        "log") # transformations
+for (d in 1:length(dist.methods))
 {
-  cat("ANOSIM: using method = \'", dista, "\'\n", sep="")
+  dista <- dist.methods[d]
+  trans <- dist.trans[d]
+  col.label <- paste(dista, trans, sep="_")
+  Fauna.t <- paste("Fauna", trans, sep=".")
+  if (Fauna.t == "Fauna.") Fauna.t <- "Fauna"
+  Fauna.t <- get( Fauna.t )
+  cat("ANOSIM: using distance = \'", dista, "\', ", 
+      ifelse(trans == "", "[no]", trans), " transformation\n", 
+      sep="")
   dist.g <- c()                        # group labels
   dist.R <- c()
   dist.p <- c()
@@ -344,13 +363,15 @@ for (dista in dist.methods)
                 paste("Chamber:C x Pos:", lvl, " x Frag",  sep = "")
                 )
   }
-  cat("Assembling ANOSIM results for method: ", dista, "\n")
+  cat("Assembling ANOSIM results for method:", dista, "\n")
   if (nrow(ANOSIM.results) != length(dist.g)) 
     ANOSIM.results <- data.frame(Groups = dist.g)      # labels
   ##   ANOSIM.results$Groups <- dist.g      # labels
   ANOSIM.results <- cbind(ANOSIM.results, dist.R, dist.p)
-  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.R"] <- paste(dista, ".R", sep="")
-  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.p"] <- paste(dista, ".p", sep="")
+  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.R"] <- 
+    paste(col.label, ".R", sep="")
+  colnames(ANOSIM.results)[colnames(ANOSIM.results) == "dist.p"] <- 
+    paste(col.label, ".p", sep="")
 }
 
 
@@ -599,7 +620,9 @@ ordiplot(Fauna.cca1, type="text",
 ### PUBLICATION GRAPHS
 ##################################################
 ## Prepare data to plot
-stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
+## has vegan changed?  stress values now seem to be <1, rather than in % ?!?
+## stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
+stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 2) )	# Make text label of Stress value.
 MDS.pts <- as.data.frame(Fauna.mds$points)
 colnames(MDS.pts) <- c('x', 'y')
 MDS.pts <- cbind(MDS.pts, Time = Fauna.sp$Time, Chamber = Fauna.sp$Chamber, 
@@ -764,13 +787,19 @@ if (FALSE)
 ## Save Multivariate Results
 ##================================================
 if (TRUE) {
-  cat(  paste(ANOSIM.results, collapse = "\n")
-      , "\n\n", "======== Environmental Variables Post Hoc fit to nMDS ========", "\n"
-      , paste(capture.output(print(Fauna.fit)), collape="\n")
-      , "\n\n", "======== CCA ========", "\n"
-      , paste(capture.output(summary(Fauna.cca)), collape="\n")
-      , "\n\n", "======== Permutation tests of CCA terms ========", "\n"
-      , paste(capture.output(print(CCA.anova.terms)), collape="\n")
+  ANOSIM.table <- xtable(ANOSIM.results[, c("Groups", "bray_.p", 
+                                                   "bray_log.p", "jaccard_.p")], 
+                                digits = 3) # bray, bray_log, jaccard **** 
+  capture.output(  cat("ANOSIM results\n")
+      , print(ANOSIM.results), cat("\n\n")
+      , print(ANOSIM.table), cat("\n\n")
+      , cat("\n\n", "======== Environmental Variables Post Hoc fit to nMDS ========", "\n", 
+            sep="")
+      , print(Fauna.fit)
+      , cat("\n\n", "======== CCA ========", "\n", sep="")
+      , summary(Fauna.cca)
+      , cat("\n\n", "======== Permutation tests of CCA terms ========", "\n", sep="")
+      , print(CCA.anova.terms)
       , file = "./output/Fauna - Multivariate.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
