@@ -40,9 +40,31 @@ ARA cyanobacteria regression models
 
 Microarthropods: Fauna
 ================================
-~ Constrained ordination?
+- Use 2-3 transformations / measures of association to compare importance of abundant species.
+- Mantel Test: is patch similarity correlated with physical distance?
+- Partial Mantel Test: are experimental treatments different, after partialing out spatial similarities?
+- Variogram (Borcard et al. 2011): scales of similarity?
 - Nestedness?
+~ Correlations between Predators, Grazers, and Cyanobacteria
+  - trophic cascade?
+AG:
+I am curious about changes in patterns of community diversity per patch across treatments. Could you calculate Renyi entropy (see Vegan package) for each community of predators and grazers. What about community abundance distributions (e.g SADs).
+
+I believe Shawn Leroux developed a simple index for estimating the strength of a trophic cascade.
+I think it is in this paper: Leroux, S.J. & Loreau, M. (2010). Consumer-mediated recycling and cascading trophic interactions. Ecology 91:2162-2171.
+JAW: log-response ratio.  Need to compare a situation with & without a particular trophic level.
+Not very applicable in this case, as I have only a single patch with no predators.
+also in:
+Schmitz, O. J. 2006. Predators have large effects on ecosystem properties by changing plant diversity, not plant biomass. Ecology 87:1432-1437.
+
+
+
+Follow-up analyses in later chapter
+________________________________
+~ Constrained ordination?
 - Other multivariate analyses?
+
+
 
 Ecosystem Processes
 ================================
@@ -55,8 +77,26 @@ Ecosystem Processes
     - use Decomp. mass loss rates to calculate Decomp. in g / area / time.
     - Compare Decomposition & Production : balance under various experimental conditions?
 
+Productivity - Decomposition Balance
+________________________________
+- Calculate Decomposition rate as g lost / area / time
+    - g lost = % lost * g of moss in patch (?)
+- Calculate net g gained or lost  / time
+    - Productivity - Decomposition
+    - per patch
+    - mean & CI
+    - SD: variability**
+- What is the approximate Carbon content of Pleurozium Schreberi?
+  - g moss -> g Carbon
+- Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
+  - or, just get a km^2 measurement and see if that sounds impressive.
+
 + Load    Ion Resin Data
 + Analyze Ion Resin Data
+
+
+SYNTHESIS
+================================
 
 
 

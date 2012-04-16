@@ -152,7 +152,7 @@ if (FALSE)
   with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
 
   pairplot(SECC.sp.sum[, which(sapply(SECC.sp.sum, class) == "numeric")])
-  pairplot(SECC.sum[, c("Richness", "Evenness", "fauna.jaw", "H2O")])
+  pairplot(SECC.sum[, c("Richness", "Evenness", "Predators", "Grazers", "fauna.jaw", "H2O")])
 
   ## Species Occurences
   sp.pr <- apply(Fauna > 0, 2, sum)
@@ -162,6 +162,13 @@ if (FALSE)
   hist(sp.pr, right = FALSE, main = "Species Occurences", xlab = "Number of occurences", ylab = "Number of species", col = "grey", border = NA)
   hist(sp.refr, right = FALSE, main = "Species Relative Frequencies", xlab = "Frequencey of occurences (%)", ylab = "Number of species", col = "grey", border = NA)
   par(mfrow = c(1,1))
+  
+  ## 1 single patch with no Predators!
+  hist(SECC.sum$Predators, color = "grey")
+  hist(SECC.sum$Grazers, color = "grey")
+  sum(SECC.sum$Predators == 0)
+  SECC.sum$SampleID[ which(SECC.sum$Predators == 0) ] # 14C-2.0
+  sum(SECC.sum$Grazers == 0)
 
   ## Blocks 1 & 7 are kind of diversity hotspots
   qplot(xE, yN, data = Fauna.xy, size = SECC.sp.sum$Richness, shape = 20, alpha = 0.1 )
@@ -508,7 +515,7 @@ Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) +
     jaw.ggplot()
 print(Spp.corplot)
 
-pairplot(SECC.sum[, c("Predators", "Grazers", "Cells.g")])
+pairplot(SECC.sum[, c("Predators", "Grazers", "Cells.g", "H2O")])
 ## scatterplot of group abundances in Final Publication Graphs below
 
 
@@ -563,13 +570,13 @@ Mantel.euc   <- mantel(Fauna.euclD, Fauna.xydist, permutations = 1000)
 Fauna.det <- resid(lm(as.matrix(Fauna.chorD) ~ ., data = Fauna.xy[, c("xE", "yN")]))
 Fauna.ddist <- vegdist(Fauna.det, method = "euclidean")
 ( Fauna.correlog <- mantel.correlog(Fauna.ddist, XY = Fauna.xy[, c("xE", "yN")], nperm = 99) )
-plot(Fauna.correlog)
+plot(Fauna.correlog, main = "Mantel correlogram (Chord distance matrix)")
 ## strongly negative correlation around distance class 2 (index 13).  Otherwise, nothing.
 ## This corresponds to 9--18 m (Fauna.correlog$break.pts)
 
 ## Partial Mantel Test: differences among treatment groups, after removing effect of space?
 ## Not much point, if there seems to be very little effect of space.
-Mantelp.design <- sapply( Fauna.env[, c("Chamber", "Frag", "Pos")], as.numeric )
+Mantelp.design <- sapply( SECC.env[, c("Chamber", "Frag", "Pos")], as.numeric )
 Mantelp.design <- sapply( as.data.frame(Mantelp.design), factor )
 Mantelp.design <- sapply( as.data.frame(Mantelp.design), as.numeric ) # use smallest numbers, rather than leftover factor levels from reduced set.
 Mantelp.dist   <- vegdist(Mantelp.design, method = "manhattan")
@@ -810,7 +817,7 @@ PredGraz.ribbon <- data.frame(x = c(0, mean(PredGraz.lm2$x), 40),
                               )
 
 PredGraz.cor    <- cor(SECC.sp.sum$Predators, SECC.sp.sum$Grazers)
-PredGraz.cortxt <- sprintf("r = %.3f", PredGraz.cor)
+PredGraz.cortxt <- sprintf("r = %.2f", PredGraz.cor)
 Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
 
 PredGraz.corplot <- ggplot(SECC.sp.sum, 
