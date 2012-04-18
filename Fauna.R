@@ -175,6 +175,10 @@ if (FALSE)
   with(SECC.sum, plot(Richness ~ Block) )
   with(SECC.sum, plot(Evenness ~ Block) )
   ## although it looks like drying may have been less severe in block 3 (remember, it got flooded during spring); fewer low-richness patches
+
+  plot(specaccum(Fauna), ci.type = "polygon", ci.col = "lightgrey")
+
+  plot(radfit(Fauna[1:12, ]))
 }
 
 
@@ -202,7 +206,7 @@ Y.use <- 'Y.sqrt'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
 
-if (FALSE)
+if (TRUE)
 {                                      # Totally NS: sample sizes too small to detect anything meaningful
   Y.col <- 'Richness' # Column to analyze as response variable           *****
   Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
@@ -226,7 +230,7 @@ Fauna.pa    <- decostand( Fauna, method = "pa" )
 Fauna.trans <- Fauna.log
 
 ## Distance/Similarity matrix (can be included in MDS call)
-Fauna.bray  <- vegdist(Fauna.trans, method = "bray")
+Fauna.bray  <- vegdist(Fauna.trans, method = "bray") # add `binary = TRUE` for Sorensen dissimilarity ;)
 Fauna.jacc  <- vegdist(Fauna.trans, method = "jaccard", binary = TRUE) # presence/absence data
 Fauna.hellD <- vegdist(Fauna.hell,  method = "euclidean")
 Fauna.chorD <- vegdist(Fauna.chord, method = "euclidean") # Chord Distance
@@ -403,6 +407,7 @@ for (d in 1:length(dist.methods))
 
 
 
+
 ##==============================================================
 ## SIMPER (slow)
 ## using my version of the simper algorithm in SECC.functions, which uses a few slow `for` loops
@@ -415,6 +420,35 @@ ChamberFrag.simp <- simper(Fauna.trans, ChamberFrag)
 ChamberPosn.simp <- simper(Fauna.trans, ChamberPosn)
 Chamber.rows     <- which(Fauna.sp$Chamber == "C")
 CxFragPos.simp   <- simper(Fauna.trans[Chamber.rows, ], FragPosn[Chamber.rows])
+
+
+
+##==============================================================
+## SPECIES OVERLAP / UNIQUENESS (BETA-diversity)
+##==============================================================
+## I just want to know how many species are unique to a group of sites, and how many are shared between two groups.  
+## Surely, there is a package or routine that can do this automatically?
+All.sp <- colnames(Fauna)
+CO.rows <- which(Fauna.sp$Chamber == "C" & Fauna.sp$Pos == "O")
+CO.sp <- apply(Fauna[CO.rows, ] > 0, 2, sum)
+CO.sp <- names(CO.sp)[CO.sp > 0]
+XCO.sp <- apply(Fauna[-CO.rows, ] > 0, 2, sum)
+XCO.sp <- names(XCO.sp)[XCO.sp > 0]
+COsp <- setdiff(CO.sp, XCO.sp)         # Isotomidae_sp.5 is found at a single site, in this group.
+rownames(Fauna)[Fauna[[COsp]] > 0]
+
+## betadisper test for differences in multivariate *dispersion* (variance)
+CO.bdisp <- betadisper(betadiver(Fauna, "z"), ChamberPosn)
+plot(CO.bdisp)
+TukeyHSD(CO.bdisp)                     # Outer Chambers are not just different: they are more variable.
+
+## What I want is a matrix of groups (as rows & columns), with cells that give:
+## - # unique species in that group, or pairs of groups (traingular with diagonal)
+## - # shared species in BOTH groups (triangular; diagonal is # species)
+## - # species in a group NOT in the other (full matrix; diagonal is 0)
+## * first two could be combined with one of the diagonals included in the third; 2 separate matrices / tables?
+
+
 
 
 
