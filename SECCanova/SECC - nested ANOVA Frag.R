@@ -98,7 +98,7 @@ if (FALSE) {  # do not run if source()d
 ##################################################
 ## make some meaningful plots of data to check for predicted (expected) patterns.
 
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.mc.plots )
 
 par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
 ## Patch analyses

@@ -1,0 +1,78 @@
+Nested ANOVA Results for: Morphospecies Richness ( Richness ) 
+Transformation used:      Y 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Isolated 
+Patches:        
+
+Sun Apr 22 09:27:34 2012
+
+================================================================
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Chamber * Frag + Error(Block/Chamber)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  3 30.667  10.222               
+
+Error: Block:Chamber
+          Df Sum Sq Mean Sq F value Pr(>F)
+Chamber    1  0.000  0.0000       0      1
+Residuals  3 25.333  8.4444               
+
+Error: Within
+             Df Sum Sq Mean Sq F value Pr(>F)
+Frag          2 10.083  5.0417  1.4405 0.2750
+Chamber:Frag  2  5.250  2.6250  0.7500 0.4933
+Residuals    12 42.000  3.5000               
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sun Apr 22 09:27:34 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 3 & 30.67 & 10.22 &  &  \\ 
+  Chamber   & 1 & 0.00 & 0.00 & 0.00 & 1.0000 \\ 
+  Residuals1 & 3 & 25.33 & 8.44 &  &  \\ 
+  Frag         & 2 & 10.08 & 5.04 & 1.44 & 0.2750 \\ 
+  Chamber:Frag & 2 & 5.25 & 2.63 & 0.75 & 0.4933 \\ 
+  Residuals    & 12 & 42.00 & 3.50 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+Tables of means
+Grand mean
+         
+15.33333 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+      15.333       15.333 
+
+ Frag 
+Frag
+    Continuous Full Corridors       Isolated 
+        16.250         14.875         14.875 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Isolated
+  Ambient      16.75      15.00          14.25   
+  Full Chamber 15.75      14.75          15.50   
+
+95% Minimum Significant Ranges (MSR):
+     Chamber         Frag Chamber:Frag 
+    2.853713     2.664683     4.658747 
+
+
+<============================= END ============================>

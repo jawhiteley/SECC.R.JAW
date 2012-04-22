@@ -19,7 +19,9 @@ Save.filename <- paste("Results - ", Y.col, " - ",
 Save.text  <- paste("./output/", Save.filename, ".txt", sep = "")
 Save.mc.text  <- paste("./output/", Save.filename, " - Frag", ".txt", sep = "")
 Save.plots <- paste("./graphs/", Save.filename, ".pdf", sep = "")
+Save.mc.plots <- paste("./graphs/", Save.filename, " - Frag", ".pdf", sep = "")
 Save.final <- paste("./graphs/", "Figure - ", Y.col, sep = "")    # Destination for final plots.
+Save.mc.final <- paste("./graphs/", "Figure - ", Y.col, " - Frag", sep = "")    # Destination for final plots.
 
 
 ## Output text

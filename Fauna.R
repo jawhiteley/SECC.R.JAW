@@ -185,26 +185,126 @@ if (FALSE)
 ##################################################
 ### UNIVARIATE ANALYSES (ANOVAs)
 ##################################################
+SECCxtract.aovlist <- function(x)
+{
+  if ("aovlist" %in% class(x) == FALSE) 
+    stop("SECCxtract.aovlist() expects an object of class 'aovlist'")
+  xs <- summary(x)
+  for (i in names(xs))
+  {
+    lvl <- xs[[i]][[1]]
+    lvl.out <- lvl[, c("Df", "F value", "Pr(>F)")] 
+    res.row <- grep("Residuals", rownames(lvl.out))
+    res.df <- lvl.out[res.row, "Df"]
+    lvl.out$Df.resid <- res.df
+    lvl.out <- lvl.out[, c("Df", "Df.resid", "F value", "Pr(>F)")]
+    if (i == names(xs)[1])
+      out <- lvl.out
+    else
+      out <- rbind(out, lvl.out)
+  }
+  ## cleanup
+  empty.rows <- which( is.na(out[, "F value"]) )
+  out <- out[-empty.rows, ]
+  rownames(out) <- gsub("Frag", "Fragmentation", rownames(out))
+  colnames(out) <- c("Df", "Df.resid", "F", "pF")
+  return(out)
+}
+SECCcbind.aovlist <- function(FullANOVA = Fauna.ANOVA, newANOVA = SECCxtract.aovlist(Yp.aov) )
+{
+  FullANOVA
+}
 
 Y.col <- 'Richness' # Column to analyze as response variable           *****
 Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
 Y.lim1 <- c(0, 20)  # consistent Y limits :/
 source('Fauna-univariate.R')
+ANOVAtable <- SECCxtract.aovlist(Yp.aov)
+Fauna.ANOVA <- ANOVAtable
+Ycols <- grep("^p?F$", colnames(Fauna.ANOVA))
+colnames(Fauna.ANOVA)[Ycols] <- paste(Y.col, colnames(Fauna.ANOVA)[Ycols], sep=".")
 
 Y.col <- 'Evenness'
 Y.use <- 'Y'
 Y.lim1 <- c(0, 10)  # consistent Y limits :/
 source('Fauna-univariate.R')
+ANOVAtable <- SECCxtract.aovlist(Yp.aov)
+if (ANOVAtable$Df == Fauna.ANOVA$Df)
+{
+  Fauna.ANOVA <- cbind(Fauna.ANOVA, ANOVAtable[, c("F", "pF")])
+  Ycols <- grep("^p?F$", colnames(Fauna.ANOVA))
+  colnames(Fauna.ANOVA)[Ycols] <- paste(Y.col, colnames(Fauna.ANOVA)[Ycols], sep=".")
+}
 
 Y.col <- 'Predators'
 Y.use <- 'Y'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
+ANOVAtable <- SECCxtract.aovlist(Yp.aov)
+if (ANOVAtable$Df == Fauna.ANOVA$Df)
+{
+  Fauna.ANOVA <- cbind(Fauna.ANOVA, ANOVAtable[, c("F", "pF")])
+  Ycols <- grep("^p?F$", colnames(Fauna.ANOVA))
+  colnames(Fauna.ANOVA)[Ycols] <- paste(Y.col, colnames(Fauna.ANOVA)[Ycols], sep=".")
+}
+
+## Chamber x Frag
+Chamber.label <- "Chamber" # attr(SECC, "labels")[["Pos"]]
+Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
+Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
+Chamber.map[2, "label"] <- "Chamber"
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, 
+                                     Time=SECCp$Time), 
+                                error = msd["Chamber:Frag"]
+                                )
+levels(plot.means$Chamber)[2] <- "Chamber"
+
+CxF.plot <- qplot(Frag, x, data = plot.means, group = Chamber, 
+                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  colour = Chamber, fill = Chamber, 
+                  shape = Chamber, # lty = Chamber,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Chamber"]],
+                  ylab = Y.plotlab,
+                  legend = FALSE)
+CxF.plot <- CxF.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                     width = 0.2, size = 0.5)
+CxF.plot <- CxF.plot + geom_point(aes(group = Chamber), size = 3)
+CxF.plot <- CxF.plot + scale_colour_manual(name = Chamber.label,
+                                           values = Chamber.map$col, 
+                                           breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + scale_fill_manual(name = Chamber.label,
+                                         values = Chamber.map$bg, 
+                                         breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + scale_shape_manual(name = Chamber.label,
+                                          values = Chamber.map$pch, 
+                                          breaks = Chamber.map$label)
+## CxF.plot <- CxF.plot + scale_linetype_manual(name = Chamber.label,
+##                                              values = Chamber.map$lty, 
+##                                              breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + jaw.ggplot() 
+CxF.plot <- CxF.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 4), 
+                                        breaks = levels(plot.means$Frag)) +
+     opts(axis.ticks.margin = unit(0.2, "lines"),
+          axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+     )
+print(CxF.plot)
+
+ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 3, height = 4, scale = 1.5)
+
 
 Y.col <- 'Grazers'
 Y.use <- 'Y.sqrt'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
 source('Fauna-univariate.R')
+ANOVAtable <- SECCxtract.aovlist(Yp.aov)
+if (ANOVAtable$Df == Fauna.ANOVA$Df)
+{
+  Fauna.ANOVA <- cbind(Fauna.ANOVA, ANOVAtable[, c("F", "pF")])
+  Ycols <- grep("^p?F$", colnames(Fauna.ANOVA))
+  colnames(Fauna.ANOVA)[Ycols] <- paste(Y.col, colnames(Fauna.ANOVA)[Ycols], sep=".")
+}
 
 if (TRUE)
 {                                      # Totally NS: sample sizes too small to detect anything meaningful
@@ -212,6 +312,7 @@ if (TRUE)
   Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
   Y.lim1 <- c(0, 26)  # consistent Y limits :/
   source('Fauna-regional.R')
+  Fauna.mcANOVA <- SECCxtract.aovlist(Ymc.aov)
 }
 
 
@@ -908,14 +1009,20 @@ if (FALSE)
 
 
 ##================================================
-## Save Multivariate Results
+## Save (Multivariate) Results
 ##================================================
 if (TRUE) 
 {
+  library(xtable)
+  ANOVA.table <- xtable(Fauna.ANOVA)
   ANOSIM.table <- xtable(ANOSIM.results[, c("Groups", "bray_.p", 
                                                    "bray_log.p", "jaccard_pa.p")], 
                                 digits = 3) # bray, bray_log, jaccard **** 
-  capture.output(  cat("ANOSIM results\n")
+  capture.output(  cat("FAUNA results\n", date(), "\n")
+      , cat("\n\n", "======== ANOVA results summary ========", "\n", sep="")
+      , print(Fauna.ANOVA), cat("\n\n")
+      , print(ANOVA.table), cat("\n\n")
+      , cat("\n\n", "======== ANOSIM results ========", "\n", sep="")
       , print(ANOSIM.results), cat("\n\n")
       , print(ANOSIM.table), cat("\n\n")
       , cat("\n\n", "======== Environmental Variables Post Hoc fit to nMDS ========", "\n", 
@@ -925,11 +1032,11 @@ if (TRUE)
       , summary(Fauna.cca)
       , cat("\n\n", "======== Permutation tests of CCA terms ========", "\n", sep="")
       , print(CCA.anova.terms)
-      , file = "./output/Fauna - Multivariate.txt"
+      , file = "./output/Fauna - Main Results.txt"
   )
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
   ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 2.8) # short height to push x-axis label a little closer to the axis (coord_equal bug?)
-  ## semi-transparency (`alpha = `) is not supported in eps.  But it is in pdf ;)
+  ## semi-transparency (`alpha = `) is not supported by eps.  But it is by pdf ;)
 }
 
 
