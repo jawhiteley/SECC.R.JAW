@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Fri Jan 20 21:38:55 2012
+Sun Apr 22 10:13:26 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -52,6 +52,39 @@ Time:Chamber:Frag:Position  12  173.6   14.47  0.7163    0.7356
 Residuals                  336 6786.4   20.20                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sun Apr 22 10:13:29 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 7 & 3324.37 & 474.91 &  &  \\ 
+  Time      & 2 & 10747.45 & 5373.72 & 14.35 & 0.0004 \\ 
+  Residuals1 & 14 & 5244.07 & 374.58 &  &  \\ 
+  Chamber      & 1 & 1367.14 & 1367.14 & 16.93 & 0.0005 \\ 
+  Time:Chamber & 2 & 1431.76 & 715.88 & 8.86 & 0.0016 \\ 
+  Residuals    & 21 & 1696.06 & 80.76 &  &  \\ 
+  Frag              & 3 & 208.13 & 69.38 & 1.81 & 0.1478 \\ 
+  Time:Frag         & 6 & 149.27 & 24.88 & 0.65 & 0.6894 \\ 
+  Chamber:Frag      & 3 & 90.88 & 30.29 & 0.79 & 0.5003 \\ 
+  Time:Chamber:Frag & 6 & 80.96 & 13.49 & 0.35 & 0.9070 \\ 
+  Residuals         & 126 & 4816.91 & 38.23 &  &  \\ 
+  Position                   & 2 & 2843.87 & 1421.94 & 70.40 & 0.0000 \\ 
+  Time:Position              & 4 & 918.43 & 229.61 & 11.37 & 0.0000 \\ 
+  Chamber:Position           & 2 & 1785.45 & 892.73 & 44.20 & 0.0000 \\ 
+  Frag:Position              & 6 & 154.28 & 25.71 & 1.27 & 0.2691 \\ 
+  Time:Chamber:Position      & 4 & 514.99 & 128.75 & 6.37 & 0.0001 \\ 
+  Time:Frag:Position         & 12 & 252.70 & 21.06 & 1.04 & 0.4091 \\ 
+  Chamber:Frag:Position      & 6 & 104.34 & 17.39 & 0.86 & 0.5238 \\ 
+  Time:Chamber:Frag:Position & 12 & 173.61 & 14.47 & 0.72 & 0.7356 \\ 
+  Residuals                  & 336 & 6786.38 & 20.20 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 Tables of means

@@ -5,8 +5,6 @@
 ### Jonathan Whiteley		R v2.12		2012-02-05
 ##################################################
 ## INITIALIZE
-rm(list=ls())  # clear memory
-## Project Directory
 if (FALSE) {  # do not run automatically
   ## Set Working Directory: path in quotes "".
   setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")  # iMac@McGill
@@ -25,6 +23,6 @@ SECC.prime <- SECC    # save a copy of the original for reference.
 ## DO
 ## source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
 
-source("Fauna-univariate.R")           # Nested ANOVA of biodiversity indices
 source("Fauna.R")                      # Multivariate analyses of community structure
+## source("Fauna-univariate.R")           # Nested ANOVA of biodiversity indices (included in above)
 

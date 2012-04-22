@@ -1,3 +1,5 @@
+Fix final plots so that points are on top of lines
+
 ARA cyanobacteria regression models
 ================================
 - Regressions: ARA vs. Cyanobacteria - GLM(M)

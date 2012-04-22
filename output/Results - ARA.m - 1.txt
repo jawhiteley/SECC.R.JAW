@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Fri Jan 20 21:38:42 2012
+Sun Apr 22 10:13:22 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -38,6 +38,30 @@ Chamber:Frag:Position   6  125.4   20.89  0.7033 0.6475308
 Residuals             112 3327.0   29.71                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sun Apr 22 10:13:23 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 7 & 4063.86 & 580.55 &  &  \\ 
+  Chamber   & 1 & 831.81 & 831.81 & 16.13 & 0.0051 \\ 
+  Residuals1 & 7 & 361.04 & 51.58 &  &  \\ 
+  Frag         & 3 & 109.06 & 36.35 & 0.44 & 0.7261 \\ 
+  Chamber:Frag & 3 & 88.14 & 29.38 & 0.36 & 0.7857 \\ 
+  Residuals    & 42 & 3475.55 & 82.75 &  &  \\ 
+  Position              & 2 & 703.45 & 351.72 & 11.84 & 0.0000 \\ 
+  Chamber:Position      & 2 & 517.68 & 258.84 & 8.71 & 0.0003 \\ 
+  Frag:Position         & 6 & 145.62 & 24.27 & 0.82 & 0.5589 \\ 
+  Chamber:Frag:Position & 6 & 125.35 & 20.89 & 0.70 & 0.6475 \\ 
+  Residuals             & 112 & 3327.00 & 29.71 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 Tables of means

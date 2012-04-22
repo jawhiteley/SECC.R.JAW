@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Fri Jan 20 21:39:29 2012
+Sun Apr 22 10:13:41 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -50,6 +50,39 @@ Time:Chamber:Frag:Position   6  45326  7554.3  1.8224 0.0975 .
 Residuals                  168 696412  4145.3                 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sun Apr 22 10:13:43 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 7 & 140816.83 & 20116.69 &  &  \\ 
+  Time      & 2 & 25859.39 & 12929.69 & 0.69 & 0.5173 \\ 
+  Residuals1 & 14 & 261864.99 & 18704.64 &  &  \\ 
+  Chamber      & 1 & 46726.04 & 46726.04 & 3.72 & 0.0673 \\ 
+  Time:Chamber & 2 & 29727.89 & 14863.94 & 1.18 & 0.3255 \\ 
+  Residuals    & 21 & 263532.80 & 12549.18 &  &  \\ 
+  Frag              & 3 & 16240.02 & 5413.34 & 1.09 & 0.3575 \\ 
+  Time:Frag         & 6 & 45991.22 & 7665.20 & 1.54 & 0.1710 \\ 
+  Chamber:Frag      & 3 & 7035.73 & 2345.24 & 0.47 & 0.7033 \\ 
+  Time:Chamber:Frag & 6 & 11801.94 & 1966.99 & 0.39 & 0.8813 \\ 
+  Residuals         & 126 & 627916.75 & 4983.47 &  &  \\ 
+  Position                   & 1 & 9763.26 & 9763.26 & 2.36 & 0.1267 \\ 
+  Time:Position              & 2 & 3976.42 & 1988.21 & 0.48 & 0.6199 \\ 
+  Chamber:Position           & 1 & 363.75 & 363.75 & 0.09 & 0.7674 \\ 
+  Frag:Position              & 3 & 10681.49 & 3560.50 & 0.86 & 0.4637 \\ 
+  Time:Chamber:Position      & 2 & 4725.18 & 2362.59 & 0.57 & 0.5666 \\ 
+  Time:Frag:Position         & 6 & 33468.80 & 5578.13 & 1.35 & 0.2396 \\ 
+  Chamber:Frag:Position      & 3 & 3746.11 & 1248.70 & 0.30 & 0.8245 \\ 
+  Time:Chamber:Frag:Position & 6 & 45325.69 & 7554.28 & 1.82 & 0.0975 \\ 
+  Residuals                  & 168 & 696411.61 & 4145.31 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 Tables of means

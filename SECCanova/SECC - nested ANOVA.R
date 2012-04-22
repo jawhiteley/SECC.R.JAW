@@ -291,6 +291,7 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.header, Save.patch.header, sep=""),
 				 print(Yp.model),                  # model
 				 summary(Yp.aov),                  # model summary
+				 cat("\n"),                        # for output
 				 xtable(summary(Yp.aov)),          # LaTeX output
 				 cat("\n\n"),                      # for output
 				 Yp.mtab,                          # effect sizes
