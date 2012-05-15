@@ -60,7 +60,7 @@ SECC.moss <- within( SECC.moss,
 						grow23 <- grow23 / 10           # growth in mm /10 mm/cm -> cm
 					  }
 					  mg.mm  <- mg.cm  / 10           # mg/cm / 10 mm/cm -> mg/mm
-					  ## Calculate Biomass Production in mg
+					  ## Calculate Biomass Production in mg / shoot
 					  Prod23 <- grow23 * mg.mm
 					  Prod12 <- grow12 * mg.mm
 					  Prod01 <- grow01 * mg.mm        # growth in mm * mg/mm -> mg
@@ -68,6 +68,7 @@ SECC.moss <- within( SECC.moss,
 					  Prod01[Skinny01] <- (grow01 * mg.mm/2)[Skinny01]
 					  Prod12[Skinny12] <- (grow12 * mg.mm/2)[Skinny12]
 					  Prod23[Skinny23] <- (grow23 * mg.mm/2)[Skinny23]
+                      ## convert Productivity to mg / patch (or square meter)
 					})
 SECC.moss <- SECC.moss[, c("SampleID", "Block", "Time", "Chamber", "Frag", "Pos",
 						   'grow01', 'Prod01', 'notes01', 

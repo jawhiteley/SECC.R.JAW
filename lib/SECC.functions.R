@@ -6,6 +6,41 @@
 ## access these functions in another file by using: 
 ## 	 source("path/to/this/file.R")
 
+##================================================
+## Calculations
+##================================================
+ara2nfix <- function (ara, 
+                      d2yr = 4*30,     # growing season: # days / year
+                      A2N = 3          # default 3 moles of Acetylene reduced for every mole of N2
+                      )
+{
+  ## convert ARA in umol / m^2 / day to N-fixation in kg / ha / year
+  Nmwt   <- 14.07                      # g / mol / atom of N
+  Natoms <- 2                          # N atoms / molecule of N2
+  u2mol  <- 1000 * 1000                # umol / mol
+  g2kg   <- 1000                       # g / kg
+  m2ha   <- 100 * 100                  # m2 / ha
+  nfix <- (ara/A2N) * ( (Nmwt * Natoms * m2ha * d2yr) / (u2mol * g2kg) )
+  nfix
+}
+
+nfix2ara <- function (nfix, 
+                      d2yr = 4*30,     # growing season: # days / year
+                      A2N = 3          # default 3 moles of Acetylene reduced for every mole of N2
+                      )
+{
+  ## convert N-fixation in kg / ha / year to ARA in umol / m^2 / day 
+  Nmwt   <- 14.07                      # g / mol / atom of N
+  Natoms <- 2                          # N atoms / molecule of N2
+  u2mol  <- 1000 * 1000                # umol / mol
+  g2kg   <- 1000                       # g / kg
+  m2ha   <- 100 * 100                  # m2 / ha
+  ara <- (nfix * A2N) / ( (Nmwt * Natoms * m2ha * d2yr) / (u2mol * g2kg) )
+  ara
+}
+
+    
+
 ##################################################
 ## ANOVA: standardized analysis of individual response variables
 ##################################################
