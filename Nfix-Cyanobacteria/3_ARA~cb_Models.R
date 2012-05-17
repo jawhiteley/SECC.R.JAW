@@ -329,18 +329,21 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   rm(ARA.glmulti1, ARA.glmulti2)         # save memory? not right away, but maybe eventually :(
 }
 ## ggplot2: theme settings
-bar.import <- function(glm.imp) {
+bar.import <- function(glm.imp) 
+{
   ##     glm.imp <- importance.glmulti(glmObj)
   ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
   list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
        scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
        geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
-       opts(panel.border=theme_blank(), axis.line=theme_segment(),
-            plot.title=theme_text(size = 16, face = "bold"),
-            title="Model-averaged importance of effects")
+       opts(title = "Model-averaged importance of effects",
+            panel.border=theme_blank(), axis.line=theme_segment(),
+            plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")
+            )
        )
 }
-est.confint <- function(glmObj) {
+est.confint <- function(glmObj) 
+{
   ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
   ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
   ggplot(glmObj, aes(x=Term, y=Estimate) ) +
@@ -350,11 +353,13 @@ est.confint <- function(glmObj) {
        coord_flip())
 }
 
+## MAIN effects
 ARA.importance1 <- bar.import(ARA.imp1) + jaw.ggplot()
 ARA.est1 <- est.confint(ARA.coef1) + jaw.ggplot()
 print(ARA.importance1)
 print(ARA.est1)
 
+## ALL model terms
 ARA.importance2 <- bar.import(ARA.imp2) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
 ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ] #  sharp jump from 0.2->0.3->0.99
 ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
@@ -614,6 +619,7 @@ ARA.cb.df <- data.frame(Cells=cb.re, ARA=ARA.re, fit=ARA.cb.pred[, "fit"],
 ################################################################
 ## SAVE OUTPUT
 ################################################################
+cat("- Saving Results (if requested)\n")
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
   capture.output(cat(Save.head.txt), 
                  print(anova.full),    # Full model: variance partitioning
@@ -637,6 +643,7 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 ################################################################
 ## FINAL GRAPHICS
 ################################################################
+cat("- Final Graphics\n")
 Chamber.map <- plotMap( "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Chamber.map$label <- factor(Chamber.map$label)
@@ -670,23 +677,51 @@ Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 ## Axis Labels: could also use X.plotlab, and Y.plotlab, but this is older code :P
-X.label <- paste("\"", attr(SECCa, "labels")[X.col], ": \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
-Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], ": \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
+X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
+Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
+X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*(", attr(SECCa, "units")[X.col], ")", sep="")
+Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*(", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- parse(text=X.label)
 Y.label <- parse(text=Y.label)
 XY.axlab <- list( xlab(bquote(.(X.label))), ylab(bquote(.(Y.label))) )
 
-df.eff <- function (effObj) {
+## (back)transformation functions
+log0 <- function(x, base = exp(1))
+{   # log-transform, but 0 stays as 0
+  y <- log(x, base)
+  y[x <= 0] <- 0
+  y
+}
+log1p <- function(x, base = exp(1))
+{   # OVERRIDING INTERNAL DEFAULT, JUST FOR ggplot2 GRAPHS
+  log0(x, base)
+}
+alog0 <- function(y)
+{   # back-transform log(X), where 0s stay as 0s
+  x <- 10^y
+  ##   x[y == 0] <- NA                      # MISSING (these cause glitches in transformed axes in ggplot)
+  x
+}
+
+## functions for extracting data, and adding predictions to ggplot2 graphs
+df.eff <- function (effObj, fun.trans = NULL, cols.trans = "numeric") {
   eff.df <- data.frame(fit     = effObj$fit,
                        lower   = effObj$lower,
                        upper   = effObj$upper)
   for (v in names(effObj$x)) {
-    eff.df[, v] <- effObj$x[, v]
+    eff.df[, v] <- effObj$x[, v]       # by name, not index ;)
+  }
+  ## apply (back) transformation function
+  if (!is.null(fun.trans)) 
+  {
+    if (all(cols.trans == "numeric")) cols.trans <- which( sapply(eff.df, class) %in% cols.trans )
+    eff.df[, cols.trans] <- do.call(fun.trans, list(eff.df[, cols.trans]))
   }
   eff.df
 }
-eff.layers <- function(effObj, conf.int=TRUE, colour="black", bin.name="H2Obin", bin.lvls=NULL, bin.var="H2O") {
+eff.H.layers <- function(effObj, conf.int=TRUE, colour="black", bin.name="H2Obin", bin.lvls=NULL, bin.var="H2O") {
   eff.df <- df.eff(effObj)
+  eff.df <- if (class(effObj) == "eff") df.eff(effObj, fun = alog0, cols.trans = c("fit", "lower", "upper", "X.trans")) else effObj
   if (!is.null(bin.lvls)) {
     eff.df[, bin.name] <- factor(eff.df[, bin.var])
     levels(eff.df[, bin.name]) <- bin.lvls
@@ -702,7 +737,7 @@ eff.layers <- function(effObj, conf.int=TRUE, colour="black", bin.name="H2Obin",
   result
 }
 eff.C.layers <- function(effObj, conf.int=TRUE) {
-  eff.df <- df.eff(effObj)
+  eff.df <- if (class(effObj) == "eff") df.eff(effObj, fun = alog0, cols = c("fit", "lower", "upper", "X.trans")) else effObj
   ## no $ in aes() !!!!
   result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit,  group=Chamber, colour=Chamber)) )
   if (conf.int == TRUE) {
@@ -714,7 +749,7 @@ eff.C.layers <- function(effObj, conf.int=TRUE) {
   result
 }
 eff.F.layers <- function(effObj, conf.int=TRUE, boxes=TRUE) { # for factors
-  eff.df <- df.eff(effObj)
+  eff.df <- if (class(effObj) == "eff") df.eff(effObj, fun = alog0, cols = c("fit", "lower", "upper")) else effObj
   ## no $ in aes() !!!!
   if (boxes==TRUE) {
     result <- list(geom_crossbar(data=eff.df, size=0.6, 
@@ -732,22 +767,35 @@ eff.F.layers <- function(effObj, conf.int=TRUE, boxes=TRUE) { # for factors
   result
 }
 
-ARA.plot <- qplot(X.trans, Y.trans, data=SECCa, geom = "point", size = I(3),
-                  group = Chamber, colour = Chamber, shape = Chamber,
-                  xlab = bquote(.(X.label)), ylab = bquote(.(Y.label))) + 
-                  jaw.ggplot() + ChamberPts + TopLegend
-ARA.plot <- ggplot(data=SECCa, aes(x=X.trans, y=Y.trans)) +
+scale_y_ARA <- function()
+{
+  require(ggplot2)
+  scale_y_continuous(trans = "log10", 
+                     breaks = c(0 , 2  , 4  , 6  , 8  , 10 , 20 , 40 , 60 , 80 , 100 , 200 , 400 , 600 , 800 , 1000), 
+                     labels = c(0 , "" , "" , "" , "" , 10 , "" , "" , "" , "" , 100 , ""  , ""  , ""  , ""  , 1000),
+                     minor_breaks = c(2, 4, 6, 8, 20, 40, 60, 80, 200, 400, 600, 800) # minor_breaks having no effect :(  simulated with blank labels above
+                     )
+}
+
+## extract, and backtransform data (moot)
+## Plot.data <- SECCa[, strsplit("SampleID, Block, Time, Chamber, Frag, Pos, Position, X, X.trans, Y, Y.trans", ", ")[[1]]]
+
+### with ggplot(), and back-transformed?
+ARA.plot <- ggplot(data=SECCa, aes(x=X, y=Y)) +
             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) + 
+            ##             coord_trans(x = "log10", y = "log10") + 
+            ##             coord_trans(x = "log1p", y = "log1p") + 
+            ##             scale_x_continuous(trans = "log10") + scale_y_continuous(trans = "log10") +
+            scale_x_log10() + scale_y_ARA() +
             XY.axlab + jaw.ggplot() + ChamberPts + TopLegend
-ARA.C.plot <- ARA.plot + geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$fit, group=Chamber)) +
-              geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$lower, group=Chamber, lty=2)) +
-              geom_line(data=X.eff$x, aes(x=X.trans, y=X.eff$upper, group=Chamber, lty=2))
-ARA.C.plot <- ARA.plot + eff.C.layers(X.eff)
+ARA.C.plot     <- ARA.plot + eff.C.layers(X.eff)
 ARA.facet.plot <- ARA.plot + eff.C.layers(X.TCP.eff) + facet_grid(facets=Position~Time)
 ARA.Block.plot <- ARA.plot + eff.C.layers(X.BTC.eff, conf=F) + facet_grid(facets=Block~Time)
 
-ARA.Frag.plot <- ARA.plot + aes(x=Frag, y=Y.trans) + XY.axlab + xlab("Fragmentation Treatment")
+ARA.Frag.plot <- ARA.plot + aes(x=Frag, y=Y) + XY.axlab + xlab("Fragmentation Treatment")
 ARA.Frag.plot <- ARA.Frag.plot + 
+##   coord_trans(y = "log10") + scale_x_continuous() + scale_y_continuous() + 
+  scale_x_continuous() + scale_y_ARA() +
   geom_jitter(size=3, aes(group=Chamber, colour=Chamber, shape=Chamber)) + # optional
   eff.F.layers(F.eff) + facet_grid(facets=.~Time)
 
@@ -767,15 +815,16 @@ opts(axis.ticks.margin = unit(0.2, "lines"),
 SECCa$H2Obin9 <- cut(SECCa$H2O, breaks=H2O.breaks9)
 SECCa$H2Obin4 <- cut(SECCa$H2O, breaks=H2O.breaks4)
 SECCa$H2Obin4 <- factor(SECCa$H2Obin4, levels=rev(levels(SECCa$H2Obin4)) ) # arrange in decreasing order, for top-down rows in plot
-ARA.H2O.plot <- ggplot(data=SECCa, aes(x=X.trans, y=Y.trans)) +
+ARA.H2O.plot <- ggplot(data=SECCa, aes(x=X, y=Y)) +
                 geom_point(size = 3, aes(group = Chamber, 
                                colour = Chamber, shape = Chamber)) + 
+                scale_x_log10() + scale_y_ARA() +
                 XY.axlab + jaw.ggplot() + ChamberPts + TopLegend
 ARA.HB.plot  <- ARA.H2O.plot + 
-                eff.layers(X.HB.eff, bin.name="H2Obin4", bin.lvls=levels(SECCa$H2Obin4)) + 
+                eff.H.layers(X.HB.eff, bin.name="H2Obin4", bin.lvls=levels(SECCa$H2Obin4)) + 
                 facet_grid(H2Obin4 ~ Block)
 ARA.H2O.plot <- ARA.H2O.plot + 
-                eff.layers(X.H.eff, bin.name="H2Obin9", bin.lvls=levels(SECCa$H2Obin9)) + 
+                eff.H.layers(X.H.eff, bin.name="H2Obin9", bin.lvls=levels(SECCa$H2Obin9)) + 
                 facet_wrap(~ H2Obin9)
 
 ## Partial Regression graph
@@ -818,3 +867,4 @@ if (Save.results == TRUE) {
   print(ARA.HB.plot)
   print(ARA.part.plot)
 }
+cat("- Finished Model Fitting -\n")
