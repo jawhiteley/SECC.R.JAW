@@ -344,7 +344,7 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
       data.frame(label = labels, 
                  col = c("#000000", "#000099", "#990000"), 
                  bg  = c("#FFFFFF", "#FFFFFF", "#FFFFFF"), 
-                 pch = c(19, 8, 21), lty = c(2, 3, 1),
+                 pch = c(19, 17, 21), lty = c(2, 3, 1), lwd = c(2, 1.5, 1),
                  stringsAsFactors = FALSE
                  )
     ## 1) Inner   = black filled circles with dotted line ; 
@@ -417,7 +417,7 @@ SECCicons <- function()
 SECCplotDataANOVA <- function(SECCdata, 
                               by.agg = list(Chamber = SECCdata$Chamber), 
                               FUN.agg = mean, 
-                              error.msd, ...)
+                              error.msd, backtransform = TRUE, ...)
 {
   if (class(SECCdata) == "data.frame") SECCdata <- SECCdata$Y.trans
   plot.means <- aggregate(SECCdata, by = by.agg, FUN = FUN.agg, ... )
@@ -428,17 +428,31 @@ SECCplotDataANOVA <- function(SECCdata,
                          error <- as.numeric(error.msd/2)
                          upper <- x + error
                          lower <- x - error
-                         if (Y.use == "Y.log")
+                         if (backtransform)
                          {
-                           x <- 10^x
-                           lower <- 10^lower
-                           upper <- 10^upper
-                         }
-                         if (Y.use == "Y.sqrt")
-                         {
-                           x <- x^2
-                           lower <- lower^2
-                           upper <- upper^2
+                           if (Y.use == "Y.log")
+                           {
+                             x <- 10^x
+                             lower <- 10^lower
+                             upper <- 10^upper
+                           }
+                           if (Y.use == "Y.sqrt")
+                           {
+                             x <- x^2
+                             lower <- lower^2
+                             upper <- upper^2
+                           }
+                           if (Y.use == "Y.4rt")
+                           {
+                             x <- x^4
+                             lower <- lower^4
+                             upper <- upper^4
+                           }
+                           if (Y.use %in% c("Y.sqrt", "Y.4rt"))
+                           {  # correct for negative values in limits :(
+                             ## lower[which(x - error < 0)] <- 0
+                             lower[which(x - error < 0)] <- lower[which(x - error < 0)] * -1
+                           }
                          }
                        })
   plot.means

@@ -4,7 +4,7 @@
 ### Jonathan Whiteley     R v2.12     2011-03-26
 ##################################################
 
-Y.plotlab <- bquote( .(Y.label) * "  " * .(Y.units) *  "" )
+Y.plotlab <- bquote( .(Y.label) * "  (" * .(Y.units) *  ")" )
 
 Dataset.labels <- c( "Patch scale data", "Meta-Community scale data" )
 Dataset.list   <- c("SECCp", "SECCmc")

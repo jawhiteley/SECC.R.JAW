@@ -39,7 +39,7 @@ Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include
 
 ## Define Labels
-Y.units <- bquote( sqrt(.(Y.units), 4) )  # store as quote(expression) *****
+## Y.units <- bquote( sqrt(.(Y.units), 4) )  # store as quote(expression) *****
 
 ## Output Results?
 Save.results  <- TRUE  
@@ -110,7 +110,7 @@ source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested 
 ### PUBLICATION GRAPHS
 ##################################################
 
-Y.lim <- c(0, 200)
+Y.lim <- c(0, 800000000)
 Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
@@ -119,23 +119,24 @@ Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 
 ## data frame of plot values (for ggplot2).
 ## might be able to accomplish much the same effect with stat_summary using means in ggplot2?
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means$error <- as.numeric(msd["Time:Chamber:Position"]/2)
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, 
+                                     Position=SECCp$Position, Time=SECCp$Time), 
+                                error = msd["Time:Chamber:Position"]
+                                )
 levels(plot.means$Chamber)[2] <- "Chamber"
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
-                    colour = Position, shape = Position,
+                    geom = "line", ylim = Y.lim, size = Position,
+                    colour = Position, shape = Position, fill = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = .~Time)
-## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
-CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
-CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                          width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_point(aes(group = Position), size = 3)
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label)
@@ -143,10 +144,14 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
                                          values = Position.map$bg, 
                                          breaks = Position.map$label)
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
-                                           values = Position.map$pch, 
-                                           breaks = Position.map$label)
+                                          values = Position.map$pch, 
+                                          breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
+
 
 
 

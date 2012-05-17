@@ -38,7 +38,7 @@ SECC <- within( SECC, {
 attr(SECC, "labels")[["H2O.asq"]] <- "Moisture"
 attr(SECC, "units" )[["H2O.asq"]] <- quote(asin(sqrt("% "* H[2]*O)))
 attr(SECC, "labels")[["H2O"]] <- "Moisture"
-attr(SECC, "units" )[["H2O"]] <- quote("("* H[2]*O *" as % of dry wt. moss)")
+attr(SECC, "units" )[["H2O"]] <- quote(""* H[2]*O *" as % of dry wt. moss")
 
 
 ### Load default settings (based on response variable) *****
@@ -158,23 +158,24 @@ Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 
 ## data frame of plot values (for ggplot2).
 ## might be able to accomplish much the same effect with stat_summary using means in ggplot2?
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means$error <- as.numeric(msd["Time:Chamber:Position"]/2)
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, 
+                                     Position=SECCp$Position, Time=SECCp$Time), 
+                                error = msd["Time:Chamber:Position"]
+                                )
 levels(plot.means$Chamber)[2] <- "Chamber"
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
-                    colour = Position, shape = Position,
+                    geom = "line", ylim = Y.lim, size = Position,
+                    colour = Position, shape = Position, fill = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = .~Time)
-## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
-CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
-CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                          width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_point(aes(group = Position), size = 3)
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label)
@@ -182,8 +183,11 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
                                          values = Position.map$bg, 
                                          breaks = Position.map$label)
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
-                                           values = Position.map$pch, 
-                                           breaks = Position.map$label)
+                                          values = Position.map$pch, 
+                                          breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
@@ -194,7 +198,13 @@ Y.lim <- c(-100, 1000)
 plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, Position=SECCp$Position, Time=SECCp$Time), mean)
 levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
 plot.means$error <- as.numeric(msd["Time:Chamber:Frag:Position"]/2)
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, Frag=SECCp$Frag, 
+                                     Position=SECCp$Position, Time=SECCp$Time), 
+                                error = msd["Time:Chamber:Frag:Position"]
+                                )
 levels(plot.means$Chamber)[2] <- "Chamber"
+
 FragIconList <- list(FragIcon1 = FragIcon1,
                      FragIcon2 = FragIcon2,
                      FragIcon3 = FragIcon3,
@@ -202,16 +212,16 @@ FragIconList <- list(FragIcon1 = FragIcon1,
                      )
 
 FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
-                    colour = Position, shape = Position,
+                    geom = "line", ylim = Y.lim, size = Position, 
+                    colour = Position, fill = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Frag"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = Chamber~Time)
 FxP.plot <- FxP.plot + 
-geom_line(aes(group = Position), size = 0.8) +
-geom_errorbar(aes(ymin = x - error, ymax = x + error), width = 0.2, size = 0.5) +
+geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+geom_point(aes(shape = Position), size = 3) +
 scale_colour_manual(name = Position.label,
                     values = Position.map$col, 
                     breaks = Position.map$label) +
@@ -221,6 +231,9 @@ scale_fill_manual(name = Position.label,
 scale_shape_manual(name = Position.label,
                    values = Position.map$pch, 
                    breaks = Position.map$label) +
+scale_size_manual(name = Position.label,
+                  values = Position.map$lwd*0.5, 
+                  breaks = Position.map$label) +
 scale_x_discrete(labels = c(1, 2, 3, 4), 
                  breaks = levels(plot.means$Frag)) + jaw.ggplot() 
 ## Add imported graphics as x-axis tick labels :D
