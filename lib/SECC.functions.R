@@ -314,7 +314,7 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
       data.frame(label = labels, 
                  col = c("#000000","#000099","#990000"), 
                  bg  = c("#FFFFFF","#FFFFFF","#FFFFFF"), 
-                 pch = c(21, 23, 18), lty = c(3, 2, 1),
+                 pch = c(21, 23, 18), lty = c(3, 2, 1), lwd = c(2, 1.5, 1),
                  stringsAsFactors = FALSE
                  )
     ## A) Ambient = black, open circles with dotted line ; 

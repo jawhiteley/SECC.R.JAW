@@ -677,8 +677,8 @@ Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 ## Axis Labels: could also use X.plotlab, and Y.plotlab, but this is older code :P
-X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
-Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
+## X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
+## Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*(", attr(SECCa, "units")[X.col], ")", sep="")
 Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*(", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- parse(text=X.label)
@@ -739,11 +739,16 @@ eff.H.layers <- function(effObj, conf.int=TRUE, colour="black", bin.name="H2Obin
 eff.C.layers <- function(effObj, conf.int=TRUE) {
   eff.df <- if (class(effObj) == "eff") df.eff(effObj, fun = alog0, cols = c("fit", "lower", "upper", "X.trans")) else effObj
   ## no $ in aes() !!!!
-  result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit,  group=Chamber, colour=Chamber)) )
+  result <- list(geom_line(data=eff.df, aes(x=X.trans, y=fit,  group=Chamber, colour=Chamber, size = Chamber)),
+                 scale_size_manual(name = Chamber.label,
+                                   values = Chamber.map$lwd*0.5, 
+                                   breaks = levels(Chamber.map$label)
+                                   )
+                 )
   if (conf.int == TRUE) {
     result <- c(result, 
-                geom_line(data=eff.df, aes(x=X.trans, y=lower, group=Chamber, colour=Chamber, lty=2)), 
-                geom_line(data=eff.df, aes(x=X.trans, y=upper, group=Chamber, colour=Chamber, lty=2)) 
+                geom_line(data=eff.df, aes(x=X.trans, y=lower, group=Chamber, colour=Chamber, size = Chamber), lty=2), 
+                geom_line(data=eff.df, aes(x=X.trans, y=upper, group=Chamber, colour=Chamber, size = Chamber), lty=2) 
                 )
   }
   result

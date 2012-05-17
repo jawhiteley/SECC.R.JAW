@@ -64,7 +64,8 @@ if (F) source('./Nfix-Cyanobacteria/3_0_ARA~cb_MixedModel.R')
 
 ## Simple Linear Models with multi-model selection
 cat("N-fixation ~ Cyanobacteria: Modelling\n")
-if (T) {                               # full dataset **
+if (T) 
+{                                      # full dataset **
   source('./Nfix-Cyanobacteria/3_ARA-cb_setup-Models.R')
 } else {                               # remove 0 Cell densities (non-detection)
   source('./Nfix-Cyanobacteria/3-x0_ARA-cb_setup-Models.R')
