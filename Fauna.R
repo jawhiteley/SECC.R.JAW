@@ -20,6 +20,7 @@ source('./lib/init.R')
 ## Load packages
 library(vegan)
 library(ggplot2)
+library(xtable)
 
 
 ##################################################
@@ -652,6 +653,70 @@ print(Spp.corplot)
 
 pairplot(SECC.sum[, c("Predators", "Grazers", "Cells.g", "H2O")])
 ## scatterplot of group abundances in Final Publication Graphs below
+
+## Correlations between groups, within experimental treatment combinations
+library(plyr)
+cordf <- function(data)
+{
+  ## aggregate over species groups: Predators, Grazers, cyanobacteria
+  ## pass in SECC.sum: already aggregated.  Pull out relevant columns
+  cols.numeric <- sapply(data, is.numeric)
+  ## calculate pairwise correlations
+  data.cor <- cor(data[, cols.numeric])
+
+  ## convert result to a data.frame for output
+  colnames.cor <- paste(rep( dimnames(data.cor)[[1]], each  = length(dimnames(data.cor)[[2]]) ), 
+                        rep( dimnames(data.cor)[[2]], times = length(dimnames(data.cor)[[1]]) ), sep=".")
+  colnames.cor <- colnames.cor[lower.tri(data.cor)]
+  data.cor <- data.cor[lower.tri(data.cor, diag = FALSE)]
+  names(data.cor) <- colnames.cor
+
+  data.cor
+}
+
+Trophic.cor <- ddply(.data = SECC.sum[, c("Chamber", "Frag", "Position", "Predators", "Grazers", "Cells.g")], 
+                     .variables = c("Chamber", "Position"), .fun = cordf )
+
+
+##================================================
+## Change in Abundance
+##================================================
+
+Fauna.dab <- Fauna.sp[Fauna.sp$Frag == 4 & Fauna.sp$Time == 4, ]
+Fauna.dab$Trt <- paste( Fauna.dab$Chamber, "_", Fauna.dab$Frag, ".", Fauna.dab$Pos, sep="" )
+cols.sp <- sapply(Fauna.dab, is.numeric) & ( colnames(Fauna.dab) %in% colnames(Fauna) )
+cols.sp <- names(cols.sp)[which(cols.sp)]
+Fauna.dab <- aggregate(Fauna.dab[, cols.sp], 
+                       by=list(Trt     = Fauna.dab$Trt), 
+                       FUN=mean
+                       )
+row.names(Fauna.dab) <- Fauna.dab$Trt
+Fauna.dab <- Fauna.dab[, -1]
+Fauna.dab <- as.data.frame( t(Fauna.dab) )
+
+axl <- c(0, 4)
+plot(Fauna.dab$C_4.I, Fauna.dab$C_4.O, xlim = axl, ylim = axl )
+abline(0, 1, lwd = 2, lty = 3)
+
+
+
+##================================================
+## Treatment Presence/Absence
+##================================================
+
+Fauna.spr   <- recodeSECC(Fauna.sp)
+Fauna.trtpa <- aggregate(Fauna.spr[, cols.sp], 
+                         by=list(Time    = Fauna.spr$Time,
+                                 Chamber = Fauna.spr$Chamber,
+                                 Frag    = Fauna.spr$Frag,
+                                 Pos     = Fauna.spr$Pos
+                                 ),
+                         FUN = sum
+                         )
+Fauna.trtpa[, cols.sp] <- decostand(Fauna.trtpa[, cols.sp], method = "pa")
+
+xtable(t(Fauna.trtpa))
+
 
 
 ##================================================
