@@ -42,13 +42,15 @@ ARA cyanobacteria regression models
 
 Microarthropods: Fauna
 ================================
-- Use 2-3 transformations / measures of association to compare importance of abundant species.
-- Mantel Test: is patch similarity correlated with physical distance?
-- Partial Mantel Test: are experimental treatments different, after partialing out spatial similarities?
-- Variogram (Borcard et al. 2011): scales of similarity?
++ Use 2-3 transformations / measures of association to compare importance of abundant species.
++ Mantel Test: is patch similarity correlated with physical distance?
++ Partial Mantel Test: are experimental treatments different, after partialing out spatial similarities?
++ Variogram (Borcard et al. 2011): scales of similarity?
 - Nestedness?
-~ Correlations between Predators, Grazers, and Cyanobacteria
-  - trophic cascade?
++ Correlations between Predators, Grazers, and Cyanobacteria
+  ~ trophic cascade?
+- Table of species presnce / absence by experimental treatment
+
 AG:
 I am curious about changes in patterns of community diversity per patch across treatments. Could you calculate Renyi entropy (see Vegan package) for each community of predators and grazers. What about community abundance distributions (e.g SADs).
 
@@ -58,7 +60,6 @@ JAW: log-response ratio.  Need to compare a situation with & without a particula
 Not very applicable in this case, as I have only a single patch with no predators.
 also in:
 Schmitz, O. J. 2006. Predators have large effects on ecosystem properties by changing plant diversity, not plant biomass. Ecology 87:1432-1437.
-
 
 
 Follow-up analyses in later chapter

@@ -166,7 +166,7 @@ Y.lim <- with(plot.means, range(lower, upper))
 Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
 
 CFP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
-                    geom = "line", ylim = Y.lim, size = I(0.8), 
+                    geom = "line", ylim = Y.lim, size = Position, 
                     colour = Position, fill = Position, 
                     shape = Position, # lty = Position,
                     main = Plot.Title, sub = Sub.msd,
@@ -186,6 +186,9 @@ CFP.plot <- CFP.plot + scale_fill_manual(name = Position.label,
 CFP.plot <- CFP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
+CFP.plot <- CFP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
 ## CFP.plot <- CFP.plot + scale_linetype_manual(name = Position.label,
 ##                                              values = Position.map$lty, 
 ##                                              breaks = Position.map$label)
@@ -216,7 +219,7 @@ if (exists('Y.lim1'))
 }
 
 FxP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
-                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  geom = "line", ylim = Y.lim, size = Position, 
                   colour = Position, fill = Position, 
                   shape = Position, # lty = Position,
                   main = Plot.Title, sub = Sub.msd,
@@ -235,6 +238,9 @@ FxP.plot <- FxP.plot + scale_fill_manual(name = Position.label,
 FxP.plot <- FxP.plot + scale_shape_manual(name = Position.label,
                                           values = Position.map$pch, 
                                           breaks = Position.map$label)
+FxP.plot <- FxP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
 ## FxP.plot <- FxP.plot + scale_linetype_manual(name = Position.label,
 ##                                              values = Position.map$lty, 
 ##                                              breaks = Position.map$label)
@@ -267,7 +273,7 @@ if (exists('Y.lim1'))
 }
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  geom = "line", ylim = Y.lim, size = Position, 
                   colour = Position, fill = Position, 
                   shape = Position, # lty = Position,
                   main = Plot.Title, sub = Sub.msd,
@@ -286,6 +292,9 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
                                           values = Position.map$pch, 
                                           breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
 ## CxP.plot <- CxP.plot + scale_linetype_manual(name = Position.label,
 ##                                              values = Position.map$lty, 
 ##                                              breaks = Position.map$label)

@@ -26,7 +26,7 @@ library(xtable)
 ##################################################
 ## SETTINGS
 ##################################################
-
+cat("STARTING Fauna Analysis ...\n")
 ## t4 samples only: I'm not really using the other data yet anyway.
 Samples.fauna <- which(SECC.fauna$Time == 4)
 Vars.fauna    <- setdiff(colnames(SECC.fauna), 
@@ -45,6 +45,9 @@ SECC.fauna.full <- SECC.fauna   # save a copy, just in case
 ##   between the various data frames.  
 Fauna.sp <- SECC.fauna[Samples.fauna, Vars.fauna]
 Fauna.meta <- SECC.fauna.meta[which(SECC.fauna.meta$ID %in% Spp.fauna), ]
+Fauna.meta$Trophic <- ifelse(Fauna.meta$Taxonomic.Group == "Mesostigmata" | Fauna.meta$Taxonomic.Group == "Prostigmata", "Predator", "Grazer")
+Fauna.meta$Trophic <- ifelse(Fauna.meta$Major.Taxa == "Uropodina",  "Grazer", Fauna.meta$Trophic)
+Fauna.meta$Trophic <- ifelse(Fauna.meta$Taxonomic.Group == "Other", "Other",  Fauna.meta$Trophic)
 
 
 ##================================================
@@ -97,9 +100,11 @@ SECC.env <- SECC[which(SECC$SampleID %in% rownames(Fauna)), ]
 Fauna.xy <- SECC.xy[rownames(Fauna), ]
 SECC.env <- SECC[rownames(Fauna), ]
 
+
 ##================================================
 ## Species Richness & Diversity metrics
 ##================================================
+cat("Calculating Diversity metrics\n")
 ## diversity() and specpool() in vegan
 SECC.sp.sum <- within(SECC.sp.sum, {
     Richness <- apply(SECC.sp, 1, function(x) length(which(x>0)) )  # observed # spp.
@@ -109,9 +114,9 @@ SECC.sp.sum <- within(SECC.sp.sum, {
 attr(SECC.sp.sum, "labels") <- attr(SECC, "labels")        # starting point
 attr(SECC.sp.sum, "units" ) <- attr(SECC, "units" )        # starting point
 attr(SECC.sp.sum, "labels")[["Richness"]] <- "Morphospecies Richness"
-attr(SECC.sp.sum, "units" )[["Richness"]] <- quote("(# observed taxa)")
+attr(SECC.sp.sum, "units" )[["Richness"]] <- quote("# observed taxa")
 attr(SECC.sp.sum, "labels")[["Evenness"]] <- "Inverse Simpson's Index"
-attr(SECC.sp.sum, "units" )[["Evenness"]] <- quote("(# effective taxa)")
+attr(SECC.sp.sum, "units" )[["Evenness"]] <- quote("# effective taxa")
 attr(SECC.sp.sum, "labels")[["Predators"]] <- "Predators (Mesostigmata + Prostigmata)"
 attr(SECC.sp.sum, "units" )[["Predators"]] <- quote("#" %.% g^-1)
 attr(SECC.sp.sum, "labels")[["Grazers"]]   <- "Grazers (fungivorous Acari + Collembola)"
@@ -186,6 +191,7 @@ if (FALSE)
 ##################################################
 ### UNIVARIATE ANALYSES (ANOVAs)
 ##################################################
+cat("Univariate Analyses of Fauna data ...\n")
 SECCxtract.aovlist <- function(x)
 {
   if ("aovlist" %in% class(x) == FALSE) 
@@ -262,7 +268,7 @@ plot.means <- SECCplotDataANOVA(SECCp$Y.trans,
 levels(plot.means$Chamber)[2] <- "Chamber"
 
 CxF.plot <- qplot(Frag, x, data = plot.means, group = Chamber, 
-                  geom = "line", ylim = Y.lim, size = I(0.8), 
+                  geom = "line", ylim = Y.lim, size = Chamber, 
                   colour = Chamber, fill = Chamber, 
                   shape = Chamber, # lty = Chamber,
                   main = Plot.Title, sub = Sub.msd,
@@ -281,6 +287,9 @@ CxF.plot <- CxF.plot + scale_fill_manual(name = Chamber.label,
 CxF.plot <- CxF.plot + scale_shape_manual(name = Chamber.label,
                                           values = Chamber.map$pch, 
                                           breaks = Chamber.map$label)
+CxF.plot <- CxF.plot + scale_size_manual(name = Chamber.label,
+                                         values = Chamber.map$lwd*0.5, 
+                                         breaks = Chamber.map$label)
 ## CxF.plot <- CxF.plot + scale_linetype_manual(name = Chamber.label,
 ##                                              values = Chamber.map$lty, 
 ##                                              breaks = Chamber.map$label)
@@ -322,6 +331,7 @@ if (TRUE)
 ##################################################
 ### MULTIVARIATE ANALYSES
 ##################################################
+cat("Multivariate Analyses of Fauna data ...\n")
 ## Transformation
 Fauna.log   <- log( Fauna +1 )         # or log1p
 Fauna.max   <- decostand( Fauna, method = "max" ) 
@@ -583,7 +593,7 @@ text(Fauna.pcoa.spscores, rownames(Fauna.pcoa.spscores), cex = 0.8, col = "red",
 ################################################################
 ## Correlations
 ################################################################
-## library(plyr)
+cat("Computing fauna species correllations\n")
 
 cols.numeric <- sapply(SECC.sp.sum, function (x) class(x) == "numeric")
 Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "pearson")
@@ -676,11 +686,20 @@ cordf <- function(data)
 
 Trophic.cor <- ddply(.data = SECC.sum[, c("Chamber", "Frag", "Position", "Predators", "Grazers", "Cells.g")], 
                      .variables = c("Chamber", "Position"), .fun = cordf )
+Trophic.cor <- Trophic.cor[, c(1, 2, 3, 5, 4)] # rearrange columns: the number of columns MATTERS!
+Trophic.cor$Chamber  <- factor(Trophic.cor$Chamber,  labels = c("Ambient", "Chamber"))
+Trophic.cor$Position <- factor(Trophic.cor$Position)
+
+## On average: 
+## * Predators & Grazers are +vely correlated,
+## * Grazers & Cells are weakly +vely correlated,
+## * and Predators & Cells are weakly negatively correlated.
 
 
 ##================================================
 ## Change in Abundance
 ##================================================
+cat("Computing changes in fauna species densities\n")
 
 Fauna.dab <- Fauna.sp[Fauna.sp$Frag == 4 & Fauna.sp$Time == 4, ]
 Fauna.dab$Trt <- paste( Fauna.dab$Chamber, "_", Fauna.dab$Frag, ".", Fauna.dab$Pos, sep="" )
@@ -695,21 +714,26 @@ Fauna.dab <- Fauna.dab[, -1]
 Fauna.dab <- as.data.frame( t(Fauna.dab) )
 
 axl <- c(0, 4)
+plot(Fauna.dab$A_4.I, Fauna.dab$A_4.O, xlim = axl, ylim = axl )
+abline(0, 1, lwd = 2, lty = 3)
+plot(Fauna.dab$C_4.I, Fauna.dab$A_4.O, xlim = axl, ylim = axl )
+abline(0, 1, lwd = 2, lty = 3)
 plot(Fauna.dab$C_4.I, Fauna.dab$C_4.O, xlim = axl, ylim = axl )
 abline(0, 1, lwd = 2, lty = 3)
 
 
 
 ##================================================
-## Treatment Presence/Absence
+## Treatment Presence/Absence ; Species Occurences
 ##================================================
+cat("Computing fauna species occurences in treatments (presence/absence)\n")
 
 Fauna.spr   <- recodeSECC(Fauna.sp)
 Fauna.trtpa <- aggregate(Fauna.spr[, cols.sp], 
-                         by=list(Time    = Fauna.spr$Time,
-                                 Chamber = Fauna.spr$Chamber,
-                                 Frag    = Fauna.spr$Frag,
-                                 Pos     = Fauna.spr$Pos
+                         by=list(Time     = Fauna.spr$Time,
+                                 Chamber  = Fauna.spr$Chamber,
+                                 Frag     = Fauna.spr$Frag,
+                                 Position = Fauna.spr$Position
                                  ),
                          FUN = sum
                          )
@@ -751,6 +775,7 @@ print(Compo.plot)
 ################################################################
 ### SPATIAL ANALYSIS
 ################################################################
+cat("Spatial analysis of fauna data ...\n")
 ## Test for spatial trend
 Fauna.rda <- rda(Fauna.hell, Fauna.xy[, c("xE", "yN")]) 
 anova(Fauna.rda)
@@ -793,6 +818,7 @@ Mantels.chord <- mantel.partial(Fauna.chorD, Mantelp.dist, Fauna.xydist, permuta
 ################################################################
 ### CONSTRAINED ORDINATION: FITTING ENVIRONMENTAL VARIABLES
 ################################################################
+cat("Constrained ordinations of fauna data ...\n")
 ## Extract matching ordination rows from Environmental data, *in same order*
 Fauna.sort <- match( rownames(Fauna.trans), SECC$SampleID )
 Fauna.sort <- na.omit(Fauna.sort)
@@ -877,6 +903,22 @@ ordiplot(Fauna.cca1, type="text",
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
+cat("Producing Figures for Publication\n")
+
+## plot symbol map
+## Inner = full
+## Outer = open
+## Chamber = Red
+## Ambient = Black
+## Pos: pch (shape); Chamber: colour; Frag: shape?
+Position.map <- plotMap( factor = "Position" )
+Position.map <- Position.map[ Position.map$label %in% levels(SECC.fauna$Pos), ]
+Chamber.map  <- plotMap( factor = "Chamber"  )
+Chamber.map  <- Chamber.map[ Chamber.map$label %in% levels(SECC.fauna$Chamber), ]
+
+Position.label <- attr(SECC, "labels")[["Pos"]] # "Patch\nPosition"
+Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
+
 ## Prepare data to plot
 ## has vegan changed?  stress values now seem to be <1, rather than in % ?!?
 ## stress.label <- paste( "Stress\n= ", round( Fauna.mds$stress, 1)/100 )	# Make text label of Stress value, rounded to 1 decimal place, and converted from % to a decimal number.
@@ -904,20 +946,6 @@ for(f in levels(MDS.spider$Frag))
 c.rows <- match(MDS.spider$Frag, MDS.centroids$Frag)
 MDS.spider$xend <- MDS.centroids$x[c.rows]
 MDS.spider$yend <- MDS.centroids$y[c.rows]
-
-## plot symbol map
-## Inner = full
-## Outer = open
-## Chamber = Red
-## Ambient = Black
-## Pos: pch (shape); Chamber: colour; Frag: shape?
-Position.map <- plotMap( factor = "Position" )
-Position.map <- Position.map[ Position.map$label %in% levels(SECC.fauna$Pos), ]
-Chamber.map  <- plotMap( factor = "Chamber"  )
-Chamber.map  <- Chamber.map[ Chamber.map$label %in% levels(SECC.fauna$Chamber), ]
-
-Position.label <- attr(SECC, "labels")[["Pos"]] # "Patch\nPosition"
-Chamber.label  <- "Chamber"         # attr(SECC, "labels")[["Chamber"]]
 
 ## Build plot in ggplot
 ## including grouping variables (shape, colour, etc.) in the default aes() (or qplot) causes geom_text() to look REALLY UGLY
@@ -1072,10 +1100,79 @@ if (FALSE)
 
 
 
+##==============================================================
+## Correlations between hypothesized "trophic groups"
+## Uses Chamber.map & Position.map from above
+## reorganize data for plotting
+Trophicor <- reshape(data = Trophic.cor, 
+                     varying = list(colnames(Trophic.cor)[3:5]),
+                     times = colnames(Trophic.cor)[3:5],
+                     timevar = "Groups",
+                     ##                      idvar = "Trt",
+                     ##                      ids = paste(Trophic.cor$Chamber, Trophic.cor$Position, sep="_"),
+                     v.names = "cor",
+                     direction = "long"
+                     )
+## Modify labels (now done in ggplot code directly)
+## Trophicor$Groups <- gsub("Cells\\.g", "cyanobacteria", Trophicor$Groups)
+## Trophicor$Groups <- gsub("\\.", " %prop% \n", Trophicor$Groups)
+Trophicor$Groups <- factor(Trophicor$Groups, levels = unique(Trophicor$Groups))
+Trophicor$id     <- factor(paste(Trophic.cor$Chamber, Trophic.cor$Position, sep="_"))
+
+Trophic.corplot  <- ggplot(data = Trophicor, aes(x = Groups, y = cor, group = id)) +
+                    geom_line(aes(colour = Chamber, size = Position, lty = Chamber)) +
+                    geom_point(aes(shape = Position, colour = Chamber, fill = Chamber), size = 3) +
+                    geom_hline(aes(x = 0)) + ylim(c(-1, 1)) +
+                    xlab("Trophic level comparisons") + ylab(expression("correlation coefficient "*rho)) +
+                    scale_x_discrete(labels = c('Predators.Grazers' = "Predators &\nGrazers",
+                                                'Grazers.Cells.g'   = "Grazers &\nCyanobacteria",
+                                                'Predators.Cells.g' = "Predators &\nCyanobacteria"
+                                                )
+                    ) + 
+                    scale_shape_manual(name = Position.label,
+                                       values = Position.map$pch) +
+                    scale_colour_manual(name = Chamber.label,
+                                        values = Chamber.map$col) +
+                    scale_fill_manual(name = Chamber.label,
+                                      values = Chamber.map$bg) +
+                    scale_linetype_manual(name = Chamber.label,
+                                          values = c(3, 1)) +
+                    scale_size_manual(name = Position.label,
+                                      values = Position.map$lwd*0.5) +
+                    jaw.ggplot()
+
+print(Trophic.corplot)
+
+
+##==============================================================
+## Change in Abundance between Treatments (Gonzalez-style)
+## prepare data for plotting
+Fauna.dab <- within(Fauna.dab, 
+                    {
+                      Trophic <- Fauna.meta$Trophic[ match(rownames(Fauna.dab), rownames(Fauna.meta)) ]
+                    })
+
+axl <- c(0, 4)
+Faunachange.plot  <- ggplot(data = Fauna.dab, aes(x = Fauna.dab$C_4.I, y = Fauna.dab$C_4.O)) +
+                    geom_point(aes(shape = Trophic), colour = "black", size = 3) +
+                    geom_abline(aes(intercept = 0, slope = 1), size = 0.5, lty = "dashed", colour = "#666666") +
+                    xlab(expression("Species density in " * italic("Isolated ") * bolditalic("Inner ") * italic("Chamber") * " patches (#" %.% g^-1 * ")")) + 
+                    ylab(expression("Species density in " * italic("Isolated ") * bolditalic("Outer ") * italic("Chamber") * " patches (#" %.% g^-1 * ")")) +
+                    scale_shape_manual(name = "Trophic group",
+                                       values = c(19, 21)) +
+                    xlim(axl) + ylim(axl) +
+                    coord_equal() + jaw.ggplot()
+
+print(Faunachange.plot)
+
+
+
+
 
 ##================================================
 ## Save (Multivariate) Results
 ##================================================
+cat("Saving Results...\n")
 if (TRUE) 
 {
   library(xtable)
@@ -1087,6 +1184,11 @@ if (TRUE)
       , cat("\n\n", "======== ANOVA results summary ========", "\n", sep="")
       , print(Fauna.ANOVA), cat("\n\n")
       , print(ANOVA.table), cat("\n\n")
+      , cat("\n\n", "======== Species Occurence by Trt (presence/absence) ========", "\n", sep="")
+      , print(Fauna.trtpa), cat("\n\n")
+      , print(xtable(t(Fauna.trtpa))), cat("\n\n")
+      , cat("\n\n", "======== Trophic Group Correlations by Trt ========", "\n", sep="")
+      , print(Trophic.cor), cat("\n\n")
       , cat("\n\n", "======== ANOSIM results ========", "\n", sep="")
       , print(ANOSIM.results), cat("\n\n")
       , print(ANOSIM.table), cat("\n\n")
@@ -1102,6 +1204,8 @@ if (TRUE)
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
   ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 2.8) # short height to push x-axis label a little closer to the axis (coord_equal bug?)
   ## semi-transparency (`alpha = `) is not supported by eps.  But it is by pdf ;)
+  ggsave(filename="./graphs/Figure - Trophic-Correlations.eps", plot = Trophic.corplot, width = 6, height = 4, scale = 1.2)
+  ggsave(filename="./graphs/Figure - Density Changes.eps", plot = Faunachange.plot, width = 5, height = 4, scale = 1.5)
 }
 
 
@@ -1109,4 +1213,5 @@ if (TRUE)
 ##################################################
 ### CLEAN-UP / HOUSEKEEPING
 ##################################################
+cat("======== Analysis of Fauna data FINISHED ========\n")
 SECC.fauna <- SECC.fauna.full   # recover full data frame

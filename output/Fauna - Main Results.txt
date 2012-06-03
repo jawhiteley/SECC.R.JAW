@@ -1,5 +1,5 @@
 FAUNA results
- Sun Apr 22 09:32:33 2012 
+ Sat Jun  2 20:49:11 2012 
 
 
 ======== ANOVA results summary ========
@@ -22,7 +22,7 @@ Chamber:Fragmentation:Position   1.5405662  0.241216566  1.6541793 0.2190294775
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Apr 22 09:32:33 2012
+% Sat Jun  2 20:49:11 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrrrrrrrr}
@@ -44,61 +44,215 @@ Chamber   & 1.00 & 3.00 & 4.22 & 0.13 & 0.31 & 0.62 & 2.41 & 0.22 & 2.33 & 0.22 
 
 
 
-======== ANOSIM results ========
-                     Groups      bray_.R bray_.p   bray_log.R bray_log.p euclidean_hell.R
-1                   Chamber  0.056222323   0.017  0.056222323      0.011      0.063550473
-2                       Pos  0.014278885   0.195  0.014278885      0.190      0.001679499
-3                      Frag -0.015856481   0.799 -0.015856481      0.785     -0.018938079
-4                  Frag:1x2 -0.004036458   0.482 -0.004036458      0.488      0.006835938
-5                  Frag:2x4 -0.016276042   0.692 -0.016276042      0.670     -0.025260417
-6                  Frag:1x4 -0.022005208   0.770 -0.022005208      0.799     -0.035123698
-7           Chamber:A x Pos -0.013994108   0.597 -0.013994108      0.576      0.007049663
-8          Chamber:A x Frag  0.079241071   0.043  0.079241071      0.050      0.119295635
-9           Chamber:C x Pos  0.163089226   0.007  0.163089226      0.009      0.135311448
-10         Chamber:C x Frag  0.062996032   0.097  0.062996032      0.107      0.047619048
-11             Pos:I x Frag  0.020461310   0.279  0.020461310      0.260      0.032986111
-12             Pos:O x Frag  0.019965278   0.259  0.019965278      0.279     -0.004216270
-13 Chamber:C x Pos:I x Frag -0.011574074   0.521 -0.011574074      0.514     -0.023148148
-14 Chamber:C x Pos:O x Frag  0.393518519   0.011  0.393518519      0.008      0.296296296
-   euclidean_hell.p euclidean_chord.R euclidean_chord.p jaccard_pa.R jaccard_pa.p
-1             0.044       0.063550473             0.028  0.056222323        0.016
-2             0.363       0.001679499             0.357  0.014278885        0.183
-3             0.715      -0.018938079             0.724 -0.015856481        0.784
-4             0.321       0.006835938             0.327 -0.004036458        0.493
-5             0.722      -0.025260417             0.717 -0.016276042        0.696
-6             0.885      -0.035123698             0.869 -0.022005208        0.798
-7             0.351       0.007049663             0.358 -0.013994108        0.587
-8             0.042       0.119295635             0.027  0.079241071        0.056
-9             0.038       0.135311448             0.042  0.163089226        0.012
-10            0.180       0.047619048             0.170  0.062996032        0.090
-11            0.232       0.032986111             0.235  0.020461310        0.272
-12            0.423      -0.004216270             0.428  0.019965278        0.273
-13            0.527      -0.023148148             0.545 -0.011574074        0.532
-14            0.029       0.296296296             0.030  0.393518519        0.010
+======== Species Occurence by Trt (presence/absence) ========
+        Time      Chamber           Frag Position Sejina_sp. Uropodina_sp.1 Uropodina_sp.2
+1  24 months      Ambient     Continuous    Inner          0              1              1
+2  24 months Full Chamber     Continuous    Inner          0              1              1
+3  24 months      Ambient Full Corridors    Inner          0              1              1
+4  24 months Full Chamber Full Corridors    Inner          0              1              1
+5  24 months      Ambient       Isolated    Inner          0              1              1
+6  24 months Full Chamber       Isolated    Inner          1              1              1
+7  24 months      Ambient     Continuous    Outer          0              1              1
+8  24 months Full Chamber     Continuous    Outer          0              1              1
+9  24 months      Ambient Full Corridors    Outer          0              1              1
+10 24 months Full Chamber Full Corridors    Outer          0              0              1
+11 24 months      Ambient       Isolated    Outer          0              1              1
+12 24 months Full Chamber       Isolated    Outer          0              0              0
+   Pergamascus_sp. Uropodina_spp.3 Zercon_sp. Parazercon_sp. Veigaiidae_sp. Ologamasidae_sp.
+1                1               0          1              1              1                1
+2                1               0          1              1              1                1
+3                1               0          1              1              1                1
+4                1               0          1              1              1                1
+5                1               0          1              1              1                1
+6                0               1          1              1              1                1
+7                1               1          1              1              1                1
+8                1               0          1              1              1                1
+9                0               0          1              1              1                1
+10               0               1          1              1              0                1
+11               1               0          1              1              1                1
+12               0               0          1              0              0                1
+   Laelapidae_sp.1 Laelapidae_sp.2 Laelapidae_sp.3 Laelapidae_sp.4 Hypogastruridae_sp.1
+1                1               1               1               0                    1
+2                1               0               0               0                    1
+3                1               1               1               0                    1
+4                0               1               0               0                    1
+5                1               0               0               0                    1
+6                1               1               0               0                    1
+7                1               1               0               0                    1
+8                0               1               0               0                    1
+9                1               1               1               0                    1
+10               0               1               0               0                    1
+11               1               0               0               0                    1
+12               0               1               0               0                    1
+   Hypogastruridae_sp.2 Onychiuridae_sp. Tomoceridae_sp. Folsomia_penicula Isotomidae_sp.3
+1                     0                1               0                 1               1
+2                     0                1               1                 1               1
+3                     0                1               0                 1               1
+4                     0                1               1                 1               1
+5                     0                1               1                 1               1
+6                     0                1               1                 1               1
+7                     0                1               1                 1               1
+8                     0                1               1                 1               1
+9                     0                1               1                 1               1
+10                    0                1               0                 1               1
+11                    0                1               0                 1               1
+12                    0                1               0                 0               1
+   Metisotoma_grandiceps Isotomidae_sp.5 Isotomidae_sp.4 Isotoma_notabilis Entomobryidae_sp.1
+1                      0               0               0                 1                  0
+2                      0               0               0                 1                  0
+3                      0               0               0                 1                  0
+4                      1               0               0                 1                  1
+5                      0               0               0                 1                  1
+6                      1               0               1                 1                  1
+7                      0               0               1                 1                  1
+8                      1               0               0                 1                  1
+9                      1               0               0                 1                  0
+10                     0               1               1                 1                  1
+11                     0               0               0                 1                  0
+12                     0               0               0                 1                  1
+   Entomobryidae_sp.2 Entomobryidae_sp.3 Neelidae_spp. Sminthuridae_sp.1 Sminthuridae_sp.2
+1                   0                  0             1                 1                 1
+2                   0                  0             1                 0                 1
+3                   0                  0             1                 1                 1
+4                   1                  0             1                 1                 1
+5                   1                  0             1                 1                 1
+6                   0                  0             1                 1                 1
+7                   0                  1             1                 1                 1
+8                   1                  0             1                 1                 1
+9                   0                  0             1                 1                 1
+10                  1                  0             0                 0                 0
+11                  0                  0             1                 1                 1
+12                  1                  0             1                 0                 0
+   Sminthuridae_sp.3
+1                  1
+2                  1
+3                  1
+4                  1
+5                  1
+6                  1
+7                  1
+8                  1
+9                  1
+10                 0
+11                 1
+12                 1
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Apr 22 09:32:33 2012
+% Sat Jun  2 20:49:11 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rllllllllllll}
+  \hline
+ & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 & 12 \\ 
+  \hline
+Time & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months \\ 
+  Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber \\ 
+  Frag & Continuous & Continuous & Full Corridors & Full Corridors & Isolated & Isolated & Continuous & Continuous & Full Corridors & Full Corridors & Isolated & Isolated \\ 
+  Position & Inner & Inner & Inner & Inner & Inner & Inner & Outer & Outer & Outer & Outer & Outer & Outer \\ 
+  Sejina\_sp. & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+  Uropodina\_sp.1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\ 
+  Uropodina\_sp.2 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 \\ 
+  Pergamascus\_sp. & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 1 & 0 & 0 & 1 & 0 \\ 
+  Uropodina\_spp.3 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 0 \\ 
+  Zercon\_sp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Parazercon\_sp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 \\ 
+  Veigaiidae\_sp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\ 
+  Ologamasidae\_sp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Laelapidae\_sp.1 & 1 & 1 & 1 & 0 & 1 & 1 & 1 & 0 & 1 & 0 & 1 & 0 \\ 
+  Laelapidae\_sp.2 & 1 & 0 & 1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 1 \\ 
+  Laelapidae\_sp.3 & 1 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 \\ 
+  Laelapidae\_sp.4 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+  Hypogastruridae\_sp.1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Hypogastruridae\_sp.2 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
+  Onychiuridae\_sp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Tomoceridae\_sp. & 0 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 0 & 0 \\ 
+  Folsomia\_penicula & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 \\ 
+  Isotomidae\_sp.3 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Metisotoma\_grandiceps & 0 & 0 & 0 & 1 & 0 & 1 & 0 & 1 & 1 & 0 & 0 & 0 \\ 
+  Isotomidae\_sp.5 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 \\ 
+  Isotomidae\_sp.4 & 0 & 0 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 0 \\ 
+  Isotoma\_notabilis & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 \\ 
+  Entomobryidae\_sp.1 & 0 & 0 & 0 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 & 1 \\ 
+  Entomobryidae\_sp.2 & 0 & 0 & 0 & 1 & 1 & 0 & 0 & 1 & 0 & 1 & 0 & 1 \\ 
+  Entomobryidae\_sp.3 & 0 & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 \\ 
+  Neelidae\_spp. & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 1 \\ 
+  Sminthuridae\_sp.1 & 1 & 0 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\ 
+  Sminthuridae\_sp.2 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\ 
+  Sminthuridae\_sp.3 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 1 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+
+======== Trophic Group Correlations by Trt ========
+  Chamber Position Predators.Grazers Grazers.Cells.g Predators.Cells.g
+1 Ambient    Inner        0.50797129      0.20937698        -0.1183919
+2 Ambient    Outer        0.32782491     -0.05075284         0.4491880
+3 Chamber    Inner        0.05662877      0.43022342        -0.3180899
+4 Chamber    Outer        0.77535600      0.26106445        -0.1156423
+
+
+
+
+======== ANOSIM results ========
+                     Groups      bray_.R bray_.p   bray_log.R bray_log.p euclidean_hell.R
+1                   Chamber  0.056222323   0.012  0.056222323      0.016      0.063550473
+2                       Pos  0.014278885   0.178  0.014278885      0.180      0.001679499
+3                      Frag -0.015856481   0.804 -0.015856481      0.792     -0.018938079
+4                  Frag:1x2 -0.004036458   0.471 -0.004036458      0.481      0.006835938
+5                  Frag:2x4 -0.016276042   0.678 -0.016276042      0.670     -0.025260417
+6                  Frag:1x4 -0.022005208   0.777 -0.022005208      0.769     -0.035123698
+7           Chamber:A x Pos -0.013994108   0.588 -0.013994108      0.560      0.007049663
+8          Chamber:A x Frag  0.079241071   0.041  0.079241071      0.051      0.119295635
+9           Chamber:C x Pos  0.163089226   0.008  0.163089226      0.007      0.135311448
+10         Chamber:C x Frag  0.062996032   0.102  0.062996032      0.107      0.047619048
+11             Pos:I x Frag  0.020461310   0.287  0.020461310      0.257      0.032986111
+12             Pos:O x Frag  0.019965278   0.290  0.019965278      0.269     -0.004216270
+13 Chamber:C x Pos:I x Frag -0.011574074   0.485 -0.011574074      0.516     -0.023148148
+14 Chamber:C x Pos:O x Frag  0.393518519   0.013  0.393518519      0.013      0.296296296
+   euclidean_hell.p euclidean_chord.R euclidean_chord.p jaccard_pa.R jaccard_pa.p
+1             0.044       0.063550473             0.034  0.056222323        0.011
+2             0.356       0.001679499             0.364  0.014278885        0.178
+3             0.734      -0.018938079             0.734 -0.015856481        0.791
+4             0.317       0.006835938             0.338 -0.004036458        0.480
+5             0.691      -0.025260417             0.686 -0.016276042        0.705
+6             0.844      -0.035123698             0.873 -0.022005208        0.791
+7             0.311       0.007049663             0.342 -0.013994108        0.574
+8             0.046       0.119295635             0.036  0.079241071        0.049
+9             0.033       0.135311448             0.032  0.163089226        0.009
+10            0.146       0.047619048             0.166  0.062996032        0.092
+11            0.245       0.032986111             0.238  0.020461310        0.286
+12            0.484      -0.004216270             0.441  0.019965278        0.318
+13            0.555      -0.023148148             0.567 -0.011574074        0.501
+14            0.028       0.296296296             0.023  0.393518519        0.011
+
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sat Jun  2 20:49:12 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rlrrr}
   \hline
  & Groups & bray\_.p & bray\_log.p & jaccard\_pa.p \\ 
   \hline
-1 & Chamber & 0.017 & 0.011 & 0.016 \\ 
-  2 & Pos & 0.195 & 0.190 & 0.183 \\ 
-  3 & Frag & 0.799 & 0.785 & 0.784 \\ 
-  4 & Frag:1x2 & 0.482 & 0.488 & 0.493 \\ 
-  5 & Frag:2x4 & 0.692 & 0.670 & 0.696 \\ 
-  6 & Frag:1x4 & 0.770 & 0.799 & 0.798 \\ 
-  7 & Chamber:A x Pos & 0.597 & 0.576 & 0.587 \\ 
-  8 & Chamber:A x Frag & 0.043 & 0.050 & 0.056 \\ 
-  9 & Chamber:C x Pos & 0.007 & 0.009 & 0.012 \\ 
-  10 & Chamber:C x Frag & 0.097 & 0.107 & 0.090 \\ 
-  11 & Pos:I x Frag & 0.279 & 0.260 & 0.272 \\ 
-  12 & Pos:O x Frag & 0.259 & 0.279 & 0.273 \\ 
-  13 & Chamber:C x Pos:I x Frag & 0.521 & 0.514 & 0.532 \\ 
-  14 & Chamber:C x Pos:O x Frag & 0.011 & 0.008 & 0.010 \\ 
+1 & Chamber & 0.012 & 0.016 & 0.011 \\ 
+  2 & Pos & 0.178 & 0.180 & 0.178 \\ 
+  3 & Frag & 0.804 & 0.792 & 0.791 \\ 
+  4 & Frag:1x2 & 0.471 & 0.481 & 0.480 \\ 
+  5 & Frag:2x4 & 0.678 & 0.670 & 0.705 \\ 
+  6 & Frag:1x4 & 0.777 & 0.769 & 0.791 \\ 
+  7 & Chamber:A x Pos & 0.588 & 0.560 & 0.574 \\ 
+  8 & Chamber:A x Frag & 0.041 & 0.051 & 0.049 \\ 
+  9 & Chamber:C x Pos & 0.008 & 0.007 & 0.009 \\ 
+  10 & Chamber:C x Frag & 0.102 & 0.107 & 0.092 \\ 
+  11 & Pos:I x Frag & 0.287 & 0.257 & 0.286 \\ 
+  12 & Pos:O x Frag & 0.290 & 0.269 & 0.318 \\ 
+  13 & Chamber:C x Pos:I x Frag & 0.485 & 0.516 & 0.501 \\ 
+  14 & Chamber:C x Pos:O x Frag & 0.013 & 0.013 & 0.011 \\ 
    \hline
 \end{tabular}
 \end{center}
@@ -112,19 +266,19 @@ Chamber   & 1.00 & 3.00 & 4.22 & 0.13 & 0.31 & 0.62 & 2.41 & 0.22 & 2.33 & 0.22 
 ***VECTORS
 
                   NMDS1     NMDS2     r2   Pr(>r)    
-H2O            0.988541 -0.150950 0.4582 0.000999 ***
-Patch.dwt      0.542568 -0.840012 0.0277 0.581419    
-Cells.g        0.301339  0.953517 0.0323 0.485514    
-Stigonema.g    0.251144  0.967950 0.0410 0.411588    
-Nostoc.g       0.158490 -0.987361 0.0490 0.318681    
-ARA.g          0.997224  0.074453 0.1329 0.051948 .  
-Decomposition  0.998973  0.045318 0.0846 0.151848    
-Prod01         0.714114 -0.700029 0.1146 0.076923 .  
-Prod12         0.983628  0.180214 0.2226 0.003996 ** 
-Prod23         0.932980 -0.359929 0.2596 0.006993 ** 
-NH4            0.666072  0.745887 0.0399 0.405594    
-NO3           -0.462430  0.886656 0.0412 0.421578    
-TAN            0.400793  0.916169 0.0373 0.444555    
+H2O            0.987509 -0.157561 0.4607 0.000999 ***
+Patch.dwt      0.538616 -0.842551 0.0288 0.577423    
+Cells.g        0.299164  0.954202 0.0322 0.525475    
+Stigonema.g    0.249281  0.968431 0.0409 0.422577    
+Nostoc.g       0.155894 -0.987774 0.0491 0.292707    
+ARA.g          0.997308  0.073325 0.1336 0.053946 .  
+Decomposition  0.999488  0.031988 0.0859 0.151848    
+Prod01         0.708683 -0.705527 0.1154 0.066933 .  
+Prod12         0.984307  0.176463 0.2235 0.010989 *  
+Prod23         0.929217 -0.369534 0.2599 0.006993 ** 
+NH4            0.660579  0.750757 0.0394 0.443556    
+NO3           -0.460188  0.887822 0.0406 0.449550    
+TAN            0.396067  0.918222 0.0369 0.471528    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 P values based on 1000 permutations.
@@ -133,31 +287,31 @@ P values based on 1000 permutations.
 
 Centroids:
                          NMDS1   NMDS2
-Block1                 -0.1230 -0.4545
+Block1                 -0.1274 -0.4520
 Block2                                
-Block3                 -0.0058  0.3895
+Block3                 -0.0041  0.3904
 Block4                                
-Block5                 -0.1504  0.2097
+Block5                 -0.1493  0.2090
 Block6                                
-Block7                  0.2849 -0.1886
+Block7                  0.2860 -0.1907
 Block8                                
-ChamberAmbient          0.2852 -0.0882
+ChamberAmbient          0.2874 -0.0896
 ChamberPartial Chamber                
-ChamberFull Chamber    -0.3021  0.0844
-FragContinuous          0.1607 -0.1027
-FragFull Corridors      0.0464  0.0601
+ChamberFull Chamber    -0.3045  0.0861
+FragContinuous          0.1628 -0.1040
+FragFull Corridors      0.0435  0.0605
 FragPseudo-Corridors                  
-FragIsolated           -0.2212  0.0302
-PositionInner           0.3082 -0.0993
+FragIsolated           -0.2206  0.0314
+PositionInner           0.3103 -0.1001
 Positionother                         
-PositionOuter          -0.3252  0.0954
+PositionOuter          -0.3274  0.0966
 
 Goodness of fit:
              r2  Pr(>r)  
-Block    0.1127 0.13686  
-Chamber  0.0765 0.03297 *
-Frag     0.0249 0.73327  
-Position 0.0897 0.01898 *
+Block    0.1124 0.12687  
+Chamber  0.0776 0.02498 *
+Frag     0.0249 0.70529  
+Position 0.0906 0.01798 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 P values based on 1000 permutations.
@@ -179,14 +333,14 @@ Unconstrained  0.6915     0.3956
 Eigenvalues, and their contribution to the mean squared contingency coefficient 
 
 Importance of components:
-                        CCA1    CCA2    CCA3    CCA4    CCA5    CCA6    CCA7    CCA8    CCA9   CCA10
-Eigenvalue            0.3171 0.16977 0.15738 0.11568 0.07351 0.05922 0.03529 0.02588 0.02421 0.02280
-Proportion Explained  0.1814 0.09712 0.09004 0.06618 0.04206 0.03388 0.02019 0.01480 0.01385 0.01304
-Cumulative Proportion 0.1814 0.27855 0.36859 0.43477 0.47683 0.51071 0.53089 0.54570 0.55955 0.57259
-                        CCA11   CCA12    CCA13    CCA14    CCA15    CCA16    CCA17    CCA18
-Eigenvalue            0.01460 0.01327 0.009012 0.005587 0.005207 0.003484 0.002555 0.001146
-Proportion Explained  0.00835 0.00759 0.005160 0.003200 0.002980 0.001990 0.001460 0.000660
-Cumulative Proportion 0.58094 0.58853 0.593690 0.596890 0.599870 0.601860 0.603320 0.603980
+                        CCA1    CCA2    CCA3    CCA4    CCA5    CCA6    CCA7    CCA8    CCA9
+Eigenvalue            0.3171 0.16977 0.15738 0.11568 0.07351 0.05922 0.03529 0.02588 0.02421
+Proportion Explained  0.1814 0.09712 0.09004 0.06618 0.04206 0.03388 0.02019 0.01480 0.01385
+Cumulative Proportion 0.1814 0.27855 0.36859 0.43477 0.47683 0.51071 0.53089 0.54570 0.55955
+                        CCA10   CCA11   CCA12    CCA13    CCA14    CCA15    CCA16    CCA17    CCA18
+Eigenvalue            0.02280 0.01460 0.01327 0.009012 0.005587 0.005207 0.003484 0.002555 0.001146
+Proportion Explained  0.01304 0.00835 0.00759 0.005160 0.003200 0.002980 0.001990 0.001460 0.000660
+Cumulative Proportion 0.57259 0.58094 0.58853 0.593690 0.596890 0.599870 0.601860 0.603320 0.603980
                           CCA19    CA1     CA2     CA3     CA4     CA5     CA6     CA7     CA8
 Eigenvalue            0.0007473 0.2000 0.11308 0.08185 0.07135 0.05044 0.03931 0.03363 0.02032
 Proportion Explained  0.0004300 0.1144 0.06469 0.04683 0.04082 0.02886 0.02249 0.01924 0.01163
@@ -398,21 +552,21 @@ Terms added sequentially (first to last)
 Model: cca(formula = Fauna.subset ~ Block + Chamber + Frag + Position + H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + Decomposition + Prod01 + Prod12 + Prod23 + NH4 + NO3 + TAN, data = Fauna.envs)
               Df  Chisq      F N.Perm Pr(>F)   
 Block          3 0.2863 3.3128    199  0.005 **
-Chamber        1 0.0503 1.7445    199  0.020 * 
-Frag           2 0.0711 1.2330    199  0.120   
-Position       1 0.0434 1.5076    199  0.045 * 
+Chamber        1 0.0503 1.7445    199  0.010 **
+Frag           2 0.0711 1.2330    199  0.130   
+Position       1 0.0434 1.5076    199  0.065 . 
 H2O            1 0.1336 4.6388    199  0.005 **
 Patch.dwt      1 0.0566 1.9651    199  0.040 * 
-Cells.g        1 0.0328 1.1390    199  0.300   
-Stigonema.g    1 0.0433 1.5015    199  0.150   
-Nostoc.g       1 0.0122 0.4223    199  0.720   
-ARA.g          1 0.0236 0.8200    199  0.495   
-Decomposition  1 0.0811 2.8152    199  0.005 **
-Prod01         1 0.0361 1.2523    199  0.195   
-Prod12         1 0.0191 0.6623    199  0.775   
-Prod23         1 0.0187 0.6473    199  0.710   
-NH4            1 0.0957 3.3217    199  0.005 **
-NO3            1 0.0526 1.8259    199  0.075 . 
+Cells.g        1 0.0328 1.1390    199  0.280   
+Stigonema.g    1 0.0433 1.5015    199  0.185   
+Nostoc.g       1 0.0122 0.4223    199  0.735   
+ARA.g          1 0.0236 0.8200    199  0.465   
+Decomposition  1 0.0811 2.8152    199  0.010 **
+Prod01         1 0.0361 1.2523    199  0.210   
+Prod12         1 0.0191 0.6623    199  0.755   
+Prod23         1 0.0187 0.6473    199  0.700   
+NH4            1 0.0957 3.3217    199  0.010 **
+NO3            1 0.0526 1.8259    199  0.105   
 Residual      24 0.6915                        
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
