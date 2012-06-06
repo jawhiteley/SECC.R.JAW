@@ -1176,7 +1176,7 @@ cat("Saving Results...\n")
 if (TRUE) 
 {
   library(xtable)
-  ANOVA.table <- xtable(Fauna.ANOVA)
+  ANOVA.table <- xtable(Fauna.ANOVA, digits = c(0, 0, 0, 2, 3, 2, 3, 2, 3, 2, 3))
   ANOSIM.table <- xtable(ANOSIM.results[, c("Groups", "bray_.p", 
                                                    "bray_log.p", "jaccard_pa.p")], 
                                 digits = 3) # bray, bray_log, jaccard **** 
