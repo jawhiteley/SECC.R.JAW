@@ -261,7 +261,7 @@ plot.means <- SECCplotDataANOVA(SECCp$Y.trans,
                                      Time=SECCp$Time), 
                                 error = msd["Chamber:Position"]
                                 )
-levels(plot.means$Chamber)[2] <- "Chamber"
+levels(plot.means$Chamber)[2] <- "Chamber\n" # The extra line is to force the lineheight setting on the axis text to have an effect.  Hacky, but it works :/
 
 
 if (exists('Y.lim1'))
@@ -301,7 +301,7 @@ CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
 CxP.plot <- CxP.plot + jaw.ggplot() +
   ## adjust x-axis labelling to allow the plot to line up better next to corresponding FxP plot
   opts(axis.ticks.margin = unit(0.2, "lines"),
-        axis.text.x = theme_text(lineheight = 1.1, vjust = 1) # trial & error 
+       axis.text.x = theme_text(lineheight = 1.1, vjust = 1) # trial & error 
   ## plot.margin = unit(c(1, 1, 1.4, 0.5), "lines")  # this lines up exactly, but moves the axis title up as well: that's not what I want.
   )
 print(CxP.plot)
