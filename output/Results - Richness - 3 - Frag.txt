@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Isolated 
 Patches:        
 
-Sun Jun 17 15:51:04 2012
+Fri Jun 22 07:01:01 2012
 
 ================================================================
 
@@ -30,7 +30,7 @@ Frag          2 10.083  5.0417  1.4405 0.2750
 Chamber:Frag  2  5.250  2.6250  0.7500 0.4933
 Residuals    12 42.000  3.5000               
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Jun 17 15:51:05 2012
+% Fri Jun 22 07:01:02 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}

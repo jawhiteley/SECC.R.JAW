@@ -185,6 +185,12 @@ if (FALSE)
   plot(specaccum(Fauna), ci.type = "polygon", ci.col = "lightgrey")
 
   plot(radfit(Fauna[1:12, ]))
+
+  ## BD-EF relationships?
+  library(mgcv)
+  qplot(x = Richness, y = Decomposition, data = SECC.sum) + stat_smooth(method = "gam")
+  qplot(x = H2O, y = Richness, data = SECC.sum) + stat_smooth(method = "gam")
+  qplot(x = H2O, y = Decomposition, data = SECC.sum) + stat_smooth(method = "gam")
 }
 
 
@@ -714,9 +720,9 @@ Fauna.dab <- Fauna.dab[, -1]
 Fauna.dab <- as.data.frame( t(Fauna.dab) )
 
 axl <- c(0, 4)
-plot(Fauna.dab$A_4.I, Fauna.dab$A_4.O, xlim = axl, ylim = axl )
+plot(Fauna.dab$A_4.O, Fauna.dab$A_4.I, xlim = axl, ylim = axl )
 abline(0, 1, lwd = 2, lty = 3)
-plot(Fauna.dab$C_4.I, Fauna.dab$A_4.O, xlim = axl, ylim = axl )
+plot(Fauna.dab$C_4.I, Fauna.dab$A_4.I, xlim = axl, ylim = axl )
 abline(0, 1, lwd = 2, lty = 3)
 plot(Fauna.dab$C_4.I, Fauna.dab$C_4.O, xlim = axl, ylim = axl )
 abline(0, 1, lwd = 2, lty = 3)
