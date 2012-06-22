@@ -431,10 +431,10 @@ SECCplotDataANOVA <- function(SECCdata,
                          if (backtransform)
                          {
                            if (Y.use == "Y.log")
-                           {
-                             x <- 10^x
-                             lower <- 10^lower
-                             upper <- 10^upper
+                           {           # Y.log = log(x + 1, 10); subtract 1 from result after?
+                             x <- (10^x) -1
+                             lower <- (10^lower) -1
+                             upper <- (10^upper) -1
                            }
                            if (Y.use == "Y.sqrt")
                            {
