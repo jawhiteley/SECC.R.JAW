@@ -124,10 +124,10 @@ attr(SECC.moss, "units")  <- list("Grow"       = "mm",
 								  "grow01"     = "mm",
 								  "grow12"     = "mm",
 								  "grow23"     = "mm",
-								  "Prod"       = "mg",
-								  "Prod01"     = "mg",
-								  "Prod12"     = "mg",
-								  "Prod23"     = "mg"
+								  "Prod"       = quote("mg" %.% "shoot"^-1),
+								  "Prod01"     = quote("mg" %.% "shoot"^-1),
+								  "Prod12"     = quote("mg" %.% "shoot"^-1),
+								  "Prod23"     = quote("mg" %.% "shoot"^-1)
 								  )
 
 ##################################################
