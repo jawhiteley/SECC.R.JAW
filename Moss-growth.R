@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Moss Growth / Productivity
-### Jonathan Whiteley     R v2.12     2012-02-05
+### Jonathan Whiteley     R v2.12     2012-06-24
 ##################################################
 ## INITIALISE
 ##################################################
@@ -165,16 +165,9 @@ for (Y.col in Ycols)
 }
 
 
-
-###===============================================
-### Include Time as a factor in nested ANOVA
-###===============================================
-## Repeated measures of the same samples (patches) across time...
-
-
-###===============================================
-### Prepare results for graphing
-###===============================================
+##================================================
+## Prepare results for graphing
+##================================================
 ## effect("Chamber:Position", Y.fits[["Prod01"]]) # Why the FUCK does this throw an error? Because Yp.fixed has changed since the object was saved (call).  GRRR :@
 effect2df <- function(eff, column = "effect", 
                          response.var = "Response", fac1.label="fac1", fac2.label = "fac2")
@@ -221,6 +214,7 @@ CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
 
 
 
+
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
@@ -236,23 +230,239 @@ PositionPts  <- ggPts.SECC(Position.map, Position.label)
 
 CxP.plot <- ggplot(data = CxP.data, 
                    aes(x = Chamber, y = effect, 
-                       group = Position, colour = Position, shape = Position)
+                       group = Position, colour = Position, fill = Position, size = Position, shape = Position)
                    ) + ylim(Y.lim) +
                     labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab) +
                     opts(title = Plot.Title) +
-                    geom_point(aes(group = Position), size = 3) +
-                    geom_line(aes(group = Position), size = 0.8) +
-                    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5)
+                    geom_line(aes(group = Position, size = Position)) +
+                    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+                    geom_point(aes(group = Position), size = 3)
 
 CxP.plot <- CxP.plot + PositionPts +
 scale_fill_manual(name = Position.label,
                   values = Position.map$bg, 
+                  breaks = Position.map$label) +
+scale_size_manual(name = Position.label,
+                  values = Position.map$lwd, 
                   breaks = Position.map$label)
 CxP.plot <- CxP.plot + facet_grid(.~ Panel) + jaw.ggplot()
 print(CxP.plot)
 
 
+
+
+
+
+
+
+
+##################################################
+### Include Time as a factor in nested model (ANOVA)
+##################################################
+## Repeated measures of the same samples (patches) across years
+
+## Reshape columns of variables in a single column with a Year factor
+SECC.grow <- reshape(SECC, idvar = "SampleID", varying = list(c("grow01", "grow13")), v.names = "grow",
+                     timevar = "Year", times = c("grow01", "grow13"), direction = "long",
+                     drop = setdiff(names(SECC), c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos', 'Position','grow01', 'grow13'))
+                     )
+SECC.prod <- reshape(SECC, idvar = "SampleID", varying = list(c("Prod01", "Prod13")),  v.names = "Prod",
+                     timevar = "Year", times = c("Prod01", "Prod13"), direction = "long",
+                     drop = setdiff(names(SECC), c('SampleID', 'Block', 'Time', 'Chamber', 'Frag', 'Pos', 'Position','Prod01', 'Prod13'))
+                     )
+if( all(SECC.grow$SampleID == SECC.prod$SampleID) ) SECC.prod <- cbind(SECC.prod, grow = SECC.grow[, "grow"])
+SECC.prod$Year <- factor(SECC.prod$Year, levels = c("Prod01", "Prod13"), labels = c(1, 2))
+rownames(SECC.prod) <- gsub("Prod01", 1, rownames(SECC.prod))
+rownames(SECC.prod) <- gsub("Prod13", 2, rownames(SECC.prod))
+
+## Filter data for analysis, according to settings of PREVIOUS ANALYSIS, above (see top of script).
+SECC.prod <- SECC.prod[SECC.prod$Time     %in% Time.use     &
+                       SECC.prod$Chamber  %in% Chamber.use  &
+                       SECC.prod$Frag     %in% Frag.use     &
+                       SECC.prod$Position %in% Position.use 
+                       , ]
+## drop unused factor levels (for plotting)
+SECC.prod <- within( SECC.prod, 
+                    {
+                      Time     <- factor(Time,     exclude=NULL)
+                      Chamber  <- factor(Chamber,  exclude=NULL)
+                      Frag     <- factor(Frag,     exclude=NULL)
+                      Position <- factor(Position, exclude=NULL)
+                    })
+
+
+##================================================
+## FIT MODEL
+##================================================
+## Repeated measures in time (approximated via nesting structure)
+lmd <- lmeControl()                    # save defaults
+lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
+Yp.random <- ~ 1 | Block/Chamber/Frag/Position/Year
+
+## Frag:Position:Year prevents solution in many cases; is the missing data really that unbalanced?
+Prod.lme <- lme(Prod ~ Chamber+Frag+Position+Year + 
+                Chamber:Frag + Chamber:Position + Chamber:Year + Frag:Position + Frag:Year + Position:Year +
+                Chamber:Frag:Position + Chamber:Frag:Year + Chamber:Position:Year, # + Frag:Position:Year + Chamber:Frag:Position:Year, 
+                random = Yp.random, 
+                data = SECC.prod[SECC.prod$Time == "t4", ], 
+                method="REML", control = lmc, na.action = na.omit)  # Linear model with nested error terms?
+
+
+##================================================
+## CHECK ASSUMPTIONS: analyse residuals, standard diagnostic plots
+##================================================
+## independence?
+    ## experimental design: random position of Frag within Chambers.
+    ## possibility of Block gradient (7&8 SW -> 1-6 E:N), which also corresponds roughly to order of samples.
+if (F)
+{                                      #  PROMPT for plot too annoying
+  ## trellis plots: any pattern across blocks, within frag & chambers?
+  xyplot(Prod ~ Block | Frag + Chamber, data=SECC.prod, 
+         pch=21, col="black", bg="grey", cex=0.8,
+         main = Dataset.labels[1]
+         )
+  par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
+  ## homogeneity of variances?
+  with( SECC.prod, plot(Prod ~ Chamber*Frag*Position*Year) )    # fixed effects only, no nesting
+  ##* PROMPT *##
+  ## plot.new()  # put next plot in empty panel?
+  ## normal distribution?
+  Yp.residuals <- resid(Prod.lme)
+  with(SECC.prod, qqnorm( Yp.residuals, main="Residuals" ) )   # are residuals normally distributed?
+  qqline(Yp.residuals,  col="grey50")
+  hist(Yp.residuals)  # plot residuals
+  ## with(SECC.prod, shapiro.test( Yp.residuals ) )    # normality?
+  par( mfrow=c(1,1) )
+}
+
+
+cat("\n\n")
+if( isTRUE( paste("anova", class(Prod.lme), sep=".") %in% methods(anova) ) ) 
+{
+  Yp.summary <- anova(Prod.lme)
+} else {
+  Yp.summary <- summary(Prod.lme)
+}
+print( Yp.summary )        # summary output
+Yp.mtab <- try( model.tables(Prod.lme, "means")   # effect sizes
+               , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
+# Interaction Plots
+par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
+with( SECC.prod, interaction.plot(Frag, Chamber, Prod,
+                              fun = function(x) mean(x, na.rm=TRUE),
+                              ylab = paste("mean of", "Productivity")
+                              )
+     )
+with( SECC.prod, interaction.plot(Position, Chamber, Prod,
+                              fun = function(x) mean(x, na.rm=TRUE),
+                              ylab=paste("mean of", "Productivity")
+                              )
+     )
+with( SECC.prod, interaction.plot(Position, Frag, Prod,
+                              fun = function(x) mean(x, na.rm=TRUE),
+                              ylab=paste("mean of", "Productivity")
+                              )
+     )
+
+
+##________________________________________________
+## unplanned Multiple Comparisons using multcomp package?
+##   -> See `SECC - nested lm.R` script for experiments using multcomp.
+if (F)
+{                                      # NOT WORKING ?! :(
+  ## estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
+  ## fake factor for Chamber x Position interaction
+  SECC.prod$CPY <- with(SECC.prod, interaction(Chamber, Position, Year) )
+  CPY.fit <- lme(Prod ~ CPY, random = Yp.random, data = SECC.prod[SECC.prod$Time == "t4", ], na.action = na.omit) #  with or without intercept?
+  ## K <- mcp(CPY="Tukey")                  # differences between each combination of factors
+  CPY.mcp <- glht(CPY.fit, linfct = mcp(CPY="Tukey"))
+  CPY.ci  <- confint(CPY.mcp)
+}
+
+##   -> comparison intervals for graphical display: using `effects` package for now.
+  library(effects)    # attractive interaction plots.  Does not work with aovlist.
+
+  Yp.effects <- allEffects(Prod.lme)
+  plot(effect("Chamber:Position:Year", Prod.lme))
+  print( plot(effect("Chamber:Position:Year", Prod.lme), 
+              multiline = TRUE, x.var = "Chamber", z.var = "Position") )
+  print( plot(effect("Chamber:Frag:Position", Prod.lme),
+              multiline = TRUE, x.var = "Frag", z.var = "Position") )
+  CPY.eff <- effect("Chamber:Position:Year", Prod.lme)
+  CPYs    <- summary(CPY.eff)
+  print( plot(CPY.eff) )
+
+
+
+
+##================================================
+## Prepare results for graphing
+##================================================
+CPY.data <- effect.to.df(CPY.eff)
+CPY.data$Chamber <- factor(CPY.data$Chamber, labels = c("Ambient", "Chamber"))
+
+
+
+##################################################
+### PUBLICATION GRAPHS
+##################################################
+Y.lim <- range(c(CPY.data$lower, CPY.data$upper))
+Y.plotlab <- bquote( .(attr(SECC, "labels")[["Prod"]]) * " (" * .(attr(SECC, "units")[["Prod"]]) * ")" )
+Plot.Title <- bquote("Patch means " %+-% "95% Confidence Intervals")
+Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
+Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+PositionPts  <- ggPts.SECC(Position.map, Position.label) 
+
+
+CPY.plot <- ggplot(data = CPY.data, 
+                   aes(x = Chamber, y = effect, 
+                       group = Position, colour = Position, fill = Position, shape = Position)
+                   ) + ylim(Y.lim) +
+                    labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab) +
+                    opts(title = Plot.Title) +
+                    geom_line(aes(group = Position, size = Position)) +
+                    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+                    geom_point(aes(group = Position), size = 3)
+
+CPY.plot <- CPY.plot + PositionPts +
+scale_fill_manual(name = Position.label,
+                  values = Position.map$bg, 
+                  breaks = Position.map$label) +
+scale_size_manual(name = Position.label,
+                  values = Position.map$lwd, 
+                  breaks = Position.map$label)
+CPY.plot <- CPY.plot + facet_grid(.~ Year) + jaw.ggplot()
+print(CPY.plot)
+
+
+##################################################
+### SAVE OUTPUTS
+##################################################
+if (Save.results == TRUE && is.null(Save.text) == FALSE) 
+{
+  Save.header  <- paste(  "Nested ANOVA Results for:", attr(SECC, "labels")[["Prod"]],
+                        "\nTransformation used:     ", Y.use,
+                        "\nExpt. Time:   ", paste(Time.use,     collapse = ", "),
+                        "\nChamber:      ", paste(Chamber.use,  collapse = ", "),
+                        "\nFragmentation:", paste(Frag.use,     collapse = ", "),
+                        "\nPatches:      ", paste(Position.use, collapse = ", "),
+                        paste("\n\n", date(), "\n\n", Save.divider, sep = "")
+                        )
+  capture.output(cat(Save.header, sep=""),
+				 print(Yp.summary),                # results summary
+				 cat("\n\n"),                      # for output
+                 ##                  summary(CxP.mcp),     # multiple comparisons of Chamber x Position interaction
+                 ##                  cat("\n\n"),                      # for output
+				 print(Yp.effects),                # effect sizes
+				 cat(Save.end),                    # END OUTPUT #
+				 file = "./output/Results - Productivity - Years 1-2.txt"
+				)
+}
+
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   Save.final <- paste(SaveDir.plots(), "Figure - ", Y.labels[1], sep="")
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CPY.eps"), plot = CPY.plot, width = 3, height = 3, scale = 1.5)
 }
+  

@@ -279,6 +279,7 @@ colnames(K) <- c(colnames(Tukey), colnames(Tukey))
 
 ## Yp.mcp <- glht(Yp.fit, linfct = K)                 # not all terms included?
 
+## estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
 ## fake factor for Chamber x Position interaction
 SECCp$CxP <- with(SECCp, interaction(Chamber, Position) )
 CxP.fit <- lme(Y.trans ~ CxP, random = Yp.random, data = SECCp) #  with or without intercept?
@@ -299,7 +300,8 @@ Yp.mcp <- glht(CxP.fit, linfct = K)
 ## Anyway, it's working now.
 
 summary(Yp.mcp)
-## estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
+## estimates and confidence intervals, adjusted for multiple comparisons.  I'm guessing this is testing whether estimates are different from 0; NOT whether they are different from each other ...
+## This is close to what I want. (depends on model / contrast matrix K)
 Yp.ci <- confint(Yp.mcp)
 plot(Yp.ci)                           # This is the data I want, but not quite the graph layout I want?
 print(Yp.ci)

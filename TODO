@@ -77,24 +77,24 @@ Ecosystem Processes
   - Repeated measures / Nested analysis of year 1 vs. year 2
     - Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
     - e.g., Block / Chamber / Frag / Position / Year
-  - Convert Productivity to g / area / time
-  - Estimate amount of "standing stock" of Moss, in g / area
-    - use Decomp. mass loss rates to calculate Decomp. in g / area / time.
-    - Compare Decomposition & Production : balance under various experimental conditions?
+  + Convert Productivity to g / area / time
+  + Estimate amount of "standing stock" of Moss, in g / area
+    + use Decomp. mass loss rates to calculate Decomp. in g / area / time.
+    + Compare Decomposition & Production : balance under various experimental conditions?
 
 Productivity - Decomposition Balance
 ________________________________
-- Calculate Decomposition rate as g lost / area / time
-    - g lost = % lost * g of moss in patch (?)
-- Calculate net g gained or lost  / time
-    - Productivity - Decomposition
-    - per patch
++ Calculate Decomposition rate as g lost / area / time
+    ~ g lost = % lost * g of moss in patch (or reasonable proportion thereof?)
++ Calculate net g gained or lost  / time
+    + Productivity - Decomposition
+    + per patch
     - mean & CI
     - SD: variability**
 - What is the approximate Carbon content of Pleurozium Schreberi?
   - g moss -> g Carbon
 - Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
-  - or, just get a km^2 measurement and see if that sounds impressive.
+  - or, just get a ha or km^2 measurement and see if that sounds impressive.
 
 - compare average dry weight of various treatments through time?
   - nested ANOVA on Patch.dwt

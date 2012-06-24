@@ -3,7 +3,7 @@
 ### Main control Script - Chapter 3:
 ### Decomposition & Productivity in Moss layer
 ### 
-### Jonathan Whiteley		R v2.12		2012-06-22
+### Jonathan Whiteley		R v2.12		2012-06-24
 ################################################################
 ## INITIALIZE
 if (FALSE) {  # do not run automatically

@@ -2,8 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 3:
 ### Balance between Productivity and Decomposition in moss layer
-### 
-### Jonathan Whiteley		R v2.12		2012-06-22
+### Jonathan Whiteley		R v2.12		2012-06-24
 ################################################################
 ## INITIALIZE
 if (FALSE) {  # do not run automatically
@@ -144,21 +143,7 @@ print( effect("Chamber:Position", Yp.fit) ) # works fine here
 ## effects() processing functions in SECC.functions.R
 
 CxP.data <- effect.to.df(CxP.eff)
-if (F)
-{
-  CxP.data <- cbind(Var = names(CxP.eff)[1], effect.to.df(CxP.eff) )
-  rownames(CxP.data) <- NULL
-  CxP.labels <- attr(SECC, "labels")[which(names(attr(SECC, "labels")) %in% unique(CxP.data$Var) )]
-  CxP.TimeP <- substring(CxP.labels, gregexpr("[0-9-]+ months", CxP.labels) )
-  Months <- c("August", "June", "August")
-  Months <- c(Months, rep( "", len = length(CxP.TimeP) - length(Months) ) )
-  CxP.data$Panel <- factor(CxP.data$Var, labels = paste(Months, CxP.TimeP, sep="\n") )
-  CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
-
-  Y.labels  <- gsub("\\s+[0-9-]+ months", "", CxP.labels) 
-  Y.plotlab <- bquote( .(Y.labels[1]) * " (" * .(Y.units) * ")" )
-
-}
+CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
 
 ##################################################
 ### PUBLICATION GRAPHS
@@ -173,7 +158,7 @@ PositionPts  <- ggPts.SECC(Position.map, Position.label)
 
 CxP.plot <- ggplot(data = CxP.data, 
                    aes(x = Chamber, y = effect, 
-                       group = Position, colour = Position, shape = Position)
+                       group = Position, colour = Position, fill = Position, shape = Position)
                    ) + ylim(Y.lim) +
                     labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab) +
                     opts(title = Plot.Title) +
