@@ -1,0 +1,67 @@
+Nested ANOVA Results for: Net Biomass Production (- Decomposition) ( PD.bal ) 
+Transformation used:      Y 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sat Jun 23 22:30:06 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position
+~1 | Block/Chamber/Frag
+                      numDF denDF   F-value p-value
+(Intercept)               1    45 10.772069  0.0020
+Chamber                   1     7  2.615383  0.1499
+Frag                      3    42  2.259874  0.0954
+Position                  1    45 14.630748  0.0004
+Chamber:Frag              3    42  1.596370  0.2046
+Chamber:Position          1    45 12.263314  0.0011
+Frag:Position             3    45  2.858274  0.0474
+Chamber:Frag:Position     3    45  0.560978  0.6435
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
+
+Linear Hypotheses:
+                                             Estimate Std. Error z value Pr(>|z|)    
+Full Chamber.Inner - Ambient.Inner == 0        13.110      9.581   1.368  0.51920    
+Ambient.Outer - Ambient.Inner == 0             -1.676      9.758  -0.172  0.99820    
+Full Chamber.Outer - Ambient.Inner == 0       -34.087      9.418  -3.619  0.00150 ** 
+Ambient.Outer - Full Chamber.Inner == 0       -14.786      9.840  -1.503  0.43580    
+Full Chamber.Outer - Full Chamber.Inner == 0  -47.197      9.506  -4.965  < 0.001 ***
+Full Chamber.Outer - Ambient.Outer == 0       -32.411      9.683  -3.347  0.00447 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+ model: Y.trans ~ Chamber * Frag * Position
+
+ Chamber*Frag*Position effect
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        34.57511       10.53561         15.04294 22.43340
+  Full Chamber   81.66573       18.51919         15.40511 21.95328
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors  Isolated
+  Ambient       11.587569       19.30878        14.844896  27.65052
+  Full Chamber  -8.750559      -12.10187        -5.389308 -25.91024
+
+
+
+<============================= END ============================>

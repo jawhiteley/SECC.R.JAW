@@ -75,6 +75,8 @@ Ecosystem Processes
 + Load    Moss Growth Data
 ~ Analyze Moss Growth Data (repeated measures in time)
   - Repeated measures / Nested analysis of year 1 vs. year 2
+    - Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
+    - e.g., Block / Chamber / Frag / Position / Year
   - Convert Productivity to g / area / time
   - Estimate amount of "standing stock" of Moss, in g / area
     - use Decomp. mass loss rates to calculate Decomp. in g / area / time.
@@ -93,6 +95,10 @@ ________________________________
   - g moss -> g Carbon
 - Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
   - or, just get a km^2 measurement and see if that sounds impressive.
+
+- compare average dry weight of various treatments through time?
+  - nested ANOVA on Patch.dwt
+  - Is the overall dry wt of outer chamber patches naturally lower?
 
 + Load    Ion Resin Data
 + Analyze Ion Resin Data

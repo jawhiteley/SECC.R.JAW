@@ -1,9 +1,9 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 3:
-### Ecosystem-level synthesis of all measured variables
-### N-fixation, cyanobacteria, Fauna, Moisture, Available N, Decomposition, etc.
-### Jonathan Whiteley		R v2.12		2012-02-05
+### Decomposition & Productivity in Moss layer
+### 
+### Jonathan Whiteley		R v2.12		2012-06-22
 ################################################################
 ## INITIALIZE
 if (FALSE) {  # do not run automatically
@@ -27,52 +27,10 @@ source("Moss-growth.R")                # Moss Growth
 source("Decomposition.R")              # Decomposition: litter bags
 
 
-
-
-################################################################
-## PRODUCTION - DECOMPOSITION MASS BALANCE
-################################################################
-## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-source('./lib/init.R')
-
 ##==============================================================
-## Convert Production and Decomposition to common units (t4 only)
+## Balance
 ##==============================================================
-SECC <- within(SECC, 
-               {
-                 Productivity <- Prod12 + Prod23
-                 if (FALSE)
-                 {
-                 Productivity <- Productivity * 385.8 # shoots / patch (appoximately, on average)
-                 } else {
-                 Productivity <- Productivity * Patch.dwt / (Cells.dwt / 1000 * 2) # multiply by fraction of patch weight in ~1 shoot (half of sample used for cyanobacteria Cells)
-                 }
-                 Productivity <- Productivity / 1000 # mg -> g
-                 Decompositng <- Decomposition * Patch.dwt/3 # only dead tissue is really decomposing?
-                 PD.bal <- Productivity - Decompositng
-               }
-)
+source("Moss-Prod-Decomp.R")           # Prod - Decomposition mass balance
 
-##==============================================================
-## Data Exploration & Checking
-##==============================================================
-if (FALSE)
-{
-  with(SECC, hist(Productivity) )
-  with(SECC, hist(Decompositng) )
-  with(SECC, hist(PD.bal) )
-}
 
-SECCsub <- subset(SECC, Position %in% c("Inner", "Outer") ) 
-SECCsub <- subset(SECCsub, Chamber %in% c("Ambient", "Full Chamber") ) 
-SECCsub$Position <- factor(SECCsub$Position)
-SECCsub$Chamber  <- factor(SECCsub$Chamber)
 
-library(ggplot2)
-PD.plot <- ggplot(SECCsub, 
-                  aes(x = Chamber, y = PD.bal, colour = Position)
-) +
-               stat_summary(fun.data = "mean_cl_boot", geom = "errorbar" ) +
-               stat_summary(fun.y = mean, geom = "line" )
-
-print(PD.plot)

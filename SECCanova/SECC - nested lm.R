@@ -237,14 +237,17 @@ Yp.mtab <- try( model.tables(Yp.fit, "means")   # effect sizes
 # Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
 with( SECCp, interaction.plot(Frag, Chamber, Y.trans,
+                              fun = function(x) mean(x, na.rm=TRUE),
                               ylab = paste("mean of", Y.use)
                               )
      )
 with( SECCp, interaction.plot(Position, Chamber, Y.trans,
+                              fun = function(x) mean(x, na.rm=TRUE),
                               ylab=paste("mean of", Y.use)
                               )
      )
 with( SECCp, interaction.plot(Position, Frag, Y.trans,
+                              fun = function(x) mean(x, na.rm=TRUE),
                               ylab=paste("mean of", Y.use)
                               )
      )

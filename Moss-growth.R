@@ -20,7 +20,7 @@ if (FALSE) {  # do not run automatically
 source('./lib/init.R')
 library(car)
 
-## Moss growth is a little different than other measure variables:
+## Moss growth is a little different than other measured variables:
 ## - Measured from the same t3 & t4 patches throughout.
 ##   - True repeated measures, unlike destructive sampling
 ##   - t3 data not included in SECC data frame

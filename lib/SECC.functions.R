@@ -39,7 +39,19 @@ nfix2ara <- function (nfix,
   ara
 }
 
-    
+
+## Conversion factors (constants)
+sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
+      #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
+      #  or 6.4 for 20 shoots, based on density survey.
+sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
+sample_ml    <- 50  # 50 ml sample
+ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
+patchA   <- pi * (12.5^2)      # patch area
+patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
+Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
+
+
 
 ##################################################
 ## ANOVA: standardized analysis of individual response variables
@@ -268,6 +280,32 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
 ##================================================
 ## ANALYSIS: GET RESULTS
 ##================================================
+
+## functions for processing effects() output for graphing
+effect2df <- function(eff, column = "effect", 
+                         response.var = "Response", fac1.label="fac1", fac2.label = "fac2")
+{
+  fac1.label <- names(eff$variables)[1]
+  fac2.label <- names(eff$variables)[2]
+  effw <- as.data.frame( summary(eff)[[column]] )
+  fac2 <- colnames(effw)
+  EffCols   <- paste(response.var, colnames(effw), sep=".")
+  colnames(effw) <- EffCols
+  effw[[fac1.label]] <- rownames(effw)
+  effw$Var  <- response.var
+  effl <- reshape(effw, varying = list(EffCols), direction = "long")
+  effl[[fac2.label]] <- factor(effl$time, labels = fac2)
+  effl$Response <- effl[, EffCols[1]]
+  effl <- effl[, c("Var", fac1.label, fac2.label, "Response")]
+  effl
+}
+
+effect.to.df <- function(eff)
+{
+  vars <- names(eff$variables) 
+  eff.df <- cbind(eff$x, effect = eff$fit, lower = eff$lower, upper = eff$upper)
+  eff.df
+}
 
 
 
