@@ -74,9 +74,9 @@ Ecosystem Processes
 
 + Load    Moss Growth Data
 ~ Analyze Moss Growth Data (repeated measures in time)
-  - Repeated measures / Nested analysis of year 1 vs. year 2
-    - Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
-    - e.g., Block / Chamber / Frag / Position / Year
+  + Repeated measures / Nested analysis of year 1 vs. year 2
+    + Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
+    + e.g., Block / Chamber / Frag / Position / Year
   + Convert Productivity to g / area / time
   + Estimate amount of "standing stock" of Moss, in g / area
     + use Decomp. mass loss rates to calculate Decomp. in g / area / time.
@@ -104,8 +104,13 @@ ________________________________
 + Analyze Ion Resin Data
 
 
+
 SYNTHESIS
 ================================
+
+
+
+
 
 
 
