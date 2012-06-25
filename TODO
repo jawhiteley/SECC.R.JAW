@@ -91,6 +91,11 @@ ________________________________
     + per patch
     - mean & CI
     - SD: variability**
+
++ Check for and remove outliers from Productivity (probably un-id'd skinny shoots)
+- Check for outliers in Moss Growth **
+- Estimate appropriate proportion of moss stem available for decomposition based on biomass conversion data ("Brown" + "Dead" tissue)
+
 - What is the approximate Carbon content of Pleurozium Schreberi?
   - g moss -> g Carbon
 - Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)

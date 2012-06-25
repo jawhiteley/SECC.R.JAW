@@ -14,10 +14,10 @@ if (FALSE) {  # do not run automatically
   getwd()           # Check that we're in the right place
 
   source("./lib/load.R")  # (re-)load data
-} else {
-  ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-  source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
-}
+}   
+
+## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
+source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
 
 
 library(ggplot2)
@@ -43,10 +43,14 @@ SECC <- within(SECC,
                  {
                    Productivity <- Productivity * 385.8 # shoots / patch (appoximately, on average)
                  } else {
-                   Productivity <- Productivity * Patch.dwt / (Cells.dwt / 1000 * 0.5) # multiply by fraction of patch weight in ~1 shoot (half of sample used for cyanobacteria Cells)
+                   ## multiply by fraction of patch weight in ~1 shoot (half of sample used for cyanobacteria Cells)
+                   Productivity <- Productivity * Patch.dwt / (Cells.dwt / 1000 * 0.5) 
                  }
                  Productivity <- Productivity / 1000 # mg -> g (yes, I still need to do this)
-                 Decompositng <- Decomposition * Patch.dwt/2 # only dead tissue is really decomposing?
+                 ## remove outliers; 44C-1.I, 64C-1.I, if extrapolation based on Patch.dwt
+                 Productivity[which(Productivity > 10)] <- NA
+
+                 Decompositng <- Decomposition * Patch.dwt/3 # only dead tissue is really decomposing?
                  PD.bal <- Productivity - Decompositng  # g / patch over 1 year
                  PD.bal <- PD.bal / (patch.m2 * 1)            # patch area -> square m ; 1000 g / kg X
                }
@@ -79,6 +83,19 @@ if (FALSE)
                stat_summary(fun.y = mean, geom = "line" )
 
                print(PD.plot)
+
+  library(mgcv)
+  PxD.plot <- ggplot(SECCsub,
+                    aes(x = Decompositng, y = Productivity, colour = Chamber, shape = Position)
+  ) +
+  geom_point() + stat_smooth(method = "gam") +
+  geom_abline(intercept = 0, slope = 1, colour = "#999999") + coord_equal()
+  print(PxD.plot)
+
+  ## Possible Productivity Outliers
+  Psort <- order(SECC$Productivity, decreasing = TRUE)
+  SECC[Psort[1:5], ]
+
 }
 
 
