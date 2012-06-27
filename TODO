@@ -101,9 +101,10 @@ ________________________________
 - Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
   - or, just get a ha or km^2 measurement and see if that sounds impressive.
 
-- compare average dry weight of various treatments through time?
-  - nested ANOVA on Patch.dwt
-  - Is the overall dry wt of outer chamber patches naturally lower?
++ compare average dry weight of various treatments through time?
+  + nested ANOVA on Patch.dwt
+  + Is the overall dry wt of outer chamber patches naturally lower?
+  - Regression of Net Productivity vs. Patch.dwt?
 
 + Load    Ion Resin Data
 + Analyze Ion Resin Data
