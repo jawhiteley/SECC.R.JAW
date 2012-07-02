@@ -26,38 +26,50 @@ library(ggplot2)
 ## Convert Production and Decomposition to common units (t4 only)
 ##==============================================================
 ## Decomposition is recorded as % mass loss,
-## BUT, it seems unlikely and unrealistic that 100% of the moss is "eligible" for decomposition
+## BUT, it seems unlikely and unrealistic that 100% of of a patch's dry weight is "available" for decomposition
 ## I am assuming that a portion of the dry weight of each patch is 'decomposing'
 ## But, what is a reasonable proportion?  
 ## 1/2?  At that rate, totall mass loss by decomposition may appear to exceed productivity, even in Ambient patches?
 ##       (actually, this may have been the result of an error in my math)
 ## 1/3?  Seems reasonable?
-## I should really use Heather's data (Moss_biomass) to estimate what proportion, or at what depth moss tissue is "brown", and use that.
+## Analysis of the Moss biomass data (`Moss_biomass.R`) suggests a proportion of 0.115 - 0.118 (Brown + Dead tissue / Total dwt).
+## - This might be an underestimate, given that there's likely a bunch of moss litter not attached to the shoot.
+## By length: 0.15 - 0.16, but that's based on total segments for each shoot.
+## - this may also be biased, because of the variation in total shoot length.
+## A more conservative approach might just be to go by depth:
+## - 75% of "green" segments are above 6 cm
+## - most "brown" or "dead" segments are at 6cm, or below.
+## - assuming a total depth of 9 cm, 1/3 is actually a reasonable proportion, assuming mass doesn't change with depth
+## - realistically, biomass probably does change with depth, with more litter deeper down, and less total biomass at the top.
+## Assuming 1/3 seems like a reasonable balance between the various estimates based on Moss biomass data
 
 ## Conversion factors - defined in SECC.functions
 
 SECC <- within(SECC, 
                {
-                 Productivity <- Prod12 + Prod23
+                 Productivity <- Prod12 + Prod23 # Cumulative productivity over 2nd year (same time period as litter bags for Decomposition)
                  if (FALSE)
                  {
-                   Productivity <- Productivity * 385.8 # shoots / patch (appoximately, on average)
+                   Productivity <- Productivity * 385.8 # shoots / patch (approximately, on average)
                  } else {
                    ## multiply by fraction of patch weight in ~1 shoot (half of sample used for cyanobacteria Cells)
                    Productivity <- Productivity * Patch.dwt / (Cells.dwt / 1000 * 0.5) 
                  }
                  Productivity <- Productivity / 1000 # mg -> g (yes, I still need to do this)
+                 ## Analysis of the Moss biomass data (`Moss_biomass.R`) suggests a proportion of 0.115 - 0.118.
+                 Decompositng <- Decomposition * Patch.dwt * (1/3) # only dead tissue is really decomposing?
+                 ## Convert each g / patch / yr -> g / m2 / yr
+                 Productivity <- Productivity / patch.m2
+                 Decompositng <- Decompositng / patch.m2
                  ## remove outliers; 44C-1.I, 64C-1.I, if extrapolation based on Patch.dwt
-                 Productivity[which(Productivity > 10)] <- NA
-
-                 Decompositng <- Decomposition * Patch.dwt/3 # only dead tissue is really decomposing?
-                 PD.bal <- Productivity - Decompositng  # g / patch over 1 year
-                 PD.bal <- PD.bal / (patch.m2 * 1)            # patch area -> square m ; 1000 g / kg X
+                 Productivity[which(Productivity > 200)] <- NA
+                 # Net Production
+                 PD.bal <- Productivity - Decompositng
                }
 )
 
-attr(SECC, "labels")[["PD.bal"]] <- "Net Biomass Production (- Decomposition)"
-attr(SECC, "units" )[["PD.bal"]] <- quote(g %.% m^-2 %.% y^-1)
+attr(SECC, "labels")[["PD.bal"]] <- "Net Moss Production" # "Net Biomass Production - Decomposition" ?
+attr(SECC, "units" )[["PD.bal"]] <- quote(g %.% m^-2 %.% yr^-1)
 
 
 
@@ -95,6 +107,11 @@ if (FALSE)
   ## Possible Productivity Outliers
   Psort <- order(SECC$Productivity, decreasing = TRUE)
   SECC[Psort[1:5], ]
+
+  ## quick regression of Net Biomass Production vs. Patch.dwt?
+  Patchreg.plot <- ggplot(SECCsub, aes(x = Patch.dwt, y = PD.bal, colour = Chamber, shape = Position) ) +
+                    geom_point() + stat_smooth(method = "gam")
+  print(Patchreg.plot)
 
 }
 
@@ -193,6 +210,10 @@ scale_size_manual(name = Position.label,
                   breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
+
+## stacked bar graph of Total Production - Decomposition?
+## I currently don't have a graphical representation of the relative magnitudes of these two processes: only the combined net effect.
+## ...
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {

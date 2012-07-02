@@ -25,6 +25,7 @@ if (FALSE) {  # do not run automatically
 ##==============================================================
 source("Moss-growth.R")                # Moss Growth
 source("Decomposition.R")              # Decomposition: litter bags
+source("Moss-dwt.R")              # Decomposition: litter bags
 
 
 ##==============================================================

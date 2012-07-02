@@ -109,6 +109,65 @@ Biomass.plot <- ggplot(Moss.biomass, aes(x=Segment, y=dwt.mg)) + Point.smooth + 
 print(Biomass.plot)
 
 
+##==============================================================
+## What proportion of Moss shoot, by dry weight (biomass), is available for 'Decomposition'?
+##==============================================================
+## This is useful for converting Decomposition rates, as % mass loss, to g / patch
+agg.by <-list(Sample = Moss.biomass$Sample,
+              Block = Moss.biomass$Block,
+              Time = Moss.biomass$Time,
+              Chamber = Moss.biomass$Chamber,
+              Frag = Moss.biomass$Frag,
+              Pos = Moss.biomass$Pos,
+              Colour = Moss.biomass$Colour
+              ##, Total.length = Total.length    # if you want to get values per shoot, rather than pooled across replicates within a patch.
+              )
+dwt.agg <- aggregate(Moss.biomass[, c("dwt.mg")],  by = agg.by, FUN = sum)
+seg.agg <- aggregate(Moss.biomass[, c("Segment")], by = agg.by, FUN = length)
+colnames(dwt.agg)[colnames(dwt.agg)=="x"] <- "dwt.mg"
+colnames(seg.agg)[colnames(seg.agg)=="x"] <- "Segments"
+Decomp.agg <- merge(dwt.agg, seg.agg)
+Decomp.prop <- reshape(Decomp.agg, idvar = c("Sample", "Block", "Time", "Chamber", "Frag", "Pos"), 
+                       timevar = "Colour", v.names = "dwt.mg", direction = "wide", drop = "Segments")
+## overall proportion of biomass "available" for decomposition: 0.118
+Decomp.prop.global <- sum(c(Decomp.prop$dwt.mg.Brown, Decomp.prop$dwt.mg.Dead), na.rm = TRUE)
+Decomp.prop.global <- Decomp.prop.global / sum(c(Decomp.prop$dwt.mg.Brown, Decomp.prop$dwt.mg.Dead, Decomp.prop$dwt.mg.Green), na.rm = TRUE) 
+## proportion of biomass available for decomposition, by patch?
+Decomp.prop$PropDecomp <- rowSums(Decomp.prop[, c("dwt.mg.Brown", "dwt.mg.Dead")], na.rm = TRUE)
+Decomp.prop$PropDecomp <- Decomp.prop$PropDecomp / rowSums(Decomp.prop[, c("dwt.mg.Brown", "dwt.mg.Dead", "dwt.mg.Green")], na.rm = TRUE) 
+
+mean(Decomp.prop$PropDecomp)           # 0.115
+hist(Decomp.prop$PropDecomp)
+## The estimate by weight could be an underestimate, given that there is likely a lot of moss litter not attached to the shoot.
+
+
+## Try by length / depth, instead:
+hist(Moss.biomass[Moss.biomass$Colour=="Green", "Segment"])
+summary(Moss.biomass[Moss.biomass$Colour=="Green", "Segment"], na.rm = TRUE)
+## As a rough guess, 3 - 3.5 cm seems like a good estimate of "Green" biomass, which suggests a ratio of closer to 2/3!
+hist(Moss.biomass[Moss.biomass$Colour=="Brown" | Moss.biomass$Colour=="Brown", "Segment"])
+summary(Moss.biomass[Moss.biomass$Colour=="Brown" | Moss.biomass$Colour=="Brown", "Segment"], na.rm = TRUE)
+## if the median is 6 cm for most brown / dead tissue, that actually suggests that a proportion of 1/3 - 1/2 is reasonable, assuming a total depth of about 9 cm
+
+Decomp.seg <- reshape(Decomp.agg, idvar = c("Sample", "Block", "Time", "Chamber", "Frag", "Pos"), 
+                       timevar = "Colour", v.names = "Segments", direction = "wide", drop = "dwt.mg")
+## overall proportion of biomass "available" for decomposition: 0.162
+Decomp.seg.global <- sum(c(Decomp.seg$Segments.Brown, Decomp.seg$Segments.Dead), na.rm = TRUE)
+Decomp.seg.global <- Decomp.seg.global / sum(c(Decomp.seg$Segments.Brown, Decomp.seg$Segments.Dead, Decomp.seg$Segments.Green), na.rm = TRUE) 
+## proportion of biomass available for decomposition, by patch?
+Decomp.seg$PropDecomp <- rowSums(Decomp.seg[, c("Segments.Brown", "Segments.Dead")], na.rm = TRUE)
+Decomp.seg$PropDecomp <- Decomp.seg$PropDecomp / rowSums(Decomp.seg[, c("Segments.Brown", "Segments.Dead", "Segments.Green")], na.rm = TRUE) 
+
+mean(Decomp.seg$PropDecomp)           # 0.151
+hist(Decomp.seg$PropDecomp)
+
+
+## I *could* use the patch-level data in the same spatial algorithm below, to estimate proportions for each patch.
+## However, I'm less confident about the spatial correspondence of this aspect, than I am about the morphometrics that determine mg / cm ...
+## i.e., it's not worth the effort right now.
+
+
+
 
 ################################################################
 ## ANALYSIS
