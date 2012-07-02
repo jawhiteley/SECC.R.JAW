@@ -25,6 +25,7 @@ source('./lib/init.R')
 Y.col <- 'H2O'  # Column to analyze as response variable           *****
 Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
 
+
 ##================================================
 ## CUSTOM CALCULATIONS 
 ##================================================
@@ -40,13 +41,32 @@ attr(SECC, "units" )[["H2O.asq"]] <- quote(asin(sqrt("% "* H[2]*O)))
 attr(SECC, "labels")[["H2O"]] <- "Moisture"
 attr(SECC, "units" )[["H2O"]] <- quote(""* H[2]*O *" as % of dry wt. moss")
 
+##==============================================================
+## Data Exploration & Checking
+##==============================================================
+if (FALSE)
+{
+  with(SECC, hist(H2O) )
 
-### Load default settings (based on response variable) *****
-source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
+  library(ggplot2)
+  library(mgcv)
+
+  ## I originally wanted to try a quick regression of H2O on temp, but then I realized I don't have that kind of temperature data.
+  H2O_temp.plot <- ggplot(SECC,
+                    aes(y = Prod12 + Prod23, x = H2O, colour = Chamber, shape = Position)
+  ) +
+  geom_point() + stat_smooth(method = "gam")
+  print(H2O_temp.plot)
+
+}
+
 
 ##================================================
 ## CUSTOM SETTINGS 
 ##================================================
+### Load default settings (based on response variable) *****
+source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
+
 ## delete lines to use the defaults.
 
 ## Specify which treatment levels to include (by index is probably easiest)
@@ -103,6 +123,7 @@ source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested 
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
+library(ggplot2)
 
 Y.lim <- c(0, 800)
 Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
