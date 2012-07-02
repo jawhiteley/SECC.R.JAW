@@ -99,7 +99,7 @@ if (FALSE) {  # do not run when source()'d
 attr(SECC.decomposition, "SECC columns") <- c('Decomposition')
 attr(SECC.decomposition, "labels") <- list("Decomposition"     = "Decomposition"
                                 )
-attr(SECC.decomposition, "units")  <- list("Decomposition"     = quote("% mass loss")
+attr(SECC.decomposition, "units")  <- list("Decomposition"     = quote("% mass loss" %.% "yr"^-1)
                                  )
 
 ##################################################
