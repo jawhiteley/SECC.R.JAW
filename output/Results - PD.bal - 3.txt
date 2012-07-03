@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Mon Jul  2 12:24:45 2012
+Tue Jul  3 10:53:06 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -33,12 +33,12 @@ Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
 
 Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
-Full Chamber.Inner - Ambient.Inner == 0        -2.971      5.472  -0.543    0.948    
-Ambient.Outer - Ambient.Inner == 0             -1.390      5.327  -0.261    0.994    
-Full Chamber.Outer - Ambient.Inner == 0       -37.015      5.282  -7.008   <1e-04 ***
-Ambient.Outer - Full Chamber.Inner == 0         1.581      5.617   0.282    0.992    
-Full Chamber.Outer - Full Chamber.Inner == 0  -34.044      5.284  -6.443   <1e-04 ***
-Full Chamber.Outer - Ambient.Outer == 0       -35.625      5.430  -6.561   <1e-04 ***
+Full Chamber.Inner - Ambient.Inner == 0       -11.884     21.887  -0.543    0.948    
+Ambient.Outer - Ambient.Inner == 0             -5.559     21.310  -0.261    0.994    
+Full Chamber.Outer - Ambient.Inner == 0      -148.060     21.126  -7.008   <1e-05 ***
+Ambient.Outer - Full Chamber.Inner == 0         6.325     22.469   0.282    0.992    
+Full Chamber.Outer - Full Chamber.Inner == 0 -136.175     21.135  -6.443   <1e-05 ***
+Full Chamber.Outer - Ambient.Outer == 0      -142.501     21.721  -6.561   <1e-05 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
@@ -52,15 +52,15 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient        42.65459       16.48761         21.01306 27.67833
-  Full Chamber   21.05768       23.50722         21.77132 28.78544
+  Ambient       170.61836       65.95043         84.05224 110.7133
+  Full Chamber   84.23071       94.02890         87.08527 115.1418
 
 , , Position = Outer
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors  Isolated
-  Ambient       21.556561       24.16644        19.973030  34.04462
-  Full Chamber  -3.183898      -10.57684        -3.658224 -21.27465
+  Ambient        86.22624       96.66574         79.89212 136.17846
+  Full Chamber  -12.73559      -42.30736        -14.63290 -85.09858
 
 
 

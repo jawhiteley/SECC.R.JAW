@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 3:
 ### Balance between Productivity and Decomposition in moss layer
-### Jonathan Whiteley		R v2.12		2012-06-24
+### Jonathan Whiteley		R v2.12		2012-07-03
 ################################################################
 ## INITIALIZE
 if (FALSE) {  # do not run automatically
@@ -39,7 +39,7 @@ library(ggplot2)
 ## A more conservative approach might just be to go by depth:
 ## - 75% of "green" segments are above 6 cm
 ## - most "brown" or "dead" segments are at 6cm, or below.
-## - assuming a total depth of 9 cm, 1/3 is actually a reasonable proportion, assuming mass doesn't change with depth
+## - assuming a total depth of 10 cm, 1/3 is actually a reasonable proportion, assuming mass doesn't change with depth
 ## - realistically, biomass probably does change with depth, with more litter deeper down, and less total biomass at the top.
 ## Assuming 1/3 seems like a reasonable balance between the various estimates based on Moss biomass data
 
@@ -62,7 +62,7 @@ SECC <- within(SECC,
                  Productivity <- Productivity / patch.m2
                  Decompositng <- Decompositng / patch.m2
                  ## remove outliers; 44C-1.I, 64C-1.I, if extrapolation based on Patch.dwt
-                 Productivity[which(Productivity > 200)] <- NA
+                 Productivity[which(Productivity > 500)] <- NA
                  # Net Production
                  PD.bal <- Productivity - Decompositng
                }

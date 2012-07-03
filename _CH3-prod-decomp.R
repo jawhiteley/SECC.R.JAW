@@ -3,7 +3,7 @@
 ### Main control Script - Chapter 3:
 ### Decomposition & Productivity in Moss layer
 ### 
-### Jonathan Whiteley		R v2.12		2012-06-24
+### Jonathan Whiteley		R v2.12		2012-07-03
 ################################################################
 ## INITIALIZE
 if (FALSE) {  # do not run automatically
@@ -25,7 +25,7 @@ if (FALSE) {  # do not run automatically
 ##==============================================================
 source("Moss-growth.R")                # Moss Growth
 source("Decomposition.R")              # Decomposition: litter bags
-source("Moss-dwt.R")              # Decomposition: litter bags
+source("Moss-dwt.R")                   # Patch dry weight?
 
 
 ##==============================================================

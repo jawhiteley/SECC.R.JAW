@@ -286,6 +286,8 @@ CxP.fit <- lme(Y.trans ~ CxP, random = Yp.random, data = SECCp) #  with or witho
 ## K <- mcp(CxP="Tukey")                  # differences between each combination of factors
 CxP.mcp <- glht(CxP.fit, linfct = mcp(CxP="Tukey"))
 CxP.ci  <- confint(CxP.mcp)
+plot(CxP.ci)
+print(CxP.ci)
 
 ## custom contrasts to get estimates & CI of factor levels, not differences
 CxP.fit <- lme(Y.trans ~ Chamber * Position, random = Yp.random, data = SECCp,
