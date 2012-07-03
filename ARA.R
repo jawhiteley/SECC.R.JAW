@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Acetylene Reduction Assay (ARA: N-fixation)  @ time #s
-### Jonathan Whiteley     R v2.12     2011-03-28
+### Jonathan Whiteley     R v2.12     2012-07-03
 ##################################################
 ## INITIALISE
 ##################################################
@@ -50,16 +50,19 @@ Save.results  <- TRUE
 ## !is.na(SECC$Time) ; NAs in factors are annoying
 SECC.prime <- SECC    # save a copy of the original for reference.
 
-# str(SECC)
-sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
-      #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
-      #  or 6.4 for 20 shoots, based on density survey.
-sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
-sample_ml    <- 50  # 50 ml sample
-ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
-patchA   <- pi * (12.5^2)      # patch area
-patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
-Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
+if (FALSE)
+{                                      # Conversion factors defined in SECC.functions
+  ## str(SECC)
+  sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
+                  #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
+                  #  or 6.4 for 20 shoots, based on density survey.
+  sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
+  sample_ml    <- 50  # 50 ml sample
+  ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
+  patchA   <- pi * ((12.5 / 2)^2)      # patch area, in cm^2 (12.5 cm diameter patch)
+  patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
+  Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
+}
 
 SECC <- within( SECC, { 
   ## change negative ARA values to 0 - should I wait until after aggregation?

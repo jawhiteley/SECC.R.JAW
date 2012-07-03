@@ -6,7 +6,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Thu May 17 07:48:58 2012
+Tue Jul  3 10:16:31 2012
 ================================================================
 
 Analysis of Variance Table
@@ -262,9 +262,9 @@ Residuals:
 -1.68831 -0.30994  0.01078  0.37425  1.62384 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -1.525e-17  2.886e-02   0.000        1    
-cb.re        4.227e-02  1.007e-02   4.198 3.36e-05 ***
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 3.308e-17  2.886e-02   0.000        1    
+cb.re       4.227e-02  1.007e-02   4.198 3.36e-05 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 

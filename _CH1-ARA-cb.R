@@ -32,5 +32,3 @@ source("Cyanobacteria.R")   # Cyanobcateria density Analysis
 
 source("./Nfix-Cyanobacteria/0_ARA~cyanobacteria.R")   # ARA ~ cyanobacteria (regression models)
 
-## OUTPUT
-## source("lib/out.R")   # Produce Outputs: graphs, reports, export.

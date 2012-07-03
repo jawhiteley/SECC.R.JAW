@@ -55,7 +55,7 @@ sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
 sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
 sample_ml    <- 50  # 50 ml sample
 ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
-patchA   <- pi * (12.5^2)      # patch area
+patchA   <- pi * ((12.5 / 2)^2)      # patch area, in cm^2 (12.5 cm diameter patch)
 patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
 Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
 
