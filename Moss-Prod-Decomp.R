@@ -120,7 +120,7 @@ if (FALSE)
 
 
 ################################################################
-## PRODUCTION - DECOMPOSITION MASS BALANCE (ANOVA)
+## RUN STANDARD NESTED ANALYSIS (ANOVA)
 ################################################################
 ##==============================================================
 ## CONFIGURE BASIC ANALYSIS
@@ -171,13 +171,75 @@ print( effect("Chamber:Position", Yp.fit) ) # works fine here
 ## ALERT: Tukey HSD family-wise CI are quite a bit wider than CIs in basic effects graphs!
 ##        Treatment differences may not be as strong as suggested by CIs
 
+
+##================================================
+## check for Block effects: I can't include it in the full model, because of lack of replication
+Yp.b   <- gls(Y.trans ~ Block*Chamber*Position, data = SECCp,
+              method="REML", na.action = na.omit
+)
+anova(Yp.b)
+Yp.b0 <- update(Yp.b , method = "ML")
+Yp.b1 <- update(Yp.b0, . ~ . -Block:Chamber:Position)
+anova(Yp.b0, Yp.b1)                # Maybe a main effect, but no sig. interaction.  *pfew*
+
+Block.plot <- ggplot(SECCp, aes(y = Y.trans, x = Chamber, group = Position)) + 
+                geom_point(aes(colour = Position, shape = Position)) +
+                stat_summary(fun.y = mean, geom = "line", aes(colour = Position, size = Position)) +
+                facet_wrap(~ Block)
+print(Block.plot)
+
+
+##================================================
+## MODEL SELECTION?
+##================================================
+## control for heterogeneity between blocks & years (see data exploration graphs)
+Yp.hB  <- update(Yp.fit, weights = varIdent(form= ~1 | Block))
+Yp.hF  <- update(Yp.fit, weights = varIdent(form= ~1 | Frag))
+Yp.hBF <- update(Yp.fit, weights = varIdent(form= ~1 | Block * Frag))
+
+Yp.gls <- gls(Yp.fixed, data = SECCp, method="REML", na.action = na.omit)
+
+## Check Random Structure
+anova(Yp.hBF, Yp.hB)
+anova(Yp.hBF, Yp.hF)
+anova(Yp.hBF, Yp.hF, Yp.fit, Yp.gls)              # random structure might make a difference ...
+
+## controlling for heterogeneity between fragmentation treatments improves the model fit by AIC *slightly*, but not BIC.
+## However, doing so means that Chamber:Frag:Position is no longer significant ... :/
+## It also prevents effect() from working, making plotting WAY more difficult! :(
+## Yp.fit  <- Yp.hF
+anova(Yp.hF)
+
+if (FALSE)
+{   ## Backwards-selection (using likelihood-ratio tests)
+  ML <- update(Yp.fit, method = "ML")
+  ML1 <- update(ML, . ~ . - Chamber:Frag:Position)
+  anova(ML, ML1)                       # * p = 0.0497 (without allowing heterogeneity across Frag trts) !!
+  ML2 <- update(ML1, . ~ . - Chamber:Frag)
+  ML3 <- update(ML1, . ~ . - Chamber:Position)
+  ML4 <- update(ML1, . ~ . - Frag:Position)
+  anova(ML1, ML2)
+  anova(ML1, ML3)                      # ***
+  anova(ML1, ML4)
+  ML5 <- update(ML2, . ~ . - Frag:Position)
+  anova(ML2, ML5)
+  ML6 <- update(ML5, . ~ . - Frag)
+  anova(ML5, ML6)
+  ## Basically, the anova output produces largely the same results (slightly different p-values, but same terms are significant, or not).
+}
+
+
+
 ###===============================================
 ### Prepare results for graphing
 ###===============================================
 ## effects() processing functions in SECC.functions.R
 
-CxP.data <- effect.to.df(CxP.eff)
+CxP.data <- effect.to.df(effect("Chamber:Position", Yp.fit)) # CxP.eff)
 CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
+CFP.data <- effect.to.df(effect("Chamber:Frag:Position", Yp.fit))
+CFP.data$Chamber <- factor(CFP.data$Chamber, labels = c("Ambient", "Chamber"))
+
 
 ##################################################
 ### PUBLICATION GRAPHS
@@ -211,6 +273,49 @@ scale_size_manual(name = Position.label,
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
+
+## Chamber-Frag-Position interaction?
+FragIconList <- list(FragIcon1 = FragIcon1,
+                     FragIcon2 = FragIcon2,
+                     FragIcon3 = FragIcon3,
+                     FragIcon4 = FragIcon4
+                     )
+Y.lim <- range(c(CFP.data$lower, CFP.data$upper))
+Plot.Title <- bquote("Patch means " %+-% "95% Confidence Intervals")
+Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
+Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+PositionPts  <- ggPts.SECC(Position.map, Position.label) 
+
+
+CFP.plot <- ggplot(data = CFP.data, 
+                   aes(x = Frag, y = effect, 
+                       group = Position, colour = Position, fill = Position, shape = Position)
+                   ) + ylim(Y.lim) +
+                    labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab) +
+                    opts(title = Plot.Title) +
+                    geom_hline(yintercept = 0, size = 0.5, colour = "#999999") +
+                    geom_line(aes(group = Position, size = Position)) +
+                    geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+                    geom_point(aes(group = Position), size = 3) + facet_grid(.~ Chamber)
+
+CFP.plot <- CFP.plot + PositionPts +
+scale_fill_manual(name = Position.label,
+                  values = Position.map$bg, 
+                  breaks = Position.map$label) +
+scale_size_manual(name = Position.label,
+                  values = Position.map$lwd, 
+                  breaks = Position.map$label) +
+scale_x_discrete(labels = names(FragIconList),
+                 breaks = levels(CFP.data$Frag))
+CFP.plot <- CFP.plot + jaw.ggplot() + 
+opts(axis.ticks.margin = unit(0.2, "lines"),
+     axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+)
+
+print(CFP.plot)
+
+
 ## stacked bar graph of Total Production - Decomposition?
 ## I currently don't have a graphical representation of the relative magnitudes of these two processes: only the combined net effect.
 ## ...
@@ -219,5 +324,6 @@ print(CxP.plot)
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   Save.final <- paste(SaveDir.plots(), "Figure - ", "PD-balance", sep="")
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 3, height = 3, scale = 1.5)
 }
 
