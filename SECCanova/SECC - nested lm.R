@@ -376,6 +376,7 @@ if (F)
 ## SAVE OUTPUT
 ##################################################
 if (Save.results == TRUE && is.null(Save.text) == FALSE) {
+  library(xtable)
   capture.output(cat(Save.header, Save.patch.header, sep=""),
 				 print(Yp.fixed),                  # model
 				 print(Yp.random),                 # model

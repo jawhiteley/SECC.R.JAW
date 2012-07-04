@@ -293,17 +293,36 @@ SECC.prod <- within( SECC.prod,
 
 
 ##================================================
+## check for Block effects: I can't include it in the full model, because of lack of replication
+Prod.b   <- gls(Prod ~ Block*Chamber*Position,
+                data = SECC.prod[SECC.prod$Year == 2, ],  # no productivity measurements from t3 in year 1 :(
+                method="REML", na.action = na.omit
+                )
+anova(Prod.b)
+Prod.b0 <- update(Prod.b , method = "ML")
+Prod.b1 <- update(Prod.b0, . ~ . -Block:Chamber:Position)
+anova(Prod.b0, Prod.b1)                # barely significant
+
+Block.plot <- ggplot(SECC.prod, aes(y = Prod, x = Chamber, group = Position)) + 
+                geom_point(aes(colour = Position, shape = Position)) +
+                stat_summary(fun.y = mean, geom = "line", aes(colour = Position, size = Position)) +
+                facet_wrap(~ Block)
+print(Block.plot)                      # maybe something funny hapenning in block 4 or 8, but the pattern is pretty consistent.
+
+
+##================================================
 ## FIT MODEL
 ##================================================
 ## Repeated measures in time (approximated via nesting structure)
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
+## Frag:Position:Year prevents solution in many cases; is the missing data really that unbalanced?
 Yp.fixed  <- Prod ~ Chamber+Frag+Position+Year + 
                 Chamber:Frag + Chamber:Position + Chamber:Year + Frag:Position + Frag:Year + Position:Year +
                 Chamber:Frag:Position + Chamber:Frag:Year + Chamber:Position:Year # + Frag:Position:Year + Chamber:Frag:Position:Year,
 Yp.random <- ~ 1 | Block/Chamber/Frag/Position/Year
 
-## Frag:Position:Year prevents solution in many cases; is the missing data really that unbalanced?
+## Main Model
 Prod.lme <- lme(Yp.fixed, random = Yp.random, 
                 data = SECC.prod[SECC.prod$Time == "t4", ],  # no productivity measurements from t3 in year 1 :(
                 method="REML", control = lmc, na.action = na.omit)  # Linear model with nested error terms?
