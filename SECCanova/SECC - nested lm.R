@@ -176,12 +176,18 @@ Yp.lmer <- lmer(as.formula(paste(deparse(Yp.fixed), "+ (", substring(deparse(Yp.
                 data=SECCp, REML = TRUE)  # Linear model with nested error terms??
 ## Frag*Position is causing the problem!!
 
-Yp.lm <- lm( Yp.fixed, data=SECCp)  # Linear model (no nested error terms??)
+Yp.lm  <- lm( Yp.fixed, data=SECCp)  # Linear model (no nested error terms??)
+Yp.gls <- gls( Yp.fixed, data=SECCp, method = "REML")  # for comparison with lme MM
 
+## Nested ANOVA: unbalanaced data means that treatments appear in multiple levels: messy!
 ## Yp.aov <- aov(Y.trans ~ Time*Chamber*Frag*Position + Error(Block/Time/Chamber/Frag), data=SECCp)
 Yp.aov <- aov(as.formula(paste(deparse(Yp.fixed), " + Error(", Yp.error, ")", sep="" ) ), 
               data=SECCp)
 
+anova(Yp.lme, Yp.gls)                  # does nesting make a difference?
+AIC(Yp.lme, Yp.gls, Yp.lm)             # compared with standard lm?
+
+## even if nesting does not reduce the AIC significantly, it seems more appropriate / valid
 Yp.fit <- Yp.lme
 
 ##################################################
@@ -197,18 +203,18 @@ xyplot(Y.trans ~ Block | Frag + Chamber, data=SECCp,
        pch=21, col="black", bg="grey", cex=0.8,
        main = Dataset.labels[1]
        )
-par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
-## homogeneity of variances?
-with( SECCp, plot(Y.trans ~ Chamber*Frag*Position) )    # fixed effects only, no nesting
-##* PROMPT *##
-## plot.new()  # put next plot in empty panel?
-## normal distribution?
 if (inherits(Yp.fit, "aovlist"))
 {
   Yp.residuals <- resid(Yp.fit$Within)
 } else {
   Yp.residuals <- resid(Yp.fit)
 }
+par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
+## homogeneity of variances?
+with( SECCp, plot(Yp.residuals ~ Chamber*Frag*Position) )    # fixed effects only, no nesting
+##* PROMPT *##
+## plot.new()  # put next plot in empty panel?
+## normal distribution?
 with(SECCp, qqnorm( Yp.residuals, main="Residuals", sub=Dataset.labels[1] ) )   # are residuals normally distributed?
 qqline(Yp.residuals,  col="grey50")
 par( mfrow=c(1,1) )
@@ -228,13 +234,28 @@ print(Yp.fixed)                 # for output
 if( isTRUE( paste("anova", class(Yp.fit), sep=".") %in% methods(anova) ) ) 
 {
   Yp.summary <- anova(Yp.fit)
+  if (FALSE)
+  {     ## Model selection ?
+    step(Yp.lm, direction = "backward")
+    ## Model selection, assuming no Time factor :P
+    ML.fit <- update(Yp.fit, method = "ML")
+    ML1 <- update(ML.fit, . ~ . - Chamber:Frag:Position)
+    anova(ML.fit, ML1)
+    ML2 <- update(ML1, . ~ . - Chamber:Position)
+    ML3 <- update(ML1, . ~ . - Chamber:Frag)
+    ML4 <- update(ML1, . ~ . - Frag:Position)
+    anova(ML1, ML2)
+    anova(ML1, ML3)
+    anova(ML1, ML4)
+  }
 } else {
   Yp.summary <- summary(Yp.fit)
 }
 print( Yp.summary )        # summary output
 Yp.mtab <- try( model.tables(Yp.fit, "means")   # effect sizes
                , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
-# Interaction Plots
+
+## Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
 with( SECCp, interaction.plot(Frag, Chamber, Y.trans,
                               fun = function(x) mean(x, na.rm=TRUE),
@@ -253,7 +274,7 @@ with( SECCp, interaction.plot(Position, Frag, Y.trans,
      )
 
 
-##________________________________________________
+##==============================================================
 ## unplanned Multiple Comparisons using multcomp package
 ##   -> comparison intervals for graphical display.
 library(multcomp)   # multiple comparisons
@@ -312,7 +333,7 @@ Yp.ci$confint[, 3] - Yp.ci$confint[, 1] # uneven confidence widths, due to uneve
 par(op)
 
 
-##________________________________________________
+##==============================================================
 ## Effects display
 if (!inherits(Yp.fit, "aovlist"))
 {
@@ -337,7 +358,7 @@ if (!inherits(Yp.fit, "aovlist"))
 }
 
 
-##________________________________________________
+##==============================================================
 ## (un)planned Multiple Comparisons using Least Significant Differences (LSD) -> comparison intervals for graphical display.
 ## Requires balanced data :/
 if (F)
@@ -359,7 +380,9 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 				 print(Yp.fixed),                  # model
 				 print(Yp.random),                 # model
 				 print(Yp.summary),                # results summary
-				 cat("\n\n"),                      # for output
+                 cat("\n\n"),                      # for output
+				 print( xtable(Yp.summary, digits = c(0, 0, 0, 1, 3)) ),
+                 cat("\n\n"),                      # for output
                  summary(CxP.mcp),     # multiple comparisons of Chamber x Position interaction
 				 cat("\n\n"),                      # for output
 				 print(Yp.effects),                # effect sizes

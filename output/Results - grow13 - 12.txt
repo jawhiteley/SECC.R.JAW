@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Tue Jul  3 10:51:07 2012
+Tue Jul  3 20:35:15 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -31,6 +31,36 @@ Chamber:Frag:Position          3    98   1.74002  0.1638
 Time:Chamber:Frag:Position     3    98   0.74191  0.5296
 
 
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Tue Jul  3 20:35:43 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & numDF & denDF & F-value & p-value \\ 
+  \hline
+(Intercept) & 1 & 98 & 120.3 & 0.000 \\ 
+  Time & 1 & 7 & 1.7 & 0.237 \\ 
+  Chamber & 1 & 14 & 52.2 & 0.000 \\ 
+  Frag & 3 & 84 & 1.6 & 0.198 \\ 
+  Position & 1 & 98 & 61.0 & 0.000 \\ 
+  Time:Chamber & 1 & 14 & 1.3 & 0.267 \\ 
+  Time:Frag & 3 & 84 & 0.7 & 0.562 \\ 
+  Chamber:Frag & 3 & 84 & 2.4 & 0.073 \\ 
+  Time:Position & 1 & 98 & 0.1 & 0.730 \\ 
+  Chamber:Position & 1 & 98 & 62.4 & 0.000 \\ 
+  Frag:Position & 3 & 98 & 0.6 & 0.629 \\ 
+  Time:Chamber:Frag & 3 & 84 & 0.3 & 0.814 \\ 
+  Time:Chamber:Position & 1 & 98 & 3.3 & 0.074 \\ 
+  Time:Frag:Position & 3 & 98 & 0.1 & 0.939 \\ 
+  Chamber:Frag:Position & 3 & 98 & 1.7 & 0.164 \\ 
+  Time:Chamber:Frag:Position & 3 & 98 & 0.7 & 0.530 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
 
 	 Simultaneous Tests for General Linear Hypotheses
 
@@ -43,10 +73,10 @@ Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
 Full Chamber.Inner - Ambient.Inner == 0        0.3891     0.8144   0.478    0.964    
 Ambient.Outer - Ambient.Inner == 0             0.1343     0.8127   0.165    0.998    
-Full Chamber.Outer - Ambient.Inner == 0       -8.4563     0.8111 -10.425   <1e-05 ***
+Full Chamber.Outer - Ambient.Inner == 0       -8.4563     0.8111 -10.425   <1e-04 ***
 Ambient.Outer - Full Chamber.Inner == 0       -0.2549     0.8318  -0.306    0.990    
-Full Chamber.Outer - Full Chamber.Inner == 0  -8.8454     0.7989 -11.072   <1e-05 ***
-Full Chamber.Outer - Ambient.Outer == 0       -8.5905     0.8283 -10.372   <1e-05 ***
+Full Chamber.Outer - Full Chamber.Inner == 0  -8.8454     0.7989 -11.072   <1e-04 ***
+Full Chamber.Outer - Ambient.Outer == 0       -8.5905     0.8283 -10.372   <1e-04 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)

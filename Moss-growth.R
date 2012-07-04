@@ -125,7 +125,7 @@ for (Y.col in Ycols)
   ## delete lines to use the defaults.
 
   ## Specify which treatment levels to include (by index is probably easiest)
-  Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not included in SECC)
+  Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not normally included in SECC)
   Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
   Position.use <- levels(SECC$Position)[c(1, 3)]   # Chamber treatments to include
 
@@ -260,6 +260,7 @@ print(CxP.plot)
 ### Include Time as a factor in nested model (ANOVA)
 ##################################################
 ## Repeated measures of the same samples (patches) across years
+cat("\n\n\n======== Nested analysis of Moss Productivity between Years ========\n")
 
 ## Reshape columns of variables in a single column with a Year factor
 SECC.grow <- reshape(SECC, idvar = "SampleID", varying = list(c("grow01", "grow13")), v.names = "grow",
@@ -297,15 +298,67 @@ SECC.prod <- within( SECC.prod,
 ## Repeated measures in time (approximated via nesting structure)
 lmd <- lmeControl()                    # save defaults
 lmc <- lmeControl(niterEM = 500, msMaxIter = 100, opt="optim")
+Yp.fixed  <- Prod ~ Chamber+Frag+Position+Year + 
+                Chamber:Frag + Chamber:Position + Chamber:Year + Frag:Position + Frag:Year + Position:Year +
+                Chamber:Frag:Position + Chamber:Frag:Year + Chamber:Position:Year # + Frag:Position:Year + Chamber:Frag:Position:Year,
 Yp.random <- ~ 1 | Block/Chamber/Frag/Position/Year
 
 ## Frag:Position:Year prevents solution in many cases; is the missing data really that unbalanced?
-Prod.lme <- lme(Prod ~ Chamber+Frag+Position+Year + 
-                Chamber:Frag + Chamber:Position + Chamber:Year + Frag:Position + Frag:Year + Position:Year +
-                Chamber:Frag:Position + Chamber:Frag:Year + Chamber:Position:Year, # + Frag:Position:Year + Chamber:Frag:Position:Year, 
-                random = Yp.random, 
-                data = SECC.prod[SECC.prod$Time == "t4", ], 
+Prod.lme <- lme(Yp.fixed, random = Yp.random, 
+                data = SECC.prod[SECC.prod$Time == "t4", ],  # no productivity measurements from t3 in year 1 :(
                 method="REML", control = lmc, na.action = na.omit)  # Linear model with nested error terms?
+## control for heterogeneity between blocks & years (see data exploration graphs)
+Prod.hB  <- update(Prod.lme, weights = varIdent(form= ~1 | Block))
+Prod.hY  <- update(Prod.lme, weights = varIdent(form= ~1 | Year))
+Prod.hBY <- update(Prod.lme, weights = varIdent(form= ~1 | Block * Year))
+
+Prod.gls <- gls(Yp.fixed,
+                data = SECC.prod[SECC.prod$Time == "t4", ],  # no productivity measurements from t3 in year 1 :(
+                method="REML", na.action = na.omit
+                )
+
+
+##================================================
+## MODEL SELECTION?
+##================================================
+## Random Structure
+anova(Prod.hBY, Prod.hB)
+anova(Prod.hBY, Prod.hY)
+anova(Prod.hBY, Prod.hY, Prod.lme, Prod.gls)              # random structure makes a BIG difference :)
+
+## controlling for heterogeneity between years improves the model fit by AIC, but the residuals are no longer normally-distributed :(
+## The results don't change much otherwise ...
+## Prod.lme <- Prod.hY                   # replace with best model
+
+if (FALSE)
+{   ## Backwards-selection (using likelihood-ratio tests)
+  ML <- update(Prod.lme, method = "ML")
+  ML1 <- update(ML, . ~ . - Chamber:Frag:Position)
+  ML2 <- update(ML, . ~ . - Chamber:Frag:Year)
+  ML3 <- update(ML, . ~ . - Chamber:Position:Year)
+  anova(ML, ML1)
+  anova(ML, ML2)
+  anova(ML, ML3)                         # ***
+  ML4 <- update(ML1, . ~ . - Chamber:Frag:Year)
+  ML5 <- update(ML1, . ~ . - Chamber:Position:Year)
+  anova(ML1, ML4)
+  anova(ML1, ML5)                        # ***
+  ML6 <- update(ML4, . ~ . - Frag:Year)
+  ML7 <- update(ML4, . ~ . - Frag:Position)
+  ML8 <- update(ML4, . ~ . - Chamber:Frag)
+  anova(ML4, ML6)
+  anova(ML4, ML7)
+  anova(ML4, ML8)
+  ML9  <- update(ML6, . ~ . - Frag:Position)
+  ML10 <- update(ML6, . ~ . - Chamber:Frag)
+  anova(ML6, ML9)
+  anova(ML6, ML10)
+  ML11 <- update(ML9, . ~ . - Chamber:Frag)
+  anova(ML9, ML11)
+  ML12 <- update(ML11, . ~ . - Frag)
+  anova(ML11, ML12)
+  ## Basically, the anova output produces largely the same results (slightly different p-values, but same terms are significant, or not.
+}
 
 
 ##================================================
@@ -314,20 +367,25 @@ Prod.lme <- lme(Prod ~ Chamber+Frag+Position+Year +
 ## independence?
     ## experimental design: random position of Frag within Chambers.
     ## possibility of Block gradient (7&8 SW -> 1-6 E:N), which also corresponds roughly to order of samples.
-if (F)
+Save.plots <- paste("./graphs/", "Results - Productivity - 12", ".pdf", sep = "")
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) pdf( file = Save.plots )
+
+if (T)
 {                                      #  PROMPT for plot too annoying
   ## trellis plots: any pattern across blocks, within frag & chambers?
   xyplot(Prod ~ Block | Frag + Chamber, data=SECC.prod, 
          pch=21, col="black", bg="grey", cex=0.8,
          main = Dataset.labels[1]
          )
+  Yp.residuals <- resid(Prod.lme)
   par( mfrow=c(2,2), cex=0.8) # panel of figures: 2 rows & 2 columns
   ## homogeneity of variances?
-  with( SECC.prod, plot(Prod ~ Chamber*Frag*Position*Year) )    # fixed effects only, no nesting
+  if (T) with( SECC.prod, plot(Prod ~ Block*Chamber*Frag*Position*Year) )    # fixed effects only, no nesting
   ##* PROMPT *##
   ## plot.new()  # put next plot in empty panel?
+
   ## normal distribution?
-  Yp.residuals <- resid(Prod.lme)
+  ## controlling for heterogeneity might have a better fit AIC-wise, but the residuals are way less normal
   with(SECC.prod, qqnorm( Yp.residuals, main="Residuals" ) )   # are residuals normally distributed?
   qqline(Yp.residuals,  col="grey50")
   hist(Yp.residuals)  # plot residuals
@@ -346,6 +404,7 @@ if( isTRUE( paste("anova", class(Prod.lme), sep=".") %in% methods(anova) ) )
 print( Yp.summary )        # summary output
 Yp.mtab <- try( model.tables(Prod.lme, "means")   # effect sizes
                , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
+
 # Interaction Plots
 par(mfrow=c(2,2))   # panel of figures: 2 rows & 2 columns
 with( SECC.prod, interaction.plot(Frag, Chamber, Prod,
@@ -364,19 +423,23 @@ with( SECC.prod, interaction.plot(Position, Frag, Prod,
                               )
      )
 
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
 
-##________________________________________________
+
+##==============================================================
 ## unplanned Multiple Comparisons using multcomp package?
 ##   -> See `SECC - nested lm.R` script for experiments using multcomp.
-if (F)
+if (T)
 {                                      # NOT WORKING ?! :(
   ## estimates of DIFFERENCES and confidence intervals, adjusted for multiple comparisons.  This is close to what I want. (depends on model / contrast matrix K)
-  ## fake factor for Chamber x Position interaction
+  ## fake factor for Chamber x Position x Year interaction
   SECC.prod$CPY <- with(SECC.prod, interaction(Chamber, Position, Year) )
   CPY.fit <- lme(Prod ~ CPY, random = Yp.random, data = SECC.prod[SECC.prod$Time == "t4", ], na.action = na.omit) #  with or without intercept?
   ## K <- mcp(CPY="Tukey")                  # differences between each combination of factors
   CPY.mcp <- glht(CPY.fit, linfct = mcp(CPY="Tukey"))
+  summary(CPY.mcp)
   CPY.ci  <- confint(CPY.mcp)
+  plot(CPY.ci)
 }
 
 ##   -> comparison intervals for graphical display: using `effects` package for now.
@@ -452,8 +515,10 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE)
   capture.output(cat(Save.header, sep=""),
 				 print(Yp.summary),                # results summary
 				 cat("\n\n"),                      # for output
-                 ##                  summary(CxP.mcp),     # multiple comparisons of Chamber x Position interaction
-                 ##                  cat("\n\n"),                      # for output
+				 xtable(Yp.summary, digits = c(0, 0, 0, 1, 3)),
+				 cat("\n\n"),                      # for output
+                 summary(CPY.mcp),                 # multiple comparisons of Chamber x Position interaction
+                 cat("\n\n"),                      # for output
 				 print(Yp.effects),                # effect sizes
 				 cat(Save.end),                    # END OUTPUT #
 				 file = "./output/Results - Productivity - Years 1-2.txt"
@@ -461,7 +526,7 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE)
 }
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  Save.final <- paste(SaveDir.plots(), "Figure - ", Y.labels[1], sep="")
+  Save.final <- paste(SaveDir.plots(), "Figure - Moss Productivity", sep="")
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CPY.eps"), plot = CPY.plot, width = 3, height = 3, scale = 1.5)
 }

@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Tue Jul  3 10:50:39 2012
+Tue Jul  3 20:34:47 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -29,6 +29,36 @@ Time:Chamber:Position          1   107  0.18273  0.6699
 Time:Frag:Position             3   107  0.82194  0.4845
 Chamber:Frag:Position          3   107  1.08876  0.3572
 Time:Chamber:Frag:Position     3   107  0.87640  0.4558
+
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Tue Jul  3 20:35:15 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & numDF & denDF & F-value & p-value \\ 
+  \hline
+(Intercept) & 1 & 107 & 87.9 & 0.000 \\ 
+  Time & 1 & 7 & 0.0 & 0.947 \\ 
+  Chamber & 1 & 14 & 51.2 & 0.000 \\ 
+  Frag & 3 & 84 & 3.0 & 0.037 \\ 
+  Position & 1 & 107 & 39.0 & 0.000 \\ 
+  Time:Chamber & 1 & 14 & 1.1 & 0.302 \\ 
+  Time:Frag & 3 & 84 & 0.5 & 0.718 \\ 
+  Chamber:Frag & 3 & 84 & 2.4 & 0.078 \\ 
+  Time:Position & 1 & 107 & 4.0 & 0.048 \\ 
+  Chamber:Position & 1 & 107 & 46.9 & 0.000 \\ 
+  Frag:Position & 3 & 107 & 0.3 & 0.830 \\ 
+  Time:Chamber:Frag & 3 & 84 & 0.4 & 0.721 \\ 
+  Time:Chamber:Position & 1 & 107 & 0.2 & 0.670 \\ 
+  Time:Frag:Position & 3 & 107 & 0.8 & 0.485 \\ 
+  Chamber:Frag:Position & 3 & 107 & 1.1 & 0.357 \\ 
+  Time:Chamber:Frag:Position & 3 & 107 & 0.9 & 0.456 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 
