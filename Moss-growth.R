@@ -109,6 +109,7 @@ Y.fits    <- list()
 Y.CxP.mcp <- list()
 Y.CxP.eff <- list()
 Y.effects <- list()
+Time.eff  <- list()
 
 
 ### loop each variable / measurement time period
@@ -158,6 +159,10 @@ for (Y.col in Ycols)
   Y.CxP.mcp[[Y.col]] <- CxP.mcp
   Y.CxP.eff[[Y.col]] <- CxP.eff
   Y.effects[[Y.col]] <- Yp.effects
+  if (length(levels(SECCp$Time)) > 1)
+  {
+    Time.eff[[Y.col]] <- effect("Time:Chamber:Position", Yp.fit)
+  }
 
   ##   print( effect("Chamber:Position", Yp.fit) )
   print( effect("Chamber:Position", Y.fits[[Y.col]]) ) # works fine here
@@ -211,6 +216,19 @@ Months <- c("August", "June", "August")
 Months <- c(Months, rep( "", len = length(CxP.TimeP) - length(Months) ) )
 CxP.data$Panel <- factor(CxP.data$Var, labels = paste(Months, CxP.TimeP, sep="\n") )
 CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
+
+
+##================================================
+## EXPLORATION: effect of "Time"?
+##================================================
+## Remember, Time is really just replication within blocks: there should be no effect.
+plot(Y.effects[["grow12"]])
+print(Time.eff[["grow12"]])
+plot(Time.eff[["grow12"]], multiline = TRUE)
+plot(Time.eff[["grow12"]], x.var = "Chamber", z.var = "Time")
+plot(Time.eff[["grow23"]], x.var = "Chamber", z.var = "Time")
+plot(Time.eff[["grow13"]], x.var = "Chamber", z.var = "Time")
+
 
 
 
@@ -323,9 +341,15 @@ Yp.fixed  <- Prod ~ Chamber+Frag+Position+Year +
 Yp.random <- ~ 1 | Block/Chamber/Frag/Position/Year
 
 ## Main Model
+## I *could* include all measurements from t3, which are only present in the second year, although I worry about what kind of comparison that creates (years aren't really comparable at that rate).
+## t4 measurements alone appear to be sufficient.
+## the results are basically the same, except the p-values for Frag drop a bit (still nowhere near 0.05).
 Prod.lme <- lme(Yp.fixed, random = Yp.random, 
                 data = SECC.prod[SECC.prod$Time == "t4", ],  # no productivity measurements from t3 in year 1 :(
-                method="REML", control = lmc, na.action = na.omit)  # Linear model with nested error terms?
+                method="REML", control = lmc, na.action = na.omit)
+Prod.lme2 <- lme(Yp.fixed, random = ~ 1 | Block/Time/Chamber/Frag/Position/Year, 
+                data = SECC.prod,  # no productivity measurements from t3 in year 1 :(
+                method="REML", control = lmc, na.action = na.omit)
 ## control for heterogeneity between blocks & years (see data exploration graphs)
 Prod.hB  <- update(Prod.lme, weights = varIdent(form= ~1 | Block))
 Prod.hY  <- update(Prod.lme, weights = varIdent(form= ~1 | Year))
@@ -376,7 +400,7 @@ if (FALSE)
   anova(ML9, ML11)
   ML12 <- update(ML11, . ~ . - Frag)
   anova(ML11, ML12)
-  ## Basically, the anova output produces largely the same results (slightly different p-values, but same terms are significant, or not.
+  ## Basically, the anova output produces largely the same results (slightly different p-values, but same terms are significant, or not).
 }
 
 
