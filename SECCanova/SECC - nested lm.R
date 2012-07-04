@@ -384,7 +384,9 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
                  cat("\n\n"),                      # for output
 				 print( xtable(Yp.summary, digits = c(0, 0, 0, 1, 3)) ),
                  cat("\n\n"),                      # for output
-                 summary(CxP.mcp),     # multiple comparisons of Chamber x Position interaction
+                 summary(CxP.mcp),                 # multiple comparisons of Chamber x Position interaction
+				 cat("\n\n"),                      # for output
+                 summary(Yp.mcp),                  # multiple comparisons with 0
 				 cat("\n\n"),                      # for output
 				 print(Yp.effects),                # effect sizes
 				 cat(Save.end),                    # END OUTPUT #

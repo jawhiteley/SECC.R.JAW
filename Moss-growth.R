@@ -221,13 +221,16 @@ CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
 ##================================================
 ## EXPLORATION: effect of "Time"?
 ##================================================
-## Remember, Time is really just replication within blocks: there should be no effect.
-plot(Y.effects[["grow12"]])
-print(Time.eff[["grow12"]])
-plot(Time.eff[["grow12"]], multiline = TRUE)
-plot(Time.eff[["grow12"]], x.var = "Chamber", z.var = "Time")
-plot(Time.eff[["grow23"]], x.var = "Chamber", z.var = "Time")
-plot(Time.eff[["grow13"]], x.var = "Chamber", z.var = "Time")
+if (F)
+{                                      # Hide prompts when source()ing
+  ## Remember, Time is really just replication within blocks: there should be no effect.
+  plot(Y.effects[["grow12"]])
+  print(Time.eff[["grow12"]])
+  plot(Time.eff[["grow12"]], multiline = TRUE)
+  plot(Time.eff[["grow12"]], x.var = "Chamber", z.var = "Time")
+  plot(Time.eff[["grow23"]], x.var = "Chamber", z.var = "Time")
+  plot(Time.eff[["grow13"]], x.var = "Chamber", z.var = "Time")
+}
 
 
 
@@ -569,7 +572,7 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE)
 }
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  Save.final <- paste(SaveDir.plots(), "Figure - Moss Productivity", sep="")
+  Save.final <- paste(SaveDir.plots(), "Figure - Moss Growth", sep="")
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CPY.eps"), plot = CPY.plot, width = 3, height = 3, scale = 1.5)
 }

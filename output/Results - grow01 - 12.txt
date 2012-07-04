@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Wed Jul  4 08:08:32 2012
+Wed Jul  4 15:20:54 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    55   0.39866  0.7545
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Wed Jul  4 08:08:43 2012
+% Wed Jul  4 15:21:04 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -61,6 +61,24 @@ Full Chamber.Outer - Ambient.Inner == 0       -4.7207     0.7110  -6.639   <1e-0
 Ambient.Outer - Full Chamber.Inner == 0        0.1337     0.7052   0.190    0.998    
 Full Chamber.Outer - Full Chamber.Inner == 0  -4.8909     0.7052  -6.936   <1e-06 ***
 Full Chamber.Outer - Ambient.Outer == 0       -5.0247     0.7052  -7.126   <1e-06 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lme.formula(fixed = Y.trans ~ Chamber * Position, data = SECCp, 
+    random = Yp.random, na.action = na.omit, control = lmc)
+
+Linear Hypotheses:
+                        Estimate Std. Error z value Pr(>|z|)    
+Ambient:Inner == 0        5.7986     0.5720  10.138   <1e-04 ***
+Full Chamber:Inner == 0   5.9691     0.5647  10.570   <1e-04 ***
+Ambient:Outer == 0        6.1028     0.5647  10.807   <1e-04 ***
+Full Chamber:Outer == 0   1.0781     0.5647   1.909    0.200    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
