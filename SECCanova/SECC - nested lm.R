@@ -281,7 +281,7 @@ library(multcomp)   # multiple comparisons
 op <- par(mfrow=c(1, 1), mai = par("mai") * c(1, 3, 1, 1))
 
 Yp.glht <- glht(Yp.fit)
-confint(Yp.glht)
+confint(Yp.glht)                       # tests of each group mean / fitted value (Estimate) == 0
 plot(Yp.glht)
 ## Interaction terms?
 X.grid <- expand.grid(Chamber = unique(SECCp$Chamber), Position = unique(SECCp$Position))
@@ -311,13 +311,13 @@ plot(CxP.ci)
 print(CxP.ci)
 
 ## custom contrasts to get estimates & CI of factor levels, not differences
-CxP.fit <- lme(Y.trans ~ Chamber * Position, random = Yp.random, data = SECCp,
+CP.fit <- lme(Y.trans ~ Chamber * Position, random = Yp.random, data = SECCp,
                control = lmc, na.action = na.omit) #  with or without intercept?
-CxP.ci1 <- confint(glht(CxP.fit, linfct = K)) # differences between levels of one factor, nested within another factor.  Doesn't really make sense :(
+CP.ci <- confint(glht(CP.fit, linfct = K)) # differences between levels of one factor, nested within another factor.  Doesn't really make sense :(
 
 rownames(X.grid) <- paste(X.grid[, 1], X.grid[, 2], sep=":")
 K <- model.matrix(~ Chamber * Position, data = X.grid) # set up contrasts
-Yp.mcp <- glht(CxP.fit, linfct = K)
+Yp.mcp <- glht(CP.fit, linfct = K)
 ## this produces the right type of information, but there's something wrong, because the estimate for Ambient:Inner is way too high.
 ## - model.matrix?  Following the examples in the vignette led to some strange results, but I found better examples in the raw source (Sweave files) of the generalsiminf.Rnw vignette (the code is not shown in the pdf version, but it's exactly what I needed).
 ## Anyway, it's working now.
