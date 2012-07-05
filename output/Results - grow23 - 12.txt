@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Wed Jul  4 15:21:34 2012
+Thu Jul  5 12:17:00 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -32,7 +32,7 @@ Time:Chamber:Frag:Position     3   107  0.87640  0.4558
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Wed Jul  4 15:22:02 2012
+% Thu Jul  5 12:17:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -73,10 +73,10 @@ Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
 Full Chamber.Inner - Ambient.Inner == 0      -0.09365    0.43049  -0.218    0.996    
 Ambient.Outer - Ambient.Inner == 0            0.19180    0.43418   0.442    0.971    
-Full Chamber.Outer - Ambient.Inner == 0      -4.05488    0.43050  -9.419   <1e-06 ***
+Full Chamber.Outer - Ambient.Inner == 0      -4.05488    0.43050  -9.419   <1e-05 ***
 Ambient.Outer - Full Chamber.Inner == 0       0.28545    0.43593   0.655    0.914    
-Full Chamber.Outer - Full Chamber.Inner == 0 -3.96123    0.43224  -9.164   <1e-06 ***
-Full Chamber.Outer - Ambient.Outer == 0      -4.24668    0.43575  -9.746   <1e-06 ***
+Full Chamber.Outer - Full Chamber.Inner == 0 -3.96123    0.43224  -9.164   <1e-05 ***
+Full Chamber.Outer - Ambient.Outer == 0      -4.24668    0.43575  -9.746   <1e-05 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)

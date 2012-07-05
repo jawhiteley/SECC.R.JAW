@@ -139,6 +139,10 @@ source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE)
 ## delete lines to use the defaults.
 
 ## Specify which treatment levels to include (by index is probably easiest)
+## I have Moss growth measurements from all chambers & positions
+## but, I only have Moss Production measurements from Ambient & Full Chambers
+## I only have Decomposition measures from Inner & Outer patches (all chambers).
+## So, the only patches with real Net estimates (Prod - Decomp) are Inner/Outer, Ambient/Full Chamber.
 Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (all available, but we'll exclude partial for simplicity?)
 Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer

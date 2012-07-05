@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Moss Growth / Productivity
-### Jonathan Whiteley     R v2.12     2012-06-24
+### Jonathan Whiteley     R v2.12     2012-07-05
 ##################################################
 ## INITIALISE
 ##################################################
@@ -126,9 +126,11 @@ for (Y.col in Ycols)
   ## delete lines to use the defaults.
 
   ## Specify which treatment levels to include (by index is probably easiest)
+  ## Including "other" patches throws errors when fitting models (for grow01)?
+  ## Include Partial Chambers throws errors when doing post-hoc multiple tests (grow01)?
   Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not normally included in SECC)
   Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
-  Position.use <- levels(SECC$Position)[c(1, 3)]   # Chamber treatments to include
+  Position.use <- levels(SECC$Position)[c(1, 3)]  # Position treatments to include
 
   ## Define Labels
   Y.units <- bquote( .(Y.units) )     # store as quote(expression)  *****
@@ -282,6 +284,15 @@ print(CxP.plot)
 ##################################################
 ## Repeated measures of the same samples (patches) across years
 cat("\n\n\n======== Nested analysis of Moss Productivity between Years ========\n")
+
+
+if (F)
+{ ## Specify which treatment levels to include (optional: hide to use same as previous analyses)
+  Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not normally included in SECC)
+  Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (No Productivity measurements from Partial; no Moss_Biomass data for these treatments).
+  Position.use <- levels(SECC$Position)[c(1:3)]  # Position treatments to include: other patches normally excluded for consistency, but they are kind of interesting here ...
+}
+
 
 ## Reshape columns of variables in a single column with a Year factor
 SECC.grow <- reshape(SECC, idvar = "SampleID", varying = list(c("grow01", "grow13")), v.names = "grow",

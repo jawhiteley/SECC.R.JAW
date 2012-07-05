@@ -1,0 +1,199 @@
+Nested ANOVA Results for: Moss Biomass Production 
+Transformation used:      Y 
+Expt. Time:    t3, t4 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, other, Outer 
+
+Thu Jul  5 12:11:54 2012
+
+================================================================
+                      numDF denDF   F-value p-value
+(Intercept)               1   134 275.55504  <.0001
+Chamber                   1     7  41.93505  0.0003
+Frag                      3    42   0.18079  0.9088
+Position                  2   112  24.72384  <.0001
+Year                      1   134  40.48830  <.0001
+Chamber:Frag              3    42   0.69113  0.5626
+Chamber:Position          2   112  28.64495  <.0001
+Chamber:Year              1   134  12.74286  0.0005
+Frag:Position             6   112   0.53976  0.7770
+Frag:Year                 3   134   0.53820  0.6569
+Position:Year             2   134   5.10002  0.0073
+Chamber:Frag:Position     6   112   0.67382  0.6710
+Chamber:Frag:Year         3   134   0.35293  0.7871
+Chamber:Position:Year     2   134   5.47312  0.0052
+
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Thu Jul  5 12:11:54 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & numDF & denDF & F-value & p-value \\ 
+  \hline
+(Intercept) & 1 & 134 & 275.6 & 0.000 \\ 
+  Chamber & 1 & 7 & 41.9 & 0.000 \\ 
+  Frag & 3 & 42 & 0.2 & 0.909 \\ 
+  Position & 2 & 112 & 24.7 & 0.000 \\ 
+  Year & 1 & 134 & 40.5 & 0.000 \\ 
+  Chamber:Frag & 3 & 42 & 0.7 & 0.563 \\ 
+  Chamber:Position & 2 & 112 & 28.6 & 0.000 \\ 
+  Chamber:Year & 1 & 134 & 12.7 & 0.000 \\ 
+  Frag:Position & 6 & 112 & 0.5 & 0.777 \\ 
+  Frag:Year & 3 & 134 & 0.5 & 0.657 \\ 
+  Position:Year & 2 & 134 & 5.1 & 0.007 \\ 
+  Chamber:Frag:Position & 6 & 112 & 0.7 & 0.671 \\ 
+  Chamber:Frag:Year & 3 & 134 & 0.4 & 0.787 \\ 
+  Chamber:Position:Year & 2 & 134 & 5.5 & 0.005 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lme.formula(fixed = Prod ~ CPY, data = SECC.prod[SECC.prod$Time == 
+    "t4", ], random = Yp.random, na.action = na.omit)
+
+Linear Hypotheses:
+                                                 Estimate Std. Error z value Pr(>|z|)    
+Full Chamber.Inner.1 - Ambient.Inner.1 == 0       0.03489    0.31895   0.109   1.0000    
+Ambient.other.1 - Ambient.Inner.1 == 0           -0.18023    0.35157  -0.513   1.0000    
+Full Chamber.other.1 - Ambient.Inner.1 == 0      -1.09356    0.37606  -2.908   0.1318    
+Ambient.Outer.1 - Ambient.Inner.1 == 0            0.08470    0.29070   0.291   1.0000    
+Full Chamber.Outer.1 - Ambient.Inner.1 == 0      -1.64299    0.31895  -5.151    <0.01 ***
+Ambient.Inner.2 - Ambient.Inner.1 == 0            1.03360    0.25208   4.100    <0.01 ** 
+Full Chamber.Inner.2 - Ambient.Inner.1 == 0       1.05779    0.32537   3.251   0.0501 .  
+Ambient.other.2 - Ambient.Inner.1 == 0            1.00165    0.29493   3.396   0.0312 *  
+Full Chamber.other.2 - Ambient.Inner.1 == 0      -0.31891    0.31895  -1.000   0.9974    
+Ambient.Outer.2 - Ambient.Inner.1 == 0            1.23078    0.30320   4.059    <0.01 ** 
+Full Chamber.Outer.2 - Ambient.Inner.1 == 0      -2.21291    0.32097  -6.894    <0.01 ***
+Ambient.other.1 - Full Chamber.Inner.1 == 0      -0.21512    0.37367  -0.576   1.0000    
+Full Chamber.other.1 - Full Chamber.Inner.1 == 0 -1.12844    0.35058  -3.219   0.0545 .  
+Ambient.Outer.1 - Full Chamber.Inner.1 == 0       0.04981    0.31691   0.157   1.0000    
+Full Chamber.Outer.1 - Full Chamber.Inner.1 == 0 -1.67787    0.28846  -5.817    <0.01 ***
+Ambient.Inner.2 - Full Chamber.Inner.1 == 0       0.99871    0.32109   3.110   0.0767 .  
+Full Chamber.Inner.2 - Full Chamber.Inner.1 == 0  1.02291    0.25230   4.054    <0.01 ** 
+Ambient.other.2 - Full Chamber.Inner.1 == 0       0.96676    0.32078   3.014   0.0998 .  
+Full Chamber.other.2 - Full Chamber.Inner.1 == 0 -0.35380    0.28846  -1.226   0.9854    
+Ambient.Outer.2 - Full Chamber.Inner.1 == 0       1.19589    0.32836   3.642   0.0134 *  
+Full Chamber.Outer.2 - Full Chamber.Inner.1 == 0 -2.24779    0.29070  -7.732    <0.01 ***
+Full Chamber.other.1 - Ambient.other.1 == 0      -0.91333    0.42347  -2.157   0.5665    
+Ambient.Outer.1 - Ambient.other.1 == 0            0.26493    0.34987   0.757   0.9998    
+Full Chamber.Outer.1 - Ambient.other.1 == 0      -1.46275    0.37367  -3.915    <0.01 ** 
+Ambient.Inner.2 - Ambient.other.1 == 0            1.21383    0.35365   3.432   0.0277 *  
+Full Chamber.Inner.2 - Ambient.other.1 == 0       1.23802    0.37916   3.265   0.0476 *  
+Ambient.other.2 - Ambient.other.1 == 0            1.18188    0.32055   3.687   0.0118 *  
+Full Chamber.other.2 - Ambient.other.1 == 0      -0.13868    0.37367  -0.371   1.0000    
+Ambient.Outer.2 - Ambient.other.1 == 0            1.41101    0.36009   3.918    <0.01 ** 
+Full Chamber.Outer.2 - Ambient.other.1 == 0      -2.03267    0.37540  -5.415    <0.01 ***
+Ambient.Outer.1 - Full Chamber.other.1 == 0       1.17826    0.37434   3.148   0.0679 .  
+Full Chamber.Outer.1 - Full Chamber.other.1 == 0 -0.54943    0.35058  -1.567   0.9144    
+Ambient.Inner.2 - Full Chamber.other.1 == 0       2.12715    0.37788   5.629    <0.01 ***
+Full Chamber.Inner.2 - Full Chamber.other.1 == 0  2.15135    0.35658   6.033    <0.01 ***
+Ambient.other.2 - Full Chamber.other.1 == 0       2.09521    0.37761   5.549    <0.01 ***
+Full Chamber.other.2 - Full Chamber.other.1 == 0  0.77465    0.31498   2.459   0.3528    
+Ambient.Outer.2 - Full Chamber.other.1 == 0       2.32433    0.38408   6.052    <0.01 ***
+Full Chamber.Outer.2 - Full Chamber.other.1 == 0 -1.11935    0.35228  -3.177   0.0627 .  
+Full Chamber.Outer.1 - Ambient.Outer.1 == 0      -1.72768    0.31691  -5.452    <0.01 ***
+Ambient.Inner.2 - Ambient.Outer.1 == 0            0.94890    0.29305   3.238   0.0519 .  
+Full Chamber.Inner.2 - Ambient.Outer.1 == 0       0.97310    0.32337   3.009   0.1010    
+Ambient.other.2 - Ambient.Outer.1 == 0            0.91695    0.29271   3.133   0.0711 .  
+Full Chamber.other.2 - Ambient.Outer.1 == 0      -0.40361    0.31691  -1.274   0.9805    
+Ambient.Outer.2 - Ambient.Outer.1 == 0            1.14608    0.25866   4.431    <0.01 ***
+Full Chamber.Outer.2 - Ambient.Outer.1 == 0      -2.29760    0.31895  -7.204    <0.01 ***
+Ambient.Inner.2 - Full Chamber.Outer.1 == 0       2.67658    0.32109   8.336    <0.01 ***
+Full Chamber.Inner.2 - Full Chamber.Outer.1 == 0  2.70078    0.29554   9.138    <0.01 ***
+Ambient.other.2 - Full Chamber.Outer.1 == 0       2.64463    0.32078   8.244    <0.01 ***
+Full Chamber.other.2 - Full Chamber.Outer.1 == 0  1.32407    0.28846   4.590    <0.01 ***
+Ambient.Outer.2 - Full Chamber.Outer.1 == 0       2.87376    0.32836   8.752    <0.01 ***
+Full Chamber.Outer.2 - Full Chamber.Outer.1 == 0 -0.56992    0.24660  -2.311   0.4529    
+Full Chamber.Inner.2 - Ambient.Inner.2 == 0       0.02420    0.32746   0.074   1.0000    
+Ambient.other.2 - Ambient.Inner.2 == 0           -0.03195    0.29727  -0.107   1.0000    
+Full Chamber.other.2 - Ambient.Inner.2 == 0      -1.35251    0.32109  -4.212    <0.01 ** 
+Ambient.Outer.2 - Ambient.Inner.2 == 0            0.19718    0.30542   0.646   1.0000    
+Full Chamber.Outer.2 - Ambient.Inner.2 == 0      -3.24650    0.32309 -10.048    <0.01 ***
+Ambient.other.2 - Full Chamber.Inner.2 == 0      -0.05614    0.32715  -0.172   1.0000    
+Full Chamber.other.2 - Full Chamber.Inner.2 == 0 -1.37670    0.29554  -4.658    <0.01 ***
+Ambient.Outer.2 - Full Chamber.Inner.2 == 0       0.17298    0.33459   0.517   1.0000    
+Full Chamber.Outer.2 - Full Chamber.Inner.2 == 0 -3.27070    0.29776 -10.984    <0.01 ***
+Full Chamber.other.2 - Ambient.other.2 == 0      -1.32056    0.32078  -4.117    <0.01 ** 
+Ambient.Outer.2 - Ambient.other.2 == 0            0.22913    0.30514   0.751   0.9998    
+Full Chamber.Outer.2 - Ambient.other.2 == 0      -3.21456    0.32279  -9.959    <0.01 ***
+Ambient.Outer.2 - Full Chamber.other.2 == 0       1.54969    0.32836   4.719    <0.01 ***
+Full Chamber.Outer.2 - Full Chamber.other.2 == 0 -1.89399    0.29070  -6.515    <0.01 ***
+Full Chamber.Outer.2 - Ambient.Outer.2 == 0      -3.44368    0.33032 -10.425    <0.01 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+ model: Prod ~ Chamber + Frag + Position + Year + Chamber:Frag + Chamber:Position + 
+    Chamber:Year + Frag:Position + Frag:Year + Position:Year + 
+    Chamber:Frag:Position + Chamber:Frag:Year + Chamber:Position:Year
+
+ Chamber*Frag*Position effect
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        2.722133       2.234738         2.360365 3.155015
+  Full Chamber   2.460621       2.706392         2.640417 2.771108
+
+, , Position = other
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        2.900002       2.230600         2.125166 2.587889
+  Full Chamber   1.416618       1.432267         1.693825 1.203533
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors    Isolated
+  Ambient       2.8010075      2.6861065       2.46791402  3.05227665
+  Full Chamber  0.6829965     -0.1067056      -0.02425104 -0.06289394
+
+
+ Chamber*Frag*Year effect
+, , Year = 1
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        2.165130       1.707283         1.847939 2.330693
+  Full Chamber   1.201533       1.158980         1.244058 1.251198
+
+, , Year = 2
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        3.365569       3.007307         2.763310 3.515645
+  Full Chamber   1.818174       1.495681         1.570723 1.365276
+
+
+ Chamber*Position*Year effect
+, , Year = 1
+
+              Position
+Chamber           Inner    other     Outer
+  Ambient      2.097210 1.785678 2.1689741
+  Full Chamber 2.100036 1.067903 0.4442804
+
+, , Year = 2
+
+              Position
+Chamber           Inner    other      Outer
+  Ambient      3.138637 3.116917  3.3052701
+  Full Chamber 3.123342 1.737324 -0.1275369
+
+
+
+<============================= END ============================>
