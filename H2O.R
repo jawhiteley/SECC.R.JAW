@@ -213,6 +213,33 @@ CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
 
+## t4-only for follow-up manuscripts
+CP4.plot <- qplot(Chamber, x, data = subset(plot.means, Time == "August\n24 months"), 
+                  group = Position,  size = Position,
+                  colour = Position, shape = Position, fill = Position,
+                  geom = "line", ylim = Y.lim,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Chamber"]],
+                  ylab = Y.plotlab, legend = FALSE)
+CP4.plot <- CP4.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                         width = 0.2, size = 0.5)
+CP4.plot <- CP4.plot + geom_point(aes(group = Position), size = 3)
+CP4.plot <- CP4.plot + scale_colour_manual(name = Position.label,
+                                           values = Position.map$col, 
+                                           breaks = Position.map$label)
+CP4.plot <- CP4.plot + scale_fill_manual(name = Position.label,
+                                         values = Position.map$bg, 
+                                         breaks = Position.map$label)
+CP4.plot <- CP4.plot + scale_shape_manual(name = Position.label,
+                                          values = Position.map$pch, 
+                                          breaks = Position.map$label)
+CP4.plot <- CP4.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd*0.5, 
+                                         breaks = Position.map$label)
+CP4.plot <- CP4.plot + jaw.ggplot()
+print(CP4.plot)
+
+
 ## Frag x Pos Interaction
 
 Y.lim <- c(-100, 1000)
@@ -267,7 +294,47 @@ opts(axis.ticks.margin = unit(0.2, "lines"),
 print(FxP.plot)
 
 
+## t4-only for follow-up manuscripts
+FP4.plot <- qplot(Frag, x, data = subset(plot.means, Time == "August\n24 months"), 
+                  group = Position,  size = Position, 
+                  colour = Position, fill = Position, shape = Position,
+                  geom = "line", ylim = Y.lim,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Frag"]],
+                  ylab = Y.plotlab,
+                  legend = FALSE,
+                  facets = .~Chamber)
+FP4.plot <- FP4.plot + 
+geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+geom_point(aes(shape = Position), size = 3) +
+scale_colour_manual(name = Position.label,
+                    values = Position.map$col, 
+                    breaks = Position.map$label) +
+     scale_fill_manual(name = Position.label,
+                       values = Position.map$bg, 
+                       breaks = Position.map$label) +
+     scale_shape_manual(name = Position.label,
+                        values = Position.map$pch, 
+                        breaks = Position.map$label) +
+     scale_size_manual(name = Position.label,
+                       values = Position.map$lwd*0.5, 
+                       breaks = Position.map$label) +
+     scale_x_discrete(labels = c(1, 2, 3, 4), 
+                      breaks = levels(plot.means$Frag)) + jaw.ggplot() 
+     ## Add imported graphics as x-axis tick labels :D
+     ## http://stackoverflow.com/questions/2181902/how-to-use-an-image-as-a-point-in-ggplot
+     FP4.plot <- FP4.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 3, 4), 
+                                             breaks = levels(plot.means$Frag)) +
+     opts(axis.ticks.margin = unit(0.2, "lines"),
+          axis.text.x = picture_axis(FragIconList, icon.size = unit(1.4, "lines")) 
+     )
+print(FP4.plot)
+
+
+
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 6, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CP4.eps"), plot = CP4.plot, width = 3, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 4, height = 3, scale = 1.5)
 }
