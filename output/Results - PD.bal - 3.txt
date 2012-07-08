@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Wed Jul  4 15:10:51 2012
+Sun Jul  8 17:36:39 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    43  2.417197  0.0793
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Wed Jul  4 15:11:01 2012
+% Sun Jul  8 17:36:50 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -57,10 +57,10 @@ Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
 Full Chamber.Inner - Ambient.Inner == 0       -11.884     21.887  -0.543    0.948    
 Ambient.Outer - Ambient.Inner == 0             -5.559     21.310  -0.261    0.994    
-Full Chamber.Outer - Ambient.Inner == 0      -148.060     21.126  -7.008   <1e-05 ***
+Full Chamber.Outer - Ambient.Inner == 0      -148.060     21.126  -7.008   <1e-04 ***
 Ambient.Outer - Full Chamber.Inner == 0         6.325     22.469   0.282    0.992    
-Full Chamber.Outer - Full Chamber.Inner == 0 -136.175     21.135  -6.443   <1e-05 ***
-Full Chamber.Outer - Ambient.Outer == 0      -142.501     21.721  -6.561   <1e-05 ***
+Full Chamber.Outer - Full Chamber.Inner == 0 -136.175     21.135  -6.443   <1e-04 ***
+Full Chamber.Outer - Ambient.Outer == 0      -142.501     21.721  -6.561   <1e-04 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
@@ -75,9 +75,9 @@ Fit: lme.formula(fixed = Y.trans ~ Chamber * Position, data = SECCp,
 
 Linear Hypotheses:
                         Estimate Std. Error z value Pr(>|z|)    
-Ambient:Inner == 0        108.41      17.32   6.258   <0.001 ***
-Full Chamber:Inner == 0    96.53      18.04   5.351   <0.001 ***
-Ambient:Outer == 0        102.85      18.04   5.702   <0.001 ***
+Ambient:Inner == 0        108.41      17.32   6.258   <1e-04 ***
+Full Chamber:Inner == 0    96.53      18.04   5.351   <1e-04 ***
+Ambient:Outer == 0        102.85      18.04   5.702   <1e-04 ***
 Full Chamber:Outer == 0   -39.66      17.11  -2.318   0.0766 .  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

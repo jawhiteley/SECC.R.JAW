@@ -120,7 +120,164 @@ if (FALSE)
 
 
 ################################################################
-## RUN STANDARD NESTED ANALYSIS (ANOVA)
+## PRIMARY PRODUCTION - MOSS
+################################################################
+## Mostly for supplementary info, in case anyone wants just these values, which would be difficult to derive just based on other info presented in the manuscript.
+##==============================================================
+## CONFIGURE BASIC ANALYSIS
+##==============================================================
+
+### Response Variable *****
+Y.col <- 'Productivity'     # Column to analyze as response variable           *****
+Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
+
+### Load default settings (based on response variable) *****
+source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
+
+##================================================
+## CUSTOM SETTINGS 
+##================================================
+## delete lines to use the defaults.
+
+## Specify which treatment levels to include (by index is probably easiest)
+Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
+Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (all available, but we'll exclude partial for simplicity?)
+Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer
+
+## Output Results?
+Save.results  <- TRUE
+
+
+### Load default Labels - dependent on above settings. *****
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+##================================================
+### RUN STANDARD nested ANOVA
+##================================================
+source("./SECCanova/SECC - nested lm.R", echo = FALSE)
+
+##   print( effect("Chamber:Position", Yp.fit) )
+print( effect("Chamber:Position", Yp.fit) ) # works fine here
+
+
+## ALERT: Tukey HSD family-wise CI are quite a bit wider than CIs in basic effects graphs!
+##        Treatment differences may not be as strong as suggested by CIs
+
+
+##================================================
+## Prepare results for graphing
+Prod.fit <- Yp.fit                     # save for later (just in case)
+Prod.pdata <- effect.to.df(effect("Chamber:Position", Yp.fit))
+Prod.pdata$Chamber <- factor(Prod.pdata$Chamber, labels = c("Ambient", "Chamber"))
+
+
+
+
+
+################################################################
+## NET MOSS PRODUCTION
+################################################################
+##==============================================================
+## CONFIGURE BASIC ANALYSIS
+##==============================================================
+
+### Response Variable *****
+Y.col <- 'Decompositng'     # Column to analyze as response variable           *****
+Y.use <- 'Y'    # Which transformation is being used (for labels)? *****
+
+### Load default settings (based on response variable) *****
+source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
+
+##================================================
+## CUSTOM SETTINGS 
+##================================================
+## delete lines to use the defaults.
+
+## Specify which treatment levels to include (by index is probably easiest)
+Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
+Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (all available, but we'll exclude partial for simplicity?)
+Position.use <- levels(SECC$Position)[c(1, 3)]  # Patch Positions to include: Inner, Outer
+
+## Output Results?
+Save.results  <- TRUE
+
+
+### Load default Labels - dependent on above settings. *****
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+
+##================================================
+### RUN STANDARD nested ANOVA
+##================================================
+source("./SECCanova/SECC - nested lm.R", echo = FALSE)
+
+##   print( effect("Chamber:Position", Yp.fit) )
+print( effect("Chamber:Position", Yp.fit) ) # works fine here
+
+
+## ALERT: Tukey HSD family-wise CI are quite a bit wider than CIs in basic effects graphs!
+##        Treatment differences may not be as strong as suggested by CIs
+
+
+##================================================
+## Prepare results for graphing
+Decomp.fit <- Yp.fit                     # save for later (just in case)
+Decomp.pdata <- effect.to.df(effect("Chamber:Position", Yp.fit))
+Decomp.pdata$Chamber <- factor(Decomp.pdata$Chamber, labels = c("Ambient", "Chamber"))
+
+PD.pdata <- within(Decomp.pdata,
+                  {
+                    ## convert decomp values to negative, for plotting
+                    effect <- -effect
+                    lwr    <-  lower
+                    lower  <- -upper
+                    upper  <- -lwr
+                    rm(lwr)
+                    Process <- "Decomposition"
+                  })
+PD.pdata <- rbind(within(Prod.pdata, Process <- "Productivity"), PD.pdata)
+
+##================================================
+### PUBLICATION-QUALITY GRAPHS - separate
+##================================================
+Y.lim <- range(c(PD.pdata$lower, PD.pdata$upper))
+Plot.Title <- bquote("Patch means " %+-% "95% Confidence Intervals")
+Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
+Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+PositionPts  <- ggPts.SECC(Position.map, Position.label) 
+Y.plotlab <- bquote("Decomposition (-) or Productivity (+) " * "(" * .(attr(SECC, "units" )[["PD.bal"]]) * ")" )
+
+PD.CP.plot <- ggplot(data = PD.pdata, 
+                     aes(x = Chamber, y = effect, 
+                         group = paste(Process, Position, sep="."), 
+                         colour = Position, fill = Position, shape = Position)
+                     ) + ylim(Y.lim) +
+               labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab) +
+               opts(title = Plot.Title) +
+               geom_hline(yintercept = 0, size = 0.5, colour = "#999999") +
+               geom_line(aes(size = Position)) +
+               geom_errorbar(aes(ymin = lower, ymax = upper), width = 0.2, size = 0.5) +
+               geom_point(size = 3) 
+PD.CP.plot <- PD.CP.plot + PositionPts +
+scale_fill_manual(name = Position.label,
+                  values = Position.map$bg, 
+                  breaks = Position.map$label) +
+scale_size_manual(name = Position.label,
+                  values = Position.map$lwd, 
+                  breaks = Position.map$label)
+PD.CP.plot <- PD.CP.plot + jaw.ggplot()
+print(PD.CP.plot)
+
+
+
+
+
+
+
+
+
+################################################################
+## NET PRIMARY PRODUCTION - DECOMPOSITION (MOSS)
 ################################################################
 ##==============================================================
 ## CONFIGURE BASIC ANALYSIS
@@ -327,6 +484,7 @@ print(CFP.plot)
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   Save.final <- paste(SaveDir.plots(), "Figure - ", "PD-balance", sep="")
+  ggsave(file = paste(Save.final, "- PD.eps" ), plot = PD.CP.plot, width = 3, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 3, height = 3, scale = 1.5)
 }

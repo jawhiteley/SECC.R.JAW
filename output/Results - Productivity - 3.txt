@@ -1,0 +1,107 @@
+Nested ANOVA Results for:  ( Productivity ) 
+Transformation used:      Y 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer 
+
+Sun Jul  8 17:36:13 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position
+~1 | Block/Chamber/Frag
+                      numDF denDF   F-value p-value
+(Intercept)               1    43 111.70926  <.0001
+Chamber                   1     7  46.85689  0.0002
+Frag                      3    42   2.24742  0.0968
+Position                  1    43  35.43801  <.0001
+Chamber:Frag              3    42   1.26964  0.2971
+Chamber:Position          1    43  32.29440  <.0001
+Frag:Position             3    43   0.19487  0.8993
+Chamber:Frag:Position     3    43   2.89987  0.0458
+
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Sun Jul  8 17:36:24 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{rrrrr}
+  \hline
+ & numDF & denDF & F-value & p-value \\ 
+  \hline
+(Intercept) & 1 & 43 & 111.7 & 0.000 \\ 
+  Chamber & 1 & 7 & 46.9 & 0.000 \\ 
+  Frag & 3 & 42 & 2.2 & 0.097 \\ 
+  Position & 1 & 43 & 35.4 & 0.000 \\ 
+  Chamber:Frag & 3 & 42 & 1.3 & 0.297 \\ 
+  Chamber:Position & 1 & 43 & 32.3 & 0.000 \\ 
+  Frag:Position & 3 & 43 & 0.2 & 0.899 \\ 
+  Chamber:Frag:Position & 3 & 43 & 2.9 & 0.046 \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Multiple Comparisons of Means: Tukey Contrasts
+
+
+Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
+
+Linear Hypotheses:
+                                             Estimate Std. Error z value Pr(>|z|)    
+Full Chamber.Inner - Ambient.Inner == 0       -15.147     20.681  -0.732    0.884    
+Ambient.Outer - Ambient.Inner == 0             -2.925     20.161  -0.145    0.999    
+Full Chamber.Outer - Ambient.Inner == 0      -170.924     19.962  -8.562   <1e-04 ***
+Ambient.Outer - Full Chamber.Inner == 0        12.222     21.230   0.576    0.939    
+Full Chamber.Outer - Full Chamber.Inner == 0 -155.777     19.996  -7.790   <1e-04 ***
+Full Chamber.Outer - Ambient.Outer == 0      -167.999     20.524  -8.186   <1e-04 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+
+	 Simultaneous Tests for General Linear Hypotheses
+
+Fit: lme.formula(fixed = Y.trans ~ Chamber * Position, data = SECCp, 
+    random = Yp.random, na.action = na.omit, control = lmc)
+
+Linear Hypotheses:
+                        Estimate Std. Error z value Pr(>|z|)    
+Ambient:Inner == 0        158.78      16.09   9.869   <1e-05 ***
+Full Chamber:Inner == 0   143.63      16.78   8.562   <1e-05 ***
+Ambient:Outer == 0        155.85      16.78   9.291   <1e-05 ***
+Full Chamber:Outer == 0   -12.15      15.88  -0.765    0.896    
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+(Adjusted p values reported -- single-step method)
+
+
+
+ model: Y.trans ~ Chamber * Frag * Position
+
+ Chamber*Frag*Position effect
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient        235.2542       113.5664         128.9554 152.7849
+  Full Chamber   131.0776       133.9332         135.9982 170.6883
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors  Isolated
+  Ambient        164.4692      136.67577       127.410122 187.33126
+  Full Chamber    31.7977      -30.10709        -0.969925 -48.01379
+
+
+
+<============================= END ============================>
