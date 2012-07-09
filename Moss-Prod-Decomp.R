@@ -175,7 +175,7 @@ Prod.pdata$Chamber <- factor(Prod.pdata$Chamber, labels = c("Ambient", "Chamber"
 
 
 ################################################################
-## NET MOSS PRODUCTION
+## DECOMPOSITION (in g)
 ################################################################
 ##==============================================================
 ## CONFIGURE BASIC ANALYSIS
@@ -235,6 +235,18 @@ PD.pdata <- within(Decomp.pdata,
                     Process <- "Decomposition"
                   })
 PD.pdata <- rbind(within(Prod.pdata, Process <- "Productivity"), PD.pdata)
+
+## estimates of gC, assuming 45% carbon by weight (Bond-Lamberty, B., C. Wang, and S. T. Gower. 2004. Net primary production and net ecosystem production of a boreal black spruce wildfire chronosequence. Global Change Biology 10:473-487.)
+gC_Pschreberi <- 0.45
+PD.Cdata <- within(PD.pdata,
+                   {
+                     error <- upper - effect
+                     error <- error * gC_Pschreberi
+                     effect <- effect * gC_Pschreberi
+                     lower <- lower * gC_Pschreberi
+                     upper <- upper * gC_Pschreberi
+                   })
+
 
 ##================================================
 ### PUBLICATION-QUALITY GRAPHS - separate
@@ -478,14 +490,20 @@ print(CFP.plot)
 
 
 ## stacked bar graph of Total Production - Decomposition?
-## I currently don't have a graphical representation of the relative magnitudes of these two processes: only the combined net effect.
 ## ...
 
 
+if (Save.results == TRUE && is.null(Save.text) == FALSE) {
+  capture.output(cat("\n\n"),                      # for output
+                 cat("Rates recalculated as g carbon · m^-2 · yr^-1 (assuming 45% carbon; Bond-Lamberty et al. 2004, Global Chagne Biology)\n\n"), # for output
+				 print(PD.Cdata),                  # gC data
+				 cat(Save.end),                    # END OUTPUT #
+				 file = Save.text, append = TRUE
+				)
+}
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   Save.final <- paste(SaveDir.plots(), "Figure - ", "PD-balance", sep="")
   ggsave(file = paste(Save.final, "- PD.eps" ), plot = PD.CP.plot, width = 3, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 3, height = 3, scale = 1.5)
 }
-

@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Jul  8 17:36:39 2012
+Mon Jul  9 17:53:19 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    43  2.417197  0.0793
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Jul  8 17:36:50 2012
+% Mon Jul  9 17:53:30 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -75,9 +75,9 @@ Fit: lme.formula(fixed = Y.trans ~ Chamber * Position, data = SECCp,
 
 Linear Hypotheses:
                         Estimate Std. Error z value Pr(>|z|)    
-Ambient:Inner == 0        108.41      17.32   6.258   <1e-04 ***
-Full Chamber:Inner == 0    96.53      18.04   5.351   <1e-04 ***
-Ambient:Outer == 0        102.85      18.04   5.702   <1e-04 ***
+Ambient:Inner == 0        108.41      17.32   6.258   <0.001 ***
+Full Chamber:Inner == 0    96.53      18.04   5.351   <0.001 ***
+Ambient:Outer == 0        102.85      18.04   5.702   <0.001 ***
 Full Chamber:Outer == 0   -39.66      17.11  -2.318   0.0766 .  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
@@ -102,6 +102,21 @@ Chamber        Continuous Full Corridors Pseudo-Corridors  Isolated
   Ambient        86.22624       96.66574         79.89212 136.17846
   Full Chamber  -12.73559      -42.30736        -14.63290 -85.09858
 
+
+
+<============================= END ============================>
+
+Rates recalculated as g carbon · m^-2 · yr^-1 (assuming 45% carbon; Bond-Lamberty et al. 2004, Global Chagne Biology)
+
+    Chamber Position    effect     lower      upper       Process     error
+116 Ambient    Inner  70.19124  56.30952  84.072969  Productivity 13.881725
+117 Chamber    Inner  64.50113  49.96710  79.035162  Productivity 14.534033
+118 Ambient    Outer  69.40811  54.94535  83.870876  Productivity 14.462765
+119 Chamber    Outer  -6.03150 -19.71305   7.650054  Productivity 13.681554
+129 Ambient    Inner -22.89009 -29.50494 -16.275234 Decomposition  6.614851
+130 Chamber    Inner -23.69924 -30.31410 -17.084394 Decomposition  6.614851
+131 Ambient    Outer -25.65322 -32.26807 -19.038366 Decomposition  6.614851
+132 Chamber    Outer -12.21367 -18.82852  -5.598815 Decomposition  6.614851
 
 
 <============================= END ============================>
