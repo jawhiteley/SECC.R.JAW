@@ -10,12 +10,12 @@ source('./CH4-model-fitting/1_reg_settings.R')
 
 Y.col <- 'Nfix'      # Column to analyze as response variable           *****
 # explanatory vars for data exploration (and labels)
-X.cols <- c("Cells.m", "Hcells.m", "H2O")  
+X.cols <- c("Cells.m", "Hcells.m", "H2O", "TAN")  
 
 ##==============================================================
 ## CUSTOM SETTINGS
 ##==============================================================
-Save.results  <- FALSE                 # Output Results?
+Save.results  <- TRUE                 # Output Results?
 Save.glmulti  <- paste(SaveDir.obj(), "Nfix.glmulti.R", sep="")
 
 ## Default labels & calcs

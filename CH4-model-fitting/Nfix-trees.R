@@ -32,13 +32,6 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ################################################################
 ## Regression trees are not affected by transformations in the EXPLANATORY variables,
 ##   but they are sensitive to transformations in the RESPONSE variable...
-## log-transformation DOES change the resulting tree in subtle ways, 
-##   but qualitative results are similar.
-## My preference is to use untransformed data, with no strong reason to use transformed data;
-## log-transformed ARA data may be used as a response in regression,
-## in order to linearize the relationship.
-## log-transformation should not be necessary here, although might be more consistent?
-
 
 
 
@@ -57,8 +50,8 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ##  - splits do not change, but group means do.
 ##  - The position of the offset variable **does** matter
 ##    - I think it should be first, to account for Blocks *before* any other factors?
-Y.main   <- Y ~ Block + Warming + Frag + H2O + log(Cells.m) + TAN
-Y.mainB  <- Y ~ offset(Block) + Warming + Frag + H2O + log(Cells.m) + TAN
+Y.main   <- Y ~ Block + TempC + Frag + H2O + logCells + TAN
+Y.mainB  <- Y ~ offset(Block) + TempC + Frag + H2O + logCells + TAN
  
 BlockOffset <- FALSE
 if (BlockOffset) Y.main <- Y.mainB
@@ -80,7 +73,8 @@ Y.tree  <- rpart(Y.main, data=SECCa, control=rpc)  # no interaction terms
 Y.treeD <- rpart(Y.main, data=SECCa) # using default settings; no pruning
 
 ## Pruning
-if (FALSE) {                           # repeated tree-fitting for 'optimal' size
+if (FALSE) 
+{                           # repeated tree-fitting for 'optimal' size
   ## cptable values are unstable, due to cross-validation process; better to choose a consistent value, based on multiple runs...
 
   cpMinError <- c()                      # empty vector
@@ -110,10 +104,11 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
   ## cpMinError:      minsplit 20: 0.015 ; minsplit 10: 0.015
 }
 
+## Using the smaller cut-offs allows logCells to appear: at the bottom...
 if (minsplit==20) {
-  Y.cp <- 0.006                    # actual means are a little lower, but the resulting cutoff is effectively the same
+  Y.cp <- 0.02
 } else {
-  Y.cp <- 0.015                    # reduce smaller branches (over-fitting)
+  Y.cp <- 0.040
 }
 Y.treeP  <- prune(Y.tree , cp=Y.cp)
 
