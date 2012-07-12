@@ -82,23 +82,18 @@ SECCa <- within( SECCa,
 ### pairplots of several variables of interest: check for collinearity, patterns, etc.
 ### see Zuur et al. books
 if (DrawExplorationGraphs) {
-  ## full dataset: unbalanced with respect to experimental treatments
-  pairplot(SECC[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
-  ## filtered dataset: balanced, but am I missing useful information about continuous explanatory variables (H2O, cells)?
-  pairplot(SECCa[, c("ARA.m", "ARA.g", "H2O", "Cells.m", "Cells.g", "Hcells.m", "Hcells.g", "Stigonema", "Nostoc" )])
   ## look at log transformations & check for colinearity among explanatory variables
   pairplot(SECCa[, c('Y', 'Y.log', 'H2O', 'Block', 'TempC','Chamber', 'Frag', 'Position')],
            labels=c(Y.col, paste("log(", Y.col, ")"), 
                     "H2O", "Block", "Temperature", "Chamber", "Frag", "Position")
           )
-  pairplot(SECCa[, c('Y', 'Y.log', 'Block', 'Frag', 'TempC', 'H2O', 'Cells.m', 
-                     'Growth', 'Decomposition', 'TAN', 'Patch.dwt')],
-           labels=c(Y.col, paste("log(", Y.col, ")"), 
-                    "Block", "Frag", "Temperature", "H2O", "Cells.m", 
-                    "Moss growth", "Decomposition", "TAN", "Patch dwt.")
+  pairplot(SECCa[, c('Y', 'Y.log', 'Cells.m',
+                     'Growth', 'Decomposition', 'TAN', 'Patch.dwt',
+                     'H2O', 'TempC', 'Frag', 'Block' )],
+           labels=c(Y.col, paste("log(", Y.col, ")"), "Cells.m", 
+                    "Moss growth", "Decomposition", "TAN", "Patch dwt.",
+                    "H2O", "Temperature", "Frag", "Block" )
           )
-  ## Moisture by Block?
-  pairplot(SECCa[, c('H2O', 'Block')])
 
   ## Cleveland Dotplots (Zuur et al. 2009)
   Dotplot.y <- "Order of observations"
@@ -110,7 +105,7 @@ if (DrawExplorationGraphs) {
   dotchart(SECCa$H2O, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['H2O']]) # outliers > 800?
   dotchart(SECCa$Growth, ylab=Dotplot.y, xlab="Moss growth - year 2") # outliers >30??
   dotchart(SECCa$Decomposition, ylab=Dotplot.y, xlab="Moss decomposition - year 2") # outliers >0.3??
-  dotchart(SECCa$TAN, ylab=Dotplot.y, xlab="Total Available N") # outliers >0.3??
+  dotchart(SECCa$TAN, ylab=Dotplot.y, xlab="Total Available N")
   dotchart(SECCa$Richness, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Richness']])
   dotchart(SECCa$Evenness, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Evenness']])
   par(op)
@@ -160,11 +155,9 @@ for (Xcol in X.cols)
 
   ## log-y may be the best linear model (according to AIC), but essentially implies an exponential relationship (!)
   YX.logy <- YX.plot + scale_y_log10()
-  YX.time.logy   <- YX.logy + Time.facets 
   YX.panels.logy <- YX.logy + All.facets 
   if (DrawExplorationGraphs) {
     print(YX.logy)
-    print(YX.time.logy)
     print(YX.panels.logy)
   }
 
@@ -252,32 +245,36 @@ if (DrawExplorationGraphs) {
   for(i in 1:length(vars.ls) ) {
     var <- vars.ls[i]
     label <- labels.ls[i]
-    with( SECCa,{
-         X.var <- get(var)
-    X.max  <- max( X.var )
-    ##         cat(var, " ", X.max, "\n")
-    freq.max <- length(X.var)/2
-    X.maxD <- max( density( X.var )$y )*1.5
-    for(Ch.trt in levels(Chamber)) {
-      X.trt <- X.var[Chamber==Ch.trt]
-      X.density <- density( X.trt )
-      hist(X.trt,
-           main=Ch.trt, xlab=label,
-           xlim=c(0, X.max), 
-           ylim=c(0, freq.max),
-           breaks=seq( 0, X.max, length.out=16 ),
-           col="#CCCCCC"
-           )
-###       abline( 5, 0, lty=3, col="#666666" ) # reference line
-      plot(X.density,
-           main=Ch.trt, xlab=label,
-           xlim=c(0, X.max),
-           ylim=c(0, X.maxD)
-           )
-      densityplot( X.trt,
+    with( SECCa,
+         {
+           X.var <- get(var)
+           Xna   <- !is.na(X.var)
+           X.var <- na.omit(X.var)
+           X.max  <- max( X.var )
+           ##         cat(var, " ", X.max, "\n")
+           freq.max <- length(X.var)/2
+           X.maxD <- max( density( X.var )$y )*1.5
+           for(Ch.trt in levels(Chamber)) {
+             X.trt <- X.var[Chamber[Xna]==Ch.trt]
+             X.density <- density( X.trt )
+             hist(X.trt,
                   main=Ch.trt, xlab=label,
-                  xlim=c(0, max( X.var ) )
-                  )	# ** TRELLIS plot
+                  xlim=c(0, X.max), 
+                  ylim=c(0, freq.max),
+                  breaks=seq( 0, X.max, length.out=16 ),
+                  col="#CCCCCC"
+                  )
+###       abline( 5, 0, lty=3, col="#666666" ) # reference line
+             plot(X.density,
+                  main=Ch.trt, xlab=label,
+                  xlim=c(0, X.max),
+                  ylim=c(0, X.maxD)
+                  )
+             densityplot( X.trt,
+                         main=Ch.trt, xlab=label,
+                         xlim=c(0, max( X.var ) ),
+                         na.rm = TRUE
+                         )	# ** TRELLIS plot
       }
     })
     ## qqplot(x, y) to compare distributions.

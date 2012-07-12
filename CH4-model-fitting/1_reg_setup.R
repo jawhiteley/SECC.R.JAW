@@ -39,7 +39,9 @@ SECC <- within( SECC, {
   Nfix    <- ARA.m * Nfix.ARA.ratio
   H2O     <- H2O * 100
   H2O.wwt <- H2O.wwt * 100
-  Growth  <- grow12 + grow23             # moss growth during second year **
+  Growth  <- grow12 + grow23           # moss growth during second year **
+  logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria
+  ##   logCells[Cells.m <= 0] <- 0
   ## recoded factors / new explanatory variables
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
   Warming <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 
@@ -50,6 +52,16 @@ SECC <- within( SECC, {
   TempC   <- as.numeric(as.character(TempC))
   Climate <- factor( paste(Position, Chamber) ) # pseudo-factor to simplify modelling: fewer interactions to deal with.
 })
+
+attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]]
+attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% m^-2) )
+attr(SECC, "labels")[["Growth"]] <- "Moss growth"
+attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
+attr(SECC, "labels")[["Warming"]] <- "Warming"
+attr(SECC, "units" )[["Warming"]] <- quote(delta ~ "°C vs. ambient")
+attr(SECC, "labels")[["TempC"]] <- "Average annual T"
+attr(SECC, "units" )[["TempC"]] <- quote("°C")
+
 
 
 ##==============================================================
@@ -110,6 +122,16 @@ SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
 
 SECC.scale  <- "patch"  # c("patch", "mc")
 SECCa <- if(SECC.scale == "patch") SECCp else if (SECC.scale == "mc") SECCmc else SECC
+
+
+## Filter Outliers (see Exploration Graphs)
+if (FALSE)
+{
+  SECCa$Cells.m[SECCa$Cells.m > 5e+09] <- NA # pretty moot after transformation
+  SECCa$Growth[SECCa$Growth > 30] <- NA
+  ##   SECCa$H2O[SECCa$H2O > 800] <- NA
+  ##   SECCa$Decomposition[SECCa$Decomposition > 0.30] <- NA
+}
 
 
 SECCa <- within( SECCa, {
