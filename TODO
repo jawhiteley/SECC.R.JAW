@@ -73,7 +73,7 @@ Ecosystem Processes
 ================================
 
 + Load    Moss Growth Data
-~ Analyze Moss Growth Data (repeated measures in time)
++ Analyze Moss Growth Data (repeated measures in time)
   + Repeated measures / Nested analysis of year 1 vs. year 2
     + Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
     + e.g., Block / Chamber / Frag / Position / Year
@@ -93,18 +93,19 @@ ________________________________
     - SD: variability**
 
 + Check for and remove outliers from Productivity (probably un-id'd skinny shoots)
-- Check for outliers in Moss Growth **
-- Estimate appropriate proportion of moss stem available for decomposition based on biomass conversion data ("Brown" + "Dead" tissue)
++ Check for outliers in Moss Growth **
++ Estimate appropriate proportion of moss stem available for decomposition based on biomass conversion data ("Brown" + "Dead" tissue)
 
 - What is the approximate Carbon content of Pleurozium Schreberi?
   - g moss -> g Carbon
-- Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
-  - or, just get a ha or km^2 measurement and see if that sounds impressive.
+  - assume 45% carbon  (Bond-Lamberty:2004.473)
++ Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
+  + or, just get a ha or km^2 measurement and see if that sounds impressive.
 
 + compare average dry weight of various treatments through time?
   + nested ANOVA on Patch.dwt
   + Is the overall dry wt of outer chamber patches naturally lower?
-  - Regression of Net Productivity vs. Patch.dwt?
+  + Regression of Net Productivity vs. Patch.dwt (exploration)
 
 + Load    Ion Resin Data
 + Analyze Ion Resin Data
@@ -114,8 +115,16 @@ ________________________________
 SYNTHESIS
 ================================
 
+- Multiple Regressions
+  - Nfix (with more variables)
+  - Moss Growth
+  - Decomposition?
+- constrained ordinations of Fauna data?
+  - I don't have fauna data from all blocks, so if I include it in multiple regressions above, I will lose a lot of replication
+  - BUT, I might be able to go the other way, and explore associations between Fana spp & ecosystem variables ...
 
-
+- Structural Equation Modelling of multiple variables
+  - compare alternative models with & without links between fauna & decomposition?  Others?
 
 
 

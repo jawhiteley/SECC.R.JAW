@@ -93,6 +93,11 @@ MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD
 ##================================================
 ## PLOTS & GRAPHS
 ##================================================
+make.axis.title <- function (data = NULL, label = "")
+{
+  bquote( .(attr(data, "labels")[[label]]) * " (" * .(attr(data, "units")[[label]]) * ")" )
+}
+
 ##________________________________________________
 ## text_to_plot: mtext() wrapper.  Outputs text to a plotting device.
 ## useful for getting some text output into a pdf
