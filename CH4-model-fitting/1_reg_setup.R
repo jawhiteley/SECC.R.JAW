@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, load & process data, configure analysis options
 ### N-fixation synthesis vs. everything else, really
-### Jonathan Whiteley     R v2.12     2012-07-09
+### Jonathan Whiteley     R v2.12     2012-07-12
 ################################################################
 ## INITIALISE
 ################################################################
@@ -13,30 +13,6 @@ if (FALSE) {  # do not run automatically
   getwd()           # Check that we're in the right place
 }
 
-## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-source('./lib/init.R')
-
-################################################################
-## CONFIGURE BASIC ANALYSIS
-################################################################
-Y.col <- 'Nfix'      # Column to analyze as response variable           *****
-
-##==============================================================
-## SETTINGS 
-##==============================================================
-## Specify which treatment levels to include (by index is probably easiest)
-## I only really have complete data for:
-## - t4 patches
-## - Ambient & Full Chamber
-## - Inner & Outer patch Positions
-## - I might also have to drop pseudo-corridor treatments (due to missing fauna data)
-Time.use     <- levels(SECC$Time)[3]           # Time (index: 1-3) to include in this run
-Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]  # Chamber treatments to include
-Frag.use     <- levels(SECC$Frag)              # Frag treatments to include
-Position.use <- levels(SECC$Position)[c(1, 3)] # Patch Positions to include
-
-Save.results  <- FALSE                  # Output Results?
-
 
 ##==============================================================
 ## CALCULATIONS 
@@ -44,13 +20,14 @@ Save.results  <- FALSE                  # Output Results?
 SECC.prime <- SECC    # save a copy of the original for reference.
 
 # merge in Fauna statistics
-source("./CH4-model-fitting/Fauna_proc.R")                 # Prepare Fauna data & stats for merging.
+source("./CH4-model-fitting/1_Fauna_proc.R")                 # Prepare Fauna data & stats for merging.
 
 ## Merge with SECC data for direct comparisons
 SECC <- merge(SECC, recodeSECC(SECC.sp.sum), all = TRUE)
 ## merge attributes: this leaves duplicates, but at least it's all there.
 attr(SECC, "labels") <- c( attr(SECC.prime, "labels"), attr(SECC.sp.sum, "labels") )
 attr(SECC, "units") <- c( attr(SECC.prime, "units"), attr(SECC.sp.sum, "units") )
+cat("Fauna data merged into main data frame.\n")
 
 
 ## Conversion factors defined in /lib/SECC.functions.R
@@ -62,7 +39,7 @@ SECC <- within( SECC, {
   Nfix    <- ARA.m * Nfix.ARA.ratio
   H2O     <- H2O * 100
   H2O.wwt <- H2O.wwt * 100
-  grow2 <- grow12 + grow23             # moss growth during second year **
+  Growth  <- grow12 + grow23             # moss growth during second year **
   ## recoded factors / new explanatory variables
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
   Warming <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 
@@ -82,7 +59,7 @@ SECC <- within( SECC, {
 Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label
 Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units
 
-Y.plotlab <- bquote( .(Y.label) * "  " * .(Y.units) *  "" )
+Y.plotlab <- bquote( .(Y.label) * " (" * .(Y.units) *  ")" )
 
 
 ## Save Output to Files - set to NULL to prevent output.
@@ -138,7 +115,7 @@ SECCa <- if(SECC.scale == "patch") SECCp else if (SECC.scale == "mc") SECCmc els
 SECCa <- within( SECCa, {
                 Y <- as.numeric( get(Y.col) )
                 Y.log <- log10(Y)      # There's a value of Nfix <1 :(
-                Y.log[Y.log <= 0] <- 0 # log10(<1) will be negative ...
+                Y.log[Y < 1] <- 0      # log10(<1) will be negative ... log10(<0) = NaN
                 Y.trans <- Y.log       # convenience
 })
 
@@ -154,3 +131,4 @@ if (FALSE) {  # do not run if source()d
   summary(SECCa)  # summary statistics
 }
 
+cat("== SECC data loaded & processed for multivariate / regression analyses ==\n")

@@ -52,6 +52,7 @@ evplot = function(ev) {
 #
 # License: GPL-2 
 # Authors: Francois Gillet & Daniel Borcard, April 2010
+# tweaked by Jonathan Whiteley (for personal preference)
 
   require("vegan")
 
@@ -64,11 +65,12 @@ evplot = function(ev) {
   # Scaling 1: "species" scores scaled to relative eigenvalues
   sit.sc1 <- scores(res.pca, display="wa", scaling=1, choices=c(1:p))
   spe.sc1 <- scores(res.pca, display="sp", scaling=1, choices=c(1:p))
-  plot.cca(res.pca, choices=c(ax1,ax2), display=c("wa","sp"), type="n", 
-	 main="PCA - scaling 1", scaling=1)
+  ## plot.cca() throws an error (can't find the function) - jaw
+  plot(res.pca, choices=c(ax1,ax2), display=c("wa","sp"), type="n", 
+	 main="PCA - scaling 1 (distance)", scaling=1)
   if (point) {
     points(sit.sc1[,ax1], sit.sc1[,ax2], pch=20)
-    text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex, pos=3, scaling=1)
+    ##     text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex, pos=3, scaling=1)
   }
   else {
     text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex, scaling=1)
@@ -82,10 +84,10 @@ evplot = function(ev) {
   sit.sc2 <- scores(res.pca, display="wa", choices=c(1:p))
   spe.sc2 <- scores(res.pca, display="sp", choices=c(1:p))
   plot(res.pca, choices=c(ax1,ax2), display=c("wa","sp"), type="n", 
-  	main="PCA - scaling 2")
+  	main="PCA - scaling 2 (correlation)")
   if (point) {
     points(sit.sc2[,ax1], sit.sc2[,ax2], pch=20)
-    text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex, pos=3)
+    ##     text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex, pos=3)
   }
   else {
     text(res.pca, display="wa", choices=c(ax1,ax2), cex=cex)

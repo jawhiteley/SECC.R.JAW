@@ -103,7 +103,7 @@ SECC.env <- SECC[rownames(Fauna), ]
 ##================================================
 ## Species Richness & Diversity metrics
 ##================================================
-cat("Calculating Diversity metrics\n")
+## cat("Calculating Diversity metrics\n")
 ## diversity() and specpool() in vegan
 SECC.sp.sum <- within(SECC.sp.sum, {
     Richness <- apply(SECC.sp, 1, function(x) length(which(x>0)) )  # observed # spp.

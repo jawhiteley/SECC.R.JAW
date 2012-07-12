@@ -29,7 +29,8 @@ library(car)                           # diagnostic plots & tools
 ## CUSTOM OPTIONS
 ################################################################
 # explanatory vars for data exploration (and labels)
-vars.ls   <- c("Nfix", "Cells.m", "Hcells.m", "H2O")  
+## vars.ls   <- c("Nfix", "Cells.m", "Hcells.m", "H2O")  
+vars.ls   <- c(Y.col, X.cols)          # defined in setup
 
 labels.ls <- c()
 for(i in 1:length(vars.ls) ){
@@ -91,7 +92,7 @@ if (DrawExplorationGraphs) {
                     "H2O", "Block", "Temperature", "Chamber", "Frag", "Position")
           )
   pairplot(SECCa[, c('Y', 'Y.log', 'Block', 'Frag', 'TempC', 'H2O', 'Cells.m', 
-                     'grow2', 'Decomposition', 'TAN', 'Patch.dwt')],
+                     'Growth', 'Decomposition', 'TAN', 'Patch.dwt')],
            labels=c(Y.col, paste("log(", Y.col, ")"), 
                     "Block", "Frag", "Temperature", "H2O", "Cells.m", 
                     "Moss growth", "Decomposition", "TAN", "Patch dwt.")
@@ -101,20 +102,22 @@ if (DrawExplorationGraphs) {
 
   ## Cleveland Dotplots (Zuur et al. 2009)
   Dotplot.y <- "Order of observations"
-  op <- par(mfcol=c(2,2))
+  op <- par(mfrow=c(2,2))
   dotchart(SECCa$Y, ylab=Dotplot.y, xlab=Y.label)
   dotchart(SECCa$Y.log, ylab=Dotplot.y, xlab=paste("log(", Y.label, ")"))
+  dotchart(SECCa$Nfix, ylab=Dotplot.y, xlab=make.axis.title(SECCa, "Nfix"))
   dotchart(SECCa$Cells.m, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Cells.m']]) # outliers > 5e+09
   dotchart(SECCa$H2O, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['H2O']]) # outliers > 800?
-  dotchart(SECCa$Richness, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Richness']])
-  dotchart(SECCa$grow2, ylab=Dotplot.y, xlab="Moss growth - year 2") # outliers >30??
+  dotchart(SECCa$Growth, ylab=Dotplot.y, xlab="Moss growth - year 2") # outliers >30??
   dotchart(SECCa$Decomposition, ylab=Dotplot.y, xlab="Moss decomposition - year 2") # outliers >0.3??
   dotchart(SECCa$TAN, ylab=Dotplot.y, xlab="Total Available N") # outliers >0.3??
+  dotchart(SECCa$Richness, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Richness']])
+  dotchart(SECCa$Evenness, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Evenness']])
   par(op)
 }
 
-if (FALSE) {
-  ## the old-fashioned way (low-level)
+if (FALSE) 
+{ ## the old-fashioned way (low-level)
   with( SECCa,{
        ## scatterplot
        plot(X, Y, type="p",
@@ -139,71 +142,79 @@ TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 Time.facets <- facet_grid(facets = .~Time)
 All.facets  <- facet_grid(facets = Frag~Position)
 
-Ycb.plot  <- ggplot(SECCa, aes(Cells.m, Y, group = Chamber) ) + 
-                    geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
-                    xlab( make.axis.title(SECCa, "Cells.m") ) +
-                    ylab( Y.plotlab )
-Ycb.plot  <- Ycb.plot + jaw.ggplot() + ChamberPts + TopLegend  # order matters!
+for (Xcol in X.cols)
+{
+  X.plotlab <- SECC.axislab(SECCa, Xcol)
+  ## using get() inside a ggplot call seems risky, but it's the best I can think of for now.
+  YX.plot  <- ggplot(SECCa, aes(get(Xcol), Y, group = Chamber) ) + 
+  geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
+  xlab( X.plotlab ) +
+  ylab( Y.plotlab )
+  YX.plot  <- YX.plot + jaw.ggplot() + ChamberPts + TopLegend  # order matters!
 
-Ycb.panels <- Ycb.plot + All.facets # Full Faceting ***
-if (DrawExplorationGraphs) {
-  print(Ycb.plot)
-  print(Ycb.panels)
+  YX.panels <- YX.plot + All.facets # Full Faceting ***
+  if (DrawExplorationGraphs) {
+    print(YX.plot)
+    print(YX.panels)
+  }
+
+  ## log-y may be the best linear model (according to AIC), but essentially implies an exponential relationship (!)
+  YX.logy <- YX.plot + scale_y_log10()
+  YX.time.logy   <- YX.logy + Time.facets 
+  YX.panels.logy <- YX.logy + All.facets 
+  if (DrawExplorationGraphs) {
+    print(YX.logy)
+    print(YX.time.logy)
+    print(YX.panels.logy)
+  }
+
+  ## log-log looks encouraging, and may be theoretically (Biologically) justified.
+  YX.log <- YX.logy + scale_x_log10()
+  YX.panels.log <- YX.log + All.facets 
+  if (DrawExplorationGraphs) {
+    print(YX.log)
+    print(YX.panels.log)
+  }
+
+  ## sqrt-transformation?
+  ##   X.plotlab <- SECC.axislab(SECCa, Xcol, trans = "sqrt")   # not quite working as expected
+  YX.sqrt <- ggplot(SECCa, aes(sqrt(get(Xcol)), Y, group = Chamber) ) + 
+  geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
+  ##   xlab( X.plotlab ) +
+  xlab( bquote( sqrt( .(X.plotlab) ) ) ) +
+  ylab( Y.plotlab )
+  YX.sqrt <- YX.sqrt + ChamberPts + jaw.ggplot() + TopLegend
+  YX.panels.sqrt <- YX.sqrt + All.facets 
+  if (DrawExplorationGraphs) {
+    print(YX.sqrt)
+    print(YX.panels.sqrt)
+  }
+
 }
 
-## log-y may be the best linear model (according to AIC), but essentially implies an exponential relationship (!)
-Ycb.logy <- Ycb.plot + scale_y_log10()
 
-Ycb.time.logy   <- Ycb.logy + Time.facets 
-Ycb.panels.logy <- Ycb.logy + All.facets 
-if (DrawExplorationGraphs) {
-  print(Ycb.logy)
-  print(Ycb.time.logy)
-  print(Ycb.panels.logy)
+if (FALSE)
+{
+  ## H2O plots
+  Y.H2O <- ggplot(SECCa, aes(H2O, Y, group = Chamber) ) + 
+  geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
+  xlab( make.axis.title(SECCa, "H2O") ) +
+  ylab( Y.plotlab )
+  Y.H2O <- Y.H2O + ChamberPts + jaw.ggplot() + TopLegend
+
+  Y.H2O.panels <- Y.H2O + All.facets
+  if (DrawExplorationGraphs) {
+    print(Y.H2O)
+    print(Y.H2O.panels)
+  }
+
+  Y.H2O.log <- Y.H2O + scale_y_log10()
+  Y.H2O.log.panels <- Y.H2O.log + All.facets
+  if (DrawExplorationGraphs) {
+    print(Y.H2O.log)
+    print(Y.H2O.log.panels)
+  }
 }
-
-## log-log looks encouraging, and may be theoretically (Biologically) justified.
-Ycb.log <- Ycb.logy + scale_x_log10()
-
-Ycb.panels.log <- Ycb.log + All.facets 
-if (DrawExplorationGraphs) {
-  print(Ycb.log)
-  print(Ycb.panels.log)
-}
-
-## sqrt-transformation on cells?
-Ycb.sqrt <- ggplot(SECCa, aes(sqrt(Cells.m), Y, group = Chamber) ) + 
-                    geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
-                    xlab( bquote( sqrt( .(make.axis.title(SECCa, "Cells.m")) ) ) ) +
-                    ylab( Y.plotlab )
-Ycb.sqrt <- Ycb.sqrt + ChamberPts + jaw.ggplot() + TopLegend
-
-Ycb.panels.sqrt <- Ycb.sqrt + All.facets 
-if (DrawExplorationGraphs) {
-  print(Ycb.sqrt)
-  print(Ycb.panels.sqrt)
-}
-
-## H2O plots
-Y.H2O <- ggplot(SECCa, aes(H2O, Y, group = Chamber) ) + 
-                    geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
-                    xlab( make.axis.title(SECCa, "H2O") ) +
-                    ylab( Y.plotlab )
-Y.H2O <- Y.H2O + ChamberPts + jaw.ggplot() + TopLegend
-
-Y.H2O.panels <- Y.H2O + All.facets
-if (DrawExplorationGraphs) {
-  print(Y.H2O)
-  print(Y.H2O.panels)
-}
-
-Y.H2O.log <- Y.H2O + scale_y_log10()
-Y.H2O.log.panels <- Y.H2O.log + All.facets
-if (DrawExplorationGraphs) {
-  print(Y.H2O.log)
-  print(Y.H2O.log.panels)
-}
-
 
 
 
@@ -211,15 +222,15 @@ if (DrawExplorationGraphs) {
 ##==============================================================
 ## Check Variation, Ranges
 ## with(SECCa, boxplot(Y.log ~ Block, ylab = Y.plotlab ) )    # bquote doesn't work in base graphics?  Need a different format for expression?
-Y.logBlock <- qplot(Block, Y.log, data = SECCa, geom = "boxplot",
-                 ylab = Y.plotlab) + jaw.ggplot()
 Y.Block <- qplot(Block, Y, data = SECCa, geom = "boxplot",
                  ylab = Y.plotlab) + jaw.ggplot()
-Y.Chamber <- qplot(Chamber, Y.log, data = SECCa, geom = "boxplot",
+Y.logBlock <- qplot(Block, Y.trans, data = SECCa, geom = "boxplot",
+                 ylab = Y.plotlab) + jaw.ggplot()
+Y.Chamber <- qplot(Chamber, Y.trans, data = SECCa, geom = "boxplot",
                    ylab = Y.plotlab) + jaw.ggplot() 
-Y.Frag <- qplot(Frag, Y.log, data = SECCa, geom = "boxplot",
+Y.Frag <- qplot(Frag, Y.trans, data = SECCa, geom = "boxplot",
                 ylab = Y.plotlab) + jaw.ggplot() 
-Y.Pos  <- qplot(Position, Y.log, data = SECCa, geom = "boxplot",
+Y.Pos  <- qplot(Position, Y.trans, data = SECCa, geom = "boxplot",
                 ylab = Y.plotlab) + jaw.ggplot() 
 if (DrawExplorationGraphs) {
   print(Y.logBlock)
@@ -231,11 +242,6 @@ if (DrawExplorationGraphs) {
 
 ##==============================================================
 ## Check distributions
-X.dist <- qplot(Cells.m, data = SECCa, geom = "histogram", 
-                xlab = make.axis.title(SECCa, "Cells.m"))
-X.dist <- X.dist + jaw.ggplot() + All.facets
-if (DrawExplorationGraphs) print(X.dist)
-
 Y.dist <- qplot(Y, data = SECCa, geom = "histogram",
                 xlab = Y.plotlab)
 Y.dist <- Y.dist + jaw.ggplot() + All.facets
@@ -279,7 +285,6 @@ if (DrawExplorationGraphs) {
   par(old.par)
 }
 
-if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
 
 
 
@@ -289,7 +294,7 @@ if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()
 ## MULTIVARIATE EXPLORATION
 ################################################################
 library(vegan)
-SECCmv <- SECCa[, c("Y.trans", "Block", "Warming", "Frag", "H2O", "grow2", "Decomposition", "TAN")]
+SECCmv <- SECCa[, c("Y.trans", "Block", "Warming", "Frag", "H2O", "Growth", "Decomposition", "TAN")]
 rownames(SECCmv) <- SECCa$SampleID
 SECCmv$Block <- as.numeric(as.character(SECCmv$Block))
 SECCmv$Frag <- as.numeric(SECCmv$Frag)
@@ -332,3 +337,10 @@ op <- par(mfrow = c(1,2))
 biplot(SECC.pca, scaling = 1, type = c("text", "points"), main = "PCA - scaling 1 (distance)")
 biplot(SECC.pca, scaling = 2, type = c("text", "points"), main = "PCA - scaling 2 (correlation)")
 par(op)
+cleanplot.pca(SECC.pca, point = TRUE)
+
+
+
+
+
+if (Save.results == TRUE && is.null(Save.plots) == FALSE) dev.off()

@@ -95,6 +95,7 @@ MSD <- function( model, alpha=0.05, method=c("unplanned", "planned", "MSR", "LSD
 ##================================================
 make.axis.title <- function (data = NULL, label = "")
 {
+  ## this is a very simple version: the more powerful one is `SECC.axislab` in `lib/SECC.functions.R`
   bquote( .(attr(data, "labels")[[label]]) * " (" * .(attr(data, "units")[[label]]) * ")" )
 }
 
