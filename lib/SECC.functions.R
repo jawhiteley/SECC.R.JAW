@@ -497,6 +497,22 @@ SECCplotDataANOVA <- function(SECCdata,
 }
 
 
+## (back)transformation functions
+log0 <- function(x, base = exp(1))
+{   # log-transform, but 0 stays as 0
+  y <- log(x, base)
+  y[x <= 0] <- 0
+  ##   y[x <  1] <- 0
+  y
+}
+alog0 <- function(y)
+{   # back-transform log(X), where 0s stay as 0s
+  x <- 10^y
+  ##   x[y == 0] <- NA                      # MISSING (these cause glitches in transformed axes in ggplot)
+  ##   x[y == 0] <- 0
+  x
+}
+
 
 
 ##################################################
