@@ -55,4 +55,73 @@ strip_empty_dims  <- function( data = NULL, dim = c(1, 2),
 }
 
 
+###=============================================================
+### glmulti wrapper functions for mixed effects modelling
+## lmer.glmulti from ?glmulti examples
+lmer.glmulti <- function (formula, data, random = "", ...) {
+  lmer(paste(deparse(formula), random), data = data, REML=FALSE, ...)
+}
+# the fixed-effects are passed as formula, and the random effects are passed as "random"
+# Here we could redefine the getfit function, but this is necessary only to use coef() or predict().
+# 3.Last, we must provide the corresponding aicc method, since the default will not work with mer objects
+setMethod('aicc', 'mer', function(object, ...) 
+          {
+            liliac<- logLik(object)
+            k<-attr(liliac,"df")
+            n= object@dims['n']
+            return(-2*as.numeric(liliac[1]) + 2*k*n/max(n-k-1,0))
+          })
+## nlme equivalents - these don't have the same coef() methods, so they may not be useful, even if they work
+  lme.glmulti <- function (formula, data, random, REML=FALSE, ...) {
+    if (REML) method.gls <- "REML" else method.gls <- "ML"
+    lme(formula, random = random, data = data, method = method.gls, ...)
+  }
+  gls.glmulti <- function (formula, data, REML=FALSE, ...) {
+    if (REML) method.gls <- "REML" else method.gls <- "ML"
+    gls(formula, data = data, method = method.gls, ...)
+  }
+
+### glmulti functions for extracting plot data
+getCoef.glmulti <- function(glmObj, minImportance=0) {
+  glm.coef <- as.data.frame(coef(glmObj))
+  ## from coef: these are weights of model *coefficients*, NOT *model terms*...
+  ## I think I want weights of model terms (variables, rather than levels of each factor)
+  ## ggplot will order the bars by levels of the explanatory factor
+  glm.coef$Term <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
+  glm.order <- order(glm.coef$Importance, decreasing=TRUE)
+  ## glm.coef$Term <- factor(glm.coef$Term, levels=levels(glm.coef$Term)[glm.order])
+  ## Drop terms below the threshold
+  glm.minImp <- which(glm.coef$Importance >= minImportance)
+  glm.coef <- glm.coef[glm.minImp, ]
+  ## facilitate confidence intervals on Estimates
+  glm.coef$Emax <- glm.coef$Estimate + glm.coef[, "+/- (alpha=0.05)"]
+  glm.coef$Emin <- glm.coef$Estimate - glm.coef[, "+/- (alpha=0.05)"]
+  glm.coef
+  ## Process coef table afterwards (text replacement, etc.)
+}
+importance.glmulti <- function(x) {
+  ## collect importances (see plot.glmulti( type="s" )
+  ww = exp(-(x@crits - x@crits[1])/2)
+  ww = ww/sum(ww)
+  clartou = function(x) {
+    pieces <- sort(strsplit(x, ":")[[1]])
+    if (length(pieces) > 1) 
+      paste(pieces[1], ":", pieces[2], sep = "")
+    else x
+  }
+  tet = lapply(x@formulas, function(x) sapply(attr(delete.response(terms(x)), 
+                                                   "term.labels"), clartou))
+  allt <- unique(unlist(tet))
+  imp <- sapply(allt, function(x) sum(ww[sapply(tet, function(t) x %in% t)]))
+  order.imp <- order(imp)
+  glm.imp <- data.frame(Term=allt[order.imp], Importance=imp[order.imp], stringsAsFactors=F)
+  glm.imp$Term <- factor(glm.imp$Term, levels=glm.imp$Term) # sorted levels?
+  glm.imp
+}
+
+
+
+
+###=============================================================
+
 gmean <- function (x) exp( mean( log(x) ) ) # Geometric mean == nth root of product of n values

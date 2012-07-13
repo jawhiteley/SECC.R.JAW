@@ -1,0 +1,148 @@
+Results for: N-fixation rate ( Nfix ) ~ (others) 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer
+
+R version 2.12.0 (2010-10-15)
+Thu Jul 12 19:42:36 2012
+================================================================
+
+n= 128 
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 128 837188.800  75.55693  
+   2) H2O< 418.513 41  25442.640  11.94227 *
+   3) H2O>=418.513 87 567634.200 105.53620  
+     6) Block=1,4,7,8 36 127922.200  63.00330  
+      12) Block=8 10   5355.857  18.47755 *
+      13) Block=1,4,7 26  95115.770  80.12859  
+        26) Frag=Continuous 9   5839.303  25.97669 *
+        27) Frag=Full Corridors,Pseudo-Corridors,Isolated 17  48912.460 108.79720 *
+     7) Block=2,3,5,6 51 328615.000 135.55950  
+      14) Frag=Continuous,Isolated 27  89456.070  98.95554 *
+      15) Frag=Full Corridors,Pseudo-Corridors 24 162285.000 176.73900  
+        30) H2O>=606.2576 11  26872.750 131.49550 *
+        31) H2O< 606.2576 13  93842.890 215.02190 *
+Call:
+rpart(formula = Y.main, data = SECCa, control = rpc)
+  n= 128 
+
+          CP nsplit rel error    xerror      xstd
+1 0.29158527      0 1.0000000 1.0149632 0.1536065
+2 0.13270251      1 0.7084147 0.7723096 0.1451499
+3 0.09182389      2 0.5757122 0.7160836 0.1319621
+4 0.04965347      3 0.4838883 0.7003640 0.1317256
+5 0.04050137      4 0.4342349 0.6855433 0.1315001
+6 0.04000000      6 0.3532321 0.6799442 0.1457958
+
+Node number 1: 128 observations,    complexity param=0.2915853
+  mean=75.55693, MSE=6540.537 
+  left son=2 (41 obs) right son=3 (87 obs)
+  Primary splits:
+      H2O        < 418.513   to the left,  improve=0.29158530, (0 missing)
+      Block      splits as  LRRLRRLL, improve=0.16116560, (0 missing)
+      TempC      < 6.985     to the right, improve=0.04035040, (0 missing)
+      Frag       splits as  LRRL, improve=0.03611806, (0 missing)
+      log10(TAN) < -1.35716  to the right, improve=0.02916831, (0 missing)
+  Surrogate splits:
+      Block      splits as  LRRRRRRR, agree=0.711, adj=0.098, (0 split)
+      logCells   < 9.572687  to the right, agree=0.695, adj=0.049, (0 split)
+      log10(TAN) < -1.40878  to the right, agree=0.695, adj=0.049, (0 split)
+
+Node number 2: 41 observations
+  mean=11.94227, MSE=620.5521 
+
+Node number 3: 87 observations,    complexity param=0.1327025
+  mean=105.5362, MSE=6524.531 
+  left son=6 (36 obs) right son=7 (51 obs)
+  Primary splits:
+      Block      splits as  LRRLRRLL, improve=0.19571940, (0 missing)
+      Frag       splits as  LRRL, improve=0.14800370, (0 missing)
+      log10(TAN) < -1.547389 to the right, improve=0.04953848, (0 missing)
+      logCells   < 8.995907  to the left,  improve=0.03911800, (0 missing)
+      H2O        < 775.3181  to the left,  improve=0.02833269, (0 missing)
+  Surrogate splits:
+      H2O        < 489.3033  to the left,  agree=0.690, adj=0.250, (0 split)
+      logCells   < 8.317562  to the right, agree=0.632, adj=0.111, (0 split)
+      log10(TAN) < -1.976533 to the left,  agree=0.621, adj=0.083, (0 split)
+
+Node number 6: 36 observations,    complexity param=0.04050137
+  mean=63.0033, MSE=3553.395 
+  left son=12 (10 obs) right son=13 (26 obs)
+  Primary splits:
+      Block      splits as  R--R--RL, improve=0.21458810, (0 missing)
+      H2O        < 481.8307  to the right, improve=0.16100360, (0 missing)
+      Frag       splits as  LRRR, improve=0.14556760, (0 missing)
+      log10(TAN) < -1.583027 to the right, improve=0.10234590, (0 missing)
+      logCells   < 8.482189  to the left,  improve=0.08173173, (0 missing)
+  Surrogate splits:
+      H2O        < 658.4839  to the right, agree=0.889, adj=0.6, (0 split)
+      log10(TAN) < -1.366081 to the right, agree=0.778, adj=0.2, (0 split)
+
+Node number 7: 51 observations,    complexity param=0.09182389
+  mean=135.5595, MSE=6443.431 
+  left son=14 (27 obs) right son=15 (24 obs)
+  Primary splits:
+      Frag       splits as  LRRL, improve=0.233933100, (0 missing)
+      logCells   < 8.967084  to the left,  improve=0.108660300, (0 missing)
+      log10(TAN) < -1.541172 to the right, improve=0.090707480, (0 missing)
+      H2O        < 591.2493  to the right, improve=0.084231690, (0 missing)
+      Block      splits as  -RL-RL--, improve=0.009818174, (0 missing)
+  Surrogate splits:
+      logCells   < 7.947758  to the left,  agree=0.686, adj=0.333, (0 split)
+      H2O        < 538.231   to the right, agree=0.647, adj=0.250, (0 split)
+      log10(TAN) < -1.631911 to the right, agree=0.608, adj=0.167, (0 split)
+
+Node number 12: 10 observations
+  mean=18.47755, MSE=535.5857 
+
+Node number 13: 26 observations,    complexity param=0.04050137
+  mean=80.12859, MSE=3658.299 
+  left son=26 (9 obs) right son=27 (17 obs)
+  Primary splits:
+      Frag       splits as  LRRR, improve=0.42436720, (0 missing)
+      logCells   < 9.213355  to the left,  improve=0.26333840, (0 missing)
+      log10(TAN) < -1.583027 to the right, improve=0.09663476, (0 missing)
+      H2O        < 481.8307  to the right, improve=0.07855191, (0 missing)
+      Block      splits as  R--R--L-, improve=0.02010655, (0 missing)
+  Surrogate splits:
+      H2O        < 586.112   to the right, agree=0.731, adj=0.222, (0 split)
+      log10(TAN) < -1.583027 to the right, agree=0.692, adj=0.111, (0 split)
+
+Node number 14: 27 observations
+  mean=98.95554, MSE=3313.188 
+
+Node number 15: 24 observations,    complexity param=0.04965347
+  mean=176.739, MSE=6761.874 
+  left son=30 (11 obs) right son=31 (13 obs)
+  Primary splits:
+      H2O        < 606.2576  to the right, improve=0.25615020, (0 missing)
+      Block      splits as  -RL-RL--, improve=0.12217770, (0 missing)
+      logCells   < 8.222274  to the left,  improve=0.10724240, (0 missing)
+      log10(TAN) < -1.738782 to the right, improve=0.07940661, (0 missing)
+      Frag       splits as  -RL-, improve=0.02192425, (0 missing)
+  Surrogate splits:
+      Block      splits as  -RL-RL--, agree=0.875, adj=0.727, (0 split)
+      logCells   < 7.008687  to the left,  agree=0.667, adj=0.273, (0 split)
+      log10(TAN) < -1.656665 to the left,  agree=0.625, adj=0.182, (0 split)
+
+Node number 26: 9 observations
+  mean=25.97669, MSE=648.8114 
+
+Node number 27: 17 observations
+  mean=108.7972, MSE=2877.203 
+
+Node number 30: 11 observations
+  mean=131.4955, MSE=2442.977 
+
+Node number 31: 13 observations
+  mean=215.0219, MSE=7218.684 
+
+
+
+
+
+<============================= END ============================>
