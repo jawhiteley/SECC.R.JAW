@@ -15,7 +15,7 @@ X.cols <- c("Nfix", "H2O")
 ##==============================================================
 ## CUSTOM SETTINGS
 ##==============================================================
-Save.results  <- FALSE                 # Output Results?
+Save.results  <- TRUE                 # Output Results?
 Save.glmulti  <- paste(SaveDir.obj(), "Growth.glmulti.R", sep="")
 
 ## Default labels & calcs

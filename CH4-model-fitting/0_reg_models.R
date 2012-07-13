@@ -30,10 +30,10 @@ source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Nfix-trees.R")    # N-fixation: regression trees
 source("CH4-model-fitting/Nfix-models.R")   # N-fixation: regression models
 
-source("CH4-model-fitting/Grow_setup.R")    # Moss Growth: settings
+source("CH4-model-fitting/Growth_setup.R")  # Moss Growth: settings
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
-source("CH4-model-fitting/Grow-trees.R")    # Moss Growth: regression trees
-source("CH4-model-fitting/Grow-models.R")   # Moss Growth: regression models
+source("CH4-model-fitting/Growth-trees.R")  # Moss Growth: regression trees
+source("CH4-model-fitting/Growth-models.R") # Moss Growth: regression models
 
 source("CH4-model-fitting/Decomp_setup.R")  # Decomposition: settings
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration

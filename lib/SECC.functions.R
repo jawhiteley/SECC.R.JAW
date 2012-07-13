@@ -514,6 +514,99 @@ alog0 <- function(y)
 }
 
 
+## Plotting Regression Tree results
+RegTreePlot.SECC <- function(Reg.tree, minsplit) 
+{
+  require(ggplot2)
+  require(ggdendro)
+  Y.cp <- min(Reg.tree$cptable[, "CP"])
+  Suppl.text  <- paste("cp = ", Y.cp, ", split min. n = ", minsplit, sep="")
+
+  Yvals       <- as.numeric(Reg.tree$frame[, "yval"])
+  Ylabels     <- paste(" ", formatC(Yvals, digits=1, flag="-", format="f"), sep="")
+  Nvals       <- as.numeric(Reg.tree$frame[, "n"])
+  Nlabels     <- paste("", formatC(Nvals), sep="") # "n="
+  Droot       <- as.numeric(Reg.tree$frame[1, "dev"]) 
+  Dvals       <- as.numeric(Reg.tree$frame[, "dev"]) / Droot # proportion of total deviance
+  Dlabels     <- paste("", formatC(Dvals, digits=2, big.mark=",", flag="-", format="f"), sep="")
+  Leaf.labels <- paste(Ylabels, " (", Dlabels, ")", sep="") #
+  Info.labels <- paste(" n=", Nlabels, sep="") # Y.tree.labels
+  Var.labels  <- labels(Reg.tree, pretty=F) # includes full factor levels, decision criteria, etc.
+  ## clean up labels
+  Var.labels <- gsub(" months,", ",", Var.labels) #  duplicate month labels
+  Var.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Var.labels)
+  Var.labels <- gsub("X.trans", "Cells", Var.labels)
+  Var.labels <- gsub("Full Corridors", "Corridors", Var.labels)
+  Var.labels <- gsub("Pseudo-Corridors", "Pseudo-Cs", Var.labels)
+  if (FALSE) { # ggplot2 doesn't support math expressions (yet)?
+    Var.labels <- gsub("H2O(..[0-9.]+)", "H[2]*O\\1%", Var.labels)
+    Var.labels <- gsub("\\de\\+(\\d+)", " %*% 10^{\\1}", Var.labels)
+    Var.labels <- expression(Var.labels)      # expressions
+  } else {
+  }
+  Var.labels  <- paste(" ", Var.labels, sep="")
+  Node.labels <- paste(Var.labels, "\n", Dlabels, sep="") # space in front of each line for padding (hack) ; blank line for leaf labels in between
+  Full.labels <- paste(" ", Var.labels, "\n ", Ylabels, " (n=", Nlabels, ") ", Dlabels, sep="")
+  Y.tree.labels <- data.frame(label=Full.labels, 
+                                node=Node.labels, leaf=Leaf.labels, info=Info.labels,
+                                var=Var.labels, dev=Dlabels, n=Nlabels, yval=Ylabels)
+  ## x=Y.plot$x, y=Y.plot$y, 
+
+  class(Reg.tree) <- c("rpart", "tree") # largely the same, but no methods for "rpart"
+  dend_data <- dendro_data(Reg.tree)
+  ## dend.labels <- Y.tree.labels$label[as.numeric(row.names(dend_data$labels)) +1]
+  numLabels <- nrow(Y.tree.labels) -1  # drop "root"
+  branch_labels <- segment(dend_data)[1:numLabels, c("x", "y", "xend", "yend")]     # coordinates for segments / branches
+  ## names(branch_labels) <- c("x", "y")    # rename columns ;)
+  branch_labels <- cbind(branch_labels, Y.tree.labels[-1, 3:ncol(Y.tree.labels)])
+  dend_data$branch_label <- branch_labels # package it all up
+  dend.leaf   <- Y.tree.labels$leaf[ as.numeric(row.names(dend_data$leaf_label)) ]
+  leaf_labels <- dend_data$leaf_label
+  leaf_labels$label <- dend.leaf
+  dend_data$leaf_label <- leaf_labels
+  ## move leaves from edge to leave space for labels?
+  ## ylim doesn't work too well, but I did discover that the plotting area will expand
+  ## to include all coordinates (on all layers), so I can just add some (blank)
+  ## text at the limits to ensure the axes go at least that far.
+  Y.lim <- c( min(segment(dend_data)$y), max(segment(dend_data)$y) )
+  Y.lim[1] <- Y.lim[1] *0
+  Suppl.label <- data.frame(label=Suppl.text, x=(max(segment(dend_data)$x) +0.5), 
+                            y=max(segment(dend_data)$y), stringsAsFactors=FALSE)
+  Suppl.label <- rbind(Suppl.label, 
+                       data.frame(label=" ", x=1, y=Y.lim[1], stringsAsFactors=FALSE)
+  ) # add some space 'below' bottom leaves for labels.
+
+  RegTree.plot <- ggplot(segment(dend_data)) +
+  geom_segment(aes(x=x, y=y, xend=xend, yend=yend), size=1, color="grey50") +
+  scale_size_identity() + scale_color_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                             aes(label=var, x=xend, y=yend),
+                                             hjust=0, vjust=-0.7, size=3.1, colour="grey20") + 
+                                   scale_size_identity() + scale_colour_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                             aes(label=info, x=xend, y=yend),
+                                             hjust=0, vjust=1.75, size=3.1, colour="grey20") + 
+                                   scale_size_identity() + scale_colour_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                             aes(label=leaf, x=x, y=y),
+                                             hjust=0, vjust=0.5, size=3) + 
+                                   scale_size_identity()
+  ## RegTree.plot <- RegTree.plot + geom_text(data=leaf_labels, aes(label=label, x=x, y=y), 
+  ##                                            hjust=-0.1, size=4) + scale_size_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=Suppl.label, aes(label=label, x=x, y=y), 
+                                             hjust=0, size=4) + scale_size_identity()
+  RegTree.plot <- RegTree.plot + coord_flip() + scale_y_reverse() + 
+  theme_dendro() + opts(panel.border = theme_blank())
+  ## expand=c(0.2, 0) within the sacle_y_reverse() adds space to *both* sides, to make room for long labels.  Not ideal, but it works
+  ## expand=c(0.2, 0)
+
+  ## these ggplot objects are not entirely stand-alone if they depend on the dendro objects!!
+  ## dendro_data()
+  RegTree.plot                          # return
+}
+
+
+
 
 ##################################################
 ## MULTIVARIATE ORDINATION ANALYSES
