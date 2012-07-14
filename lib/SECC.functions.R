@@ -408,20 +408,41 @@ SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, multiline=
                          trans.func=NULL, unit.mult = 1, ...) {
   ax.label <- attr(SECC.df, "labels")[[col.name]] 
   ax.units <- attr(SECC.df, "units" )[[col.name]] 
-  if (!is.null(trans.func)) {          # Not working :(
-    ## dynamically wrap the units in a plotmath 'function' (passed as text)?
-    ##     ax.units <- paste(trans.func, "(", deparse(ax.units), ")", sep="")
-    if (length(grep("\\(", trans.func)) <1 ) 
-      trans.func <- paste(trans.func, "(%s)", sep="")
-    ax.units <- sprintf(trans.func, deparse(ax.units))
-    ax.units <- parse(text = ax.units)
-  }
-  if (unit.mult!=1) ax.units <- bquote("" %*% .(format(unit.mult, ...)) ~ .(ax.units))
-  sep <- if (multiline==TRUE) "\n" else " "
-  axis.lab <- if (parens==TRUE) {
-    bquote( .(ax.label) ~ .(paste(sep, "(", sep="")) * .(ax.units) * ")" )
+  if (FALSE)
+  { # wrap it as an expression() instead - I should have done this from the very beginning.  Let's hope this works anyway ...
+    if (!is.null(trans.func)) {          # Not working :(
+      ## dynamically wrap the units in a plotmath 'function' (passed as text)?
+      ##     ax.units <- paste(trans.func, "(", deparse(ax.units), ")", sep="")
+      if (length(grep("\\(", trans.func)) <1 ) 
+        trans.func <- paste(trans.func, "(%s)", sep="")
+  ax.units <- sprintf(trans.func, deparse(ax.units))
+  ax.units <- parse(text = ax.units)
+    }
+    if (unit.mult!=1) ax.units <- bquote("" %*% .(format(unit.mult, ...)) ~ .(ax.units))
+    sep <- if (multiline==TRUE) "\n" else " "
+    axis.lab <- if (parens==TRUE) {
+      bquote( .(ax.label) ~ .(paste(sep, "(", sep="")) * .(ax.units) * ")" )
+    } else {
+      bquote( .(ax.label) ~ .(paste(sep, " ", sep="")) * .(ax.units) )
+    }
   } else {
-    bquote( .(ax.label) ~ .(paste(sep, " ", sep="")) * .(ax.units) )
+    ax.units <- deparse(ax.units)    # -> string
+    if (!is.null(trans.func)) {
+      if (length(grep("\\(", trans.func)) <1 ) 
+        trans.func <- paste(trans.func, "(%s)", sep="")
+      ax.units <- sprintf(trans.func, ax.units)
+    }
+    unit.pre <- ""                     # default
+    if (unit.mult!=1) unit.pre <- paste("%*%", format(unit.mult, ...))
+    sepc <- if (multiline==TRUE) "\n" else " "
+    axis.text <- if (parens==TRUE) {
+      paste( deparse(paste(ax.label, sepc, "(", unit.pre, sep="")), 
+            ax.units, deparse(")"), sep = " * " )
+    } else {
+      paste( deparse(paste(ax.label, sepc, unit.pre,  sep="")), 
+            ax.units,               sep = " * " )
+    }
+    axis.lab <- parse(text = axis.text)
   }
   axis.lab
 }
