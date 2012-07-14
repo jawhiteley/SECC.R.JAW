@@ -52,7 +52,7 @@ anova(Y.log.gam)
 AIC(Y.gam, Y.log.gam)
 ## Cells.m is linear (no need to transform?), TAN might be, H2O is NOT
 ## I log-transformed Cells in original analysis: I should probably continue to do so, unless I have a really good reason not to.
-## The non-linearity in H2O is driven largely by a big gap between very dry and other patches.
+## The non-linearity in H2O may be driven largely by a big gap between very dry and other patches.
 ## log(TAN) looks a little smoother, but I'm not sure I can justify it biologically? 
 ##   (regardless, the distribution is highly skewed)
 
@@ -85,9 +85,11 @@ if (TRUE)
   anova(Y.gls, Y.lme)                  # random structure not an improvement
   anova(Y.gls, Y.lme2)                 # random structure not an improvement
   Y.lmB  <- gls(Y.main, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
-  Y.lmeB <- lme(Y.main, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
+  Y.lmeB <- lme(Y.main, random = Y.random, weights = varIdent(form = ~ 1 | Block), 
+                data = SECCa, method = "REML")
   anova(Y.gls, Y.lmB, Y.lmeB)          # allowing heterogeneity among Blocks is an improvement (p = 0.004).
-  Y.lmBC <- gls(Y.main, weights = varIdent(form = ~ 1 | Block * Chamber), data = SECCa, method = "REML")
+  Y.lmBC <- gls(Y.main, weights = varIdent(form = ~ 1 | Block * Chamber), 
+                data = SECCa, method = "REML")
   anova(Y.lmB, Y.lmBC)                 # allowing heterogeneity among Blocks AND Chambers is not a sig. improvement (p = 0.088)
 }
 
@@ -125,8 +127,8 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   Y.glmultiBr <- glmulti(Y.main, data=SECCa, crit=aic, level=1, fitfunc=lme.glmulti, 
                         marginality = TRUE, method="h", confsetsize=256, 
                         plotty=FALSE, report=TRUE,
-                        weights = varIdent(form = ~ 1 | Block), control = lmc,
-                        random = Y.random
+                        weights = varIdent(form = ~ 1 | Block),
+                        random = Y.random, control = lmc
                         )
   print(Y.glmultiBr)
   Y.glmulti1 <- Y.glmultiBr
@@ -282,7 +284,7 @@ Anova(Y.best2lm, type=2)               # Type II: car package**
 ## Frag:H2O
 ## Frag:H2O^2
 ## Block:logCells
-## H2O:H2O^2    (WTF?)
+## H2O:H2O^2   (WTF?  I interpret this as a nonlinear relationship based on some combination of the linear & quadratic terms)
 ## logTAN:TempC
 ## H2O:logCells
 ## Block:H2O
@@ -415,15 +417,18 @@ if (!inherits(Y.fit, "lm"))
 ## extract effects (order of terms in interactions matter)
 Y.eff     <- allEffects(Y.fit)
 BH.eff    <- effect("Block:H2O:I(H2O^2)", Y.fit)
-FH.eff    <- effect("H2O:I(H2O^2):Frag", Y.fit)
+FH.eff    <- effect("H2O:I(H2O^2):Frag", Y.fit, xlevels=list(H2O=H2O.9lvls))
 CH.eff    <- effect("logCells:H2O:I(H2O^2)", Y.fit, xlevels=list(H2O=H2O.9lvls))
 C.BH.eff  <- effect("Block:logCells:H2O:I(H2O^2)", Y.fit, 
                     xlevels=list(Block=1:8, H2O=H2O.4lvls))
 
 plot(BH.eff, x.var = "H2O", ask = FALSE)
 plot(FH.eff, x.var = "H2O", ask = FALSE)
+plot(FH.eff, x.var = "Frag", ask = FALSE)
 plot(CH.eff, x.var = "logCells", ask = FALSE)
 plot(C.BH.eff, x.var = "logCells", ask = FALSE)
+
+plot( effect("H2O:I(H2O^2)", Y.fit) )
 
 
 ##==============================================================
@@ -433,6 +438,50 @@ plot(C.BH.eff, x.var = "logCells", ask = FALSE)
 Y.pred$multi.fit <- Y.multipred$averages[1]
 Y.pred$multi.lwr <- Y.multipred$averages[1] - Y.multipred$variability[, "+/- (alpha=0.05)"]
 Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (alpha=0.05)"]
+
+
+##==============================================================
+## Partial regression
+##==============================================================
+## gls (mixed effects) model causes problems in this section
+Y.lfit <- if (inherits(Y.fit, "lm")) Y.fit else Y.fHlm
+avPlots(Y.fxlm, terms= ~ H2O * I(H2O^2) + logCells + log10(TAN), ask=FALSE) # car
+avPlots(Y.lfit, terms= ~ H2O * I(H2O^2) + logCells + log10(TAN), ask=FALSE) # car
+
+
+## Removing main + interaction terms dynamically (gls should be ok here)
+RHS.part <- as.character(formula(Y.fit)[3]) 
+RHS.part <- gsub("logCells\\s?\\*?\\s?", "", RHS.part) # *-notation
+RHS.part <- gsub("\\+\\+", "+", RHS.part) # leftovers
+RHS.part <- gsub(" [^ ]+\\:\\+", "", RHS.part) # :-notation
+RHS.part <- gsub(" \\+ [^ ]+:$", "", RHS.part) # :-notation
+Y.part <- paste("update(Y.fit, .~ ", RHS.part, ")", sep="")
+X.part <- paste("update(Y.fit, logCells ~ ", RHS.part, ")", sep="")
+Y.part <- eval(parse(text=Y.part)) # problems fitting with gls? :(
+X.part <- eval(parse(text=X.part))
+
+Y.re     <- resid(Y.part, type = "response")
+X.re     <- resid(X.part,  type = "response")
+Y.X      <- lm(Y.re ~ X.re)
+x.ord    <- order(X.re)
+Y.X.pred <- predict(Y.X, interval="confidence", level=0.95) # 95% CI bands
+
+plot(X.re, Y.re, pch=20)
+## points(X.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
+## abline(Y.X, col="red")
+## 95% CI?
+lines(X.re[x.ord], Y.X.pred[x.ord, 1], col="red", lty=1, lwd=2)
+lines(X.re[x.ord], Y.X.pred[x.ord, 2], col="red", lty=2)
+lines(X.re[x.ord], Y.X.pred[x.ord, 3], col="red", lty=2)
+
+residualPlots(Y.X)                 # car
+
+## The fit is actually marginally better and more impressive with lm() than gls().
+##  Perhaps accounting for random effects leaves even less for cyanobacteria density :P
+summary(Y.X)                        # R^2 = 0.02 ! :(
+Y.X.r2 <- format(summary(Y.X)$adj.r.squared, digits=2)
+Y.X.df <- data.frame(X=X.re, Y=Y.re, fit=Y.X.pred[, "fit"], 
+                        lower=Y.X.pred[, "lwr"], upper=Y.X.pred[, "upr"])
 
 
 ################################################################
