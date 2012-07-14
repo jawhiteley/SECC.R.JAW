@@ -276,6 +276,8 @@ opts(axis.text.y=theme_text(size=8, hjust=1))
 print(Y.importance2)
 print(Y.est2)
 
+anova(Y.best2lm)                       # order matters (Type 1)
+Anova(Y.best2lm, type=2)               # Type II: car package**
 ## Important 2-way interactions (no mixed effects):
 ## Frag:H2O
 ## Frag:H2O^2
@@ -291,38 +293,81 @@ print(Y.est2)
 ## Block * logCells * H2O * I(H2O^2)
 ## except that ML estimation will fail with these interactions :(
 Y.fixHi <- Y.trans ~ Block * logCells * H2O * I(H2O^2) + TempC + Frag + log10(TAN) +
-                     Frag:H2O + Frag:I(H2O^2) + TempC:log(TAN)
+                     Frag:H2O + Frag:I(H2O^2) + TempC:log10(TAN)
 
 ## based on Y.best2, plus extra terms that have similar "importance" & are related (Block:H2O)
 Y.fixed <- Y.trans ~ Block + Frag + TempC + H2O + I(H2O^2) + logCells + log10(TAN) +
                      Frag:H2O + Frag:I(H2O^2) + Block:logCells + H2O:I(H2O^2) +
-                     log(TAN):TempC + H2O:logCells + Block:H2O + Block:I(H2O^2) + I(H2O^2):logCells
+                     log10(TAN):TempC + H2O:logCells + I(H2O^2):logCells + Block:H2O + Block:I(H2O^2)
+
 
 ##==============================================================
 ## MODEL FITTING: Final Fixed & Random Effects?
 ##==============================================================
+Y.fxlm <- lm(Y.fixed, data = SECCa)
+Y.fHlm <- lm(Y.fixHi, data = SECCa)
+anova(Y.best2lm, Y.fxlm, Y.fHlm)
+Y.f2   <- gls(Y.best2, data = SECCa, method = "ML")
+Y.fx   <- gls(Y.fixed, data = SECCa, method = "ML")
+Y.fH   <- gls(Y.fixHi, data = SECCa, method = "ML")
+anova(Y.fx, Y.f2, Y.fH)                # Adding higher-order interactions is better (without mixed effects)
+Y.fx   <- update(Y.fx, method = "REML")
+Y.fH   <- update(Y.fH, method = "REML")
 ## I will likely need to account for heterogeneity among Blocks, maybe Chambers as well (TempC/Warming)
-Y.mm <- gls(Y.fixHi, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
+Y.mH <- gls(Y.fixHi, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 Y.me <- lme(Y.fixHi, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
-anova(Y.mm, Y.me)
+Y.mr <- lme(Y.fixHi, random = Y.random, data = SECCa, method ="REML")
+anova(Y.fH, Y.mH, Y.me, Y.mr)          # compare random structures (using REML)
+anova(Y.fH, Y.me)
+anova(Y.fH, Y.mr)
+anova(Y.mH, Y.mr)                      # are these really nested?  (might not be a valid comparison)
 ## The nested structure of random effects is technically not necessary, but it did improve the AIC in glmulti (using ML), 
 ## and probably should be done on theoretical grounds, to account for the structure of the experiment.
 
 ## Compare fuller model with best model from glmulti
-Y.mel <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
-Y.me2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
-anova(Y.mel, Y.me2)     # adding the extra interaction term does increase the AIC (worse), but not significantly so.
-Y.mmf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
-Y.ml  <- update(Y.mel, method = "REML")
-anova(Y.mmf, Y.ml)
+Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
+Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
+## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
+anova(Y.mlf, Y.mb2)      # adding the extra interaction term does increase the AIC (worse), but not significantly so.
+Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
+Y.mef <- update(Y.mlf, method = "REML")
+anova(Y.mHf, Y.mef)
 
+## SO, Which model should I use?
+##  All I really need a model for at this point is predictions and graphs.
+##  Ideally, I would prefer the full model with higher order interactions and all random effects (Y.me),
+##    however, this model may be too complex: several coefficients have 0 df & p = NaN (see summary(Y.me))
+##    Y.mel is a little better, and the gls versions don't seem to have this problem :/
+##  Sadly, effect() throws an error with the mixed models (lme including nested effects & heterogeneity)
+##  Basically, I can have either nested effects OR heterogeneity, but not both (to work with `effects`)
 Y.fit  <- Y.me
+Y.fit  <- Y.mH
+
+
 
 
 ################################################################
 ## CHECK ASSUMPTIONS: MODEL VALIDATION
 ################################################################
-cat("- Validating model\n")
+cat("- Validating models\n")
+
+## residualPlots(Y.best2lm)               # car: lm only
+diagnostics(Y.best2lm, X.cols = c("logCells", "H2O", "TAN")) # Best model from glmulti
+diagnostics(Y.mHf, X.cols = c("logCells", "H2O", "TAN"))     # 2-way interactions and heterogeneity
+diagnostics(Y.mH,  X.cols = c("logCells", "H2O", "TAN"))     # higher-order interactions and heterogeneity
+diagnostics(Y.mr,  X.cols = c("logCells", "H2O", "TAN"))     # higher-order interactions and nested structure
+diagnostics(Y.me,  X.cols = c("logCells", "H2O", "TAN"))     # higher-order interactions + mixed effects
+## I do prefer the distribution and lack of patterns in residuals in the mixed effects models
+## There are some disturbing patterns in the residuals for the lm model
+## Allowing heterogeneity is a modest improvement: a nested random structure is about the same (but theoretically justified).
+## There may also be some heterogeneity with H2O, but I might just have to live with it :(
+
+RE <- diagnostics(Y.fit, resType = "pearson", 
+                  X.cols = c("logCells", "H2O", "TAN"), more = TRUE) # Full diagnostics
+op <- par(mfrow=c(2,2))
+plot(Y.fit)
+par(op)
+
 
 
 
@@ -330,7 +375,64 @@ cat("- Validating model\n")
 ## GET RESULTS
 ################################################################
 cat("- Generating results & predictions\n")
+summary(Y.fit)
+anova(Y.fit)                           # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
+if (inherits(Y.fit, "lm")) {
+  Anova(Y.fit, type=2)                 # Type II: car package**
+  ## effects of single-term deletions?
+  drop1(Y.fit)
+  drop1(Y.lmain)
+}
 
+## Partial effects of each variable (Zuur et al. 2009, pg. 400)
+## Use effect() to get predicted effects for specific terms
+## Effects to plot: 
+##   Block * logCells * H2O * H2O^2
+##   Frag * H2O(^2)
+##   TempC * TAN
+##   logCells * H2O(^2)
+library(effects)
+
+## Break continuous predictors into discrete groups for facetting.
+H2O.breaks9 <- seq(0, max(SECCa$H2O), length.out=10) # 9 groups
+H2O.breaks4 <- seq(0, max(SECCa$H2O), length.out=5 ) # 4 groups
+H2O.9lvls   <- intermean(H2O.breaks9)  # 9 groups
+H2O.4lvls   <- intermean(H2O.breaks4)  # 4 groups
+
+if (!inherits(Y.fit, "lm"))
+{  ## effect() throws an error if the model isn't specified explicitly :(
+  Y.call <- deparse(Y.fit$call)
+  Y.calf <- regexpr("(?<=formula = )[^,]+", Y.call, perl = TRUE)
+  if (all(Y.calf == -1)) Y.calf <- regexpr("(?<=model = )[^,]+", Y.call, perl = TRUE)
+  if (all(Y.calf == -1)) Y.calf <- regexpr("(?<=fixed = )[^,]+", Y.call, perl = TRUE)
+  Y.form <- substr(Y.call, Y.calf, Y.calf + attr(Y.calf, "match.length") -1 )
+  Y.form <- Y.form[Y.form != ""]
+  Y.newf <- paste( deparse(get(Y.form)), collapse = "\n")
+  Y.call <- sub(Y.form, Y.newf, paste(Y.call, collapse = "\n"), fixed = TRUE)
+  Y.fit  <- eval( parse( text = Y.call ) )
+}
+
+## extract effects (order of terms in interactions matter)
+Y.eff     <- allEffects(Y.fit)
+BH.eff    <- effect("Block:H2O:I(H2O^2)", Y.fit)
+FH.eff    <- effect("H2O:I(H2O^2):Frag", Y.fit)
+CH.eff    <- effect("logCells:H2O:I(H2O^2)", Y.fit, xlevels=list(H2O=H2O.9lvls))
+C.BH.eff  <- effect("Block:logCells:H2O:I(H2O^2)", Y.fit, 
+                    xlevels=list(Block=1:8, H2O=H2O.4lvls))
+
+plot(BH.eff, x.var = "H2O", ask = FALSE)
+plot(FH.eff, x.var = "H2O", ask = FALSE)
+plot(CH.eff, x.var = "logCells", ask = FALSE)
+plot(C.BH.eff, x.var = "logCells", ask = FALSE)
+
+
+##==============================================================
+## Predictions
+##==============================================================
+## Note: there is a predict() method for glmulti objects...
+Y.pred$multi.fit <- Y.multipred$averages[1]
+Y.pred$multi.lwr <- Y.multipred$averages[1] - Y.multipred$variability[, "+/- (alpha=0.05)"]
+Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (alpha=0.05)"]
 
 
 ################################################################
@@ -342,6 +444,5 @@ cat("- Generating results & predictions\n")
 ##==============================================================
 ## PUBLICATION GRAPHS
 ##==============================================================
-
 
 

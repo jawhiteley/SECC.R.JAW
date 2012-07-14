@@ -25,16 +25,20 @@ RegDir <- "./CH4-model-fitting/"       # directory for scripts used in these ana
 
 ## DO
 ## _setup.R scripts also include source("./lib/init.R"); memore is cleared, data re-loaded & processed every time.
+cat("N-fixation ~ \n")
 source("CH4-model-fitting/Nfix_setup.R")    # N-fixation: settings
+cat("N-fixation ~ : Data Eploration\n")
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Nfix-trees.R")    # N-fixation: regression trees
 source("CH4-model-fitting/Nfix-models.R")   # N-fixation: regression models
 
+cat("Moss Growth ~ \n")
 source("CH4-model-fitting/Growth_setup.R")  # Moss Growth: settings
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Growth-trees.R")  # Moss Growth: regression trees
 source("CH4-model-fitting/Growth-models.R") # Moss Growth: regression models
 
+cat("Decomposition ~ \n")
 source("CH4-model-fitting/Decomp_setup.R")  # Decomposition: settings
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Decomp-trees.R")  # Decomposition: regression trees

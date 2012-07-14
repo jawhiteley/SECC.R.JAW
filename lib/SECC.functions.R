@@ -208,8 +208,11 @@ SECCclean <- function(data=NULL,
 ## - Should be no areas of residuals with similar values, gaps in the cloud, etc.
 ## Residuals should ideally be spread out equally across all graphs (vs. X / Fitted).
 
-diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, more=FALSE) {
+diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, X.cols = c("X.trans", "H2O"), more=FALSE) 
+{
+  ## the defaults for X.cols are really only there for the original use of this function: in ARA~Cyanobacteria (More general defaults would be better for re-use).
   require(car)                         # diagnostic plots
+  if (more) require(ggplot2)           # facetted plots
   ## Standard diagnostic plots 
   if (FALSE) {                         # buggy
     op <- par(mfrow=c(2,2))	 # panel of figures
@@ -251,8 +254,8 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
   Fit0 <- fitted(Y.model, level=0)
   Fit1 <- fitted(Y.model, level=1)
   plot(Fit, RE, xlab="Fitted values", ylab=RE.lab)
-  plot(SECCa$X.trans, RE, ylab=RE.lab)             
-  plot(SECCa$H2O,   RE, ylab=RE.lab)
+  ## Plot residuals vs. predictor (explanatory) variables
+  for (Xcol in X.cols) plot(SECCa[[Xcol]], RE, ylab=RE.lab, xlab = Xcol)             
   ## spreadLevelPlot(Y.model)                  # library(car)
   mtext(label, 3, adj=0.5, line=-2, outer=TRUE)
   par(op)
@@ -261,8 +264,8 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, mor
     print( qplot(Block, RE, data = SECCa, ylab=RE.lab, facets = . ~ Time, geom="boxplot" ) + jaw.ggplot() )
     print( qplot(Chamber, RE, data = SECCa, ylab=RE.lab, facets = Frag * Position ~ Time, geom="boxplot" ) + jaw.ggplot() )
 
-    print( qplot(X.trans, RE, data = SECCa, ylab=RE.lab, facets = Block ~ Time) + jaw.ggplot() )
-    print( qplot(H2O, RE, data = SECCa, ylab=RE.lab, facets = Block ~ Time) + jaw.ggplot() )
+    for (Xcol in X.cols) 
+      print( qplot(get(Xcol), RE, data = SECCa, ylab=RE.lab, xlab = Xcol, facets = Block ~ Time) + jaw.ggplot() )
   }
 
   ## Global Validation of Linear Model Assumptions (gvlma package)
@@ -307,6 +310,14 @@ effect.to.df <- function(eff)
   eff.df
 }
 
+intermean <- function (vec) 
+{   # for getting the midpoint between breaks (used for converting continuous variables into discrete groups)
+  vec1 <- rep(NA, length(vec) -1)
+  for (i in 1:length(vec1) ) {
+    vec1[i] <- mean(vec[c(i, i+1)])
+  }
+  vec1
+}
 
 
 ##================================================
