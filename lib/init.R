@@ -18,12 +18,11 @@ source("./lib/fun.R")   # define functions
 
 ## Load Data
 cat('Loading data.\n')
-if (FALSE) {
-  ## do not run when source()'d
-  source("./lib/load.R")  # (re-)load Data
-} else {
-  ## OR if output file is produced instead:
+if (file.exists("./save/SECC_data.R")) 
+{
   load("./save/SECC_data.R") # load data
+} else {
+  source("./lib/load.R")  # (re-)load Data
 }
 
 cat('== SECC Project Initialized ==\n')
