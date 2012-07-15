@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, configure default analysis options
 ### N-fixation synthesis vs. everything else, really
-### Jonathan Whiteley     R v2.12     2012-07-12
+### Jonathan Whiteley     R v2.12     2012-07-15
 ################################################################
 ## INITIALISE
 ################################################################
@@ -46,4 +46,5 @@ Frag.use     <- levels(SECC$Frag)              # Frag treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)] # Patch Positions to include
 
 Save.results  <- TRUE                  # Output Results?
+ExcludeOutliers <- TRUE                # For use in follow-up scripts
 

@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, load & process data, configure analysis options
 ### N-fixation synthesis vs. everything else, really
-### Jonathan Whiteley     R v2.12     2012-07-12
+### Jonathan Whiteley     R v2.12     2012-07-15
 ################################################################
 ## INITIALISE
 ################################################################
@@ -26,7 +26,11 @@ source("./CH4-model-fitting/1_Fauna_proc.R")                 # Prepare Fauna dat
 SECC <- merge(SECC, recodeSECC(SECC.sp.sum), all = TRUE)
 ## merge attributes: this leaves duplicates, but at least it's all there.
 attr(SECC, "labels") <- c( attr(SECC.prime, "labels"), attr(SECC.sp.sum, "labels") )
-attr(SECC, "units") <- c( attr(SECC.prime, "units"), attr(SECC.sp.sum, "units") )
+attr(SECC, "units")  <- c( attr(SECC.prime, "units"),  attr(SECC.sp.sum, "units") )
+SECC.labels <- unique( names( attr(SECC, "labels") ) )
+SECC.units  <- unique( names( attr(SECC, "units" ) ) )
+attr(SECC, "labels") <- attr(SECC, "labels")[SECC.labels]
+attr(SECC, "units")  <- attr(SECC, "units" )[SECC.units]
 cat("Fauna data merged into main data frame.\n")
 
 
@@ -40,8 +44,10 @@ SECC <- within( SECC, {
   H2O     <- H2O * 100
   H2O.wwt <- H2O.wwt * 100
   Growth  <- grow12 + grow23           # moss growth during second year **
+  ## Should I be log-transforming moss Growth, or just use non-linear GLMM (log-link?)?  Note negative values!
   logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria
   ##   logCells[Cells.m <= 0] <- 0
+  Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
   ## recoded factors / new explanatory variables
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
   Warming <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 
@@ -59,7 +65,7 @@ attr(SECC, "labels")[["Growth"]] <- "Moss growth"
 attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
 attr(SECC, "labels")[["Warming"]] <- "Warming"
 attr(SECC, "units" )[["Warming"]] <- quote(delta ~ "°C vs. ambient")
-attr(SECC, "labels")[["TempC"]] <- "Average annual T"
+attr(SECC, "labels")[["TempC"]] <- "Mean annual T"
 attr(SECC, "units" )[["TempC"]] <- quote("°C")
 
 
@@ -125,21 +131,21 @@ SECCa <- if(SECC.scale == "patch") SECCp else if (SECC.scale == "mc") SECCmc els
 
 
 ## Filter Outliers (see Exploration Graphs)
-if (FALSE)
+if (ExcludeOutliers)
 {
-  SECCa$Cells.m[SECCa$Cells.m > 5e+09] <- NA # pretty moot after transformation
+  SECCa$Cells.m[SECCa$Cells.m > 5e+09] <- NA # moot after transformation
   SECCa$Growth[SECCa$Growth > 30] <- NA
-  ##   SECCa$H2O[SECCa$H2O > 800] <- NA
+  SECCa$H2O[SECCa$H2O > 800] <- NA     #  I believe it's real, but it may be highly influential
   ##   SECCa$Decomposition[SECCa$Decomposition > 0.30] <- NA
 }
 
 
-SECCa <- within( SECCa, {
-                Y <- as.numeric( get(Y.col) )
-                Y.log <- log10(Y)      # There's a value of Nfix <1 :(
-                Y.log[Y < 1] <- 0      # log10(<1) will be negative ... log10(<0) = NaN
-                Y.trans <- Y.log       # convenience
-})
+SECCa <- within( SECCa, 
+                {
+                  Y <- as.numeric( get(Y.col) )
+                  Y.log <- log10(Y +1) # Generic: some variables (Nfix) will use a special version
+                  Y.trans <- Y         # default
+                })
 
 
 

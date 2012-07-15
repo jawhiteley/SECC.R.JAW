@@ -3,7 +3,7 @@
 ### Data Exploration
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2011-11-02
+### Jonathan Whiteley     R v2.12     2012-07-15
 ################################################################
 ## INITIALISE
 ################################################################
@@ -174,7 +174,7 @@ for (Xcol in X.cols)
   YX.sqrt <- ggplot(SECCa, aes(sqrt(get(Xcol)), Y, group = Chamber) ) + 
   geom_point(aes(colour = Chamber, shape = Chamber), size = 3) +
   ##   xlab( X.plotlab ) +
-  xlab( bquote( sqrt( .(X.plotlab) ) ) ) +
+  xlab( SECC.axislab(SECCa, Xcol, trans="sqrt") ) +
   ylab( Y.plotlab )
   YX.sqrt <- YX.sqrt + ChamberPts + jaw.ggplot() + TopLegend
   YX.panels.sqrt <- YX.sqrt + All.facets 

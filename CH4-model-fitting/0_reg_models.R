@@ -3,7 +3,7 @@
 ### Main control Script - Chapter 4:
 ### Ecosystem-level synthesis of all measured variables
 ### N-fixation, cyanobacteria, Fauna, Moisture, Moss Growth, Decomposition, Available N, etc.
-### Jonathan Whiteley		R v2.12		2012-02-05
+### Jonathan Whiteley		R v2.12		2012-07-14
 ##################################################
 ## INITIALIZE
 if (FALSE) {  ## Project Directory
