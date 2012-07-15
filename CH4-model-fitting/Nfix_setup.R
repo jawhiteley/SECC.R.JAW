@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, load & process data, configure analysis options
 ### Acetylene Reduction Assay (ARA: N-fixation)
-### Jonathan Whiteley     R v2.12     2012-07-12
+### Jonathan Whiteley     R v2.12     2012-07-15
 ################################################################
 ## INITIALISE (wth default settings)
 ################################################################
@@ -26,11 +26,12 @@ source('./CH4-model-fitting/1_reg_setup.R')
 ##==============================================================
 ## PROCESS DATA: planned
 ##==============================================================
-## Repeated here for assurance and easy reference
 SECCa <- within( SECCa, 
-                {
-                  Y.trans <- Y.log  # convenience: log10
-                })
+				{
+				  Y.log <- log10(Y)                # There's a value of Nfix <1 :(
+				  Y.log[Y < 1] <- 0                # log10(<1) will be negative ... log10(<0) = NaN
+				  Y.trans <- Y.log                 # 
+				})
 
 
 ##==============================================================
