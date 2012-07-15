@@ -215,19 +215,20 @@ if (FALSE)
 ##==============================================================
 ## Check Variation, Ranges
 ## with(SECCa, boxplot(Y.log ~ Block, ylab = Y.plotlab ) )    # bquote doesn't work in base graphics?  Need a different format for expression?
+Y.translab <- SECC.axislab(SECC = SECCa, col = Y.col, trans = "log", parens = FALSE) 
 Y.Block <- qplot(Block, Y, data = SECCa, geom = "boxplot",
                  ylab = Y.plotlab) + jaw.ggplot()
 Y.logBlock <- qplot(Block, Y.trans, data = SECCa, geom = "boxplot",
-                 ylab = Y.plotlab) + jaw.ggplot()
+                 ylab = Y.translab) + jaw.ggplot()
 Y.Chamber <- qplot(Chamber, Y.trans, data = SECCa, geom = "boxplot",
-                   ylab = Y.plotlab) + jaw.ggplot() 
+                   ylab = Y.translab) + jaw.ggplot() 
 Y.Frag <- qplot(Frag, Y.trans, data = SECCa, geom = "boxplot",
-                ylab = Y.plotlab) + jaw.ggplot() 
+                ylab = Y.translab) + jaw.ggplot() 
 Y.Pos  <- qplot(Position, Y.trans, data = SECCa, geom = "boxplot",
-                ylab = Y.plotlab) + jaw.ggplot() 
+                ylab = Y.translab) + jaw.ggplot() 
 if (DrawExplorationGraphs) {
-  print(Y.logBlock)
   print(Y.Block)
+  print(Y.logBlock)
   print(Y.Chamber)
   print(Y.Frag)
   print(Y.Pos)
