@@ -287,7 +287,7 @@ diagnostics <- function(Y.model=NULL, resType="pearson", label=Y.model$call, X.c
 ## functions for processing effects() output for graphing
 effect2df <- function(eff, column = "effect", 
                          response.var = "Response", fac1.label="fac1", fac2.label = "fac2")
-{
+{   # Deprecated: use effect.to.df?
   fac1.label <- names(eff$variables)[1]
   fac2.label <- names(eff$variables)[2]
   effw <- as.data.frame( summary(eff)[[column]] )
@@ -303,10 +303,13 @@ effect2df <- function(eff, column = "effect",
   effl
 }
 
-effect.to.df <- function(eff)
-{
+effect.to.df <- function(eff, fun.trans = NULL)
+{   # extract plotting data from an `eff` object (& back-transform if necessary)
   vars <- names(eff$variables) 
   eff.df <- cbind(eff$x, effect = eff$fit, lower = eff$lower, upper = eff$upper)
+  ## You will have to back-transform any variables in eff.df$x yourself (they may be different)
+  cols.trans <- c("effect", "lower", "upper")
+  if (!is.null(fun.trans)) eff.df[, cols.trans] <- do.call(fun.trans, list(eff.df[, cols.trans])) 
   eff.df
 }
 
@@ -317,6 +320,20 @@ intermean <- function (vec)
     vec1[i] <- mean(vec[c(i, i+1)])
   }
   vec1
+}
+
+eff.layer <- function(eff.df = NULL, conf.int = TRUE, ...)
+{   # assumes certain columns in eff.df (using effect.to.df())
+  require(ggplot2)
+  ## the ... doesn't really work as planned, because these function calls aren't evaluated until plotting time :(
+  result <- list( geom_line(data=eff.df, aes(y=effect, ... ) ) )
+  if (conf.int == TRUE) {
+    result <- c(result, 
+                geom_line(data=eff.df, aes(y=lower, lty=2) ), 
+                geom_line(data=eff.df, aes(y=upper, lty=2) ) 
+                )
+  }
+  result
 }
 
 
@@ -457,7 +474,11 @@ ggPts.SECC <- function (ptMap = plotMap("Chamber"), name = "Chamber Treatment") 
                        scale_shape_manual(name = name,
                                           values = ptMap$pch, 
                                           breaks = levels(ptMap$label)
-                                          )
+                                          ),
+                       scale_size_manual(name = name,
+                                         values = ptMap$lwd*0.5, 
+                                         breaks = levels(ptMap$label)
+                                         )
                        )
   ## should just be breaks = Chamber.map$label, but that produces right-aligned text :(
 }

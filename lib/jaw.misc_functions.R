@@ -1,6 +1,6 @@
 ##################################################
 # Miscellaneous useful functions
-# Jonathan Whiteley		R v2.12		2010-01-26
+# Jonathan Whiteley		R v2.12		2012-07-15
 ##################################################
 
 strip_empty_dims  <- function( data = NULL, dim = c(1, 2), 
@@ -64,13 +64,17 @@ lmer.glmulti <- function (formula, data, random = "", ...) {
 # the fixed-effects are passed as formula, and the random effects are passed as "random"
 # Here we could redefine the getfit function, but this is necessary only to use coef() or predict().
 # 3.Last, we must provide the corresponding aicc method, since the default will not work with mer objects
-setMethod('aicc', 'mer', function(object, ...) 
-          {
-            liliac<- logLik(object)
-            k<-attr(liliac,"df")
-            n= object@dims['n']
-            return(-2*as.numeric(liliac[1]) + 2*k*n/max(n-k-1,0))
-          })
+lmer.aicc <- function()
+{
+  require(glmulti)
+  setMethod('aicc', 'mer', function(object, ...) 
+            {
+              liliac<- logLik(object)
+              k<-attr(liliac,"df")
+              n= object@dims['n']
+              return(-2*as.numeric(liliac[1]) + 2*k*n/max(n-k-1,0))
+            })
+}
 ## nlme equivalents - these don't have the same coef() methods, so they may not be useful, even if they work
   lme.glmulti <- function (formula, data, random, REML=FALSE, ...) {
     if (REML) method.gls <- "REML" else method.gls <- "ML"
@@ -119,6 +123,34 @@ importance.glmulti <- function(x) {
   glm.imp
 }
 
+
+
+
+###=============================================================
+## Partial Regression formula processing
+PartialFormula <- function (model = "", x.var = "", part = "both")
+{
+  RHS.part <- as.character(formula(get(model))[3]) 
+  x.term <- gsub("([().])", "\\\\\\1", x.var)
+  RHS.part <- gsub(x.term, "", RHS.part) # term
+  RHS.part <- gsub("\\s\\:[^ ]+", "", RHS.part) # :term
+  RHS.part <- gsub("[^ ]+\\:\\s", "", RHS.part) # term:
+  RHS.part <- gsub("\\s[^ ]+\\:\\:[^ ]+", "", RHS.part) # term::term
+  RHS.part <- gsub("[^ ]+\\:$", "", RHS.part) # last term
+  RHS.part <- gsub("\\+\\s*([+*])", "\\1", RHS.part) # leftovers
+  RHS.part <- gsub("\\s*([+*])\\s*$", "", RHS.part) # leftovers
+  Y.part <- sprintf("update(%s, .~ %s )",  model, RHS.part)
+  X.part <- sprintf("update(%s, %s ~ %s )", model, x.var, RHS.part)
+  ##   Y.part <- eval(parse(text=Y.part)) # problems fitting with gls? :(
+  ##   X.part <- eval(parse(text=X.part))
+  Y.part <- parse(text=Y.part) # problems fitting with gls? :(
+  X.part <- parse(text=X.part)
+  out <- NULL
+  if (part == "both") out <- list(y = Y.part, x = X.part)
+  if (part %in% c("x", "X")) out <- X.part
+  if (part %in% c("y", "Y")) out <- Y.part
+  out
+}
 
 
 
