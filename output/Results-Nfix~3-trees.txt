@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Thu Jul 12 19:42:36 2012
+Sun Jul 15 18:36:27 2012
 ================================================================
 
 n= 128 
@@ -31,26 +31,26 @@ rpart(formula = Y.main, data = SECCa, control = rpc)
   n= 128 
 
           CP nsplit rel error    xerror      xstd
-1 0.29158527      0 1.0000000 1.0149632 0.1536065
-2 0.13270251      1 0.7084147 0.7723096 0.1451499
-3 0.09182389      2 0.5757122 0.7160836 0.1319621
-4 0.04965347      3 0.4838883 0.7003640 0.1317256
-5 0.04050137      4 0.4342349 0.6855433 0.1315001
-6 0.04000000      6 0.3532321 0.6799442 0.1457958
+1 0.29158527      0 1.0000000 1.0172757 0.1546877
+2 0.13270251      1 0.7084147 0.7722756 0.1453293
+3 0.09182389      2 0.5757122 0.8155604 0.1440258
+4 0.04965347      3 0.4838883 0.7284448 0.1347691
+5 0.04050137      4 0.4342349 0.8118151 0.1380422
+6 0.04000000      6 0.3532321 0.8422753 0.1472993
 
 Node number 1: 128 observations,    complexity param=0.2915853
   mean=75.55693, MSE=6540.537 
   left son=2 (41 obs) right son=3 (87 obs)
   Primary splits:
-      H2O        < 418.513   to the left,  improve=0.29158530, (0 missing)
+      H2O        < 418.513   to the left,  improve=0.28895920, (1 missing)
       Block      splits as  LRRLRRLL, improve=0.16116560, (0 missing)
       TempC      < 6.985     to the right, improve=0.04035040, (0 missing)
       Frag       splits as  LRRL, improve=0.03611806, (0 missing)
       log10(TAN) < -1.35716  to the right, improve=0.02916831, (0 missing)
   Surrogate splits:
-      Block      splits as  LRRRRRRR, agree=0.711, adj=0.098, (0 split)
-      logCells   < 9.572687  to the right, agree=0.695, adj=0.049, (0 split)
-      log10(TAN) < -1.40878  to the right, agree=0.695, adj=0.049, (0 split)
+      Block      splits as  LRRRRRRR, agree=0.709, adj=0.098, (1 split)
+      logCells   < 9.572687  to the right, agree=0.693, adj=0.049, (0 split)
+      log10(TAN) < -1.40878  to the right, agree=0.693, adj=0.049, (0 split)
 
 Node number 2: 41 observations
   mean=11.94227, MSE=620.5521 
@@ -63,9 +63,9 @@ Node number 3: 87 observations,    complexity param=0.1327025
       Frag       splits as  LRRL, improve=0.14800370, (0 missing)
       log10(TAN) < -1.547389 to the right, improve=0.04953848, (0 missing)
       logCells   < 8.995907  to the left,  improve=0.03911800, (0 missing)
-      H2O        < 775.3181  to the left,  improve=0.02833269, (0 missing)
+      H2O        < 589.2203  to the right, improve=0.02789826, (1 missing)
   Surrogate splits:
-      H2O        < 489.3033  to the left,  agree=0.690, adj=0.250, (0 split)
+      H2O        < 489.3033  to the left,  agree=0.678, adj=0.222, (0 split)
       logCells   < 8.317562  to the right, agree=0.632, adj=0.111, (0 split)
       log10(TAN) < -1.976533 to the left,  agree=0.621, adj=0.083, (0 split)
 
@@ -89,11 +89,11 @@ Node number 7: 51 observations,    complexity param=0.09182389
       Frag       splits as  LRRL, improve=0.233933100, (0 missing)
       logCells   < 8.967084  to the left,  improve=0.108660300, (0 missing)
       log10(TAN) < -1.541172 to the right, improve=0.090707480, (0 missing)
-      H2O        < 591.2493  to the right, improve=0.084231690, (0 missing)
+      H2O        < 591.2493  to the right, improve=0.084323300, (1 missing)
       Block      splits as  -RL-RL--, improve=0.009818174, (0 missing)
   Surrogate splits:
       logCells   < 7.947758  to the left,  agree=0.686, adj=0.333, (0 split)
-      H2O        < 538.231   to the right, agree=0.647, adj=0.250, (0 split)
+      H2O        < 538.231   to the right, agree=0.627, adj=0.208, (0 split)
       log10(TAN) < -1.631911 to the right, agree=0.608, adj=0.167, (0 split)
 
 Node number 12: 10 observations

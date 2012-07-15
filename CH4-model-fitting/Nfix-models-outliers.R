@@ -54,7 +54,7 @@ Y.pred <- expand.grid(Block    = levels(SECCa$Block) ,
                       )
 
 
-cat("- Fitting models\n")
+cat("- Fitting models:", Y.col, "\n")
 ################################################################
 ## MODEL FITTING
 ################################################################
@@ -711,7 +711,6 @@ T.plot <- ggplot(SECCa, aes(y = Y, x = TempC)) + ylim(Y.lim) +
 			eff.layer(eff = T.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TempC", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(T.plot)
 
 
 ##______________________________________________________________
@@ -722,7 +721,6 @@ H.plot <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			eff.layer(eff = H.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(H.plot)
 
 TH.pdata <- effect.to.df(TH.eff, fun = alog0)
 TH.pdata <- within(TH.pdata, Chamber <- factor(TempC, labels = levels(SECCa$Chamber)) ) # colour-coding
@@ -733,7 +731,6 @@ TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			geom_line(data=TH.pdata, aes(y=upper, lty=2, group = factor(TempC), colour = Chamber, lwd = Chamber )) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
-print(TH.plot)
 
 ## N-fixation lower in Contiguous chambers on average: likely due to less disturbance (DeLuca pers. comm.)?
 FH.pdata <- effect.to.df(FH.eff, fun = alog0)
@@ -742,7 +739,6 @@ FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			eff.layer(eff = FH.pdata, conf.int = TRUE) + facet_wrap(~ Frag) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			jaw.ggplot() + ChamberPts + TopLegend
-print(FH.plot)
 
 
 ##______________________________________________________________
@@ -754,7 +750,6 @@ C.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
 			eff.layer(eff = C.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(C.plot)
 
 ## This just looks weird
 CT.pdata <- effect.to.df(CT.eff, fun = alog0)
@@ -765,7 +760,6 @@ CT.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
 			eff.Tlayer(eff = CT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(CT.plot)
 
 ##______________________________________________________________
 ## Available N effects
@@ -775,7 +769,6 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			eff.layer(eff = N.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(N.plot)
 
 NT.pdata <- effect.to.df(NT.eff, fun = alog0)
 NT.pdata <- within(NT.pdata, Chamber <- factor(TempC, labels = levels(SECCa$Chamber)) ) # colour-coding
@@ -784,7 +777,6 @@ NT.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			eff.Tlayer(eff = NT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-print(NT.plot)
 
 
 ##______________________________________________________________
@@ -829,7 +821,6 @@ X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
 X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
-print(X.part.plot)
 
 
 ##______________________________________________________________
@@ -874,6 +865,44 @@ N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
-print(N.part.plot)
 
-
+##==============================================================
+## SAVE GRAPHS
+##==============================================================
+if (Save.results == TRUE) 
+{
+  ggsave(filename = sprintf("%sTemp.eps", Fig.filename), plot = T.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sH2O.eps", Fig.filename), plot = H.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sTxH2O.eps", Fig.filename), plot = TH.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sFxH2O.eps", Fig.filename), plot = FH.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sCells.eps", Fig.filename), plot = C.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sTxCells.eps", Fig.filename), plot = CT.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sTAN.eps", Fig.filename), plot = N.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sTxTAN.eps", Fig.filename), plot = NT.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ## Partial Regression plots
+  ggsave(filename = sprintf("%sCells-partial.eps", Fig.filename), plot = X.part.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sTAN-partial.eps",   Fig.filename), plot = N.part.plot, 
+         width = 4, height = 4, scale = 1.5)
+} else {
+  print(T.plot)
+  print(H.plot)
+  print(TH.plot)
+  print(FH.plot)
+  print(C.plot)
+  print(CT.plot)
+  print(N.plot)
+  print(NT.plot)
+  ## Partial Regression plots
+  print(X.part.plot)
+  print(N.part.plot)
+}
+cat("- Finished Model Fitting:", Y.col, "-\n")

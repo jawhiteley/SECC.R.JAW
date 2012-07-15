@@ -77,11 +77,13 @@ attr(SECC, "units" )[["TempC"]] <- quote("°C")
 Y.label <- attr(SECC, "labels")[[Y.col]]  # response variable label
 Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units
 
-Y.plotlab <- bquote( .(Y.label) * " (" * .(Y.units) *  ")" )
+## Y.plotlab <- bquote( .(Y.label) * "  " * log[10](.(Y.units)) *  "" )
+Y.plotlab <- SECC.axislab(SECC, Y.col)
 
 
 ## Save Output to Files - set to NULL to prevent output.
-Save.plot.dir <- SaveDir.plots()
+Subdir <- "synth/"
+Save.plot.dir <- sprintf("%s%s", SaveDir.plots(), Subdir)
 Save.filename <- paste("Results-", Y.col, "~",
                        paste(which(levels(SECC$Time) == Time.use), collapse=""),
                        sep = ""
@@ -89,7 +91,7 @@ Save.filename <- paste("Results-", Y.col, "~",
 Save.filename <- sprintf("Results-%s~%s", Y.col,
                          paste(which(levels(SECC$Time) == Time.use), collapse="") )
 Save.text  <- paste(SaveDir.text(),  Save.filename, ".txt", sep = "")
-Save.plots <- paste(SaveDir.plots(), Save.filename, ".pdf", sep = "")
+Save.plots <- paste(SaveDir.plots(), Subdir, Save.filename, ".pdf", sep = "")
 Save.final <- Save.plots              # Destination for final plots.
 
 ## Output text
@@ -103,6 +105,11 @@ Save.head    <- paste(  "Results for:",   Y.label, "(", Y.col, ") ~", "(others)"
 Save.head.txt <- Save.header(Save.head)
 Save.end.txt  <- Save.end()
 
+
+Fig.filename <- sprintf("%s%s/Figure-%s~", SaveDir.plots(), Subdir, Y.col
+###                         , paste(which(levels(SECC$Time) == Time.use), collapse="") 
+)
+Suppl.filename <- sprintf("%s%sSupplemental-%s~", SaveDir.plots(), Subdir, Y.col)
 
 
 

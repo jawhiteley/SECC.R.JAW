@@ -30,7 +30,7 @@ source("CH4-model-fitting/Nfix_setup.R")    # N-fixation: settings
 cat("N-fixation ~ : Data Eploration\n")
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Nfix-trees.R")    # N-fixation: regression trees
-source("CH4-model-fitting/Nfix-models.R")   # N-fixation: regression models
+source("CH4-model-fitting/Nfix-models-outliers.R")   # N-fixation: regression models
 
 cat("Moss Growth ~ \n")
 source("CH4-model-fitting/Growth_setup.R")  # Moss Growth: settings

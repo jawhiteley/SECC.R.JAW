@@ -35,16 +35,9 @@ SECCa <- within( SECCa,
 
 
 ##==============================================================
-## LABELS
+## CUSTOM LABELS
 ##==============================================================
 
-## Y.plotlab <- bquote( .(Y.label) * "  " * log[10](.(Y.units)) *  "" )
-Y.plotlab <- SECC.axislab(SECCa, Y.col)
-
-Fig.filename <- sprintf("%sFigure-%s~", SaveDir.plots(), Y.col
-###                         , paste(which(levels(SECC$Time) == Time.use), collapse="") 
-)
-Suppl.filename <- sprintf("%sSupplemental-%s~", SaveDir.plots(), Y.col)
 
 cat("== Setup complete ==\n")
 cat("--< Ready for N-fixation analysis >--\n")
