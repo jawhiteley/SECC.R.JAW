@@ -880,6 +880,14 @@ N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 ##==============================================================
 if (Save.results == TRUE) 
 {
+  ## glmulti plots
+  ggsave(filename = sprintf("%sImportance1.eps", Fig.filename), plot = Y.importance1, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sImportance2.eps", Fig.filename), plot = Y.importance2, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sEstimates.eps", Fig.filename), plot = Y.est2, 
+         width = 4, height = 4, scale = 1.5)
+  ## Effects plots
   ggsave(filename = sprintf("%sTemp.eps", Fig.filename), plot = T.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sH2O.eps", Fig.filename), plot = H.plot, 
