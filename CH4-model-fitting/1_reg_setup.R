@@ -41,6 +41,8 @@ SECC <- within( SECC, {
   ARA.m[ ARA.m  < 0] <- 0
   ARA.g[ ARA.g  < 0] <- 0
   Nfix    <- ARA.m * Nfix.ARA.ratio
+  logNfix <- log10(Nfix)               # There's a value of Nfix <1 :(
+  logNfix[Nfix < 1] <- 0               # log10(<1) will be negative ... log10(<0) = NaN
   H2O     <- H2O * 100
   H2O.wwt <- H2O.wwt * 100
   Growth  <- grow12 + grow23           # moss growth during second year **
@@ -48,6 +50,7 @@ SECC <- within( SECC, {
   logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria
   ##   logCells[Cells.m <= 0] <- 0
   Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
+  logTAN <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
   ## recoded factors / new explanatory variables
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
   Warming <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 

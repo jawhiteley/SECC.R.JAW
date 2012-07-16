@@ -83,16 +83,10 @@ SECCa <- within( SECCa,
 ### see Zuur et al. books
 if (DrawExplorationGraphs) {
   ## look at log transformations & check for colinearity among explanatory variables
-  pairplot(SECCa[, c('Y', 'Y.log', 'H2O', 'Block', 'TempC','Chamber', 'Frag', 'Position')],
-           labels=c(Y.col, paste("log(", Y.col, ")"), 
-                    "H2O", "Block", "Temperature", "Chamber", "Frag", "Position")
-          )
-  pairplot(SECCa[, c('Y', 'Y.log', 'Cells.m',
+  pairplot(SECCa[, c('Nfix', 'logNfix', 'H2O', 'Block', 'TempC','Chamber', 'Frag', 'Position')])
+  pairplot(SECCa[, c('Nfix', 'logNfix', 'Cells.m',
                      'Growth', 'Decomposition', 'TAN', 'Patch.dwt',
-                     'H2O', 'TempC', 'Frag', 'Block' )],
-           labels=c(Y.col, paste("log(", Y.col, ")"), "Cells.m", 
-                    "Moss growth", "Decomposition", "TAN", "Patch dwt.",
-                    "H2O", "Temperature", "Frag", "Block" )
+                     'H2O', 'TempC', 'Frag', 'Block' )]
           )
 
   ## Cleveland Dotplots (Zuur et al. 2009)
@@ -214,7 +208,6 @@ if (FALSE)
 
 ##==============================================================
 ## Check Variation, Ranges
-## with(SECCa, boxplot(Y.log ~ Block, ylab = Y.plotlab ) )    # bquote doesn't work in base graphics?  Need a different format for expression?
 Y.translab <- SECC.axislab(SECC = SECCa, col = Y.col, trans = "log", parens = FALSE) 
 Y.Block <- qplot(Block, Y, data = SECCa, geom = "boxplot",
                  ylab = Y.plotlab) + jaw.ggplot()
@@ -251,7 +244,8 @@ if (DrawExplorationGraphs) {
            X.var <- get(var)
            Xna   <- !is.na(X.var)
            X.var <- na.omit(X.var)
-           X.max  <- max( X.var )
+           X.max <- max( X.var )
+           X.min <- min(0, min(X.var))
            ##         cat(var, " ", X.max, "\n")
            freq.max <- length(X.var)/2
            X.maxD <- max( density( X.var )$y )*1.5
@@ -260,20 +254,20 @@ if (DrawExplorationGraphs) {
              X.density <- density( X.trt )
              hist(X.trt,
                   main=Ch.trt, xlab=label,
-                  xlim=c(0, X.max), 
+                  xlim=c(X.min, X.max), 
                   ylim=c(0, freq.max),
-                  breaks=seq( 0, X.max, length.out=16 ),
+                  breaks=seq( X.min, X.max, length.out=16 ),
                   col="#CCCCCC"
                   )
 ###       abline( 5, 0, lty=3, col="#666666" ) # reference line
              plot(X.density,
                   main=Ch.trt, xlab=label,
-                  xlim=c(0, X.max),
+                  xlim=c(X.min, X.max),
                   ylim=c(0, X.maxD)
                   )
              densityplot( X.trt,
                          main=Ch.trt, xlab=label,
-                         xlim=c(0, max( X.var ) ),
+                         xlim=c(X.min, X.max ),
                          na.rm = TRUE
                          )	# ** TRELLIS plot
       }
@@ -292,7 +286,7 @@ if (DrawExplorationGraphs) {
 ## MULTIVARIATE EXPLORATION
 ################################################################
 library(vegan)
-SECCmv <- SECCa[, c("Y.trans", "Block", "Warming", "Frag", "H2O", "Growth", "Decomposition", "TAN")]
+SECCmv <- SECCa[, c("logNfix", "Block", "Warming", "Frag", "H2O", "Growth", "Decomposition", "logCells", "logTAN")]
 rownames(SECCmv) <- SECCa$SampleID
 SECCmv$Block <- as.numeric(as.character(SECCmv$Block))
 SECCmv$Frag <- as.numeric(SECCmv$Frag)
@@ -335,6 +329,32 @@ op <- par(mfrow = c(1,2))
 biplot(SECC.pca, scaling = 1, type = c("text", "points"), main = "PCA - scaling 1 (distance)")
 biplot(SECC.pca, scaling = 2, type = c("text", "points"), main = "PCA - scaling 2 (correlation)")
 par(op)
+cleanplot.pca(SECC.pca, point = TRUE)
+
+
+
+##______________________________________________________________
+## With Fauna stats
+SECCmv <- SECCa[, c("logNfix", "Block", "Warming", "Frag", "H2O", "Growth", "Decomposition", "logCells", "logTAN", "Richness", "Evenness", "Predators", "Grazers")]
+rownames(SECCmv) <- SECCa$SampleID
+SECCmv$Block <- as.numeric(as.character(SECCmv$Block))
+SECCmv$Frag <- as.numeric(SECCmv$Frag)
+SECC.trans <- decostand(SECCmv, method = "standardize")
+boxplot(SECC.trans)
+
+SECC.pca <- rda(na.omit(SECC.trans))
+SECC.pca
+if (F)
+  summary(SECC.pca)
+
+# extract eigenvalues, and apply Kaiser-Guttman criterion to select axes
+EV <- SECC.pca$CA$eig
+EV[EV > mean(EV)]
+
+# Plot eigenvalues
+evplot(EV)
+
+# Plot PCA
 cleanplot.pca(SECC.pca, point = TRUE)
 
 

@@ -38,10 +38,13 @@ source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Growth-trees.R")  # Moss Growth: regression trees
 source("CH4-model-fitting/Growth-models.R") # Moss Growth: regression models
 
-cat("Decomposition ~ \n")
-source("CH4-model-fitting/Decomp_setup.R")  # Decomposition: settings
-source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
-source("CH4-model-fitting/Decomp-trees.R")  # Decomposition: regression trees
-source("CH4-model-fitting/Decomp-models.R") # Decomposition: regression models
+if (FALSE)
+{
+  cat("Decomposition ~ \n")
+  source("CH4-model-fitting/Decomp_setup.R")  # Decomposition: settings
+  source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
+  source("CH4-model-fitting/Decomp-trees.R")  # Decomposition: regression trees
+  source("CH4-model-fitting/Decomp-models.R") # Decomposition: regression models
+}
 
 
