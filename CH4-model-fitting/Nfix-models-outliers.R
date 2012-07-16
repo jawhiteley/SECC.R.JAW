@@ -127,7 +127,8 @@ library(glmulti)                       #  v1.0, april 2011; v1.0.3, Nov 2011
 ## library(MASS)                          # ?
 ## library(leaps)
 
-if (file.exists(Save.glmulti)) { ## load saved object to speed things up
+if (file.exists(Save.glmulti)) 
+{ ## load saved object to speed things up
   cat("- loading glmulti objects from previous run\n")
   load(Save.glmulti)
 } else {
@@ -168,7 +169,8 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   }    
 
   Y.multi <- list()
-  for (i in 1:6) {
+  for (i in 1:6) 
+  {
     cat("\n================ glmulti: Genetic Algorithm Run", i, "================\n\n")
     Y.multi[[i]] <- glmulti(Y.main, data=SECCa, crit=aic, level=2, fitfunc=lm, 
                             marginality = TRUE, method="g", confsetsize=256, 
@@ -187,7 +189,8 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
   summary(Y.best2lm)
 
 
-  if (F) {
+  if (F) 
+  {
     summary(Y.glmulti1)
     summary(Y.glmulti2)
     names(Y.glmulti2)
@@ -314,6 +317,13 @@ Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells +
     Block:TempC + Block:H2O + Block:I(H2O^2) + Block:logCells + 
     Block:log10(TAN) + Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
     Frag:logCells + Frag:log10(TAN)
+### log10(TAN):logCells <-  Block:log10(TAN)
+Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
+    log10(TAN) + Frag:Block + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
+    logCells:TempC + logCells:I(H2O^2) + log10(TAN):TempC + log10(TAN):H2O + 
+    log10(TAN):logCells + Block:TempC + Block:H2O + Block:I(H2O^2) + 
+    Block:logCells + Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
+    Frag:logCells + Frag:log10(TAN)
 }
 
 ## Important 2-way interactions (no mixed effects):
@@ -398,6 +408,7 @@ Y.fH   <- update(Y.fH, method = "REML")
 Y.mH <- gls(Y.fixHi, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 Y.mr <- lme(Y.fixHi, random = Y.random, data = SECCa, method ="REML")
 anova(Y.fH, Y.mr)
+anova(Y.fH, Y.mH)
 anova(Y.mH, Y.mr)                      # are these really nested?  (might not be a valid comparison)
 if (TryMM)
 {                                      # higher-order interaction models often crash here: trying to do too much!
@@ -408,16 +419,16 @@ if (TryMM)
 ## The nested structure of random effects is technically not necessary, but it did improve the AIC in glmulti (using ML), 
 ## and probably should be done on theoretical grounds, to account for the structure of the experiment.
 
+Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 if (TryMM)
 {  # ML estimation may fail with many interactions.
+  Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
+  anova(Y.mHf, Y.mef)
   ## Compare fuller model with best model from glmulti
   Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   ## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
   anova(Y.mlf, Y.mb2)      # adding the extra interaction term does increase the AIC (worse), but not significantly so.
-  Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
-  Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
-  anova(Y.mHf, Y.mef)
 }
 
 ## SO, Which model should I use?
@@ -615,8 +626,6 @@ lines(N.re[x.ord], Y.N.pred[x.ord, 3], col="red", lty=2)
 
 residualPlots(Y.N)                 # car
 
-## The fit is actually marginally better and more impressive with lm() than gls().
-##  Perhaps accounting for random effects leaves even less for cyanobacteria density :P
 summary(Y.N)                        # R^2 = 0.02 ! :(
 Y.N.r2 <- format(summary(Y.N)$adj.r.squared, digits=2)
 Y.N.df <- data.frame(N=N.re, Y=Y.re, fit=Y.N.pred[, "fit"], 
