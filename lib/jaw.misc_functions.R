@@ -132,18 +132,20 @@ PartialFormula <- function (model = "", x.var = "", part = "both")
 {
   RHS.part <- as.character(formula(get(model))[3]) 
   x.term <- gsub("([().])", "\\\\\\1", x.var)
-  RHS.part <- gsub(x.term, "", RHS.part) # term
-  RHS.part <- gsub("\\s\\:[^ ]+", "", RHS.part) # :term
-  RHS.part <- gsub("[^ ]+\\:\\s", "", RHS.part) # term:
-  RHS.part <- gsub("\\s[^ ]+\\:\\:[^ ]+", "", RHS.part) # term::term
-  RHS.part <- gsub("[^ ]+\\:$", "", RHS.part) # last term
+  RHS.part <- gsub(sprintf("[^ ]*%s[^ ]*", x.term), "", RHS.part) # term (and any non-space characters around it)
+  ##   RHS.part <- gsub("\\s\\:[^ ]+", "", RHS.part) # :term
+  ##   RHS.part <- gsub("[^ ]+\\:\\s", "", RHS.part) # term:
+  ##   RHS.part <- gsub("\\s[^ ]+\\:\\:[^ ]+", "", RHS.part) # term::term
+  ##   RHS.part <- gsub("[^ ]+\\:$", "", RHS.part) # last term
   RHS.part <- gsub("\\+\\s*([+*])", "\\1", RHS.part) # leftovers
   RHS.part <- gsub("\\s*([+*])\\s*$", "", RHS.part) # leftovers
   Y.part <- sprintf("update(%s, .~ %s )",  model, RHS.part)
   X.part <- sprintf("update(%s, %s ~ %s )", model, x.var, RHS.part)
-  ##   Y.part <- eval(parse(text=Y.part)) # problems fitting with gls? :(
+  ## If I return the raw text strings, it would be more "robust", and allow custom post-processing
+  ## But, then it becomes harder to *use*: eval(parse(text = Y.part))
+  ##   Y.part <- eval(parse(text=Y.part))
   ##   X.part <- eval(parse(text=X.part))
-  Y.part <- parse(text=Y.part) # problems fitting with gls? :(
+  Y.part <- parse(text=Y.part)
   X.part <- parse(text=X.part)
   out <- NULL
   if (part == "both") out <- list(y = Y.part, x = X.part)
