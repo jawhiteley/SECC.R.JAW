@@ -19,8 +19,8 @@ library(nlme)
 ################################################################
 ## MODEL FORMULA
 ################################################################
-Y.main   <- Y.trans ~ Block + Frag + TempC + H2O + I(H2O^2) + logNfix + logTAN
-Y.fixed  <- Y.trans ~ Block + Frag * TempC * H2O * I(H2O^2) * logNfix * logTAN
+Y.main   <- Y.trans ~ Block + Frag + TempC + H2O + logNfix + logTAN
+Y.fixed  <- Y.trans ~ Block * Frag * TempC * H2O * logNfix * logTAN
 Y.full   <- Y.fixed                    # not enough replication to test full range of interactions
 Y.random <-  ~ 1 | Block/Chamber/Frag 
 
@@ -84,6 +84,7 @@ par(op)
 Y.lmain <- lm(Y.main, data = SECCa)
 summary(Y.lmain)
 anova(Y.lmain)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
+Anova(Y.lmain, type = 2)               # H2O, Nfixation **
 Y.lmfull <- lm( Y.full , data=SECCa)   # n = 2 for all interaction combinations (perfect fit)
 anova.full <- anova(Y.lmfull)
 anova.full$PropVar <- anova.full[, "Sum Sq"] / sum(anova.full[, "Sum Sq"])
@@ -103,10 +104,10 @@ if (TRUE)
   Y.lmB  <- gls(Y.main, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
   Y.lmeB <- lme(Y.main, random = Y.random, weights = varIdent(form = ~ 1 | Block), 
                 data = SECCa, method = "REML")
-  anova(Y.gls, Y.lmB, Y.lmeB)          # allowing heterogeneity among Blocks is an improvement (p < 0.001).
+  anova(Y.gls, Y.lmB, Y.lmeB)          # allowing heterogeneity among Blocks is an improvement (p = 0.001).
   Y.lmBC <- gls(Y.main, weights = varIdent(form = ~ 1 | Block * Chamber), 
                 data = SECCa, method = "REML")
-  anova(Y.lmB, Y.lmBC)                 # allowing heterogeneity among Blocks AND Chambers is not a sig. improvement (p = 0.283)
+  anova(Y.lmB, Y.lmBC)                 # allowing heterogeneity among Blocks AND Chambers is not a sig. improvement (p = 0.24)
 }
 
 
@@ -154,14 +155,6 @@ if (file.exists(Save.glmulti))
   ## Best to run 2-4+ replicate genetic algorithms, and take consensus.
   ## use method="d" to print a summary of candidate models (no fitting)
   ## larger confsetsize -> more memory useage
-  if (FALSE)
-  { ## ML estimation crashes with weights (heterogeneity) and all terms: false convergence / Singularity at backsolve
-    Y.mm <- gls(Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-                logTAN + Frag:Block + logTAN + Block:TempC + 
-                Block:I(H2O^2) + Block:logTAN + Frag:TempC + Frag:H2O + 
-                Frag:I(H2O^2) + Frag:logCells, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
-  }    
-
   Y.multi <- list()
   for (i in 1:6) 
   {
@@ -233,17 +226,17 @@ clean.term.labels <- function(tls, coef.labels = FALSE) {
     tls <- gsub("ChamberFull Chamber", "Chamber", tls)
     tls <- gsub("PositionOuter", "Position", tls)
     tls <- gsub("Block(.*)", "Block \\1", tls)
-    tls <- gsub("Frag(.*)", "Frag (\\1)", tls)
-    tls <- gsub("Time(.*)", "Time (\\1)", tls)
+    tls <- gsub("Frag([^:]*)", "Frag (\\1)", tls)
+    tls <- gsub("Time([^:]*)", "Time (\\1)", tls)
   }
   ## Term labels
-  tls <- gsub("Cells.m", "Cyanobacteria", tls)
-  tls <- gsub("logCells", "Cyanobacteria", tls)
-  tls <- gsub("logNfix", "N-fixation", tls)
+  tls <- gsub("Cells.m", "Cyanobacteria", tls, fixed=TRUE)
+  tls <- gsub("logCells", "Cyanobacteria", tls, fixed=TRUE)
+  tls <- gsub("logNfix", "N-fixation", tls, fixed=TRUE)
   tls <- gsub("logTAN", "Total N", tls, fixed=TRUE)
   tls <- gsub("logTAN", "Total N", tls, fixed=TRUE)
   tls <- gsub("I(H2O^2)", "H2O^2", tls, fixed=TRUE)
-  tls <- gsub("H2O", "Moisture", tls)
+  tls <- gsub("H2O", "Moisture", tls, fixed=TRUE)
   tls <- gsub("TempC", "Temperature", tls, fixed=TRUE)
   tls <- gsub("Frag", "Fragmentation", tls)
   if (FALSE) { # math expressions for axis labels?
@@ -309,6 +302,11 @@ Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logNfix +
     logTAN:I(H2O^2) + logTAN:logNfix + Block:TempC + Block:H2O + 
     Block:I(H2O^2) + Block:logNfix + Block:logTAN + Frag:TempC + 
     Frag:H2O + Frag:I(H2O^2) + Frag:logNfix + Frag:logTAN
+## Without quadratic H2O term
+Y.trans ~ 1 + Block + Frag + TempC + H2O + logNfix + logTAN + 
+    Frag:Block + H2O:TempC + logNfix:H2O + logTAN:TempC + logTAN:H2O + 
+    logTAN:logNfix + Block:TempC + Block:H2O + Block:logNfix + 
+    Block:logTAN + Frag:TempC + Frag:H2O + Frag:logNfix + Frag:logTAN    
 }
 ## Important 2-way interactions (no mixed effects):
 ## ...
@@ -317,27 +315,23 @@ Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logNfix +
 ## H2O:logNfix
 ##   Everything except:
 ##   logTAN:TempC
+##   logNfix:TempC
 ## Given potential colinearity between H2O & Nfix, I should probably be interested in their interaction?
 
 ## After removing potential outliers (mostly Cells.m outlier):
 ##   I'm less interested in Block interactions
-Y.fixed <- Y.trans ~ Block + Frag + TempC + H2O + I(H2O^2) + logNfix + 
-			logTAN + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
-			logNfix:TempC + logTAN:TempC + logNfix:H2O + logNfix:I(H2O^2) +
-            ## logTAN:I(H2O^2) + Frag:Block + 
-			## Block:TempC + Block:H2O + Block:I(H2O^2) + Block:logNfix + Block:logTAN +  
-			Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
-			Frag:logNfix + Frag:logTAN
+Y.fixed <- Y.trans ~ Block + Frag + TempC + H2O + logNfix + logTAN + 
+            Frag:Block + H2O:TempC + logNfix:H2O + logTAN:TempC + logTAN:H2O + 
+            Block:TempC + Block:H2O + ## Block:logNfix + Block:logTAN + 
+            logTAN:logNfix + Frag:TempC + Frag:H2O + Frag:logNfix + Frag:logTAN
 
 ## Implied higher-order interactions
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
-Y.fixHi <- Y.trans ~ Block + Frag + H2O + I(H2O^2) + TempC + logNfix + 
-			logTAN + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
-			TempC:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) + 
-			logNfix:H2O + logNfix:I(H2O^2) + logNfix:H2O:I(H2O^2) + 
-            logNfix:TempC + logTAN:TempC +
-            Frag:TempC + Frag:logNfix + Frag:logTAN +
-            Frag:TempC:logNfix + Frag:TempC:logTAN
+Y.fixHi <- Y.trans ~ Block + Frag * H2O * TempC * logTAN  + logNfix +
+            Block:TempC + Block:H2O + ## Block:logNfix + Block:logTAN +  # These really improve the AIC!
+            Frag:logNfix + H2O:logNfix + logTAN:logNfix +
+            Frag:H2O:logNfix + Frag:logTAN:logNfix + H2O:logTAN:logNfix +
+            Frag:H2O:logTAN:logNfix
 
 ##==============================================================
 ## MODEL FITTING: Final Fixed & Random Effects?
@@ -352,14 +346,14 @@ Y.f2   <- gls(Y.best2, data = SECCa, method = "ML")
 Y.fx   <- gls(Y.fixed, data = SECCa, method = "ML")
 Y.fH   <- gls(Y.fixHi, data = SECCa, method = "ML")
 anova(Y.fx, Y.f2, Y.fH)                # Adding higher-order interactions is not better
-anova(Y.fx, Y.fH)                      # Adding higher-order interactions is not better
+anova(Y.fx, Y.fH)                      
 Y.fx   <- update(Y.fx, method = "REML")
 Y.fH   <- update(Y.fH, method = "REML")
 ## I will likely need to account for heterogeneity among Blocks, maybe Chambers as well (TempC/Warming)
 Y.mH <- gls(Y.fixHi, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 Y.mr <- lme(Y.fixHi, random = Y.random, data = SECCa, method ="REML")
-anova(Y.fH, Y.mr)
-anova(Y.fH, Y.mH)
+anova(Y.fH, Y.mr)                      # Adding random effects
+anova(Y.fH, Y.mH)                      # Accounting for heterogeneity
 anova(Y.mH, Y.mr)                      # are these really nested?  (might not be a valid comparison)
 if (TryMM)
 {                                      # higher-order interaction models often crash here: trying to do too much!
@@ -371,12 +365,14 @@ if (TryMM)
 ## and probably should be done on theoretical grounds, to account for the structure of the experiment.
 
 Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
+anova(Y.fx, Y.mHf)                     # 2-way interactions might be better without heterogeneity!
 if (TryMM)
 {  # ML estimation may fail with many interactions.
   Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
   anova(Y.mHf, Y.mef)
   ## Compare fuller model with best model from glmulti
   Y.m2  <- gls(Y.best2, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
+  Y.ml2 <- update(Y.m2, method ="ML")    # X False convergence :(
   Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   ## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
@@ -388,9 +384,11 @@ if (TryMM)
 ##  All I really need a model for at this point is predictions and graphs.
 ##  Higher-order interactions aren't adding much to this model, and is actually worse in terms of residual patterns (below).
 ##  The best model identified by glmulti is really the best fit, but I can't correct for heterogeneity with this model :(
-#   The best compromise seems to be 2-way interactions with heterogeneity.
+#   Adding heterogeneity improves the AIC, but the residuals look worse :(.
+## I'm going with the best linear model from glmulti because of AIC & residuals; it also produces cleaner partial regression plots.
+##  This way, I can account for Block interactions, but not worry about showing them (I am not interested in them).
 ## Y.fit  <- Y.me
-Y.fit  <- Y.mHf
+Y.fit  <- Y.best2lm
 
 
 
@@ -401,11 +399,11 @@ Y.fit  <- Y.mHf
 cat("- Validating models\n")
 
 ## residualPlots(Y.best2lm)               # car: lm only
-diagnostics(Y.best2lm, X.cols = c("logNfix", "H2O", "TAN")) # Best model from glmulti
-diagnostics(Y.mHf, X.cols = c("logNfix", "H2O", "TAN"))     # 2-way interactions and heterogeneity
-diagnostics(Y.mH,  X.cols = c("logNfix", "H2O", "TAN"))     # higher-order interactions and heterogeneity
-diagnostics(Y.mr,  X.cols = c("logNfix", "H2O", "TAN"))     # higher-order interactions and nested structure
-if (TryMM) diagnostics(Y.me,  X.cols = c("logNfix", "H2O", "TAN"))     # higher-order interactions + mixed effects
+diagnostics(Y.best2lm, X.cols = c("logNfix", "H2O", "logTAN")) # Best model from glmulti
+diagnostics(Y.mHf, X.cols = c("logNfix", "H2O", "logTAN"))     # 2-way interactions and heterogeneity
+diagnostics(Y.mH,  X.cols = c("logNfix", "H2O", "logTAN"))     # higher-order interactions and heterogeneity
+diagnostics(Y.mr,  X.cols = c("logNfix", "H2O", "logTAN"))     # higher-order interactions and nested structure
+if (TryMM) diagnostics(Y.me,  X.cols = c("logNfix", "H2O", "logTAN"))     # higher-order interactions + mixed effects
 ## I do prefer the distribution and lack of patterns in residuals in the mixed effects models
 ## There are some disturbing patterns in the residuals for the lm model
 ## Allowing heterogeneity is a modest improvement: a nested random structure is about the same (but theoretically justified).
@@ -427,6 +425,7 @@ cat("- Generating results & predictions\n")
 summary(Y.fit)
 anova(Y.fit)                           # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
 if (inherits(Y.fit, "lm")) {
+  ## WHy does this work sometimes, and throw errors others?
   Anova(Y.fit, type=2)                 # Type II: car package**
   ## effects of single-term deletions?
   drop1(Y.fit)
@@ -464,11 +463,12 @@ H.eff     <- effect("H2O:I(H2O^2)", Y.fit)
 T.eff     <- effect("TempC", Y.fit)
 A.eff     <- effect("logNfix", Y.fit)
 N.eff     <- effect("logTAN", Y.fit)
-AH.eff    <- effect("H2O:I(H2O^2):logNfix", Y.fit, xlevels=list(H2O=H2O.9lvls))
-TH.eff    <- effect("TempC:H2O:I(H2O^2)", Y.fit, xlevels = list(TempC=T.breaks, H2O=H2O.9lvls) )
-FH.eff    <- effect("Frag:H2O:I(H2O^2)", Y.fit, xlevels = list(H2O=H2O.9lvls) )
+AH.eff    <- effect("H2O:logNfix", Y.fit, xlevels=list(H2O=H2O.9lvls))
+## TH.eff    <- effect("H2O:TempC", Y.fit, xlevels = list(TempC=T.breaks, H2O=H2O.9lvls) )
+TH.eff    <- effect("TempC:H2O", Y.fit, xlevels = list(TempC=T.breaks, H2O=H2O.9lvls) )
+FH.eff    <- effect("Frag:H2O", Y.fit, xlevels = list(H2O=H2O.9lvls) )
 AF.eff    <- effect("Frag:logNfix", Y.fit)
-AT.eff    <- effect("TempC:logNfix", Y.fit, xlevels = list(TempC=T.breaks) )
+## AT.eff    <- effect("TempC:logNfix", Y.fit, xlevels = list(TempC=T.breaks) )
 NT.eff    <- effect("TempC:logTAN", Y.fit, xlevels = list(TempC=T.breaks) )
 NF.eff    <- effect("Frag:logTAN", Y.fit)
 
@@ -482,7 +482,7 @@ plot(AH.eff, x.var = "H2O", ask = FALSE)
 plot(TH.eff, x.var = "H2O", ask = FALSE)
 plot(FH.eff, x.var = "H2O", ask = FALSE)
 plot(AF.eff, x.var = "logNfix", ask = FALSE)
-plot(AT.eff, x.var = "logNfix", ask = FALSE)
+## plot(AT.eff, x.var = "logNfix", ask = FALSE)
 plot(NT.eff, x.var = "logTAN", ask = FALSE)
 plot(NF.eff, x.var = "logTAN", ask = FALSE)
 
@@ -502,10 +502,12 @@ Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (al
 ##==============================================================
 ## gls (mixed effects) model causes problems in this section
 Y.lfit <- if (inherits(Y.fit, "lm")) Y.fit else Y.fHlm
-avPlots(Y.fxlm, terms= ~ H2O * I(H2O^2) + logNfix + logTAN, ask=FALSE) # car
-avPlots(Y.lfit, terms= ~ H2O * I(H2O^2) + logNfix + logTAN, ask=FALSE) # car
+avPlots(Y.best2lm, terms= ~ H2O + logNfix + logTAN, ask=FALSE) # car
+avPlots(Y.lfit, terms= ~ H2O + logNfix + logTAN, ask=FALSE) # car
 
 
+##______________________________________________________________
+## Partial regression on logNfix?
 ## Removing main + interaction terms dynamically (gls should be ok here)
 Parts <- PartialFormula("Y.fit", x.var = "logNfix")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
@@ -640,7 +642,7 @@ ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label)
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 ## Axis Labels:
 Y.label <- SECC.axislab(SECCa, col = Y.col, parens=TRUE)
-Y.lim    <- c(-2, 30)
+Y.lim    <- c(-5, 30)
 
 ##______________________________________________________________
 ## utility functions
@@ -712,14 +714,14 @@ A.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
 			scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
 ## This just looks weird
-AT.pdata <- effect.to.df(AT.eff)
-AT.pdata <- within(AT.pdata,{ Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
-AT.pdata <- within(AT.pdata, Chamber <- factor(TempC, labels = levels(SECCa$Chamber)) ) # colour-coding
-AT.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			eff.Tlayer(eff = AT.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "Nfix", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+## AT.pdata <- effect.to.df(AT.eff)
+## AT.pdata <- within(AT.pdata,{ Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
+## AT.pdata <- within(AT.pdata, Chamber <- factor(TempC, labels = levels(SECCa$Chamber)) ) # colour-coding
+## AT.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
+##             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
+##             eff.Tlayer(eff = AT.pdata, conf.int = TRUE) +
+##             xlab(SECC.axislab(SECCa, col = "Nfix", parens=TRUE)) + ylab(Y.label) +
+##             scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
 ##______________________________________________________________
 ## Available N effects
@@ -871,6 +873,7 @@ H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
 
 
+
 ##==============================================================
 ## SAVE GRAPHS
 ##==============================================================
@@ -881,7 +884,7 @@ if (Save.results == TRUE)
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sImportance2.eps", Fig.filename), plot = Y.importance2, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sEstimates.eps", Fig.filename), plot = Y.est2, 
+  ggsave(filename = sprintf("%sEstimates.eps",   Fig.filename), plot = Y.est2, 
          width = 4, height = 4, scale = 1.5)
   ## Effects plots
   ggsave(filename = sprintf("%sTemp.eps",   Fig.filename), plot = T.plot, 
@@ -894,8 +897,8 @@ if (Save.results == TRUE)
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sNfix.eps",   Fig.filename), plot = A.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxNfix.eps", Fig.filename), plot = AT.plot, 
-         width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sTxNfix.eps", Fig.filename), plot = AT.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN.eps",    Fig.filename), plot = N.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTxTAN.eps",  Fig.filename), plot = NT.plot, 
@@ -913,7 +916,7 @@ if (Save.results == TRUE)
   print(TH.plot)
   print(FH.plot)
   print(A.plot)
-  print(AT.plot)
+  ##   print(AT.plot)
   print(N.plot)
   print(NT.plot)
   ## Partial Regression plots
