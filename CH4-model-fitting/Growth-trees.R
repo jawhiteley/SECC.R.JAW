@@ -1,7 +1,7 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression trees: Moss Growth (mm)
-### Jonathan Whiteley     R v2.12     2012-07-12
+### Jonathan Whiteley     R v2.12     2012-07-15
 ################################################################
 ## INITIALISE
 ################################################################
@@ -15,7 +15,6 @@ if (FALSE)
   getwd()           # Check that we're in the right place
 }
 ## Clear memory, load data, functions, etc.  Process data & setup config. settings
-## Load data, functions, etc.  Process data & setup config. values.  
 source('./CH4-model-fitting/Growth_setup.R')
 
 
@@ -49,15 +48,7 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ## Main effects only
 ##  include Block just to see relative importance
 ##  can also include Block as an 'offset' variable: offset(Block)
-##  - not 100% sure what this does, but should model a Block 'effect', without including it in the tree (or calculating parameters).
-##  - splits do not change, but group means do.
-##  - The position of the offset variable **does** matter
-##    - I think it should be first, to account for Blocks *before* any other factors?
-Y.main   <- Y ~ Block + Warming + Frag + H2O + Nfix + TAN
-Y.mainB  <- Y ~ offset(Block) + Warming + Frag + H2O + Nfix + TAN
- 
-BlockOffset <- FALSE
-if (BlockOffset) Y.main <- Y.mainB
+Y.main   <- Y ~ Block + TempC + Frag + H2O + logNfix + logTAN
 
 
 ##==============================================================
@@ -94,22 +85,20 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
 
   Y.cp  <- mean(cpMin)
   Y.cpE <- mean(cpMinError)
+
   ## Approx. long-term averages:
   ## Block as a Factor
-  ## cpMin:           minsplit 20: 0.024 ; minsplit 10: 0.040
-  ## cpMinError:      minsplit 20: 0.006 ; minsplit 10: 0.015
+  ## cpMin:           minsplit 20: 0.041 ; minsplit 10: 0.042
+  ## cpMinError:      minsplit 20: 0.041 ; minsplit 10: 0.042
   ## Block as an Offset
   ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.
   ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.
-  ## Block as a Factor (with Growth)
-  ## cpMin:           minsplit 20: 0.060 ; minsplit 10: 0.062
-  ## cpMinError:      minsplit 20: 0.015 ; minsplit 10: 0.015
 }
 
 if (minsplit==20) {
-  Y.cp <- 0.006                    # actual means are a little lower, but the resulting cutoff is effectively the same
+  Y.cp <- 0.041                    # actual means are a little lower, but the resulting cutoff is effectively the same
 } else {
-  Y.cp <- 0.015                    # reduce smaller branches (over-fitting)
+  Y.cp <- 0.042                    # reduce smaller branches (over-fitting)
 }
 Y.treeP  <- prune(Y.tree , cp=Y.cp)
 
@@ -147,13 +136,9 @@ Y.plot <- plot(Y.treeP, main=paste("Pruned", par.label),
                  minbranch = 0, margin=0.1, compress=FALSE)
 text(Y.treeP, use.n = TRUE, cex=0.8)
 
-if (FALSE) {                           # Full trees: normally not needed, once pruning criteria established
-  plot(Y.treeD, main="rpart() Default settings")
-  text(Y.treeD, use.n = TRUE)
-  plot(Y.tree, main=par.label, compress=TRUE)
-  text(Y.tree, cex=0.6)
-}
-
+plot(Y.tree, main=paste("Full", par.label), 
+                 minbranch = 0, margin=0.1, compress=FALSE)
+text(Y.tree, use.n = TRUE, cex=0.8)
 
 
 

@@ -1,0 +1,66 @@
+Results for: Moss growth ( Growth ) ~ (others) 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer
+
+R version 2.12.0 (2010-10-15)
+Mon Jul 16 10:21:51 2012
+================================================================
+
+n=116 (12 observations deleted due to missingness)
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+1) root 116 4495.98800  6.641466  
+  2) logNfix< 0.5720822 34  262.85940 -0.035000 *
+  3) logNfix>=0.5720822 82 2089.17100  9.409756  
+    6) H2O< 388.5867 5   27.99468  3.432000 *
+    7) H2O>=388.5867 77 1870.90600  9.797922 *
+Call:
+rpart(formula = Y.main, data = SECCa, control = rpc)
+  n=116 (12 observations deleted due to missingness)
+
+          CP nsplit rel error    xerror      xstd
+1 0.47686025      0 1.0000000 1.0141572 0.1453331
+2 0.04231987      1 0.5231397 0.5379886 0.1052051
+3 0.04200000      2 0.4808199 0.7313774 0.1278772
+
+Node number 1: 116 observations,    complexity param=0.4768603
+  mean=6.641466, MSE=38.75852 
+  left son=2 (34 obs) right son=3 (82 obs)
+  Primary splits:
+      logNfix < 0.5720822 to the left,  improve=0.47686030, (0 missing)
+      H2O     < 312.8532  to the left,  improve=0.40984100, (1 missing)
+      TempC   < 6.985     to the right, improve=0.12378890, (0 missing)
+      Block   splits as  LRRRRRRL, improve=0.05195853, (0 missing)
+      logTAN  < -1.40878  to the right, improve=0.04417949, (0 missing)
+  Surrogate splits:
+      H2O    < 326.4977  to the left,  agree=0.914, adj=0.706, (0 split)
+      logTAN < -1.199841 to the right, agree=0.724, adj=0.059, (0 split)
+
+Node number 2: 34 observations
+  mean=-0.035, MSE=7.73116 
+
+Node number 3: 82 observations,    complexity param=0.04231987
+  mean=9.409756, MSE=25.47769 
+  left son=6 (5 obs) right son=7 (77 obs)
+  Primary splits:
+      H2O     < 388.5867  to the left,  improve=0.09183372, (1 missing)
+      Block   splits as  LLRRLRRL, improve=0.08768892, (0 missing)
+      logTAN  < -1.559857 to the right, improve=0.06568692, (0 missing)
+      logNfix < 2.058565  to the left,  improve=0.03447466, (0 missing)
+      Frag    splits as  RRLR, improve=0.02088245, (0 missing)
+
+Node number 6: 5 observations
+  mean=3.432, MSE=5.598936 
+
+Node number 7: 77 observations
+  mean=9.797922, MSE=24.29748 
+
+
+
+
+
+<============================= END ============================>

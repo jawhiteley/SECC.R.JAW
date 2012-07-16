@@ -10,7 +10,7 @@ source('./CH4-model-fitting/1_reg_settings.R')
 
 Y.col <- 'Growth'      # Column to analyze as response variable           *****
 # explanatory vars for data exploration (and labels)
-X.cols <- c("Nfix", "H2O")  
+X.cols <- c("Nfix", "H2O", "TAN")  
 
 ##==============================================================
 ## CUSTOM SETTINGS
@@ -37,13 +37,6 @@ SECCa <- within( SECCa,
 ## LABELS
 ##==============================================================
 
-## Y.plotlab <- bquote( .(Y.label) * "  " * log[10](.(Y.units)) *  "" )
-Y.plotlab <- SECC.axislab(SECCa, Y.col)
-
-Fig.filename <- sprintf("%sFigure-%s~", SaveDir.plots(), Y.col
-###                         , paste(which(levels(SECC$Time) == Time.use), collapse="") 
-)
-Suppl.filename <- sprintf("%sSupplemental-%s~", SaveDir.plots(), Y.col)
 
 cat("== Setup complete ==\n")
-cat("--< Ready for N-fixation analysis >--\n")
+cat("--< Ready for Moss Growth analysis >--\n")
