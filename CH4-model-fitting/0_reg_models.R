@@ -27,7 +27,7 @@ RegDir <- "./CH4-model-fitting/"       # directory for scripts used in these ana
 ## _setup.R scripts also include source("./lib/init.R"); memore is cleared, data re-loaded & processed every time.
 cat("N-fixation ~ \n")
 source("CH4-model-fitting/Nfix_setup.R")    # N-fixation: settings
-cat("N-fixation ~ : Data Eploration\n")
+cat("N-fixation ~ : Data Exploration\n")
 source("CH4-model-fitting/2_reg_Explore.R") # Data Exploration
 source("CH4-model-fitting/Nfix-trees.R")    # N-fixation: regression trees
 source("CH4-model-fitting/Nfix-models.R")   # N-fixation: regression models

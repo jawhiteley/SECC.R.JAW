@@ -29,17 +29,9 @@ cat("- Processing Data (excluding NAs)\n")
 ## Remove NA rows from data, but only for variables in the model ...
 ## Easier to do it once here, than in every single fitting function in the script ;)
 SECCf <- SECCa
-ModFrame <- model.frame(Y.main, data = SECCa, na.action = na.exclude) # includes transformations, drops all other attributes :(
-if (TRUE)
-{
-  ## include untransformed columns to use their NA values for filtering; NA/NaN in ANY column will drop that row!
-  Mod.cols <- attr(ModFrame, "variables")
-  Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, TempC, H2O, ARA.m, Nfix, logNfix, TAN, logTAN, Growth, Y, Y.trans", 
-                               ", ", fixed = TRUE) )
-  SECCa <- na.exclude( SECCa[, Mod.cols] ) # only exclude NAs from relevant (used) columns
-} else {
-  SECCa <- ModFrame                    # includes transformations, missing some columns I want to keep
-}
+Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, TempC, H2O, ARA.m, Nfix, logNfix, TAN, logTAN, Growth, Y, Y.trans", 
+                             ", ", fixed = TRUE) )
+SECCa <- na.exclude( SECCa[, Mod.cols] ) # only exclude NAs from relevant (used) columns
 attr(SECCa, "labels") <- attr(SECCf, "labels")
 attr(SECCa, "units")  <- attr(SECCf, "units")
 levels(SECCa$Chamber)[levels(SECCa$Chamber) == "Full Chamber"] <- "Chamber"
@@ -314,6 +306,7 @@ Y.fixed <- Y.trans ~ Block +  Chamber + Frag + H2O + logNfix + logTAN +
 ## Implied higher-order interactions
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
 Y.fixHi <- Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
+
 
 ##==============================================================
 ## MODEL FITTING: Final Fixed & Random Effects?

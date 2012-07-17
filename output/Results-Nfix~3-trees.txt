@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Mon Jul 16 10:37:33 2012
+Mon Jul 16 23:09:17 2012
 ================================================================
 
 n= 128 
@@ -31,12 +31,12 @@ rpart(formula = Y.main, data = SECCa, control = rpc)
   n= 128 
 
           CP nsplit rel error    xerror      xstd
-1 0.29158527      0 1.0000000 1.0278568 0.1549717
-2 0.13270251      1 0.7084147 0.7810959 0.1456127
-3 0.09182389      2 0.5757122 0.8453559 0.1483910
-4 0.04965347      3 0.4838883 0.7050746 0.1329795
-5 0.04050137      4 0.4342349 0.7137334 0.1300139
-6 0.04000000      6 0.3532321 0.6922399 0.1280132
+1 0.29158527      0 1.0000000 1.0149160 0.1544179
+2 0.13270251      1 0.7084147 0.7757005 0.1455251
+3 0.09182389      2 0.5757122 0.7307223 0.1334660
+4 0.04965347      3 0.4838883 0.6981182 0.1324948
+5 0.04050137      4 0.4342349 0.7172190 0.1324535
+6 0.04000000      6 0.3532321 0.8068124 0.1480862
 
 Node number 1: 128 observations,    complexity param=0.2915853
   mean=75.55693, MSE=6540.537 
@@ -44,7 +44,7 @@ Node number 1: 128 observations,    complexity param=0.2915853
   Primary splits:
       H2O        < 418.513   to the left,  improve=0.28895920, (1 missing)
       Block      splits as  LRRLRRLL, improve=0.16116560, (0 missing)
-      TempC      < 6.985     to the right, improve=0.04035040, (0 missing)
+      Chamber    splits as  RL, improve=0.04035040, (0 missing)
       Frag       splits as  LRRL, improve=0.03611806, (0 missing)
       log10(TAN) < -1.35716  to the right, improve=0.02916831, (0 missing)
   Surrogate splits:
