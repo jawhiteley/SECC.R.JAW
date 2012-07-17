@@ -137,7 +137,13 @@ PartialFormula <- function (model = "", x.var = "", part = "both")
   ##   RHS.part <- gsub("[^ ]+\\:\\s", "", RHS.part) # term:
   ##   RHS.part <- gsub("\\s[^ ]+\\:\\:[^ ]+", "", RHS.part) # term::term
   ##   RHS.part <- gsub("[^ ]+\\:$", "", RHS.part) # last term
-  RHS.part <- gsub("[+*]\\s*([+*])", "\\1", RHS.part) # leftovers
+  RHS.part1 <- RHS.part
+  RHS.part  <- ""                      # to start the loop
+  while (RHS.part1 !=RHS.part)
+  {                                    # keep doing this until nothing changes!
+    RHS.part  <- RHS.part1
+    RHS.part1 <- gsub("[+*]\\s*([+*])", "\\1", RHS.part) # leftovers
+  }
   RHS.part <- gsub("\\s*([+*])\\s*$", "", RHS.part) # leftovers
   Y.part <- sprintf("update(%s, .~ %s )",  model, RHS.part)
   X.part <- sprintf("update(%s, %s ~ %s )", model, x.var, RHS.part)
