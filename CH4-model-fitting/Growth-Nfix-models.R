@@ -491,6 +491,7 @@ avPlots(Y.lfit, terms= ~ H2O + logNfix + logTAN, ask=FALSE) # car
 ##______________________________________________________________
 ## Partial regression on logNfix?
 ## Removing main + interaction terms dynamically (gls should be ok here)
+##  I should account for H2O here: "What is the effect of Nfixation, after removing the effect of H2O?"
 Parts <- PartialFormula("Y.fit", x.var = "logNfix")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
 X.part <- eval(Parts$x)
@@ -519,6 +520,8 @@ Y.X.df <- data.frame(X=X.re, Y=Y.re, fit=Y.X.pred[, "fit"],
 
 ##______________________________________________________________
 ## Partial regression on H2O
+##  Maybe I should NOT account for Nfix here: "What is the effect of H2O, without removing the effect of Nfixation?"
+##  - If I believe that H2O is driving everything...
 Parts <- PartialFormula("Y.fit", x.var = "H2O")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
 H.part <- eval(Parts$x)
@@ -766,11 +769,11 @@ Npart.notes <- RegPlot.annote(Y.N)
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
-						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 0, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
-						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
-						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Moss Growth | others") 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +

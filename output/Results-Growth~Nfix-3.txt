@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Tue Jul 17 13:16:04 2012
+Tue Jul 17 16:34:29 2012
 ================================================================
 
 Analysis of Variance Table
@@ -69,7 +69,7 @@ logNfix                       N-fixation 1.000000000
 
 
 Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
-<environment: 0x29a934b0>
+<environment: 0x17f1da78>
 Denom. DF: 96 
                     numDF  F-value p-value
 (Intercept)             1 450.8367  <.0001

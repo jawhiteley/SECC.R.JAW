@@ -731,11 +731,11 @@ Npart.notes <- RegPlot.annote(Y.N)
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
-						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 0, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
-						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
-						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
+						   size = 4, hjust = 1, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Moss Growth | others") 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
