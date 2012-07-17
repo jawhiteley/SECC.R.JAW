@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Tue Jul 17 07:54:48 2012
+Tue Jul 17 13:16:04 2012
 ================================================================
 
 Analysis of Variance Table
@@ -41,35 +41,35 @@ Residuals           0    0.00                        0.000000
 
 consensus of 6-glmulti.analysis Method: g / Fitting: lm / IC used: aic Level: 2 / Marginality: TRUE 
 From 256 models: Best IC: 670.353006022713 Best model: [1] "Y.trans ~ 1 + H2O + logNfix" 
-Evidence weight: 0.0890882904709624 Worst IC: 683.300261237301 9 models within 2 IC units. 
-102 models to reach 95% of evidence weight. Convergence after 1060 generations. 
-Time elapsed: 4.99206105073293 minutes.
+Evidence weight: 0.0874056293066302 Worst IC: 683.41811206026 9 models within 2 IC units. 
+100 models to reach 95% of evidence weight. Convergence after 1140 generations. 
+Time elapsed: 5.48906929890315 minutes.
                                     Term  Importance
-Frag:H2O          Fragmentation:Moisture 0.007184183
-Chamber:Frag       Chamber:Fragmentation 0.012136217
-Frag:logTAN        Fragmentation:Total N 0.026193861
-Block:logNfix           Block:N-fixation 0.058887292
-H2O:logTAN              Moisture:Total N 0.061562104
-Block:Frag           Block:Fragmentation 0.061785368
-Block:logTAN               Block:Total N 0.061785368
-Block:H2O                 Block:Moisture 0.063659592
-Frag:logNfix    Fragmentation:N-fixation 0.068660563
-Block:Chamber              Block:Chamber 0.083451853
-Chamber:logTAN           Chamber:Total N 0.099184070
-Block                              Block 0.108331636
-Frag                       Fragmentation 0.121286720
-logNfix:logTAN        N-fixation:Total N 0.128727446
-Chamber:H2O             Chamber:Moisture 0.407797064
-logTAN                           Total N 0.426823091
-H2O:logNfix          Moisture:N-fixation 0.485944961
-Chamber:logNfix       Chamber:N-fixation 0.500296373
-Chamber                          Chamber 0.781686246
-H2O                             Moisture 0.992324618
+Frag:H2O          Fragmentation:Moisture 0.007750323
+Chamber:Frag       Chamber:Fragmentation 0.016264045
+Frag:logTAN        Fragmentation:Total N 0.033785095
+Block:logNfix           Block:N-fixation 0.064571097
+Block:Frag           Block:Fragmentation 0.070779550
+Block:logTAN               Block:Total N 0.070779550
+Block:H2O                 Block:Moisture 0.071681191
+Frag:logNfix    Fragmentation:N-fixation 0.078877171
+Block:Chamber              Block:Chamber 0.084308469
+logNfix:logTAN        N-fixation:Total N 0.092374407
+Chamber:logTAN           Chamber:Total N 0.098483658
+Block                              Block 0.102747470
+H2O:logTAN              Moisture:Total N 0.114738695
+Frag                       Fragmentation 0.126305975
+Chamber:H2O             Chamber:Moisture 0.418478490
+logTAN                           Total N 0.465994021
+H2O:logNfix          Moisture:N-fixation 0.474707991
+Chamber:logNfix       Chamber:N-fixation 0.501684226
+Chamber                          Chamber 0.776945102
+H2O                             Moisture 0.995692707
 logNfix                       N-fixation 1.000000000
 
 
 Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
-<environment: 0x5b534ecc>
+<environment: 0x29a934b0>
 Denom. DF: 96 
                     numDF  F-value p-value
 (Intercept)             1 450.8367  <.0001

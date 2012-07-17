@@ -295,15 +295,21 @@ print(Y.est2)
 anova(Y.best2lm)                       # order matters (Type 1)
 Anova(Y.best2lm, type=2)               # Type II: car package**
 
+## Including Nfix does improve the R-square (explains more variance), 
+##   but is it over-fitting or masking other terms?
+summary(lm(Y.trans ~ Block + Frag + Chamber * H2O + logTAN, data = SECCa))
+summary(lm(Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN, data = SECCa))
+
+
 ## Important 2-way interactions (no mixed effects):
 ## H2O:Chamber
 
 ## Interactions of interest (could be more or less than Y.best2, depending on how that goes)
 ##   I'm less interested in Block interactions
-Y.fixed <- Y.trans ~ Block +  Chamber + Frag + H2O + logTAN + Chamber:H2O
+Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + logTAN + Chamber:H2O
 
 ## Implied higher-order interactions
-## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
+## Actually, the same model...
 Y.fixHi <- Y.trans ~ Block + Frag + Chamber * H2O + logTAN
 
 
@@ -357,7 +363,9 @@ if (TryMM)
 ## SO, Which model should I use?
 ##  All I really need a model for at this point is predictions and graphs.
 ##  Adding heterogeneity improves the residuals, and the fit.
-##  Adding random effects doesn't improve the fit, and makes the residuals worse.
+##  Adding random effects doesn't improve the fit, but might improve the residuals
+## Y.fit  <- Y.me
+##  Unfortunately, effects() throws an error if I try to include both heterogeneity and random structure :(
 Y.fit  <- Y.mH
 
 
@@ -431,24 +439,24 @@ Y.eff     <- allEffects(Y.fit)
 T.eff     <- effect("Chamber", Y.fit)
 F.eff     <- effect("Frag", Y.fit)
 H.eff     <- effect("H2O", Y.fit)
-A.eff     <- effect("logNfix", Y.fit)
+## A.eff     <- effect("logNfix", Y.fit)
 N.eff     <- effect("logTAN", Y.fit)
-AH.eff    <- effect("H2O:logNfix", Y.fit, xlevels=list(H2O=H2O.9lvls))
+## AH.eff    <- effect("H2O:logNfix", Y.fit, xlevels=list(H2O=H2O.9lvls))
 TH.eff    <- effect("Chamber:H2O", Y.fit)
-AT.eff    <- effect("Chamber:logNfix", Y.fit)
-ATC.eff   <- effect("Chamber:H2O:logNfix", Y.fit, xlevels = list(H2O=H2O.9lvls) )
+## AT.eff    <- effect("Chamber:logNfix", Y.fit)
+## ATC.eff   <- effect("Chamber:H2O:logNfix", Y.fit, xlevels = list(H2O=H2O.9lvls) )
 
 plot(T.eff, ask = FALSE)
 plot(F.eff, ask = FALSE)
 plot(H.eff, ask = FALSE)
-plot(A.eff, ask = FALSE)
+## plot(A.eff, ask = FALSE)
 plot(N.eff, ask = FALSE)
-plot(AH.eff, x.var = "logNfix", ask = FALSE)
-plot(AH.eff, x.var = "H2O", ask = FALSE)
+## plot(AH.eff, x.var = "logNfix", ask = FALSE)
+## plot(AH.eff, x.var = "H2O", ask = FALSE)
 plot(TH.eff, x.var = "H2O", ask = FALSE)
-plot(AT.eff, x.var = "logNfix", ask = FALSE)
-plot(ATC.eff, x.var = "logNfix", ask = FALSE)
-plot(ATC.eff, x.var = "H2O", ask = FALSE)
+## plot(AT.eff, x.var = "logNfix", ask = FALSE)
+## plot(ATC.eff, x.var = "logNfix", ask = FALSE)
+## plot(ATC.eff, x.var = "H2O", ask = FALSE)
 
 
 
@@ -466,13 +474,14 @@ Y.pred$multi.upr <- Y.multipred$averages[1] + Y.multipred$variability[, "+/- (al
 ##==============================================================
 ## gls (mixed effects) model causes problems in this section
 Y.lfit <- if (inherits(Y.fit, "lm")) Y.fit else Y.fHlm
-avPlots(Y.best2lm, terms= ~ H2O + logNfix, ask=FALSE) # car
-avPlots(Y.lfit, terms= ~ H2O + logNfix + logTAN, ask=FALSE) # car
+avPlots(Y.best2lm, terms= ~ H2O, ask=FALSE) # car
+avPlots(Y.lfit, terms= ~ H2O + logTAN, ask=FALSE) # car
 
 
 ##______________________________________________________________
 ## Partial regression on logNfix?
 ## Removing main + interaction terms dynamically (gls should be ok here)
+## This should be the same as Growth~Nfix ...
 Parts <- PartialFormula("Y.fit", x.var = "logNfix")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
 X.part <- eval(Parts$x)
@@ -501,6 +510,7 @@ Y.X.df <- data.frame(X=X.re, Y=Y.re, fit=Y.X.pred[, "fit"],
 
 ##______________________________________________________________
 ## Partial regression on H2O
+## This will be much stronger without removing the effect of NFix!
 Parts <- PartialFormula("Y.fit", x.var = "H2O")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
 H.part <- eval(Parts$x)
@@ -665,24 +675,6 @@ TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 
 
 ##______________________________________________________________
-## N-fixation effects
-A.pdata <- effect.to.df(A.eff)
-A.pdata <- within(A.pdata, { Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
-A.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			eff.layer(eff = A.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "Nfix", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-
-AT.pdata <- effect.to.df(AT.eff)
-AT.pdata <- within(AT.pdata,{ Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
-AT.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
-            geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-            eff.Tlayer(eff = AT.pdata, conf.int = TRUE) +
-            xlab(SECC.axislab(SECCa, col = "Nfix", parens=TRUE)) + ylab(Y.label) +
-            scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-
-##______________________________________________________________
 ## Available N effects
 N.pdata <- effect.to.df(N.eff)
 N.pdata <- within(N.pdata, TAN <- 10^logTAN)
@@ -692,51 +684,18 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
 			jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
-## NT.pdata <- effect.to.df(NT.eff)
-## NT.pdata <- within(NT.pdata, TAN <- 10^logTAN)
-## NT.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
-##             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-##             eff.Tlayer(eff = NT.pdata, conf.int = TRUE) +
-##             xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
-##             jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-
-
 ##______________________________________________________________
 ## Partial Regression: N-fixation
 ## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
-Xpart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.X)[1], digits = 2), 
-				   ifelse(coef(Y.X)[2] > 0, "+", "-"), abs(coef(Y.X)[2]) )
-Xpart.eq <- sub("-?0\\.0 ", "", Xpart.eq) # clean-up
-Xpart.eq <- sub("= \\+ ", "= ", Xpart.eq) # clean-up
-Xpart.eq <- gsub("([xy])", "italic(\\1)", Xpart.eq) # prep for expression
-Xpart.eq <- gsub(" = ", "~\"=\"~", Xpart.eq) # prep for expression
-YX.summary <- summary(Y.X)
-Xpart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YX.summary$fstatistic['numdf'], YX.summary$fstatistic['dendf'],
-				   YX.summary$fstatistic['value'], 
-				   pf(YX.summary$fstatistic[1],
-					  YX.summary$fstatistic[2],
-					  YX.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Xpart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YX.summary$fstatistic['numdf'], 
-						   df2 = YX.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YX.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YX.summary$fstatistic[1],
-											 YX.summary$fstatistic[2],
-											 YX.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Xpart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.X)$r.squared)) )
+Xpart.notes <- RegPlot.annote(Y.X)
 
 X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(X), max(Y), label = Xpart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = as.character(as.expression(Xpart.pv)) ), 
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = as.character(as.expression(Xpart.r2)) ), 
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("N-fixation | others") + 
                  ylab("Moss Growth | others") 
@@ -747,39 +706,15 @@ X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 
 ##______________________________________________________________
 ## Partial Regression: H2O
-Hpart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.H)[1], digits = 2), 
-				   ifelse(coef(Y.H)[2] > 0, "+", "-"), abs(coef(Y.H)[2]) )
-Hpart.eq <- sub("-?0\\.0 ", "", Hpart.eq) # clean-up
-Hpart.eq <- sub("= \\+ ", "= ", Hpart.eq) # clean-up
-Hpart.eq <- gsub("([xy])", "italic(\\1)", Hpart.eq) # prep for expression
-Hpart.eq <- gsub(" = ", "~\"=\"~", Hpart.eq) # prep for expression
-YH.summary <- summary(Y.H)
-Hpart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YH.summary$fstatistic['numdf'], YH.summary$fstatistic['dendf'],
-				   YH.summary$fstatistic['value'], 
-				   pf(YH.summary$fstatistic[1],
-					  YH.summary$fstatistic[2],
-					  YH.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Hpart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YH.summary$fstatistic['numdf'], 
-						   df2 = YH.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YH.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YH.summary$fstatistic[1],
-											 YH.summary$fstatistic[2],
-											 YH.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Hpart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.H)$r.squared)) )
+Hpart.notes <- RegPlot.annote(Y.H)
 
 H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(H), max(Y), label = Hpart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = as.character(as.expression(Hpart.pv)) ), 
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = as.character(as.expression(Hpart.r2)) ), 
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Moisture Contents | others") + 
                  ylab("Moss Growth | others") 
@@ -790,39 +725,16 @@ H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 
 ##______________________________________________________________
 ## Partial Regression: TAN
-Npart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.N)[1], digits = 2), 
-				   ifelse(coef(Y.N)[2] > 0, "+", "-"), abs(coef(Y.N)[2]) )
-Npart.eq <- sub("-?0\\.0 ", "", Npart.eq) # clean-up
-Npart.eq <- sub("= \\+ ", "= ", Npart.eq) # clean-up
-Npart.eq <- gsub("([xy])", "italic(\\1)", Npart.eq) # prep for expression
-Npart.eq <- gsub(" = ", "~\"=\"~", Npart.eq) # prep for expression
-YN.summary <- summary(Y.N)
-Npart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YN.summary$fstatistic['numdf'], YN.summary$fstatistic['dendf'],
-				   YN.summary$fstatistic['value'], 
-				   pf(YN.summary$fstatistic[1],
-					  YN.summary$fstatistic[2],
-					  YN.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Npart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YN.summary$fstatistic['numdf'], 
-						   df2 = YN.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YN.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YN.summary$fstatistic[1],
-											 YN.summary$fstatistic[2],
-											 YN.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Npart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.N)$r.squared)) )
+## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
+Npart.notes <- RegPlot.annote(Y.N)
 
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(N), max(Y), label = Npart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(N), max(Y), label = as.character(as.expression(Npart.pv)) ), 
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(N), max(Y), label = as.character(as.expression(Npart.r2)) ), 
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Moss Growth | others") 
@@ -853,17 +765,15 @@ if (Save.results == TRUE)
          width = 4, height = 4, scale = 1.5)
   ##   ggsave(filename = sprintf("%sFxH2O.eps",  Fig.filename), plot = FH.plot, 
   ##          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sNfix.eps",   Fig.filename), plot = A.plot, 
-         width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxNfix.eps", Fig.filename), plot = AT.plot, 
-         width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sNfix.eps",   Fig.filename), plot = A.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sTxNfix.eps", Fig.filename), plot = AT.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN.eps",    Fig.filename), plot = N.plot, 
          width = 4, height = 4, scale = 1.5)
-  ##   ggsave(filename = sprintf("%sTxTAN.eps",  Fig.filename), plot = NT.plot, 
-  ##          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
-  ggsave(filename = sprintf("%sNfix-partial.eps", Fig.filename), plot = X.part.plot, 
-         width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sNfix-partial.eps", Fig.filename), plot = X.part.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN-partial.eps",  Fig.filename), plot = N.part.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sH2O-partial.eps",  Fig.filename), plot = H.part.plot, 
@@ -878,7 +788,7 @@ if (Save.results == TRUE)
   print(N.plot)
   print(NT.plot)
   ## Partial Regression plots
-  print(X.part.plot)
+  ##   print(X.part.plot)
   print(N.part.plot)
   print(H.part.plot)
 }

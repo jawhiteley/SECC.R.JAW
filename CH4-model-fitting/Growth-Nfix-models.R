@@ -317,7 +317,7 @@ Anova(Y.best2lm, type=2)               # Type II: car package**
 
 ## Interactions of interest (could be more or less than Y.best2, depending on how that goes)
 ##   I'm less interested in Block interactions
-Y.fixed <- Y.trans ~ Block +  Chamber + Frag + H2O + logNfix + logTAN + 
+Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + logNfix + logTAN + 
             logNfix:H2O + logNfix:Chamber + H2O:Chamber
 
 ## Implied higher-order interactions
@@ -722,39 +722,15 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 ##______________________________________________________________
 ## Partial Regression: N-fixation
 ## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
-Xpart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.X)[1], digits = 2), 
-				   ifelse(coef(Y.X)[2] > 0, "+", "-"), abs(coef(Y.X)[2]) )
-Xpart.eq <- sub("-?0\\.0 ", "", Xpart.eq) # clean-up
-Xpart.eq <- sub("= \\+ ", "= ", Xpart.eq) # clean-up
-Xpart.eq <- gsub("([xy])", "italic(\\1)", Xpart.eq) # prep for expression
-Xpart.eq <- gsub(" = ", "~\"=\"~", Xpart.eq) # prep for expression
-YX.summary <- summary(Y.X)
-Xpart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YX.summary$fstatistic['numdf'], YX.summary$fstatistic['dendf'],
-				   YX.summary$fstatistic['value'], 
-				   pf(YX.summary$fstatistic[1],
-					  YX.summary$fstatistic[2],
-					  YX.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Xpart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YX.summary$fstatistic['numdf'], 
-						   df2 = YX.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YX.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YX.summary$fstatistic[1],
-											 YX.summary$fstatistic[2],
-											 YX.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Xpart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.X)$r.squared)) )
+Xpart.notes <- RegPlot.annote(Y.X)
 
 X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(X), max(Y), label = Xpart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = as.character(as.expression(Xpart.pv)) ), 
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = as.character(as.expression(Xpart.r2)) ), 
+				 geom_text(aes(min(X), max(Y), label = Xpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("N-fixation | others") + 
                  ylab("Moss Growth | others") 
@@ -765,39 +741,15 @@ X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 
 ##______________________________________________________________
 ## Partial Regression: H2O
-Hpart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.H)[1], digits = 2), 
-				   ifelse(coef(Y.H)[2] > 0, "+", "-"), abs(coef(Y.H)[2]) )
-Hpart.eq <- sub("-?0\\.0 ", "", Hpart.eq) # clean-up
-Hpart.eq <- sub("= \\+ ", "= ", Hpart.eq) # clean-up
-Hpart.eq <- gsub("([xy])", "italic(\\1)", Hpart.eq) # prep for expression
-Hpart.eq <- gsub(" = ", "~\"=\"~", Hpart.eq) # prep for expression
-YH.summary <- summary(Y.H)
-Hpart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YH.summary$fstatistic['numdf'], YH.summary$fstatistic['dendf'],
-				   YH.summary$fstatistic['value'], 
-				   pf(YH.summary$fstatistic[1],
-					  YH.summary$fstatistic[2],
-					  YH.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Hpart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YH.summary$fstatistic['numdf'], 
-						   df2 = YH.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YH.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YH.summary$fstatistic[1],
-											 YH.summary$fstatistic[2],
-											 YH.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Hpart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.H)$r.squared)) )
+Hpart.notes <- RegPlot.annote(Y.H)
 
 H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(H), max(Y), label = Hpart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = as.character(as.expression(Hpart.pv)) ), 
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = as.character(as.expression(Hpart.r2)) ), 
+				 geom_text(aes(min(H), max(Y), label = Hpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Moisture Contents | others") + 
                  ylab("Moss Growth | others") 
@@ -808,39 +760,16 @@ H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 
 ##______________________________________________________________
 ## Partial Regression: TAN
-Npart.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(Y.N)[1], digits = 2), 
-				   ifelse(coef(Y.N)[2] > 0, "+", "-"), abs(coef(Y.N)[2]) )
-Npart.eq <- sub("-?0\\.0 ", "", Npart.eq) # clean-up
-Npart.eq <- sub("= \\+ ", "= ", Npart.eq) # clean-up
-Npart.eq <- gsub("([xy])", "italic(\\1)", Npart.eq) # prep for expression
-Npart.eq <- gsub(" = ", "~\"=\"~", Npart.eq) # prep for expression
-YN.summary <- summary(Y.N)
-Npart.pv <- sprintf("\"(\" * F[%d,%d] = %.2f * \", \" * p = %.3f * \")\"", 
-				   YN.summary$fstatistic['numdf'], YN.summary$fstatistic['dendf'],
-				   YN.summary$fstatistic['value'], 
-				   pf(YN.summary$fstatistic[1],
-					  YN.summary$fstatistic[2],
-					  YN.summary$fstatistic[3],
-					  lower.tail = FALSE))
-Npart.pv <- substitute("("~italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~"="~pval~")", 
-					  list(df1 = YN.summary$fstatistic['numdf'], 
-						   df2 = YN.summary$fstatistic['dendf'],
-						   Fval = sprintf("%.2f", YN.summary$fstatistic['value']), 
-						   pval = sprintf("%.3f",
-										  pf(YN.summary$fstatistic[1],
-											 YN.summary$fstatistic[2],
-											 YN.summary$fstatistic[3],
-											 lower.tail = FALSE)
-						   )
-						   ))
-Npart.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(Y.N)$r.squared)) )
+## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
+Npart.notes <- RegPlot.annote(Y.N)
 
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(N), max(Y), label = Npart.eq), size = 4, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(N), max(Y), label = as.character(as.expression(Npart.pv)) ), 
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
+						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(N), max(Y), label = as.character(as.expression(Npart.r2)) ), 
+				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Moss Growth | others") 
