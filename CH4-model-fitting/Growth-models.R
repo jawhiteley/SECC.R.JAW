@@ -1,7 +1,8 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression models for Moss Growth
-### Jonathan Whiteley     R v2.12     2012-07-16
+###   WITHOUT Nfix as a predictor variable (highly correlated with H2O)
+### Jonathan Whiteley     R v2.12     2012-07-17
 ################################################################
 if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
@@ -19,8 +20,8 @@ library(nlme)
 ################################################################
 ## MODEL FORMULA
 ################################################################
-Y.main   <- Y.trans ~ Block + Chamber + Frag + H2O + logNfix + logTAN
-Y.fixed  <- Y.trans ~ Block * Chamber * Frag * H2O * logNfix * logTAN
+Y.main   <- Y.trans ~ Block + Chamber + Frag + H2O + logTAN
+Y.fixed  <- Y.trans ~ Block * Chamber * Frag * H2O * logTAN
 Y.full   <- Y.fixed                    # not enough replication to test full range of interactions
 Y.random <-  ~ 1 | Block/Chamber/Frag 
 
@@ -59,8 +60,8 @@ cat("- Fitting models:", Y.col, "\n")
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)
 library(mgcv)
-Y.gam     <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O) + s(Nfix) + s(TAN), data = SECCa)
-Y.log.gam <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O) + s(logNfix) + s(logTAN), data = SECCa)
+Y.gam     <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O)  + s(TAN), data = SECCa)
+Y.log.gam <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O)  + s(logTAN), data = SECCa)
 anova(Y.gam)
 anova(Y.log.gam)
 AIC(Y.gam, Y.log.gam)
@@ -169,6 +170,8 @@ if (file.exists(Save.glmulti))
   Y.pmulti2 <- capture.output(print(Y.glmulti2))
   Y.best2 <- as.formula(summary(Y.glmulti2)$bestmodel)
   Y.best2lm <- lm(Y.best2, data=SECCa)
+  Y.mtable1 <- weightable(Y.glmulti1)             # models, IC values, and relative weights (for confset)
+  Y.mtable2 <- weightable(Y.glmulti2)             # models, IC values, and relative weights (for confset)
   summary(Y.best2lm)
 
 
@@ -179,7 +182,6 @@ if (file.exists(Save.glmulti))
     names(Y.glmulti2)
     str(summary(Y.glmulti2))
     summary(Y.glmulti1)$modelweights
-    weightable(Y.glmulti1)             # models, IC values, and relative weights (for confset)
   }
 
   ##   Y.coef1 <- getCoef.glmulti(Y.glmulti1)   # not for gls or lme
@@ -208,11 +210,13 @@ if (file.exists(Save.glmulti))
   ## save derivative objects to speed up loading for future analysis.  
   ## The raw glmulti objects make for a big file (and a lot of memory): >1 GB!
   save(Y.pmulti1, Y.pmulti2, Y.best2, Y.best2lm, 
-              Y.coef2, Y.imp1, Y.imp2, # Y.coef1, 
-              Y.multipred, file=Save.glmulti)
+	   Y.mtable1, Y.mtable2, Y.coef2, Y.imp1, Y.imp2, # Y.coef1, 
+	   Y.multipred, file=Save.glmulti)
 
   rm(Y.glmulti1, Y.glmulti2, Y.glmultiB, Y.glmultiBr) # save memory? not right away, but maybe eventually :(
 }
+
+
 
 clean.term.labels <- function(tls, coef.labels = FALSE) {
   ## custom function for text replacement in model output: useful for making readable graphs and other output.
@@ -292,20 +296,15 @@ anova(Y.best2lm)                       # order matters (Type 1)
 Anova(Y.best2lm, type=2)               # Type II: car package**
 
 ## Important 2-way interactions (no mixed effects):
-## NONE?!  This is using Chamber as a predictor, rather than Temperature :P
-## Given potential colinearity between H2O & Nfix, I should probably be interested in their interaction?
 ## H2O:Chamber
-## Chamber:Nfix
-## H2O:Nfix
 
 ## Interactions of interest (could be more or less than Y.best2, depending on how that goes)
 ##   I'm less interested in Block interactions
-Y.fixed <- Y.trans ~ Block +  Chamber + Frag + H2O + logNfix + logTAN + 
-            logNfix:H2O + logNfix:Chamber + H2O:Chamber
+Y.fixed <- Y.trans ~ Block +  Chamber + Frag + H2O + logTAN + Chamber:H2O
 
 ## Implied higher-order interactions
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
-Y.fixHi <- Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
+Y.fixHi <- Y.trans ~ Block + Frag + Chamber * H2O + logTAN
 
 
 ##==============================================================

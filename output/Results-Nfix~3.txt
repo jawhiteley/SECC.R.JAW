@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Mon Jul 16 23:09:19 2012
+Tue Jul 17 12:26:08 2012
 ================================================================
 
 Analysis of Variance Table
@@ -84,38 +84,38 @@ From 256 models: Best IC: 157.990660453775 Best model:
 [4] "    Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + Chamber:H2O + " 
 [5] "    Chamber:I(H2O^2) + Chamber:logCells + Chamber:log10(TAN) + "         
 [6] "    Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)"          
-Evidence weight: 0.0797397722331083 Worst IC: 190.973767066195 15 models within 2 IC units. 
-36 models to reach 95% of evidence weight. Convergence after 1060 generations. 
-Time elapsed: 6.21125510136286 minutes.
+Evidence weight: 0.0949143020907873 Worst IC: 190.490671804547 11 models within 2 IC units. 
+33 models to reach 95% of evidence weight. Convergence after 720 generations. 
+Time elapsed: 4.11031618118286 minutes.
                                            Term Importance
-I(H2O^2):logCells      Moisture^2:Cyanobacteria  0.4590025
-H2O:logCells             Moisture:Cyanobacteria  0.4688787
-log10(TAN):logCells       Total N:Cyanobacteria  0.4763418
-I(H2O^2):log10(TAN)          Moisture^2:Total N  0.4887247
-Block:log10(TAN)                  Block:Total N  0.6161708
-H2O:log10(TAN)                 Moisture:Total N  0.6842352
-Frag:logCells       Fragmentation:Cyanobacteria  0.9215685
-Frag:log10(TAN)           Fragmentation:Total N  0.9928043
-Frag:I(H2O^2)          Fragmentation:Moisture^2  0.9954119
-Block:logCells              Block:Cyanobacteria  0.9976282
-Chamber:log10(TAN)              Chamber:Total N  0.9977970
-Chamber:logCells          Chamber:Cyanobacteria  0.9980405
-Frag:H2O                 Fragmentation:Moisture  0.9982258
-Chamber:I(H2O^2)             Chamber:Moisture^2  0.9998771
-Block:Chamber                     Block:Chamber  0.9999645
-Block:Frag                  Block:Fragmentation  0.9999955
-Chamber:H2O                    Chamber:Moisture  0.9999963
-Block:I(H2O^2)                 Block:Moisture^2  0.9999980
-Chamber:Frag              Chamber:Fragmentation  0.9999995
-Block:H2O                        Block:Moisture  0.9999996
-H2O:I(H2O^2)                Moisture:Moisture^2  1.0000000
-Chamber                                 Chamber  1.0000000
+I(H2O^2):log10(TAN)          Moisture^2:Total N  0.2882871
+log10(TAN):logCells       Total N:Cyanobacteria  0.4460295
+I(H2O^2):logCells      Moisture^2:Cyanobacteria  0.4573149
+H2O:logCells             Moisture:Cyanobacteria  0.4927943
+Block:log10(TAN)                  Block:Total N  0.5324212
+Frag:logCells       Fragmentation:Cyanobacteria  0.8662840
+H2O:log10(TAN)                 Moisture:Total N  0.9275633
+Frag:I(H2O^2)          Fragmentation:Moisture^2  0.9840967
+Frag:H2O                 Fragmentation:Moisture  0.9878216
+Chamber:logCells          Chamber:Cyanobacteria  0.9935301
+Block:logCells              Block:Cyanobacteria  0.9961291
+Frag:log10(TAN)           Fragmentation:Total N  0.9967182
+Chamber:log10(TAN)              Chamber:Total N  0.9982887
+Chamber:I(H2O^2)             Chamber:Moisture^2  0.9999138
+Block:Chamber                     Block:Chamber  0.9999715
+Block:Frag                  Block:Fragmentation  0.9999911
+Chamber:H2O                    Chamber:Moisture  0.9999952
+Block:I(H2O^2)                 Block:Moisture^2  0.9999961
+Chamber:Frag              Chamber:Fragmentation  0.9999997
+Block:H2O                        Block:Moisture  0.9999997
+log10(TAN)                              Total N  0.9999998
+H2O:I(H2O^2)                Moisture:Moisture^2  0.9999999
 Block                                     Block  1.0000000
+Chamber                                 Chamber  1.0000000
 Frag                              Fragmentation  1.0000000
 H2O                                    Moisture  1.0000000
 I(H2O^2)                             Moisture^2  1.0000000
 logCells                          Cyanobacteria  1.0000000
-log10(TAN)                              Total N  1.0000000
 
 
 Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
@@ -123,7 +123,7 @@ Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
     I(H2O^2):H2O + Chamber:H2O + Chamber:I(H2O^2) + Chamber:logCells + 
     Chamber:log10(TAN) + Frag:H2O + Frag:I(H2O^2) + Frag:logCells + 
     Frag:log10(TAN)
-<environment: 0x1b7f3ec4>
+<environment: 0x3d75e56c>
 Denom. DF: 62 
                    numDF  F-value p-value
 (Intercept)            1 4573.757  <.0001

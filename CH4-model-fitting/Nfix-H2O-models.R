@@ -1,8 +1,8 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression models for N-fixation (ARA)
-###  With quadratic H2O term
-### Jonathan Whiteley     R v2.12     2012-07-16
+###  WITHOUT quadratic H2O term
+### Jonathan Whiteley     R v2.12     2012-07-17
 ################################################################
 if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
@@ -15,13 +15,27 @@ if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
 ## Clear memory, load data, functions, etc.  Process data & setup config. settings
 source('./CH4-model-fitting/Nfix_setup.R')
 
+##==============================================================
+## Custom labels
+##==============================================================
+Save.glmulti  <- paste(SaveDir.obj(), "Nfix-H2O.glmulti.R", sep="")
+Old.label <- sprintf("%s~", Y.col) 
+New.label <- sprintf("%s~H2O-", Y.col) 
+Save.filename  <- gsub(Old.label, New.label, Save.filename,  fixed = TRUE)
+Save.text      <- gsub(Old.label, New.label, Save.text,      fixed = TRUE)
+Save.plots     <- gsub(Old.label, New.label, Save.plots,     fixed = TRUE)
+Save.final     <- gsub(Old.label, New.label, Save.final,     fixed = TRUE)
+Fig.filename   <- gsub(Old.label, New.label, Fig.filename,   fixed = TRUE)
+Suppl.filename <- gsub(Old.label, New.label, Suppl.filename, fixed = TRUE)
+Save.results <- FALSE
+
 
 library(nlme)
 ################################################################
 ## MODEL FORMULA
 ################################################################
-Y.main   <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + log10(TAN)
-Y.fixed  <- Y.trans ~ Block + Chamber * Frag * H2O * I(H2O^2) * logCells * log10(TAN)
+Y.main   <- Y.trans ~ Block + Chamber + Frag + H2O + logCells + log10(TAN)
+Y.fixed  <- Y.trans ~ Block + Chamber * Frag * H2O * logCells * log10(TAN)
 Y.full   <- Y.fixed                    # not enough replication to test full range of interactions
 Y.random <-  ~ 1 | Block/Chamber/Frag 
 
@@ -58,7 +72,7 @@ Y.pred <- expand.grid(Block    = levels(SECCa$Block) ,
                       )
 
 
-cat("- Fitting models:", Y.col, "\n")
+cat("- Fitting models:", Y.col, "~ H2O\n")
 ################################################################
 ## MODEL FITTING
 ################################################################
@@ -231,8 +245,7 @@ if (file.exists(Save.glmulti))
   ## save derivative objects to speed up loading for future analysis.  
   ## The raw glmulti objects make for a big file (and a lot of memory): >1 GB!
   save(Y.pmulti1, Y.pmulti2, Y.best2, Y.best2lm, 
-	   Y.mtable1, Y.mtable2, Y.coef2, Y.imp1, Y.imp2, 
-	   ## Y.coef1, Y.importance1, Y.est1, Y.importance2, Y.est2,
+	   Y.mtable1, Y.mtable2, Y.coef2, Y.imp1, Y.imp2, # Y.coef1, 
 	   Y.multipred, file=Save.glmulti)
 
   rm(Y.glmulti1, Y.glmulti2, Y.glmultiB, Y.glmultiBr) # save memory? not right away, but maybe eventually :(
@@ -920,4 +933,4 @@ if (Save.results == TRUE)
   print(H.part.plot)
   print(N.part.plot)
 }
-cat("- Finished Model Fitting:", Y.col, "-\n")
+cat("- Finished Model Fitting:", Y.col, "~ H2O -\n")
