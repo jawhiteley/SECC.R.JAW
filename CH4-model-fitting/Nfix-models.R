@@ -366,7 +366,7 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 ## - less in Block effects (other than accounting for them)
 ## - less in interactions with TAN
 ## - Frag:TempC, Chamber:Frag, etc.
-## - H2O & anything (think of H2O:I(H2O^2) as a single term
+## - H2O & anything (think of H2O:I(H2O^2) as a single term)
 ## - logCells and anything...
 
 ## based on Y.best2, keeping only interactions of interest, or high "Importance"
@@ -614,9 +614,7 @@ x.ord    <- order(H.re)
 Y.H.pred <- predict(Y.H, interval="confidence", level=0.95) # 95% CI bands
 
 plot(H.re, Y.re, pch=20)
-## points(H.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
-## abline(Y.H, col="red")
-## 95% CI?
+## 95% CI
 lines(H.re[x.ord], Y.H.pred[x.ord, 1], col="red", lty=1, lwd=2)
 lines(H.re[x.ord], Y.H.pred[x.ord, 2], col="red", lty=2)
 lines(H.re[x.ord], Y.H.pred[x.ord, 3], col="red", lty=2)
@@ -642,9 +640,7 @@ x.ord    <- order(N.re)
 Y.N.pred <- predict(Y.N, interval="confidence", level=0.95) # 95% CI bands
 
 plot(N.re, Y.re, pch=20)
-## points(N.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
-## abline(Y.N, col="red")
-## 95% CI?
+## 95% CI
 lines(N.re[x.ord], Y.N.pred[x.ord, 1], col="red", lty=1, lwd=2)
 lines(N.re[x.ord], Y.N.pred[x.ord, 2], col="red", lty=2)
 lines(N.re[x.ord], Y.N.pred[x.ord, 3], col="red", lty=2)
@@ -887,17 +883,17 @@ if (Save.results == TRUE)
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sH2O.eps",	 Fig.filename), plot = H.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxH2O.eps",	 Fig.filename), plot = TH.plot, 
+  ggsave(filename = sprintf("%sCxH2O.eps",	 Fig.filename), plot = TH.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sFxH2O.eps",	 Fig.filename), plot = FH.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sCells.eps",	 Fig.filename), plot = C.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxCells.eps", Fig.filename), plot = CT.plot, 
+  ggsave(filename = sprintf("%sCxCells.eps", Fig.filename), plot = CT.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN.eps",	 Fig.filename), plot = N.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxTAN.eps",	 Fig.filename), plot = NT.plot, 
+  ggsave(filename = sprintf("%sCxTAN.eps",	 Fig.filename), plot = NT.plot, 
          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
   ggsave(filename = sprintf("%sCells-partial.eps", Fig.filename), plot = X.part.plot, 

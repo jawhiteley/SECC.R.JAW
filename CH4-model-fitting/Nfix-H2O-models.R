@@ -27,7 +27,7 @@ Save.plots     <- gsub(Old.label, New.label, Save.plots,     fixed = TRUE)
 Save.final     <- gsub(Old.label, New.label, Save.final,     fixed = TRUE)
 Fig.filename   <- gsub(Old.label, New.label, Fig.filename,   fixed = TRUE)
 Suppl.filename <- gsub(Old.label, New.label, Suppl.filename, fixed = TRUE)
-Save.results <- FALSE
+## Save.results   <- FALSE
 
 
 library(nlme)
@@ -365,56 +365,39 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 }
 
 ## Important 2-way interactions (no mixed effects):
-## H2O:H2O^2   (?  I interpret this as a nonlinear relationship based on some combination of the linear & quadratic terms)
-## ...
-##   Basically, everything except:  (which is interesting, too)
-##   H2O:logTAN ??
-##   Block:logTAN ?
-##   H2O^2:logTAN
-##      These are actually interesting:
-##   logTAN:logCells
-##   H2O:logCells
-##   H2O^2:logCells
+##  Block:logCells
+##  Chamber:H2O
+##  Block:Chamber
+##  Block:H2O
+##  Chamber:Frag
+##  H2O:logCells
+
 ## What am I actually interested in?
 ## - less in Block effects (other than accounting for them)
 ## - less in interactions with TAN
-## - Frag:TempC, Chamber:Frag, etc.
+## - Chamber:Frag, Frag:TempC, etc.
 ## - H2O & anything (think of H2O:I(H2O^2) as a single term
 ## - logCells and anything...
 
 ## based on Y.best2, keeping only interactions of interest, or high "Importance"
-Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
-            log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + 
-            I(H2O^2):H2O + Chamber:H2O + Chamber:I(H2O^2) +  
-			Chamber:logCells + Chamber:log10(TAN) +
-			## Block:H2O + Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + 
-			Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)
+Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + logCells + log10(TAN) + 
+			Block:Chamber + Chamber:Frag + Chamber:H2O +  
+			Block:H2O + Block:logCells + H2O:logCells
 
 ## Implied higher-order interactions
-## Block * Chamber * Frag * H2O * I(H2O^2)
-## Block * Chamber * Frag * logCells
-## Chamber * Frag * log10(TAN)
+## Block * Chamber * H2O
+## Block * H2O * logCells
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
-## dropping some 2-way log10(TAN) interactions, and adding more higher-order interactions
-Y.fixHi <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
-            log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + 
-            I(H2O^2):H2O + Chamber:H2O + Chamber:I(H2O^2) +  
-			Chamber:logCells + Chamber:log10(TAN) +
-			Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN) + 
-            Block:Chamber:Frag + Chamber:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) + 
-            Chamber:Frag:logCells + Chamber:Frag:log10(TAN)
-
-## Add 3-way interactions to Y.fixed
-Y.fixHi <- update(Y.fixed, .~. + Block:Chamber:Frag + Chamber:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) + 
-                                 Chamber:Frag:logCells + Chamber:Frag:log10(TAN)
-)
+Y.fixHi <- Y.trans ~ Block * Chamber * H2O + Frag + logCells + log10(TAN) + 
+			Chamber:Frag + Block:logCells + H2O:logCells +
+			Block:H2O:logCells
 
 
 ##==============================================================
 ## MODEL FITTING: Final Fixed & Random Effects?
 ##==============================================================
 ##	Model-fitting often fails with many interaction terms + heterogeneity + random nested structure (+ ML)
-TryMM <- FALSE                         # try fitting complex Mixed Models with interaction terms?
+TryMM <- TRUE                         # try fitting complex Mixed Models with interaction terms?
 
 Y.fxlm <- lm(Y.fixed, data = SECCa)
 Y.fHlm <- lm(Y.fixHi, data = SECCa)
@@ -450,19 +433,17 @@ if (TryMM)
   anova(Y.mHf, Y.mef)
   ## Compare fuller model with best model from glmulti
   Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
-  Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
+  Y.mlf <- lme(Y.fixHi, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   ## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
-  anova(Y.mlf, Y.mb2)      # adding the extra interaction term does increase the AIC (worse), but not significantly so.
+  anova(Y.mlf, Y.mb2)      # adding the extra interaction term does increase the AIC (worse).
 }
 
 ## SO, Which model should I use?
 ##  All I really need a model for at this point is predictions and graphs.
 ##  Ideally, I would prefer the full model with higher order interactions and all random effects (Y.me),
-##    however, this model may be too complex: several coefficients have 0 df & p = NaN (see summary(Y.me))
-##	Model-fitting often fails with many interaction terms + heterogeneity + random nested structure (+ ML)
-##  Adding heterogeneity to some models makes the residuals worse (less normal, more patterns?)
+##  Adding heterogeneity to some models improves the residuals
 ## Y.fit  <- Y.me
-Y.fit  <- Y.mHf
+Y.fit  <- Y.mH
 
 
 
@@ -539,32 +520,28 @@ if (!inherits(Y.fit, "lm"))
 Y.eff     <- allEffects(Y.fit)
 T.eff     <- effect("Chamber", Y.fit)
 F.eff     <- effect("Frag", Y.fit)
-H.eff     <- effect("H2O:I(H2O^2)", Y.fit)
+H.eff     <- effect("H2O", Y.fit)
 C.eff     <- effect("logCells", Y.fit)
 N.eff     <- effect("log10(TAN)", Y.fit)
-BH.eff    <- effect("Block:H2O:I(H2O^2)", Y.fit)
-TH.eff    <- effect("Chamber:H2O:I(H2O^2)", Y.fit)
-FH.eff    <- effect("Frag:H2O:I(H2O^2)", Y.fit)
-##   CH.eff    <- effect("H2O:I(H2O^2):logCells", Y.fit, xlevels=list(H2O=H2O.9lvls))
-  CF.eff    <- effect("Frag:logCells", Y.fit)
-  CT.eff    <- effect("Chamber:logCells", Y.fit)
-  NT.eff    <- effect("Chamber:log10(TAN)", Y.fit)
-  NF.eff    <- effect("Frag:log10(TAN)", Y.fit)
+TF.eff    <- effect("Chamber:Frag", Y.fit)
+BH.eff    <- effect("Block:H2O", Y.fit)
+TH.eff    <- effect("Chamber:H2O", Y.fit)
+## FH.eff    <- effect("Frag:H2O", Y.fit)
+CH.eff    <- effect("H2O:logCells", Y.fit, xlevels=list(H2O=H2O.9lvls))
+##   CT.eff    <- effect("Chamber:logCells", Y.fit)
+##   NT.eff    <- effect("Chamber:log10(TAN)", Y.fit)
+##   NF.eff    <- effect("Frag:log10(TAN)", Y.fit)
 
 plot(F.eff, ask = FALSE)
 plot(H.eff, ask = FALSE)
 plot(T.eff, ask = FALSE)
 plot(C.eff, ask = FALSE)
 plot(N.eff, ask = FALSE)
+plot(TF.eff, x.var = "Frag", ask = FALSE)
 plot(BH.eff, x.var = "H2O", ask = FALSE)
 plot(TH.eff, x.var = "H2O", ask = FALSE)
-plot(FH.eff, x.var = "H2O", ask = FALSE)
-plot(FH.eff, x.var = "Frag", ask = FALSE)
-## plot(CH.eff, x.var = "logCells", ask = FALSE)
-  plot(CF.eff, x.var = "logCells", ask = FALSE)
-  plot(CT.eff, x.var = "logCells", ask = FALSE)
-  plot(NT.eff, x.var = "TAN", ask = FALSE)
-  plot(NF.eff, x.var = "TAN", ask = FALSE)
+plot(CH.eff, x.var = "H2O", ask = FALSE)
+plot(CH.eff, x.var = "logCells", ask = FALSE)
 
 
 ##==============================================================
@@ -597,9 +574,7 @@ x.ord    <- order(X.re)
 Y.X.pred <- predict(Y.X, interval="confidence", level=0.95) # 95% CI bands
 
 plot(X.re, Y.re, pch=20)
-## points(X.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
-## abline(Y.X, col="red")
-## 95% CI?
+## 95% CI
 lines(X.re[x.ord], Y.X.pred[x.ord, 1], col="red", lty=1, lwd=2)
 lines(X.re[x.ord], Y.X.pred[x.ord, 2], col="red", lty=2)
 lines(X.re[x.ord], Y.X.pred[x.ord, 3], col="red", lty=2)
@@ -627,9 +602,7 @@ x.ord    <- order(H.re)
 Y.H.pred <- predict(Y.H, interval="confidence", level=0.95) # 95% CI bands
 
 plot(H.re, Y.re, pch=20)
-## points(H.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
-## abline(Y.H, col="red")
-## 95% CI?
+## 95% CI
 lines(H.re[x.ord], Y.H.pred[x.ord, 1], col="red", lty=1, lwd=2)
 lines(H.re[x.ord], Y.H.pred[x.ord, 2], col="red", lty=2)
 lines(H.re[x.ord], Y.H.pred[x.ord, 3], col="red", lty=2)
@@ -655,9 +628,7 @@ x.ord    <- order(N.re)
 Y.N.pred <- predict(Y.N, interval="confidence", level=0.95) # 95% CI bands
 
 plot(N.re, Y.re, pch=20)
-## points(N.re[SECCa$Chamber=="Full Chamber"], Y.re[SECCa$Chamber=="Full Chamber"], pch=19, col="red4")
-## abline(Y.N, col="red")
-## 95% CI?
+## 95% CI
 lines(N.re[x.ord], Y.N.pred[x.ord, 1], col="red", lty=1, lwd=2)
 lines(N.re[x.ord], Y.N.pred[x.ord, 2], col="red", lty=2)
 lines(N.re[x.ord], Y.N.pred[x.ord, 3], col="red", lty=2)
@@ -755,9 +726,30 @@ T.pdata <- effect.to.df(T.eff, fun = alog0)
 T.plot <- ggplot(SECCa, aes(y = Y, x = Chamber)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber),
 					   position = position_jitter(width = 0.1)) +
-			eff.layer(eff = T.pdata, conf.int = FALSE) +
-			xlab(SECC.axislab(SECCa, col = "Chamber", parens=TRUE)) + ylab(Y.label) +
-			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			geom_crossbar(data=T.pdata, aes(y = effect, ymax = upper, ymin = lower, lty=1),
+						  width = 0.5) +
+			xlab(SECC.axislab(SECCa, col = "Chamber", parens=FALSE)) + ylab(Y.label) +
+			jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+
+TF.pdata <- effect.to.df(TF.eff, fun = alog0)
+TF.plot  <- ggplot(SECCa, aes(x = Frag)) + ylim(Y.lim) +
+			geom_point(size = 3, aes(y = Y, group = Chamber, colour = Chamber, shape = Chamber),
+					   position = position_jitter( width = 0.1 ) ) +
+			geom_line(data=TF.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
+			geom_errorbar(data=TF.pdata, aes(ymax = upper, ymin = lower, 
+											 lty=1, group = Chamber, colour = Chamber, lwd = Chamber ),
+						  width = 0.25) +
+			xlab(SECC.axislab(SECCa, col = "Frag", parens=FALSE)) + ylab(Y.label) +
+			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
+
+F.pdata <- effect.to.df(F.eff, fun = alog0)
+F.plot <- ggplot(SECCa, aes(y = Y, x = Frag)) + ylim(Y.lim) +
+			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber),
+					   position = position_jitter(width = 0.1)) +
+			geom_crossbar(data=F.pdata, aes(y = effect, ymax = upper, ymin = lower, lty=1),
+						  width = 0.5) +
+			xlab(SECC.axislab(SECCa, col = "Frag", parens=FALSE)) + ylab(Y.label) +
+			jaw.ggplot() + ChamberPts + TopLegend
 
 
 ##______________________________________________________________
@@ -767,7 +759,7 @@ H.plot <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = H.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
-			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
 TH.pdata <- effect.to.df(TH.eff, fun = alog0)
 TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
@@ -778,31 +770,29 @@ TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
-## N-fixation lower in Contiguous chambers on average: likely due to less disturbance (DeLuca pers. comm.)?
-FH.pdata <- effect.to.df(FH.eff, fun = alog0)
-FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			eff.layer(eff = FH.pdata, conf.int = TRUE) + facet_wrap(~ Frag) +
+CH.pdata <- effect.to.df(CH.eff, fun = alog0)
+CH.pdata$panel <- factor(CH.pdata$H2O, levels = unique(CH.pdata$H2O), 
+						 labels = format(unique(CH.pdata$H2O), digits = 2) )
+CH.pdata$panel <- factor(CH.pdata$panel, levels = sort(levels(CH.pdata$panel), decreasing = FALSE ) )
+CH.pdata$panel <- factor(CH.pdata$panel, levels = c(levels(CH.pdata$panel)[7:9], 
+													levels(CH.pdata$panel)[4:6], 
+													levels(CH.pdata$panel)[1:3] 
+													) 
+)
+CH.plot  <- ggplot(CH.pdata, aes(y = Y, x = logCells)) + ylim(Y.lim) +
+			geom_point(data = SECCa, aes(group = Chamber, colour = Chamber, shape = Chamber), size = 3) +
+			eff.layer(eff = CH.pdata, conf.int = TRUE) + facet_wrap(~ panel, nrow = 3) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
-			jaw.ggplot() + ChamberPts + TopLegend
+			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 
 ##______________________________________________________________
 ## cyanobacteria effects
 C.pdata <- effect.to.df(C.eff, fun = alog0)
-C.pdata <- within(C.pdata, Cells.m <- 10^logCells -1 )
+C.pdata <- within(C.pdata, Cells.m <- alog0(logCells) )
 C.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = C.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-
-## This just looks weird
-CT.pdata <- effect.to.df(CT.eff, fun = alog0)
-CT.pdata <- within(CT.pdata, Cells.m <- 10^logCells -1 )
-CT.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			eff.Tlayer(eff = CT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
@@ -812,13 +802,6 @@ N.pdata <- effect.to.df(N.eff, fun = alog0)
 N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = N.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
-			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
-
-NT.pdata <- effect.to.df(NT.eff, fun = alog0)
-NT.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			eff.Tlayer(eff = NT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
@@ -896,21 +879,19 @@ if (Save.results == TRUE)
   ggsave(filename = sprintf("%sEstimates.eps",	 Fig.filename), plot = Y.est2, 
          width = 4, height = 4, scale = 1.5)
   ## Effects plots
-  ggsave(filename = sprintf("%sTemp.eps",	 Fig.filename), plot = T.plot, 
+  ggsave(filename = sprintf("%sChamber.eps",	Fig.filename), plot = T.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sH2O.eps",	 Fig.filename), plot = H.plot, 
+  ggsave(filename = sprintf("%sH2O.eps",		Fig.filename), plot = H.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxH2O.eps",	 Fig.filename), plot = TH.plot, 
+  ggsave(filename = sprintf("%sCxH2O.eps",		Fig.filename), plot = TH.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sFxH2O.eps",	 Fig.filename), plot = FH.plot, 
+  ggsave(filename = sprintf("%sFxC.eps",		Fig.filename), plot = TF.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sCells.eps",	 Fig.filename), plot = C.plot, 
+  ggsave(filename = sprintf("%sCells.eps",		Fig.filename), plot = C.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxCells.eps", Fig.filename), plot = CT.plot, 
+  ggsave(filename = sprintf("%sH2OxCells.eps",  Fig.filename), plot = CH.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTAN.eps",	 Fig.filename), plot = N.plot, 
-         width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sTxTAN.eps",	 Fig.filename), plot = NT.plot, 
+  ggsave(filename = sprintf("%sTAN.eps",		Fig.filename), plot = N.plot, 
          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
   ggsave(filename = sprintf("%sCells-partial.eps", Fig.filename), plot = X.part.plot, 
@@ -923,11 +904,10 @@ if (Save.results == TRUE)
   print(T.plot)
   print(H.plot)
   print(TH.plot)
-  print(FH.plot)
+  print(TF.plot)
   print(C.plot)
-  print(CT.plot)
+  print(CH.plot)
   print(N.plot)
-  print(NT.plot)
   ## Partial Regression plots
   print(X.part.plot)
   print(H.part.plot)
