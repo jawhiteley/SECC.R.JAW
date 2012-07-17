@@ -155,6 +155,35 @@ PartialFormula <- function (model = "", x.var = "", part = "both")
 }
 
 
+RegPlot.annote <- function(model, part = c("equation", "pvalue", "r.squared") )
+{   # extract some common annotations to add to a regression plot - suitable for ggplot geom_text(..., parse = TRUE)
+  mod.summary <- summary(model)
+  mod.eq <- sprintf("y = %.1f %s paste(%.3f,x)", round(coef(model)[1], digits = 2), 
+                      ifelse(coef(model)[2] > 0, "+", "-"), abs(coef(model)[2]) )
+  mod.eq <- sub("-?0\\.0 ", "", mod.eq) # clean-up
+  mod.eq <- sub("= \\+ ", "= ", mod.eq) # clean-up
+  mod.eq <- gsub("([xy])", "italic(\\1)", mod.eq) # prep for expression
+  mod.eq <- gsub(" = ", "~\"=\"~", mod.eq) # prep for expression
+  Pvalue <- pf(mod.summary$fstatistic[1], mod.summary$fstatistic[2],
+               mod.summary$fstatistic[3], lower.tail = FALSE) 
+  mod.pv <- substitute(italic(F)[list(df1,df2)]~"="~Fval~", "~italic(p)~pchar~pval, 
+                       list(df1 = mod.summary$fstatistic['numdf'],
+                            df2 = mod.summary$fstatistic['dendf'],
+                            Fval     = sprintf("%.2f", mod.summary$fstatistic['value']),
+                            pchar    = ifelse(Pvalue < 0.001, "<", "="),
+                            pval     = sprintf("%.3f", ifelse(Pvalue < 0.001, 0.001, Pvalue) )
+                            )
+  )
+  mod.r2 <- substitute( italic(r)^2~"="~r2, list(r2 = sprintf("%.3f", summary(model)$r.squared)) )
+
+  out <- c()
+  if (length(grep("eq", part)) > 0) out <- c(out, mod.eq)
+  if (length(grep("pv", part)) > 0) out <- c(out, as.character(as.expression(mod.pv)) )
+  if (length(grep("r",  part)) > 0) out <- c(out, as.character(as.expression(mod.r2)))
+
+  out
+}
+
 
 ###=============================================================
 

@@ -110,7 +110,7 @@ Save.head.txt <- Save.header(Save.head)
 Save.end.txt  <- Save.end()
 
 
-Fig.filename <- sprintf("%s%s/Figure-%s~", SaveDir.plots(), Subdir, Y.col
+Fig.filename <- sprintf("%s%sFigure-%s~", SaveDir.plots(), Subdir, Y.col
 ###                         , paste(which(levels(SECC$Time) == Time.use), collapse="") 
 )
 Suppl.filename <- sprintf("%s%sSupplemental-%s~", SaveDir.plots(), Subdir, Y.col)
