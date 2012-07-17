@@ -1,7 +1,7 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression trees: Moss Growth (mm)
-### Jonathan Whiteley     R v2.12     2012-07-15
+### Jonathan Whiteley     R v2.12     2012-07-16
 ################################################################
 ## INITIALISE
 ################################################################
@@ -48,7 +48,7 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ## Main effects only
 ##  include Block just to see relative importance
 ##  can also include Block as an 'offset' variable: offset(Block)
-Y.main   <- Y ~ Block + TempC + Frag + H2O + logNfix + logTAN
+Y.main   <- Y ~ Block + Chamber + Frag + H2O + logNfix + logTAN
 
 
 ##==============================================================
@@ -96,9 +96,9 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
 }
 
 if (minsplit==20) {
-  Y.cp <- 0.041                    # actual means are a little lower, but the resulting cutoff is effectively the same
+  Y.cp <- 0.04
 } else {
-  Y.cp <- 0.042                    # reduce smaller branches (over-fitting)
+  Y.cp <- 0.04                        # 0.035 to show a *little* more
 }
 Y.treeP  <- prune(Y.tree , cp=Y.cp)
 
@@ -132,13 +132,13 @@ print(Y.tree)
 print(Y.treeP)
 
 par.label <- paste("minsplit =", minsplit)
-Y.plot <- plot(Y.treeP, main=paste("Pruned", par.label), 
-                 minbranch = 0, margin=0.1, compress=FALSE)
-text(Y.treeP, use.n = TRUE, cex=0.8)
-
 plot(Y.tree, main=paste("Full", par.label), 
                  minbranch = 0, margin=0.1, compress=FALSE)
 text(Y.tree, use.n = TRUE, cex=0.8)
+
+Y.plot <- plot(Y.treeP, main=paste("Pruned", par.label), 
+                 minbranch = 0, margin=0.1, compress=FALSE)
+text(Y.treeP, use.n = TRUE, cex=0.8)
 
 
 

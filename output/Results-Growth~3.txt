@@ -5,208 +5,173 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Mon Jul 16 17:11:10 2012
+Mon Jul 16 20:23:28 2012
 ================================================================
 
 Analysis of Variance Table
 
 Response: Y.trans
-                 Df Sum Sq Mean Sq F value Pr(>F)  PropVar
-H2O               1 694.33  694.33                0.216213
-Block:Frag       21 426.59   20.31                0.132839
-Block             7 308.76   44.11                0.096147
-Block:TempC       7 304.25   43.46                0.094742
-Block:Frag:TempC 19 197.35   10.39                0.061453
-logNfix           1 195.46  195.46                0.060865
-Block:logNfix     7 191.05   27.29                0.059491
-Block:logTAN      7 180.33   25.76                0.056155
-TempC             1 175.33  175.33                0.054598
-Block:H2O         7 110.04   15.72                0.034267
-Frag:logNfix      3 106.49   35.50                0.033159
-Frag              3  77.95   25.98                0.024275
-Frag:logTAN       3  60.82   20.27                0.018938
-TempC:logTAN      1  58.35   58.35                0.018171
-H2O:logNfix       1  47.72   47.72                0.014859
-logTAN            1  30.45   30.45                0.009482
-logNfix:logTAN    1  23.90   23.90                0.007443
-Frag:TempC        3  10.71    3.57                0.003335
-Frag:H2O          3   6.92    2.31                0.002153
-H2O:logTAN        1   2.71    2.71                0.000844
-TempC:logNfix     1   1.46    1.46                0.000456
-TempC:H2O         1   0.36    0.36                0.000113
-Residuals         0   0.00                        0.000000
+                   Df  Sum Sq Mean Sq F value Pr(>F)  PropVar
+H2O                 1 1386.89 1386.89                0.308536
+Chamber             1  562.85  562.85                0.125215
+Block:Chamber:Frag 20  367.09   18.35                0.081665
+Block:Frag         21  338.54   16.12                0.075314
+Block               7  320.83   45.83                0.071373
+Block:Chamber       7  246.79   35.26                0.054902
+Block:H2O           7  236.73   33.82                0.052664
+Block:logTAN        7  229.22   32.75                0.050995
+logNfix             1  193.45  193.45                0.043035
+Block:Frag:H2O      6  149.90   24.98                0.033348
+Block:logNfix       7  104.43   14.92                0.023232
+Block:Chamber:H2O   7  101.74   14.53                0.022634
+Frag:logNfix        3   72.81   24.27                0.016198
+Frag:logTAN         3   51.47   17.16                0.011451
+Chamber:Frag        3   33.65   11.22                0.007486
+Frag                3   22.05    7.35                0.004905
+Frag:H2O            3   20.90    6.97                0.004651
+H2O:logNfix         1   18.90   18.90                0.004204
+logTAN              1   16.79   16.79                0.003735
+Chamber:logNfix     1    9.81    9.81                0.002183
+Chamber:logTAN      1    7.12    7.12                0.001583
+Chamber:H2O         1    1.18    1.18                0.000263
+logNfix:logTAN      1    1.15    1.15                0.000256
+H2O:logTAN          1    0.78    0.78                0.000174
+Residuals           0    0.00                        0.000000
 
 
 consensus of 6-glmulti.analysis Method: g / Fitting: lm / IC used: aic Level: 2 / Marginality: TRUE 
-From 256 models: Best IC: 519.27383274864 Best model: 
-[1] "Y.trans ~ 1 + Block + Frag + TempC + H2O + logNfix + logTAN + "          
-[2] "    Frag:Block + H2O:TempC + logNfix:H2O + logTAN:TempC + logTAN:H2O + " 
-[3] "    logTAN:logNfix + Block:TempC + Block:H2O + Block:logNfix + "         
-[4] "    Block:logTAN + Frag:TempC + Frag:H2O + Frag:logNfix + Frag:logTAN"   
-Evidence weight: 0.480196803551115 Worst IC: 588.280607462149 2 models within 2 IC units. 
-3 models to reach 95% of evidence weight. Convergence after 930 generations. 
-Time elapsed: 3.92896666526794 minutes.
-                                             Term Importance
-logNfix:TempC              N-fixation:Temperature  0.4296924
-Frag:H2O          Fragmentationmentation:Moisture  0.8094512
-H2O:logTAN                       Moisture:Total N  0.9650343
-logNfix:logTAN                 N-fixation:Total N  0.9879270
-Frag:TempC     Fragmentationmentation:Temperature  0.9999263
-logTAN:TempC                  Total N:Temperature  0.9999632
-H2O:TempC                    Moisture:Temperature  0.9999811
-H2O:logNfix                   Moisture:N-fixation  0.9999937
-Frag:logTAN        Fragmentationmentation:Total N  1.0000000
-Block:logTAN                        Block:Total N  1.0000000
-Block:logNfix                    Block:N-fixation  1.0000000
-Frag:logNfix    Fragmentationmentation:N-fixation  1.0000000
-logTAN                                    Total N  1.0000000
-Block                                       Block  1.0000000
-Frag                       Fragmentationmentation  1.0000000
-TempC                                 Temperature  1.0000000
-H2O                                      Moisture  1.0000000
-logNfix                                N-fixation  1.0000000
-Block:Frag           Block:Fragmentationmentation  1.0000000
-Block:TempC                     Block:Temperature  1.0000000
-Block:H2O                          Block:Moisture  1.0000000
+From 256 models: Best IC: 670.353006022713 Best model: [1] "Y.trans ~ 1 + H2O + logNfix" 
+Evidence weight: 0.0890882904709624 Worst IC: 683.300261237301 9 models within 2 IC units. 
+102 models to reach 95% of evidence weight. Convergence after 1060 generations. 
+Time elapsed: 4.99206105073293 minutes.
+                                    Term  Importance
+Frag:H2O          Fragmentation:Moisture 0.007184183
+Chamber:Frag       Chamber:Fragmentation 0.012136217
+Frag:logTAN        Fragmentation:Total N 0.026193861
+Block:logNfix           Block:N-fixation 0.058887292
+H2O:logTAN              Moisture:Total N 0.061562104
+Block:Frag           Block:Fragmentation 0.061785368
+Block:logTAN               Block:Total N 0.061785368
+Block:H2O                 Block:Moisture 0.063659592
+Frag:logNfix    Fragmentation:N-fixation 0.068660563
+Block:Chamber              Block:Chamber 0.083451853
+Chamber:logTAN           Chamber:Total N 0.099184070
+Block                              Block 0.108331636
+Frag                       Fragmentation 0.121286720
+logNfix:logTAN        N-fixation:Total N 0.128727446
+Chamber:H2O             Chamber:Moisture 0.407797064
+logTAN                           Total N 0.426823091
+H2O:logNfix          Moisture:N-fixation 0.485944961
+Chamber:logNfix       Chamber:N-fixation 0.500296373
+Chamber                          Chamber 0.781686246
+H2O                             Moisture 0.992324618
+logNfix                       N-fixation 1.000000000
 
 
-Y.trans ~ 1 + Block + Frag + TempC + H2O + logNfix + logTAN + 
-    Frag:Block + H2O:TempC + logNfix:H2O + logTAN:TempC + logTAN:H2O + 
-    logTAN:logNfix + Block:TempC + Block:H2O + Block:logNfix + 
-    Block:logTAN + Frag:TempC + Frag:H2O + Frag:logNfix + Frag:logTAN
-Anova Table (Type II tests)
+Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
+<environment: 0x3a5319dc>
+Denom. DF: 96 
+                    numDF  F-value p-value
+(Intercept)             1 450.8367  <.0001
+Block                   7   5.6132  <.0001
+Frag                    3   2.6651  0.0522
+Chamber                 1  70.6541  <.0001
+H2O                     1  99.5072  <.0001
+logNfix                 1  24.0231  <.0001
+logTAN                  1   0.7159  0.3996
+Chamber:H2O             1   2.0563  0.1548
+Chamber:logNfix         1   2.3178  0.1312
+H2O:logNfix             1   3.5072  0.0641
+Chamber:H2O:logNfix     1   0.1583  0.6916
+Generalized least squares fit by REML
+  Model: Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN 
+  Data: SECCa 
+       AIC      BIC    logLik
+  674.8161 744.0535 -310.4081
 
-Response: Y.trans
-               Sum Sq Df F value    Pr(>F)    
-Block          166.91  7  2.3928 0.0595556 .  
-Frag            39.07  3  1.3069 0.2997898    
-TempC            3.15  1  0.3157 0.5804692    
-H2O             26.26  1  2.6352 0.1201730    
-logNfix         93.12  1  9.3447 0.0062234 ** 
-logTAN           1.19  1  0.1197 0.7329938    
-Block:Frag     700.66 21  3.3482 0.0045109 ** 
-TempC:H2O       53.98  1  5.4171 0.0305541 *  
-H2O:logNfix     62.79  1  6.3010 0.0207768 *  
-TempC:logTAN    59.93  1  6.0141 0.0234987 *  
-H2O:logTAN      16.76  1  1.6821 0.2094145    
-logNfix:logTAN  23.38  1  2.3460 0.1412709    
-Block:TempC    490.24  7  7.0281 0.0002699 ***
-Block:H2O      321.70  7  4.6118 0.0032846 ** 
-Block:logNfix  307.75  7  4.4118 0.0041541 ** 
-Block:logTAN   203.94  7  2.9237 0.0280556 *  
-Frag:TempC      64.59  3  2.1605 0.1245031    
-Frag:H2O        20.96  3  0.7013 0.5623096    
-Frag:logNfix   244.15  3  8.1671 0.0009562 ***
-Frag:logTAN    131.58  3  4.4014 0.0156225 *  
-Residuals      199.30 20                      
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
-
-Call:
-lm(formula = Y.best2, data = SECCa)
-
-Residuals:
-    Min      1Q  Median      3Q     Max 
--3.2704 -0.9346 -0.0264  1.0971  3.0510 
+Variance function:
+ Structure: Different standard deviations per stratum
+ Formula: ~1 | Block 
+ Parameter estimates:
+        1         2         3         4         5         6         7         8 
+1.0000000 0.8257359 1.6473046 1.2567233 0.5893421 0.5004737 0.9402201 0.4445885 
 
 Coefficients:
-                               Estimate Std. Error t value Pr(>|t|)    
-(Intercept)                   2.396e+02  2.157e+02   1.111 0.279761    
-Block2                       -2.623e+01  6.635e+01  -0.395 0.696755    
-Block3                       -3.625e+02  6.743e+01  -5.375 2.92e-05 ***
-Block4                       -8.698e+01  5.627e+01  -1.546 0.137861    
-Block5                       -8.891e+01  5.702e+01  -1.559 0.134650    
-Block6                       -2.338e+02  7.221e+01  -3.237 0.004130 ** 
-Block7                        1.636e+01  4.749e+01   0.344 0.734163    
-Block8                       -1.340e+02  8.292e+01  -1.616 0.121680    
-FragFull Corridors            5.066e+01  4.370e+01   1.159 0.260018    
-FragPseudo-Corridors          2.725e+01  5.069e+01   0.538 0.596790    
-FragIsolated                  6.442e+01  4.555e+01   1.414 0.172598    
-TempC                        -3.600e+01  2.957e+01  -1.218 0.237537    
-H2O                           4.767e-01  1.972e-01   2.418 0.025296 *  
-logNfix                       2.860e+01  1.133e+01   2.524 0.020160 *  
-logTAN                        2.759e+02  1.089e+02   2.533 0.019789 *  
-Block2:FragFull Corridors    -1.285e+01  7.375e+00  -1.742 0.096903 .  
-Block3:FragFull Corridors     1.490e+01  8.293e+00   1.797 0.087431 .  
-Block4:FragFull Corridors     3.354e-01  6.357e+00   0.053 0.958441    
-Block5:FragFull Corridors     7.303e-01  6.131e+00   0.119 0.906380    
-Block6:FragFull Corridors     8.515e+00  6.395e+00   1.331 0.198025    
-Block7:FragFull Corridors     1.390e+01  6.719e+00   2.068 0.051775 .  
-Block8:FragFull Corridors    -8.674e+00  1.031e+01  -0.841 0.410175    
-Block2:FragPseudo-Corridors   1.374e+01  6.811e+00   2.017 0.057312 .  
-Block3:FragPseudo-Corridors   6.581e+00  6.031e+00   1.091 0.288173    
-Block4:FragPseudo-Corridors   3.578e+00  6.212e+00   0.576 0.571044    
-Block5:FragPseudo-Corridors   5.508e+00  6.316e+00   0.872 0.393468    
-Block6:FragPseudo-Corridors   1.590e+01  7.258e+00   2.191 0.040451 *  
-Block7:FragPseudo-Corridors   1.443e+01  6.907e+00   2.089 0.049667 *  
-Block8:FragPseudo-Corridors  -1.890e+01  5.364e+00  -3.523 0.002140 ** 
-Block2:FragIsolated           2.295e+01  8.321e+00   2.758 0.012133 *  
-Block3:FragIsolated           2.923e+01  8.125e+00   3.598 0.001798 ** 
-Block4:FragIsolated           2.595e+00  6.714e+00   0.386 0.703234    
-Block5:FragIsolated           1.200e+01  6.896e+00   1.740 0.097222 .  
-Block6:FragIsolated          -2.070e+01  2.072e+01  -0.999 0.329842    
-Block7:FragIsolated           1.790e+01  7.963e+00   2.248 0.036014 *  
-Block8:FragIsolated          -9.459e+00  5.435e+00  -1.741 0.097125 .  
-TempC:H2O                    -5.309e-02  2.281e-02  -2.327 0.030554 *  
-H2O:logNfix                  -2.597e-02  1.035e-02  -2.510 0.020777 *  
-TempC:logTAN                 -3.432e+01  1.399e+01  -2.452 0.023499 *  
-H2O:logTAN                   -4.226e-02  3.258e-02  -1.297 0.209415    
-logNfix:logTAN                9.850e+00  6.431e+00   1.532 0.141271    
-Block2:TempC                  8.045e+00  9.997e+00   0.805 0.430462    
-Block3:TempC                  6.930e+01  1.233e+01   5.622 1.67e-05 ***
-Block4:TempC                  1.821e+01  9.413e+00   1.935 0.067280 .  
-Block5:TempC                  1.874e+01  1.065e+01   1.760 0.093753 .  
-Block6:TempC                  4.233e+01  1.327e+01   3.189 0.004609 ** 
-Block7:TempC                  2.966e+00  9.372e+00   0.316 0.754971    
-Block8:TempC                  3.153e+01  1.203e+01   2.621 0.016377 *  
-Block2:H2O                   -1.921e-01  4.657e-02  -4.125 0.000525 ***
-Block3:H2O                   -7.319e-02  3.638e-02  -2.012 0.057921 .  
-Block4:H2O                   -1.437e-01  3.298e-02  -4.358 0.000304 ***
-Block5:H2O                   -1.282e-01  3.435e-02  -3.732 0.001316 ** 
-Block6:H2O                   -1.721e-01  5.710e-02  -3.014 0.006861 ** 
-Block7:H2O                   -9.963e-02  3.947e-02  -2.524 0.020170 *  
-Block8:H2O                   -1.186e-01  3.523e-02  -3.366 0.003072 ** 
-Block2:logNfix                2.716e+01  5.683e+00   4.780 0.000114 ***
-Block3:logNfix                1.206e+01  6.221e+00   1.939 0.066746 .  
-Block4:logNfix                1.247e+01  5.304e+00   2.350 0.029122 *  
-Block5:logNfix                1.564e+01  6.133e+00   2.550 0.019076 *  
-Block6:logNfix                1.628e+01  7.461e+00   2.182 0.041217 *  
-Block7:logNfix                2.058e+00  4.333e+00   0.475 0.640038    
-Block8:logNfix                9.867e+00  5.515e+00   1.789 0.088768 .  
-Block2:logTAN                -3.659e+00  1.081e+01  -0.338 0.738583    
-Block3:logTAN                 7.435e+01  1.817e+01   4.091 0.000568 ***
-Block4:logTAN                -7.479e+00  1.278e+01  -0.585 0.564869    
-Block5:logTAN                 6.582e+00  1.491e+01   0.441 0.663684    
-Block6:logTAN                 2.254e+00  1.407e+01   0.160 0.874323    
-Block7:logTAN                 1.454e+00  1.534e+01   0.095 0.925441    
-Block8:logTAN                 2.202e+01  1.426e+01   1.545 0.138134    
-FragFull Corridors:TempC     -1.382e+01  6.851e+00  -2.017 0.057330 .  
-FragPseudo-Corridors:TempC   -1.019e+01  7.119e+00  -1.432 0.167569    
-FragIsolated:TempC           -1.809e+01  7.281e+00  -2.484 0.021952 *  
-FragFull Corridors:H2O       -2.595e-02  2.884e-02  -0.900 0.378935    
-FragPseudo-Corridors:H2O      5.033e-03  1.615e-02   0.312 0.758607    
-FragIsolated:H2O             -5.354e-03  1.834e-02  -0.292 0.773367    
-FragFull Corridors:logNfix   -3.104e+00  3.787e+00  -0.820 0.422095    
-FragPseudo-Corridors:logNfix -2.084e+01  4.352e+00  -4.788 0.000112 ***
-FragIsolated:logNfix         -1.698e+01  6.363e+00  -2.668 0.014778 *  
-FragFull Corridors:logTAN    -3.624e+01  1.382e+01  -2.622 0.016328 *  
-FragPseudo-Corridors:logTAN  -4.254e+01  1.257e+01  -3.384 0.002950 ** 
-FragIsolated:logTAN          -4.828e+01  1.437e+01  -3.360 0.003115 ** 
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+                                Value Std.Error    t-value p-value
+(Intercept)                  8.113068  6.011160  1.3496677  0.1803
+Block2                       1.305371  1.591416  0.8202577  0.4141
+Block3                       2.935666  2.361766  1.2429957  0.2169
+Block4                       2.924764  1.860140  1.5723352  0.1192
+Block5                       0.240186  1.453571  0.1652384  0.8691
+Block6                       2.012336  1.468571  1.3702687  0.1738
+Block7                       1.731860  1.638515  1.0569691  0.2932
+Block8                       0.320081  1.362283  0.2349595  0.8147
+FragFull Corridors          -0.784313  0.878509 -0.8927771  0.3742
+FragPseudo-Corridors        -1.459201  0.911316 -1.6012020  0.1126
+FragIsolated                -1.480645  0.886545 -1.6701293  0.0982
+ChamberChamber             -11.406898  6.241088 -1.8277099  0.0707
+H2O                         -0.008261  0.010693 -0.7725593  0.4417
+logNfix                     -2.320228  3.873852 -0.5989460  0.5506
+logTAN                      -1.288546  1.279320 -1.0072113  0.3164
+ChamberChamber:H2O           0.012984  0.011167  1.1627407  0.2478
+ChamberChamber:logNfix       3.212870  4.054196  0.7924801  0.4300
+H2O:logNfix                  0.007177  0.006680  1.0743796  0.2853
+ChamberChamber:H2O:logNfix  -0.002813  0.007071 -0.3978382  0.6916
 
-Residual standard error: 3.157 on 20 degrees of freedom
-Multiple R-squared: 0.9379,	Adjusted R-squared: 0.6897 
-F-statistic: 3.778 on 80 and 20 DF,  p-value: 0.0007413 
+ Correlation: 
+                           (Intr) Block2 Block3 Block4 Block5 Block6 Block7 Block8 FrgFlC FrgP-C
+Block2                      0.055                                                               
+Block3                     -0.022  0.416                                                        
+Block4                      0.066  0.533  0.343                                                 
+Block5                      0.057  0.675  0.490  0.560                                          
+Block6                      0.027  0.670  0.496  0.555  0.784                                   
+Block7                     -0.018  0.539  0.348  0.458  0.582  0.575                            
+Block8                      0.130  0.670  0.478  0.582  0.748  0.747  0.604                     
+FragFull Corridors          0.055  0.012 -0.054  0.022 -0.030 -0.041 -0.026 -0.016              
+FragPseudo-Corridors        0.116  0.053 -0.013  0.048  0.047  0.056  0.023  0.007  0.561       
+FragIsolated                0.053  0.018  0.010  0.027  0.059  0.125  0.011  0.020  0.511  0.509
+ChamberChamber             -0.900 -0.266 -0.111 -0.231 -0.241 -0.227 -0.112 -0.310 -0.204 -0.230
+H2O                        -0.903 -0.223 -0.081 -0.210 -0.189 -0.174 -0.096 -0.326 -0.205 -0.207
+logNfix                    -0.846 -0.230 -0.010 -0.204 -0.150 -0.120 -0.124 -0.187 -0.240 -0.256
+logTAN                      0.259 -0.178 -0.087 -0.108 -0.044 -0.082  0.012 -0.020 -0.178 -0.062
+ChamberChamber:H2O          0.874  0.215  0.072  0.199  0.188  0.166  0.088  0.294  0.276  0.282
+ChamberChamber:logNfix      0.792  0.198  0.045  0.188  0.197  0.176  0.116  0.182  0.222  0.213
+H2O:logNfix                 0.843  0.185 -0.019  0.182  0.098  0.068  0.106  0.202  0.258  0.247
+ChamberChamber:H2O:logNfix -0.781 -0.165 -0.014 -0.166 -0.153 -0.127 -0.094 -0.174 -0.290 -0.262
+                           FrgIsl ChmbrC H2O    logNfx logTAN ChC:H2O ChmC:N H2O:lN
+Block2                                                                             
+Block3                                                                             
+Block4                                                                             
+Block5                                                                             
+Block6                                                                             
+Block7                                                                             
+Block8                                                                             
+FragFull Corridors                                                                 
+FragPseudo-Corridors                                                               
+FragIsolated                                                                       
+ChamberChamber             -0.161                                                  
+H2O                        -0.129  0.971                                           
+logNfix                    -0.131  0.900  0.888                                    
+logTAN                     -0.021  0.116  0.079  0.064                             
+ChamberChamber:H2O          0.197 -0.961 -0.970 -0.873 -0.072                      
+ChamberChamber:logNfix      0.175 -0.860 -0.831 -0.932 -0.068  0.827               
+H2O:logNfix                 0.122 -0.884 -0.913 -0.980 -0.040  0.894   0.905       
+ChamberChamber:H2O:logNfix -0.204  0.849  0.851  0.920  0.057 -0.878  -0.970 -0.926
 
+Standardized residuals:
+        Min          Q1         Med          Q3         Max 
+-2.17879634 -0.68387858 -0.02059918  0.40982647  2.38299708 
+
+Residual standard error: 4.407941 
+Degrees of freedom: 115 total; 96 residual
 
 
 Anova Table (Type II tests)
 
 Response: Y.re
-          Sum Sq Df F value    Pr(>F)    
-X.re       93.12  1  15.871 0.0001296 ***
-Residuals 580.87 99                      
+           Sum Sq  Df F value   Pr(>F)   
+X.re       133.69   1  7.3917 0.007586 **
+Residuals 2043.77 113                    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -214,53 +179,53 @@ Call:
 lm(formula = Y.re ~ X.re)
 
 Residuals:
-   Min     1Q Median     3Q    Max 
--4.892 -1.605 -0.125  1.169  6.048 
+     Min       1Q   Median       3Q      Max 
+-12.4751  -2.3104  -0.3215   1.7836  15.3124 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)    
-(Intercept) -1.378e-16  2.410e-01   0.000 1.000000    
-X.re         3.491e+00  8.763e-01   3.984 0.000130 ***
+             Estimate Std. Error t value Pr(>|t|)   
+(Intercept) 6.251e-16  3.966e-01   0.000  1.00000   
+X.re        2.112e+00  7.767e-01   2.719  0.00759 **
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 2.422 on 99 degrees of freedom
-Multiple R-squared: 0.1382,	Adjusted R-squared: 0.1295 
-F-statistic: 15.87 on 1 and 99 DF,  p-value: 0.0001296 
+Residual standard error: 4.253 on 113 degrees of freedom
+Multiple R-squared: 0.0614,	Adjusted R-squared: 0.05309 
+F-statistic: 7.392 on 1 and 113 DF,  p-value: 0.007586 
 
 
 
 Anova Table (Type II tests)
 
 Response: Y.re
-          Sum Sq Df F value Pr(>F)
-N.re        1.19  1  0.2214  0.639
-Residuals 533.29 99               
+           Sum Sq  Df F value Pr(>F)
+N.re         6.08   1  0.3579 0.5509
+Residuals 1918.61 113               
 
 Call:
 lm(formula = Y.re ~ N.re)
 
 Residuals:
-   Min     1Q Median     3Q    Max 
--5.829 -1.261  0.000  1.097  6.992 
+     Min       1Q   Median       3Q      Max 
+-12.0447  -2.2808  -0.1083   1.3651  14.6720 
 
 Coefficients:
-             Estimate Std. Error t value Pr(>|t|)
-(Intercept) 1.746e-16  2.309e-01   0.000    1.000
-N.re        7.774e-01  1.652e+00   0.471    0.639
+              Estimate Std. Error t value Pr(>|t|)
+(Intercept)  1.637e-15  3.842e-01   0.000    1.000
+N.re        -1.104e+00  1.845e+00  -0.598    0.551
 
-Residual standard error: 2.321 on 99 degrees of freedom
-Multiple R-squared: 0.002231,	Adjusted R-squared: -0.007847 
-F-statistic: 0.2214 on 1 and 99 DF,  p-value: 0.639 
+Residual standard error: 4.121 on 113 degrees of freedom
+Multiple R-squared: 0.003157,	Adjusted R-squared: -0.005664 
+F-statistic: 0.3579 on 1 and 113 DF,  p-value: 0.5509 
 
 
 
 Anova Table (Type II tests)
 
 Response: Y.re
-          Sum Sq Df F value Pr(>F)  
-H.re       26.26  1  4.3763  0.039 *
-Residuals 594.06 99                 
+          Sum Sq  Df F value  Pr(>F)  
+H.re        83.0   1  4.8562 0.02957 *
+Residuals 1931.3 113                  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -268,19 +233,19 @@ Call:
 lm(formula = Y.re ~ H.re)
 
 Residuals:
-    Min      1Q  Median      3Q     Max 
--7.0870 -1.5825  0.1072  1.2718  8.2540 
+     Min       1Q   Median       3Q      Max 
+-11.8826  -2.3178  -0.3092   1.7592  14.8967 
 
 Coefficients:
-             Estimate Std. Error t value Pr(>|t|)  
-(Intercept) 1.939e-17  2.437e-01   0.000    1.000  
-H.re        9.359e-03  4.474e-03   2.092    0.039 *
+              Estimate Std. Error t value Pr(>|t|)  
+(Intercept) -1.750e-15  3.855e-01   0.000   1.0000  
+H.re         7.139e-03  3.239e-03   2.204   0.0296 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 2.45 on 99 degrees of freedom
-Multiple R-squared: 0.04233,	Adjusted R-squared: 0.03266 
-F-statistic: 4.376 on 1 and 99 DF,  p-value: 0.039 
+Residual standard error: 4.134 on 113 degrees of freedom
+Multiple R-squared: 0.0412,	Adjusted R-squared: 0.03272 
+F-statistic: 4.856 on 1 and 113 DF,  p-value: 0.02957 
 
 
 

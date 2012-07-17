@@ -52,6 +52,7 @@ SECC <- within( SECC, {
   Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
   logTAN <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
   ## recoded factors / new explanatory variables
+  ## Don't use these: predicted values are weird and unconvincing.
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
   Warming <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 
                     labels = c(0, 0.26, 0.52) )
@@ -153,7 +154,7 @@ if (ExcludeOutliers)
 SECCa <- within( SECCa, 
                 {
                   Y <- as.numeric( get(Y.col) )
-                  Y.log <- log10(Y +1) # Generic: some variables (Nfix) will use a special version
+                  Y.log <- log10(Y)    # Generic: some variables (Nfix) will use a special version
                   Y.trans <- Y         # default
                 })
 
