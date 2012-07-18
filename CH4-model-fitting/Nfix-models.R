@@ -352,7 +352,7 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 }
 
 ## Important 2-way interactions (no mixed effects):
-## H2O:H2O^2   (?  I interpret this as a nonlinear relationship based on some combination of the linear & quadratic terms)
+## H2O:H2O^2   (?  I interpret this as a nonlinear relationship based on some combination of the linear & quadratic terms: i.e. cubic term!!)
 ## ...
 ##   Basically, everything except:  (which is interesting, too)
 ##   H2O:logTAN ??
@@ -366,34 +366,31 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 ## - less in Block effects (other than accounting for them)
 ## - less in interactions with TAN
 ## - Frag:TempC, Chamber:Frag, etc.
-## - H2O & anything (think of H2O:I(H2O^2) as a single term)
+## - H2O & anything (except H2O:I(H2O^2))
 ## - logCells and anything...
+
+## Be careful with the H2O:I(H2O^2) interaction: it does screwy things to predicted values
+##  e.g. fitting values higher than the data, particularly in dry Ambient patches (where there is NO DATA).
+##  It's basically fitting a cubic polynomial function, which isn't really what I want :P
+##  Better to avoid it in the model fitting (but I will need it for plotting effects).
+##  I should probably avoid Chamber interactions (especially Chamber:H20 AND H2O^2), given that I have no data on dry Ambient patches :(
 
 ## based on Y.best2, keeping only interactions of interest, or high "Importance"
 Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
             log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + 
-            I(H2O^2):H2O + Chamber:H2O + Chamber:I(H2O^2) +  
-			Chamber:logCells + Chamber:log10(TAN) +
-			## Block:H2O + Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + 
+            ## Chamber:H2O + Chamber:I(H2O^2) + I(H2O^2):H2O + 
+            ## Chamber:logCells + Chamber:log10(TAN) +
+			Block:H2O + Block:I(H2O^2) + # Block:logCells + Block:log10(TAN) + 
 			Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)
 
 ## Implied higher-order interactions
-## Block * Chamber * Frag * H2O * I(H2O^2)
+## Block * Chamber * Frag * H2O / I(H2O^2)
 ## Block * Chamber * Frag * logCells
 ## Chamber * Frag * log10(TAN)
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
-## dropping some 2-way log10(TAN) interactions, and adding more higher-order interactions
-Y.fixHi <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
-            log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + 
-            I(H2O^2):H2O + Chamber:H2O + Chamber:I(H2O^2) +  
-			Chamber:logCells + Chamber:log10(TAN) +
-			Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN) + 
-            Block:Chamber:Frag + Chamber:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) + 
-            Chamber:Frag:logCells + Chamber:Frag:log10(TAN)
-
 ## Add 3-way interactions to Y.fixed
-Y.fixHi <- update(Y.fixed, .~. + Block:Chamber:Frag + Chamber:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) + 
-                                 Chamber:Frag:logCells + Chamber:Frag:log10(TAN)
+Y.fixHi <- update(Y.fixed, .~. + Block:Chamber:Frag # + Chamber:Frag:logCells + Chamber:Frag:log10(TAN) # + 
+                  ## Chamber:H2O:I(H2O^2) + Frag:H2O:I(H2O^2) +  # NO! avoid H2O:I(H2O^2)
 )
 
 
@@ -406,6 +403,7 @@ TryMM <- FALSE                         # try fitting complex Mixed Models with i
 Y.fxlm <- lm(Y.fixed, data = SECCa)
 Y.fHlm <- lm(Y.fixHi, data = SECCa)
 anova(Y.best2lm, Y.fxlm, Y.fHlm)
+AIC(Y.best2lm, Y.fxlm, Y.fHlm)
 Y.f2   <- gls(Y.best2, data = SECCa, method = "ML")
 Y.fx   <- gls(Y.fixed, data = SECCa, method = "ML")
 Y.fH   <- gls(Y.fixHi, data = SECCa, method = "ML")
@@ -415,11 +413,13 @@ Y.fx   <- update(Y.fx, method = "REML")
 Y.fH   <- update(Y.fH, method = "REML")
 ## I will likely need to account for heterogeneity among Blocks, maybe Chambers as well (TempC/Warming)
 Y.mH2 <- gls(Y.best2, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
+Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 Y.mH  <- gls(Y.fixHi, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 Y.mr  <- lme(Y.fixHi, random = Y.random, data = SECCa, method ="REML")
 anova(Y.f2, Y.mH2)                     # Adding heterogeneity to best model from glmulti
+anova(Y.fx, Y.mHf)                     # Accounting for heterogeneity: 2-way interactions
+anova(Y.fH, Y.mH)                      # Accounting for heterogeneity: higher-order interactions
 anova(Y.fH, Y.mr)                      # Adding random effects
-anova(Y.fH, Y.mH)                      # Accounting for heterogeneity
 anova(Y.mH, Y.mr)                      # are these really nested?  (might not be a valid comparison)
 if (TryMM)
 {                                      # higher-order interaction models often crash here: trying to do too much!
@@ -430,7 +430,6 @@ if (TryMM)
 ## The nested structure of random effects is technically not necessary, 
 ## but probably should be done on theoretical grounds, to account for the structure of the experiment.
 
-Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 if (TryMM)
 {  # ML estimation may fail with many interactions.
   Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
@@ -448,8 +447,9 @@ if (TryMM)
 ##    however, this model may be too complex: several coefficients have 0 df & p = NaN (see summary(Y.me))
 ##	Model-fitting often fails with many interaction terms + heterogeneity + random nested structure (+ ML)
 ##  Adding heterogeneity to some models makes the residuals worse (less normal, more patterns?)
+##  Higher-order interactions seem to be a better fit, but the residuals may be worse.
 ## Y.fit  <- Y.me
-Y.fit  <- Y.mHf
+Y.fit  <- Y.mH
 
 
 
@@ -773,21 +773,21 @@ FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 ##______________________________________________________________
 ## cyanobacteria effects
 C.pdata <- effect.to.df(C.eff, fun = alog0)
-C.pdata <- within(C.pdata, Cells.m <- 10^logCells -1 )
+C.pdata <- within(C.pdata, Cells.m <- 10^logCells )
 C.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = C.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 ## This just looks weird
 CT.pdata <- effect.to.df(CT.eff, fun = alog0)
-CT.pdata <- within(CT.pdata, Cells.m <- 10^logCells -1 )
+CT.pdata <- within(CT.pdata, Cells.m <- 10^logCells )
 CT.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.Tlayer(eff = CT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 ##______________________________________________________________
 ## Available N effects
@@ -796,14 +796,14 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = N.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
-			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 NT.pdata <- effect.to.df(NT.eff, fun = alog0)
 NT.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.Tlayer(eff = NT.pdata, conf.int = TRUE) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
-			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 
 ##______________________________________________________________
