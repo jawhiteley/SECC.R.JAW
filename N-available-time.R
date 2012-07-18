@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Template for basic analyses of experimental data
 ### Available Nitrogen: NH4, NO3, TAN  @ time 4
-### Jonathan Whiteley     R v2.12     2012-01-23
+### Jonathan Whiteley     R v2.12     2012-07-18
 ##################################################
 ## INITIALISE
 ##################################################
@@ -26,8 +26,34 @@ source('./lib/init.R')
 
 ### Response Variable *****
 ##  - NH4, NO3, TAN
-Y.col <- 'TAN'      # Column to analyze as response variable           *****
-Y.use <- 'Y.log'        # Which transformation is being used (for labels)? *****
+Y.col <- 'logTAN'      # Column to analyze as response variable           *****
+Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
+
+##================================================
+## CUSTOM CALCULATIONS 
+##================================================
+SECC.prime <- SECC    # save a copy of the original for reference.
+
+## Conversion factors defined in SECC.functions
+
+SECC <- within( SECC, { 
+			   ## change negative ARA values to 0 - should I wait until after aggregation?
+			   ARA.ml[ARA.ml < 0] <- 0
+			   ARA.m[ ARA.m  < 0] <- 0
+               ARA.g[ ARA.g  < 0] <- 0
+			   Nfix <- ARA.m * Nfix.ARA.ratio
+               Nyrs <- Ndays / 365     # 365 days / year
+               NH4 <- NH4 * Nyrs
+               NO3 <- NO3 * Nyrs
+               TAN <- TAN * Nyrs
+               logTAN <- log10(TAN)    # No log(x +1) or any BS
+})
+attr(SECC, "labels")[["logTAN"]] <- attr(SECC, "labels")[["TAN"]]
+attr(SECC, "units")[["logTAN"]]  <- quote(g %.% m^-2) # I'm going to back-transform it for plotting :P
+
+## Define Labels
+## Y.units <- attr(SECC, "units")[[Y.col]]
+## Y.units <- bquote( log(.(Y.units)) )  # sqrt(.(Y.units), 4)  # store as quote(expression) *****
 
 ### Load default settings (based on response variable) *****
 source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE) 
@@ -52,39 +78,6 @@ Save.results  <- TRUE
 ## File names are determined automatically (in labels script).  Specify custom filenames *after* default labels are calculated below.
 
 
-##================================================
-## CUSTOM CALCULATIONS 
-##================================================
-SECC.prime <- SECC    # save a copy of the original for reference.
-
-## str(SECC)
-sampleA  <- 6   # sample Area, in cm^2:  pi * (2.75/2)^2 ; pi * (2.8 / 2)^2
-      #     6 for rough estimate of inner tube diameter (2.8 cm): pi*(2.8/2)^2,
-      #  or 6.4 for 20 shoots, based on density survey.
-sample.to.m2 <- (100*100)/sampleA   # scale sample area, in cm^2 to m^2
-sample_ml    <- 50  # 50 ml sample
-ARA.m2   <- sampleA/(100*100)  # ARA sample area,   in (cm^2 to) m^2
-patchA   <- pi * (12.5^2)      # patch area
-patch.m2 <- patchA/(100*100)   # patch sample area, in (cm^2 to) m^2
-Nfix.ARA.ratio <- 1/3  # ratio of N-fixation : ARA.
-
-SECC <- within( SECC, { 
-			   ## change negative ARA values to 0 - should I wait until after aggregation?
-			   ARA.ml[ARA.ml < 0] <- 0
-			   ARA.m[ ARA.m  < 0] <- 0
-               ARA.g[ ARA.g  < 0] <- 0
-			   Nfix <- ARA.m * Nfix.ARA.ratio
-               Nyrs <- Ndays / 365
-               NH4 <- NH4 * Nyrs
-               NO3 <- NO3 * Nyrs
-               TAN <- TAN * Nyrs
-})
-attr(SECC, "units")[[Y.col]] <- bquote(g %.% m^-2)
-
-## Define Labels
-Y.units <- attr(SECC, "units")[[Y.col]]
-Y.units <- bquote( log(.(Y.units)) )  # sqrt(.(Y.units), 4)  # store as quote(expression) *****
-
 ### Load default Labels - dependent on above settings. *****
 source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
 
@@ -94,6 +87,8 @@ source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE)
 ##================================================
 Save.filename <- gsub("TAN", "TAN-time", Save.filename, fixed=TRUE)
 Save.text     <- gsub("TAN", "TAN-time", Save.text,     fixed=TRUE)
+Save.plots    <- gsub("TAN", "TAN-time", Save.plots,    fixed=TRUE)
+Save.final    <- gsub("TAN", "TAN-time", Save.final,    fixed=TRUE)
 
 
 
@@ -135,6 +130,8 @@ if (FALSE)
 ##################################################
 if (F)
 {
+  ## are TAN or logTAN colinear with moisture? (given apparent inverse of CHabmer x Position interaction, albeit NS)
+  pairplot(SECCp[, c("logTAN", "TAN", "H2O")]) # NO!  Thank God.  Still interesting, though.
 }
 
 
@@ -150,46 +147,82 @@ Sub.msd <- "95% comparison intervals (MSR)"
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
 Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
-Position.map$label <- c("395d Inner", " 58d other", "395d Outer")
+## Position.map$label <- c("395d Inner", " 58d other", "395d Outer")
 Position.map$label <- c("Inner - 1 year", "other  - summer", "Outer - 1 year")
-Position.map <- Position.map[c(1, 3, 2), ]
+Position.map$label <- c("Inner (395d)", "other  \n(58d summer)", "Outer (395d)")
+Position.map <- Position.map[c(3, 1, 2), ]
 
 
 ## data frame of plot values (for ggplot2).
-## might be able to accomplish much the same effect with stat_summary using means in ggplot2?
-plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber, Position=SECCp$Position, Time=SECCp$Time), mean)
-levels(plot.means$Time) <- paste(c("August", "June", "August"), levels(plot.means$Time), sep="\n")
-plot.means$error <- as.numeric(msd["Chamber:Position"]/2)
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, 
+                                     Position=SECCp$Position, 
+                                     Time=SECCp$Time), 
+                                error = msd["Chamber:Position"]
+                                )
+## back-transform
+plot.means[, c("x", "lower", "upper")] <- sapply(plot.means[, c("x", "lower", "upper")], function (x) 10^x)
 levels(plot.means$Chamber)[2] <- "Chamber"
 plot.means$Position <- factor(plot.means$Position, 
-                              levels = levels(plot.means$Position)[c(1, 3, 2)], 
+                              levels = levels(plot.means$Position)[c(3, 1, 2)], 
                               labels = Position.map$label
                               )
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
+                    geom = "point", size = I(3), ylim = Y.lim, 
                     colour = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
-                    legend = FALSE,
-                    facets = .~Time)
+                    legend = FALSE)
 ## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
-CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
-CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = x - error, ymax = x + error), 
-                                         width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_line(aes(group = Position, lwd = Position) ) +
+                        geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                      width = 0.2, size = 0.5)
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
-                                           breaks = Position.map$label)
-CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
-                                         values = Position.map$bg, 
-                                         breaks = Position.map$label)
-CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
+                                           breaks = Position.map$label) +
+                        scale_fill_manual(name = Position.label,
+                                          values = Position.map$bg, 
+                                          breaks = Position.map$label) +
+                        scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
-                                           breaks = Position.map$label)
+                                           breaks = Position.map$label) +
+                        scale_size_manual(name = Position.label,
+                                          values = Position.map$lwd/2, 
+                                          breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
+
+## Position main effect (this is what is signficant, according to ANOVA)
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Position=SECCp$Position, 
+                                     Time=SECCp$Time), 
+                                error = msd["Position"]
+                                )
+## back-transform
+plot.means[, c("x", "lower", "upper")] <- sapply(plot.means[, c("x", "lower", "upper")], function (x) 10^x)
+plot.means$Position <- factor(plot.means$Position, 
+                              levels = levels(plot.means$Position)[c(3, 1, 2)], 
+                              labels = Position.map$label
+                              )
+
+P.plot <- qplot(x = Position, y = x, data = plot.means, 
+                    geom = "bar", stat="identity", ylim = Y.lim, 
+                    fill = I("#999999"),
+                    main = Plot.Title, sub = Sub.msd,
+                    xlab = attr(SECC, "labels")[["Pos"]],
+                    ylab = Y.plotlab,
+                    legend = FALSE)
+## P.plot <- P.plot + geom_point(aes(Chamber, x), size = 2)
+P.plot <- P.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                         width = 0.2, size = 0.5)
+P.plot <- P.plot + jaw.ggplot()
+print(P.plot)
+
+
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "-Time - CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- P.eps"),   plot =   P.plot, width = 4, height = 4, scale = 1.5)
 }

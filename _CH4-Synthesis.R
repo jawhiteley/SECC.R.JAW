@@ -1,9 +1,9 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 4:
-### Ecosystem-level synthesis of all measured variables
-### N-fixation, cyanobacteria, Fauna, Moisture, Moss Growth, Decomposition, Available N, etc.
-### Jonathan Whiteley		R v2.12		2012-02-05
+### Ecosystem-level synthesis of most (all) measured variables
+### N-fixation, cyanobacteria, Moss Growth, Fauna, Moisture, Decomposition, Available N, etc.
+### Jonathan Whiteley		R v2.12		2012-07-18
 ##################################################
 ## INITIALIZE
 ## Project Directory
@@ -27,4 +27,6 @@ SECC.prime <- SECC    # save a copy of the original for reference.
 
 source("N-available.R")                # Available Nitrogen (NH4 + NO3): ion resin capsules
 source("N-available-time.R")           # Available N, without duration (time) of exposure
+
+source("CH4-model-fitting/0_reg_models.R")    # Regression modelling: Nfixation, Moss Growth
 

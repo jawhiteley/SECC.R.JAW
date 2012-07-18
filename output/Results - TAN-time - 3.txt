@@ -1,11 +1,11 @@
 Nested ANOVA Results for: Total Available Nitrogen ( TAN ) 
-Transformation used:      Y.log 
+Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
 Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, other, Outer 
 
-Wed Feb  1 21:13:37 2012
+Wed Jul 18 12:20:49 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -13,99 +13,123 @@ Wed Feb  1 21:13:37 2012
 Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
 
 Error: Block
-          Df    Sum Sq    Mean Sq F value Pr(>F)
-Residuals  7 0.0014723 0.00021033               
+          Df    Sum Sq   Mean Sq F value Pr(>F)
+Residuals  7 0.0089381 0.0012769               
 
 Error: Block:Chamber
-          Df     Sum Sq    Mean Sq F value Pr(>F)
-Chamber    1 0.00004235 4.2352e-05  0.2765 0.6152
-Residuals  7 0.00107220 1.5317e-04               
+          Df    Sum Sq    Mean Sq F value Pr(>F)
+Chamber    1 0.0001999 0.00019991  0.2119 0.6592
+Residuals  7 0.0066036 0.00094338               
 
 Error: Block:Chamber:Frag
-             Df     Sum Sq    Mean Sq F value Pr(>F)
-Frag          3 0.00004791 1.5971e-05  0.2284 0.8761
-Chamber:Frag  3 0.00006046 2.0153e-05  0.2882 0.8337
-Residuals    42 0.00293714 6.9932e-05               
+             Df    Sum Sq    Mean Sq F value Pr(>F)
+Frag          3 0.0003078 0.00010261  0.2397 0.8681
+Chamber:Frag  3 0.0003536 0.00011787  0.2754 0.8428
+Residuals    42 0.0179772 0.00042803               
 
 Error: Within
-                       Df    Sum Sq    Mean Sq F value   Pr(>F)   
-Position                2 0.0010664 0.00053320  6.3338 0.002478 **
-Chamber:Position        2 0.0001362 0.00006811  0.8091 0.447865   
-Frag:Position           6 0.0003048 0.00005080  0.6035 0.727062   
-Chamber:Frag:Position   6 0.0006070 0.00010117  1.2017 0.310679   
-Residuals             112 0.0094285 0.00008418                    
+                       Df   Sum Sq    Mean Sq F value   Pr(>F)   
+Position                2 0.005846 0.00292315  5.6461 0.004611 **
+Chamber:Position        2 0.000826 0.00041324  0.7982 0.452690   
+Frag:Position           6 0.001866 0.00031093  0.6006 0.729355   
+Chamber:Frag:Position   6 0.003784 0.00063071  1.2182 0.302229   
+Residuals             112 0.057985 0.00051773                    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Wed Jul 18 12:20:50 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 7 & 0.01 & 0.00 &  &  \\ 
+  Chamber   & 1 & 0.00 & 0.00 & 0.21 & 0.6592 \\ 
+  Residuals1 & 7 & 0.01 & 0.00 &  &  \\ 
+  Frag         & 3 & 0.00 & 0.00 & 0.24 & 0.8681 \\ 
+  Chamber:Frag & 3 & 0.00 & 0.00 & 0.28 & 0.8428 \\ 
+  Residuals    & 42 & 0.02 & 0.00 &  &  \\ 
+  Position              & 2 & 0.01 & 0.00 & 5.65 & 0.0046 \\ 
+  Chamber:Position      & 2 & 0.00 & 0.00 & 0.80 & 0.4527 \\ 
+  Frag:Position         & 6 & 0.00 & 0.00 & 0.60 & 0.7294 \\ 
+  Chamber:Frag:Position & 6 & 0.00 & 0.00 & 1.22 & 0.3022 \\ 
+  Residuals             & 112 & 0.06 & 0.00 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
 
 
 Tables of means
 Grand mean
-           
-0.01100020 
+          
+0.0259028 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-    0.011470     0.010531 
+    0.026923     0.024882 
 
  Frag 
 Frag
       Continuous   Full Corridors Pseudo-Corridors         Isolated 
-        0.010201         0.011077         0.011576         0.011147 
+        0.023860         0.025995         0.027284         0.026473 
 
  Position 
 Position
-   Inner    other    Outer 
-0.010444 0.008433 0.014124 
+  Inner   other   Outer 
+0.02440 0.02002 0.03329 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      0.010656   0.012268       0.011197         0.011759
-  Full Chamber 0.009746   0.009886       0.011954         0.010536
+  Ambient      0.024925   0.028822       0.026287         0.027659
+  Full Chamber 0.022795   0.023167       0.028281         0.025287
 
  Chamber:Position 
               Position
-Chamber        Inner    other    Outer   
-  Ambient      0.011980 0.007910 0.014520
-  Full Chamber 0.008907 0.008956 0.013728
+Chamber        Inner   other   Outer  
+  Ambient      0.02801 0.01855 0.03420
+  Full Chamber 0.02079 0.02149 0.03237
 
  Frag:Position 
                   Position
-Frag               Inner    other    Outer   
-  Continuous       0.010156 0.007365 0.013081
-  Full Corridors   0.011894 0.005811 0.015526
-  Pseudo-Corridors 0.009881 0.010126 0.014721
-  Isolated         0.009844 0.010429 0.013170
+Frag               Inner   other   Outer  
+  Continuous       0.02371 0.01725 0.03062
+  Full Corridors   0.02785 0.01352 0.03662
+  Pseudo-Corridors 0.02306 0.02395 0.03484
+  Isolated         0.02298 0.02538 0.03106
 
  Chamber:Frag:Position 
 , , Position = Inner
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      0.012267   0.013520       0.010538         0.011593
-  Full Chamber 0.008045   0.010268       0.009224         0.008094
+  Ambient      0.02867    0.03167        0.02460          0.02712 
+  Full Chamber 0.01875    0.02403        0.02153          0.01884 
 
 , , Position = other
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      0.007688   0.007627       0.010025         0.006297
-  Full Chamber 0.007041   0.003995       0.010227         0.014560
+  Ambient      0.01805    0.01779        0.02378          0.01461 
+  Full Chamber 0.01645    0.00925        0.02412          0.03614 
 
 , , Position = Outer
 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      0.012012   0.015655       0.013029         0.017386
-  Full Chamber 0.014151   0.015396       0.016412         0.008954
+  Ambient      0.02806    0.03701        0.03049          0.04124 
+  Full Chamber 0.03318    0.03622        0.03920          0.02088 
 
 
 95% Minimum Significant Ranges (MSR):
               Chamber                  Frag              Position          Chamber:Frag 
-          0.004035919           0.004861673           0.004264463           0.007970432 
+           0.01001607            0.01202777            0.01057552            0.01971883 
      Chamber:Position         Frag:Position Chamber:Frag:Position 
-          0.007163125           0.011476802           0.017952190 
+           0.01776396            0.02846153            0.04451996 
 
 
 ================================================================
@@ -114,45 +138,45 @@ Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
 Y.trans ~ Chamber * Frag + Error(Block/Chamber)
 
 Error: Block
-          Df     Sum Sq    Mean Sq F value Pr(>F)
-Residuals  7 0.00051965 7.4235e-05               
+          Df    Sum Sq    Mean Sq F value Pr(>F)
+Residuals  7 0.0029794 0.00042562               
 
 Error: Block:Chamber
-          Df    Sum Sq    Mean Sq F value Pr(>F)
-Chamber    1 0.0000128 1.2799e-05  0.2348 0.6428
-Residuals  7 0.0003816 5.4514e-05               
+          Df     Sum Sq    Mean Sq F value Pr(>F)
+Chamber    1 0.00006664 6.6638e-05  0.2119 0.6592
+Residuals  7 0.00220122 3.1446e-04               
 
 Error: Within
-             Df     Sum Sq    Mean Sq F value Pr(>F)
-Frag          3 0.00001750 5.8321e-06  0.2357  0.871
-Chamber:Frag  3 0.00002053 6.8430e-06  0.2765  0.842
-Residuals    42 0.00103930 2.4745e-05               
+             Df    Sum Sq    Mean Sq F value Pr(>F)
+Frag          3 0.0001026 3.4205e-05  0.2397 0.8681
+Chamber:Frag  3 0.0001179 3.9290e-05  0.2754 0.8428
+Residuals    42 0.0059924 1.4268e-04               
 
 
 Tables of means
 Grand mean
-           
-0.01107002 
+          
+0.0259028 
 
  Chamber 
 Chamber
      Ambient Full Chamber 
-    0.011517     0.010623 
+    0.026923     0.024882 
 
  Frag 
 Frag
       Continuous   Full Corridors Pseudo-Corridors         Isolated 
-        0.010229         0.011123         0.011656         0.011272 
+        0.023860         0.025995         0.027284         0.026473 
 
  Chamber:Frag 
               Frag
 Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
-  Ambient      0.010680   0.012311       0.011253         0.011824
-  Full Chamber 0.009779   0.009934       0.012059         0.010720
+  Ambient      0.024925   0.028822       0.026287         0.027659
+  Full Chamber 0.022795   0.023167       0.028281         0.025287
 
 95% Minimum Significant Ranges (MSR):
      Chamber         Frag Chamber:Frag 
- 0.004240143  0.005128307  0.008477975 
+  0.01018381   0.01231414   0.02035740 
 
 
 <============================= END ============================>

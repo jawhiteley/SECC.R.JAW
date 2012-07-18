@@ -1,0 +1,186 @@
+Nested ANOVA Results for: Total Available Nitrogen ( logTAN ) 
+Transformation used:      Y 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, other, Outer 
+
+Wed Jul 18 14:10:56 2012
+
+================================================================
+================  Patch scale Results  =========================
+
+Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
+
+Error: Block
+          Df Sum Sq Mean Sq F value Pr(>F)
+Residuals  7 1.1174 0.15963               
+
+Error: Block:Chamber
+          Df  Sum Sq Mean Sq F value  Pr(>F)  
+Chamber    1 0.40011 0.40011  3.6303 0.09843 .
+Residuals  7 0.77150 0.11021                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Error: Block:Chamber:Frag
+             Df  Sum Sq  Mean Sq F value Pr(>F)
+Frag          3 0.04402 0.014675  0.2788 0.8404
+Chamber:Frag  3 0.10635 0.035450  0.6735 0.5731
+Residuals    42 2.21067 0.052635               
+
+Error: Within
+                       Df Sum Sq Mean Sq F value    Pr(>F)    
+Position                2 3.4782 1.73911 31.6308 1.287e-11 ***
+Chamber:Position        2 0.1762 0.08811  1.6025    0.2060    
+Frag:Position           6 0.3156 0.05260  0.9566    0.4580    
+Chamber:Frag:Position   6 0.4367 0.07278  1.3238    0.2524    
+Residuals             112 6.1579 0.05498                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+% latex table generated in R 2.12.0 by xtable 1.5-6 package
+% Wed Jul 18 14:10:57 2012
+\begin{table}[ht]
+\begin{center}
+\begin{tabular}{lrrrrr}
+  \hline
+ & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+  \hline
+Residuals & 7 & 1.12 & 0.16 &  &  \\ 
+  Chamber   & 1 & 0.40 & 0.40 & 3.63 & 0.0984 \\ 
+  Residuals1 & 7 & 0.77 & 0.11 &  &  \\ 
+  Frag         & 3 & 0.04 & 0.01 & 0.28 & 0.8404 \\ 
+  Chamber:Frag & 3 & 0.11 & 0.04 & 0.67 & 0.5731 \\ 
+  Residuals    & 42 & 2.21 & 0.05 &  &  \\ 
+  Position              & 2 & 3.48 & 1.74 & 31.63 & 0.0000 \\ 
+  Chamber:Position      & 2 & 0.18 & 0.09 & 1.60 & 0.2060 \\ 
+  Frag:Position         & 6 & 0.32 & 0.05 & 0.96 & 0.4580 \\ 
+  Chamber:Frag:Position & 6 & 0.44 & 0.07 & 1.32 & 0.2524 \\ 
+  Residuals             & 112 & 6.16 & 0.05 &  &  \\ 
+   \hline
+\end{tabular}
+\end{center}
+\end{table}
+
+
+Tables of means
+Grand mean
+          
+-1.687975 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+     -1.6423      -1.7336 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+         -1.7009          -1.6817          -1.6661          -1.7032 
+
+ Position 
+Position
+  Inner   other   Outer 
+-1.6665 -1.8625 -1.5349 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      -1.6640    -1.6158        -1.6550          -1.6345 
+  Full Chamber -1.7378    -1.7477        -1.6771          -1.7719 
+
+ Chamber:Position 
+              Position
+Chamber        Inner   other   Outer  
+  Ambient      -1.5781 -1.8353 -1.5135
+  Full Chamber -1.7549 -1.8897 -1.5563
+
+ Frag:Position 
+                  Position
+Frag               Inner   other   Outer  
+  Continuous       -1.6896 -1.8828 -1.5303
+  Full Corridors   -1.6088 -1.9434 -1.4930
+  Pseudo-Corridors -1.6836 -1.7841 -1.5305
+  Isolated         -1.6840 -1.8397 -1.5859
+
+ Chamber:Frag:Position 
+, , Position = Inner
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      -1.5543    -1.5192        -1.6376          -1.6015 
+  Full Chamber -1.8248    -1.6985        -1.7296          -1.7665 
+
+, , Position = other
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      -1.8766    -1.8193        -1.7958          -1.8496 
+  Full Chamber -1.8889    -2.0676        -1.7725          -1.8297 
+
+, , Position = Outer
+
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      -1.5610    -1.5090        -1.5317          -1.4524 
+  Full Chamber -1.4997    -1.4769        -1.5292          -1.7194 
+
+
+95% Minimum Significant Ranges (MSR):
+              Chamber                  Frag              Position          Chamber:Frag 
+            0.1082611             0.1333786             0.1089833             0.2186665 
+     Chamber:Position         Frag:Position Chamber:Frag:Position 
+            0.1830620             0.2933031             0.4587892 
+
+
+================================================================
+================  Meta-Community scale Results  ================
+================================================================
+Y.trans ~ Chamber * Frag + Error(Block/Chamber)
+
+Error: Block
+          Df  Sum Sq  Mean Sq F value Pr(>F)
+Residuals  7 0.37246 0.053209               
+
+Error: Block:Chamber
+          Df  Sum Sq  Mean Sq F value  Pr(>F)  
+Chamber    1 0.13337 0.133370  3.6303 0.09843 .
+Residuals  7 0.25717 0.036738                  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+
+Error: Within
+             Df  Sum Sq   Mean Sq F value Pr(>F)
+Frag          3 0.01467 0.0048916  0.2788 0.8404
+Chamber:Frag  3 0.03545 0.0118166  0.6735 0.5731
+Residuals    42 0.73689 0.0175450               
+
+
+Tables of means
+Grand mean
+          
+-1.687975 
+
+ Chamber 
+Chamber
+     Ambient Full Chamber 
+     -1.6423      -1.7336 
+
+ Frag 
+Frag
+      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+         -1.7009          -1.6817          -1.6661          -1.7032 
+
+ Chamber:Frag 
+              Frag
+Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+  Ambient      -1.6640    -1.6158        -1.6550          -1.6345 
+  Full Chamber -1.7378    -1.7477        -1.6771          -1.7719 
+
+95% Minimum Significant Ranges (MSR):
+     Chamber         Frag Chamber:Frag 
+   0.1100742    0.1365543    0.2257477 
+
+
+<============================= END ============================>
