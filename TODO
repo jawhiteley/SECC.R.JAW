@@ -62,7 +62,7 @@ also in:
 Schmitz, O. J. 2006. Predators have large effects on ecosystem properties by changing plant diversity, not plant biomass. Ecology 87:1432-1437.
 
 
-Follow-up analyses in later chapter
+Follow-up analyses (in later chapter?)
 ________________________________
 ~ Constrained ordination?
 - Other multivariate analyses?
@@ -96,9 +96,9 @@ ________________________________
 + Check for outliers in Moss Growth **
 + Estimate appropriate proportion of moss stem available for decomposition based on biomass conversion data ("Brown" + "Dead" tissue)
 
-- What is the approximate Carbon content of Pleurozium Schreberi?
+X What is the approximate Carbon content of Pleurozium Schreberi?
   - g moss -> g Carbon
-  - assume 45% carbon  (Bond-Lamberty:2004.473)
+  + assume 45% carbon  (Bond-Lamberty:2004.473)
 + Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
   + or, just get a ha or km^2 measurement and see if that sounds impressive.
 
@@ -115,17 +115,32 @@ ________________________________
 SYNTHESIS
 ================================
 
-- Multiple Regressions
-  - Nfix (with more variables)
-  - Moss Growth
-  - Decomposition?
-- constrained ordinations of Fauna data?
+~ Multiple Regressions
+  ~ Nfix (with more variables)
+  ~ Moss Growth
+  X Decomposition?
+
+- Redo analyses with more sensible terms and interactions
+  - There are no dry patches in the ambient, which can do screwy things to predicted values in ambient only.
+  - For now, I've had to remove all Chamber interactions.
+  - I really should include Position, to account for Chamber:Position interactions
+  - Try to start over and choose sensible interactions a priori
+    - See if I can use all of them, or if I need to screen some out
+    - use glmulti output to screen out any that are not "important"
+    - proceed as before
+  - Partial out main Block effects before proceeding with the rest of the analysis?
+    - Will not allow Block: interactions
+      - I'm not really interested in them anyway, but they can account for a fair amount of variation.
+    - could be harder to interpret
+
+* Structural Equation Modelling of multiple variables
+  - compare alternative models with & without links between fauna & decomposition?  Others?
+  - This is what I really need, but don't have time to learn it (before the thesis deadline) :(
+
+X constrained ordinations of Fauna data?
   - I don't have fauna data from all blocks, so if I include it in multiple regressions above, I will lose a lot of replication
   - BUT, I might be able to go the other way, and explore associations between Fana spp & ecosystem variables ...
-
-- Structural Equation Modelling of multiple variables
-  - compare alternative models with & without links between fauna & decomposition?  Others?
-
+  - Do this as part of Chapter 2 (Keep Chapter 4 about the moss - cyanobacteria - N-fixation association)
 
 
 
@@ -136,7 +151,7 @@ Project, Functions
 - check why checkSECCdata() does not catch invalid SampleID's :(
 
 
-- allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
+X allow plotMeans to accept a single value for error, and create appropriate matrix automatically?
 
 - Replace print() calls in error messages with cat() (fun.R).  Don't forget to add \n at the end of each line.
   - Or, concatenate all output together to include in the stop() message.
