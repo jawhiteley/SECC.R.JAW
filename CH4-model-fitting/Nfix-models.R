@@ -630,6 +630,7 @@ Y.H.df <- data.frame(H=H.re, Y=Y.re, fit=Y.H.pred[, "fit"],
 if (FALSE)
 {   # non-linear regression?
   Y.H <- lm(Y.re ~ H.re + I(H.re^2))   # quadratic term?
+  summary(Y.H)
   Anova(Y.H, type = 2)                 # Quadratic term significant?
 
   ## GAM

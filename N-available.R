@@ -173,16 +173,16 @@ plot.means$Position <- factor(plot.means$Position,
                               )
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
-                    geom = "point", size = I(3), ylim = Y.lim, 
+                    geom = "line", ylim = Y.lim, lwd = Position, 
                     colour = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
                     legend = FALSE)
 ## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
-CxP.plot <- CxP.plot + geom_line(aes(group = Position, lwd = Position) ) +
-                        geom_errorbar(aes(ymin = lower, ymax = upper), 
-                                      width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                     width = 0.2, size = 0.5) +
+                        geom_point(aes(group = Position, fill = Position), size = I(3) )
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label) +
