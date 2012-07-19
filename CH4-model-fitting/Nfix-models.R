@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression models for N-fixation (ARA)
 ###  With quadratic H2O term
-### Jonathan Whiteley     R v2.12     2012-07-16
+### Jonathan Whiteley     R v2.12     2012-07-18
 ################################################################
 if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
@@ -715,6 +715,7 @@ scale_y_ARA <- function()
                      minor_breaks = c(2, 4, 6, 8, 20, 40, 60, 80, 200, 400, 600, 800) # minor_breaks having no effect :(  simulated with blank labels above
                      )
 }
+
 eff.Tlayer <- function(eff.df = NULL, conf.int = TRUE)
 {   # assumes certain columns in eff.df (using effect.to.df())
   require(ggplot2)
@@ -738,6 +739,7 @@ T.pdata <- effect.to.df(T.eff, fun = alog0)
 T.plot <- ggplot(SECCa, aes(y = Y, x = Chamber)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber),
 					   position = position_jitter(width = 0.1)) +
+			geom_crossbar(aes(y = effect, ymin = lower, ymax = upper), width = 0.3, data = T.pdata) +
 			eff.layer(eff = T.pdata, conf.int = FALSE) +
 			xlab(SECC.axislab(SECCa, col = "Chamber", parens=TRUE)) + ylab(Y.label) +
 			scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
@@ -879,7 +881,7 @@ if (Save.results == TRUE)
   ggsave(filename = sprintf("%sEstimates.eps",	 Fig.filename), plot = Y.est2, 
          width = 4, height = 4, scale = 1.5)
   ## Effects plots
-  ggsave(filename = sprintf("%sTemp.eps",	 Fig.filename), plot = T.plot, 
+  ggsave(filename = sprintf("%sChamber.eps",	 Fig.filename), plot = T.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sH2O.eps",	 Fig.filename), plot = H.plot, 
          width = 4, height = 4, scale = 1.5)

@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Wed Jul 18 18:47:19 2012
+Thu Jul 19 07:01:25 2012
 ================================================================
 
 Analysis of Variance Table
@@ -122,7 +122,7 @@ Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
     log10(TAN) + Block:Chamber + Block:Frag + Chamber:Frag + 
     Block:H2O + Block:I(H2O^2) + Frag:H2O + Frag:I(H2O^2) + Frag:logCells + 
     Frag:log10(TAN) + Block:Chamber:Frag
-<environment: 0x304ed838>
+<environment: 0x29d6975c>
 Denom. DF: 32 
                    numDF      F-value p-value
 (Intercept)            1 290613125618  <.0001
