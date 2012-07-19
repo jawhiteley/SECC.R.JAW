@@ -61,7 +61,7 @@ source("./SECCanova/SECC - ANOVA settings.R", echo = FALSE)
 Time.use     <- levels(SECC$Time)[3]            # Time (index: 1-3) to include in this run
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
 Frag.use     <- levels(SECC$Frag)               # Frag treatments to include
-Position.use <- levels(SECC$Position)           # Patch Positions to include
+Position.use <- levels(SECC$Position)[c(1, 3)]           # Patch Positions to include
 ## ion resin capsules were placed in "other" patches several months after "Inner" & "Outer" 
 ##   patches, so they were deployed for a much shorter period
 ##   (see Ndays column).
@@ -105,7 +105,7 @@ source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
 ##   being collected with the rest.
 ## - see Ndays column for actual number of days each capsule was deployed.
 ## - It does appear that most of the adsorption happens in the summer 
-##   (other patches have much higher rates, over a shorter period of time)
+##   (other patches have much higher rates, but over a much shorter period of time)
 
 if (FALSE)
 {
@@ -140,16 +140,21 @@ if (F)
 ##################################################
 
 Y.lim <- range(SECCp$TAN)
-Y.lim <- c(0.0, 0.14)
+if (length(Position.use) == 3) Y.lim <- c(0.0, 0.14)
+if (length(Position.use) == 2) Y.lim <- c(0.0, 0.05)
 Plot.Title <- bquote("Patch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
 Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
-Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
+if (length(Position.use) == 3)
+{
 Position.map$label <- c("395d Inner", " 58d other", "395d Outer")
 Position.map$label <- c("Inner - 1 year", "other  - summer", "Outer - 1 year")
+}
+Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 Position.map <- Position.map[c(3, 1, 2), ]
+Position.map <- na.omit(Position.map)  # in case 'other' is omitted and there are only 2 levels
 
 
 ## data frame of plot values (for ggplot2).
