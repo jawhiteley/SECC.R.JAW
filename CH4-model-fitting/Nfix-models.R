@@ -609,8 +609,8 @@ H.part <- eval(Parts$x)
 
 Y.re     <- resid(Y.part, type = "response")
 H.re     <- resid(H.part,  type = "response")
-Y.H      <- lm(Y.re ~ H.re)
 x.ord    <- order(H.re)
+Y.H      <- lm(Y.re ~ H.re)
 Y.H.pred <- predict(Y.H, interval="confidence", level=0.95) # 95% CI bands
 
 plot(H.re, Y.re, pch=20)
@@ -625,6 +625,49 @@ summary(Y.H)                        # R^2 = 0.028 ! :(
 Y.H.r2 <- format(summary(Y.H)$adj.r.squared, digits=2)
 Y.H.df <- data.frame(H=H.re, Y=Y.re, fit=Y.H.pred[, "fit"], 
                         lower=Y.H.pred[, "lwr"], upper=Y.H.pred[, "upr"])
+
+
+if (FALSE)
+{   # non-linear regression?
+  Y.H <- lm(Y.re ~ H.re + I(H.re^2))   # quadratic term?
+  Anova(Y.H, type = 2)                 # Quadratic term significant?
+
+  ## GAM
+  YH.gam <- gam(Y.re ~ s(H.re)) 
+  plot(YH.gam, residuals = TRUE, shade = TRUE)
+  summary(YH.gam)                      # r^2 only about 2% higher than linear fit :P
+  Y.H <- YH.gam
+  Y.H.pred <- predict(Y.H, se.fit = TRUE, interval="confidence", level=0.95) # 95% CI bands
+
+  Y.H.r2 <- format(summary(Y.H)$r.sq, digits=2) # marginal increase over linear fit
+  Y.H.df <- data.frame(H=H.re, Y=Y.re, fit=Y.H.pred$fit, 
+                       lower=Y.H.pred$fit - (2*Y.H.pred$se.fit), 
+                       upper=Y.H.pred$fit + (2*Y.H.pred$se.fit) 
+                       )
+
+  plot(H.re, Y.re, pch=20)
+  lines(H.re[x.ord], Y.H.df[x.ord, "fit"], col="red", lty=1, lwd=2)
+  lines(H.re[x.ord], Y.H.df[x.ord, "lower"], col="red", lty=2)
+  lines(H.re[x.ord], Y.H.df[x.ord, "upper"], col="red", lty=2)
+
+  ## logistic regression?
+  Y.rescal <- (Y.re - min(Y.re))/(max(Y.re) - min(Y.re))
+
+  b1 = 0 ; b2 = 0.008
+  Y.logistic1 <- exp(b1 + b2 * H.re)/(1 + exp(b1 + b2 * H.re)) 
+  plot(H.re, Y.rescal, pch=20)
+  lines(H.re[x.ord], Y.logistic1[x.ord], col="red", lty=1, lwd=2)
+  rm(b1, b2)
+
+  Y.H      <- nls(Y.rescal ~ exp(b1 + b2 * H.re)/(1 + exp(b1 + b2 * H.re)), start = list(b1 = 0, b2 = 0.01), algorithm = "plinear") # logistic?
+  summary(Y.H)
+  AIC(Y.H)                             # -147.25 ?!  vs. 99 for linear model
+  ## At present, se.fit and interval are ignored by predict.nls :(
+  Y.H.pred <- predict(Y.H, se.fit = TRUE, interval="confidence", level=0.95)
+
+  plot(H.re, Y.rescal, pch=20)
+  lines(H.re[x.ord], Y.H.pred[x.ord], col="red", lty=1, lwd=2)
+}
 
 
 ##______________________________________________________________
