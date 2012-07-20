@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Main control Script
-# Jonathan Whiteley		R v2.12		2011-01-26
+# Jonathan Whiteley		R v2.12		2011-07-20
 ##################################################
 ## INITIALIZE
 rm(list=ls())  # clear memory
@@ -27,7 +27,8 @@ if (TRUE)
 {
   source("_CH1-ARA-cb.R")              # Chapter 1 analyses: ARA ~ Cyanobacteria
   source("_CH2-Fauna.R")               # Chapter 2 analyses: Fauna community analysis
-  source("_CH3-Synthesis.R")           # Chapter 3 analyses: ARA ~ Everything else
+  source("_CH3-prod-decomp.R")         # Chapter 3 analyses: Moss growth, productivity and decomposition
+  source("_CH4-Synthesis.R")           # Chapter 4 analyses: ARA ~ others; Growth ~ others
 
 } else {
   source("H2O.R")                      # Water contents density Analysis
@@ -39,6 +40,3 @@ if (TRUE)
   source("N-available-time.R")         # Available Nitrogen, without duration (time) of exposure
 }
 
-
-## OUTPUT
-source("lib/out.R")                    # Produce Outputs: graphs, reports, export.

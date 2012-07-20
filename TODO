@@ -1,4 +1,5 @@
-Fix final plots so that points are on top of lines
+Change fileformat of all data files to unix (or dos) for portability.
+  - This should not affect the processing or output on my machine (check), but would make it easier for others to read.
 
 ARA cyanobacteria regression models
 ================================
