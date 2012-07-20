@@ -131,6 +131,10 @@ if (F)
   hist(SECCp$logTAN)
   TAN.order <- order(SECCp$TAN, decreasing = TRUE)
   SECCp[TAN.order[1:4], ]
+
+  ## average incubation times (Ndays)
+  summary(SECC[SECC$Position!="other", "Ndays"])
+  summary(SECC[SECC$Position=="other", "Ndays"])
 }
 
 
