@@ -101,9 +101,9 @@ FINAL DATA STRUCTURE
 +   grow23          mm              * Moss Growth @ t2--t3 (i.e. when t4 was sampled).
 >  Prod             mg              Moss growth converted to biomass (productivity in mg dry weight).
    Decomposition    %mass loss / yr Decomposition rates.
-   NH4              g/m^2/yr        Available Ammonium (NH4+) from Ion resin (Raw +/- 0.03 mg/L)
-   NO3              g/m^2/yr        Available Nitrates & Nitrites (NO2, NO3-) from Ion resin (Raw +/- 0.04 mg/L)
-   TAN              g/m^2/yr        Total Available Nitrogen Compounds (Ion resin)
+   NH4              g/m^2/yr        Available Ammonium (NH4+) from ion resin (Raw +/- 0.03 mg/L)
+   NO3              g/m^2/yr        Available Nitrates & Nitrites (NO2, NO3-) from ion resin (Raw +/- 0.04 mg/L)
+   TAN              g/m^2/yr        Total Available Nitrogen Compounds from ion resin capsules (= NH4 + NO3)
    Ndays            days            # days ion resin capsule was deployed (NH4, NO3, TAN)
 ## Data - Response Variables        SECC    [SECC.cells for cyanobacteria data?]
    Nostoc           cells/shoot     Nostoc cyanobacteria cells
