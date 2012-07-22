@@ -223,6 +223,6 @@ print(P.plot)
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.5)
-  ggsave(file = paste(Save.final, "- P.eps"),   plot =   P.plot, width = 4, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.5) # extra width for long legend labels
+  ggsave(file = paste(Save.final, "- P.eps"),   plot =   P.plot, width = 3, height = 4, scale = 1.5)
 }
