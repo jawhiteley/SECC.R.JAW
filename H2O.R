@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### basic analyses of experimental data
 ### Moisture Content (H2O % of moss dry wt)
-### Jonathan Whiteley     R v2.12     2011-03-29
+### Jonathan Whiteley     R v2.12     2012-07-21
 ##################################################
 ## INITIALISE
 ##################################################
@@ -107,6 +107,23 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 
 }
 
+###===============================================
+### sub-analysis of final inner & outer only (for comparison with other analyses)
+###===============================================
+Position.Main <- Position.use                   # store temporarilly
+Position.use  <- levels(SECC$Position)[c(1, 3)] # Inner & Outer only
+Time.use     <- levels(SECC$Time)[3]      # Time (index: 1-3) to include in this run
+## Load default Labels - dependent on above settings. *****
+source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) 
+Save.text  <- gsub(".txt", "-IO.txt", Save.text,  fixed=TRUE)
+Save.plots <- gsub(".pdf", "-IO.txt", Save.plots, fixed=TRUE)
+
+  ## RUN STANDARD nested ANOVA
+  source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
+
+msd.4IO <- msd                                  # store for later?
+Position.Main -> Position.use                   # restore original value
+
 
 ###===============================================
 ### Include Time as a factor in nested ANOVA
@@ -117,6 +134,7 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 Time.use     <- levels(SECC$Time)      # Include *ALL* Times (as a Treatment)
 source("./SECCanova/SECC - ANOVA labels.R", echo = FALSE) # Load default Labels. *****
 source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE) # RUN STANDARD nested ANOVA
+
 
 
 
@@ -239,6 +257,41 @@ CP4.plot <- CP4.plot + scale_size_manual(name = Position.label,
 CP4.plot <- CP4.plot + jaw.ggplot()
 print(CP4.plot)
 
+# Inner & Outer only
+plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
+                                list(Chamber=SECCp$Chamber, 
+                                     Position=SECCp$Position, Time=SECCp$Time), 
+                                error = msd.4IO["Chamber:Position"]
+                                )
+levels(plot.means$Chamber)[2] <- "Chamber"
+IO.map <- subset(Position.map, label!="other")
+CP4IO.plot <- qplot(Chamber, x, data = droplevels( subset(plot.means, 
+                                                          Time == "August\n24 months" & Position!="other") ), 
+                  group = Position,  size = Position,
+                  colour = Position, shape = Position, fill = Position,
+                  geom = "line", ylim = Y.lim,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Chamber"]],
+                  ylab = Y.plotlab, legend = FALSE)
+CP4IO.plot <- CP4IO.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                         width = 0.2, size = 0.5)
+CP4IO.plot <- CP4IO.plot + geom_point(aes(group = Position), size = 3)
+CP4IO.plot <- CP4IO.plot + scale_colour_manual(name = Position.label,
+                                               values = IO.map$col, 
+                                               breaks = IO.map$label)
+CP4IO.plot <- CP4IO.plot + scale_fill_manual(name = Position.label,
+                                             values = IO.map$bg, 
+                                             breaks = IO.map$label)
+CP4IO.plot <- CP4IO.plot + scale_shape_manual(name = Position.label,
+                                              values = IO.map$pch, 
+                                              breaks = IO.map$label)
+CP4IO.plot <- CP4IO.plot + scale_size_manual(name = Position.label,
+                                             values = IO.map$lwd*0.5, 
+                                             breaks = IO.map$label)
+CP4IO.plot <- CP4IO.plot + jaw.ggplot()
+print(CP4IO.plot)
+
+
 
 ## Frag x Pos Interaction
 
@@ -335,6 +388,7 @@ print(FP4.plot)
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.5)
   ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 6, height = 4, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CP4.eps"), plot = CP4.plot, width = 3, height = 3, scale = 1.5)
-  ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 4, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 4, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CP4.eps"), plot = CP4.plot, width = 3, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- CP4-IO.eps"), plot = CP4IO.plot, width = 3, height = 4, scale = 1.5)
 }
