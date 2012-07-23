@@ -130,7 +130,7 @@ anova.full <- anova.full[order(anova.full$PropVar, decreasing=TRUE), ] # sort by
 print(sum(anova.full$PropVar))
 print(anova.full)
 
-## Reasonable model of effects & Interactions for assessment (thanks John Connelly)
+## Reasonable model of effects & Interactions for assessment (thanks John Connolly)
 Y.lm <- lm( Y.trans ~ X.trans * H2O + Block + Time * Chamber * Frag * Position , data=SECCa)
 summary(Y.lm)                          # R2 = 0.59
 anova(Y.lm)

@@ -122,19 +122,28 @@ if (FALSE)
 ##################################################
 if (F)
 {
-  ARA.N <- qplot(y = log1p(ARA.m), x = log1p(TAN), data = subset(SECCp, log1p(TAN) < 0.2) )
+  summary(SECC$NO3)
+  summary(SECC$NH4)
+  Nplot <- ggplot(SECC) + 
+  geom_histogram(aes(NH4), fill = "#996666", binwidth = 0.05) +
+  geom_histogram(aes(NO3), fill = "#9999CC", binwidth = 0.01)
+  print(Nplot)
+  
+  ARA.N <- qplot(y = log1p(ARA.m), x = log10(TAN), data = subset(SECCp, log10(TAN) < 0.2) )
   print(ARA.N)
-  mean(SECCp[SECCp$Position=="other", "Ndays"]) #  57.6 days =  58 days
-  mean(SECCp[SECCp$Position!="other", "Ndays"]) # 395.4 days = 395 days
-  ## possible outlier (but removing it unbalances the data - I don't think it's that influential)
-  hist(SECCp$TAN)
-  hist(SECCp$logTAN)
-  TAN.order <- order(SECCp$TAN, decreasing = TRUE)
-  SECCp[TAN.order[1:4], ]
-
   ## average incubation times (Ndays)
   summary(SECC[SECC$Position!="other", "Ndays"])
   summary(SECC[SECC$Position=="other", "Ndays"])
+  ## possible outlier (other) (but removing it unbalances the data - I don't think it's that influential)
+  hist(SECC$TAN)
+  hist(SECC$logTAN)
+  TAN.order <- order(SECCp$TAN, decreasing = TRUE)
+  SECCp[TAN.order[1:4], ]
+
+  ## why are *inner chamber* patches sig. lower?
+  Cplot <- ggplot(SECC, aes(y = TAN, x = Position, colour = Chamber)) +
+  geom_jitter(width = 0.5) + stat_boxplot(fill = NA, outlier.size = 0) + scale_y_log10()
+  Cplot
 }
 
 
