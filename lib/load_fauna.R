@@ -290,6 +290,16 @@ colnames(SECC.fauna.meta) <- gsub( "sp_alias", "Lowest.Level.ID", colnames(SECC.
 SECC.fauna.meta$ID <- cleanSpNames(SECC.fauna.meta$Lowest.Level.ID) # column name friendly format for lookups with variable names in other data frames
 rownames(SECC.fauna.meta) <- SECC.fauna.meta$ID
 SECC.fauna.meta <- SECC.fauna.meta[, c("ID", "Lowest.Level.ID", "Major.Taxa", "Taxonomic.Group")]
+## Document Trophic Groups
+SECC.fauna.meta <- within(SECC.fauna.meta,
+                          {
+                            Trophic.Group <- NA
+                            Trophic.Group <- ifelse(Taxonomic.Group %in% c("Mesostigmata", "Prostigmata"), 
+                                                    "Predator", Trophic.Group)
+                            Trophic.Group <- ifelse(Taxonomic.Group == "Collembola", "Grazer", Trophic.Group)
+                            Trophic.Group <- ifelse(Major.Taxa == "Uropodina", "Grazer", Trophic.Group)
+                            Trophic.Group <- ifelse(Taxonomic.Group == "Other", "Other", Trophic.Group)
+                          })
 
 
 
