@@ -101,6 +101,7 @@ Fauna.xy <- SECC.xy[rownames(Fauna), ]
 SECC.env <- SECC[rownames(Fauna), ]
 
 
+
 ##================================================
 ## Species Richness & Diversity metrics
 ##================================================
@@ -561,7 +562,7 @@ plot(CO.bdisp)
 TukeyHSD(CO.bdisp)                     # Outer Chambers are not just different: they are more variable.
 
 ## What I want is a matrix of groups (as rows & columns), with cells that give:
-## - # unique species in that group, or pairs of groups (traingular with diagonal)
+## - # unique species in that group, or pairs of groups (triangular with diagonal)
 ## - # shared species in BOTH groups (triangular; diagonal is # species)
 ## - # species in a group NOT in the other (full matrix; diagonal is 0)
 ## * first two could be combined with one of the diagonals included in the third; 2 separate matrices / tables?
@@ -821,6 +822,7 @@ Mantels.chord <- mantel.partial(Fauna.chorD, Mantelp.dist, Fauna.xydist, permuta
 
 
 
+
 ################################################################
 ### CONSTRAINED ORDINATION: FITTING ENVIRONMENTAL VARIABLES
 ################################################################
@@ -835,8 +837,22 @@ Fauna.env <- within(Fauna.env,
                       Stigonema.g <- Stigonema / Cells.dwt
                       Nostoc.g <- Nostoc / Cells.dwt
                       Other.cells.g <- Other.cells / Cells.dwt
+                      Prod13 <- Prod12 + Prod23
                       Trt <- paste(Chamber, Frag, Position, sep="\n")
                     })
+
+##================================================
+## Merge some tables ...
+##================================================
+## data frame with microarthropod and cyanobacteria sp - look for correlations?
+if (all(rownames(SECC.sp) == rownames(Fauna.env))) 
+  Trophic.sp <- cbind(SECC.sp, Fauna.env[, c("Stigonema.g", "Nostoc.g")])
+
+if (FALSE)
+{
+  pairplot(Trophic.sp)  # way too much going on: nothing seems strongly correlated with either cyanobacteria group
+}
+
 
 ## Post Hoc fit of environmental variables to nMDS (not really constrained ordination)
 ## Samples               : Same experimental subset, or ALL available?
@@ -869,9 +885,9 @@ Fauna.envs   <- Fauna.env[which(Env.rows), ]
 Fauna.subset <- Fauna.trans[which(Env.rows), ]
 
 Fauna.cca <- cca(Fauna.subset ~ Block + Chamber + Frag + Position + 
-                 H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + 
-                 Decomposition + Prod01 + Prod12 + Prod23 + 
-                 NH4 + NO3 + TAN 
+                 H2O + Patch.dwt + ARA.g + Cells.g + # Stigonema.g + Nostoc.g + 
+                 Decomposition + Prod01 + Prod13 + # Prod12 + Prod23 + 
+                 TAN # + NH4 + NO3
                  , data = Fauna.envs)
 Fauna.cca
 summary(Fauna.cca)
@@ -891,9 +907,9 @@ rect(-0.5, -0.5, 0.5, 0.5, col = NA, border = refCol, lty = refLty)
 
 ## without experimental factors
 Fauna.cca1 <- cca(Fauna.subset ~  
-                 H2O + Patch.dwt + Cells.g + Stigonema.g + Nostoc.g + ARA.g + 
-                 Decomposition + Prod01 + Prod12 + Prod23 + 
-                 NH4 + NO3 + TAN 
+                 H2O + Patch.dwt + ARA.g + Cells.g + # Stigonema.g + Nostoc.g + 
+                 Decomposition + Prod01 + Prod13 + # Prod12 + Prod23 + 
+                 TAN # + NH4 + NO3
                  , data = Fauna.envs)
 Fauna.cca1
 summary(Fauna.cca1)
