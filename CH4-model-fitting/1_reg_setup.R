@@ -1,8 +1,7 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, load & process data, configure analysis options
-### N-fixation synthesis vs. everything else, really
-### Jonathan Whiteley     R v2.12     2012-07-15
+### Jonathan Whiteley     R v2.12     2012-07-31
 ################################################################
 ## INITIALISE
 ################################################################
@@ -67,6 +66,8 @@ attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]]
 attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% m^-2) )
 attr(SECC, "labels")[["Growth"]] <- "Moss growth"
 attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
+attr(SECC, "labels")[["Decomp.asq"]] <- attr(SECC, "labels")[["Decomposition"]]
+attr(SECC, "units" )[["Decomp.asq"]] <- quote(asin(sqrt("% mass loss" %.% "yr"^-1)))
 attr(SECC, "labels")[["Warming"]] <- "Warming"
 attr(SECC, "units" )[["Warming"]] <- quote(delta ~ "°C vs. ambient")
 attr(SECC, "labels")[["TempC"]] <- "Mean annual T"
