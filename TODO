@@ -1,3 +1,5 @@
+* Change "Continuous" Fragmentation treatment to "Contiguous"
+  - re-generate graphs & output :/
 Change fileformat of all data files to unix (or dos) for portability.
   - This should not affect the processing or output on my machine (check), but would make it easier for others to read.
 
@@ -32,6 +34,7 @@ ARA cyanobacteria regression models
     - one less factor (position)
     - less noise in Ambient treatments?
     - more unexplained noise in Chambers (Inner vs. Outer)?
+    - aggregate over meaningful treatments: e.g. all inner & outer patches, regardless of fragmentation?
   - Include only Stigonema (or Nostoc) in analysis & see if it makes a difference
     - can individual species by included as explanatory variables as well as the total, to compare relative importance?
     - they are largely colinear, except maybe at small abundances.
@@ -68,48 +71,20 @@ ________________________________
 ~ Constrained ordination?
 - Other multivariate analyses?
 
-
+- Explore: relationships between fauna, richness & decomposition, available N
+    - BD-EF?
 
 Ecosystem Processes
 ================================
 
-+ Load    Moss Growth Data
-+ Analyze Moss Growth Data (repeated measures in time)
-  + Repeated measures / Nested analysis of year 1 vs. year 2
-    + Time / Year (1 & 2) as a categorical factor - at the **lowest** nesting level
-    + e.g., Block / Chamber / Frag / Position / Year
-  + Convert Productivity to g / area / time
-  + Estimate amount of "standing stock" of Moss, in g / area
-    + use Decomp. mass loss rates to calculate Decomp. in g / area / time.
-    + Compare Decomposition & Production : balance under various experimental conditions?
 
 Productivity - Decomposition Balance
 ________________________________
-+ Calculate Decomposition rate as g lost / area / time
-    ~ g lost = % lost * g of moss in patch (or reasonable proportion thereof?)
 + Calculate net g gained or lost  / time
     + Productivity - Decomposition
     + per patch
     - mean & CI
     - SD: variability**
-
-+ Check for and remove outliers from Productivity (probably un-id'd skinny shoots)
-+ Check for outliers in Moss Growth **
-+ Estimate appropriate proportion of moss stem available for decomposition based on biomass conversion data ("Brown" + "Dead" tissue)
-
-X What is the approximate Carbon content of Pleurozium Schreberi?
-  - g moss -> g Carbon
-  + assume 45% carbon  (Bond-Lamberty:2004.473)
-+ Extrapolate wildly to the Boreal Forest (of Quebec / Canada / The world)
-  + or, just get a ha or km^2 measurement and see if that sounds impressive.
-
-+ compare average dry weight of various treatments through time?
-  + nested ANOVA on Patch.dwt
-  + Is the overall dry wt of outer chamber patches naturally lower?
-  + Regression of Net Productivity vs. Patch.dwt (exploration)
-
-+ Load    Ion Resin Data
-+ Analyze Ion Resin Data
 
 
 
@@ -117,8 +92,21 @@ SYNTHESIS
 ================================
 
 ~ Multiple Regressions
+  - Cyanobacteria density
+    - H2O
+    - TAN
+    - Frag
   ~ Nfix (with more variables)
+    - H2O + H2O^2
+    - Chamber:Position (or Chamber:H2O:...?  Still doesn't account for missing dry patches in Ambient)
+    - Frag: H2O
+    - Cells
+    - TAN
   ~ Moss Growth
+    - H2O
+    - Chamber:Position
+    - N-fixation (after H2O)
+    - TAN
   X Decomposition?
 
 - Redo analyses with more sensible terms and interactions

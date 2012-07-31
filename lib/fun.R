@@ -338,7 +338,7 @@ recodeSECC <- function(data=NULL) {
     ## Rename Fragmentation codes
     Frag     <- factor(Frag,
                        levels = 1:4,
-                       labels = c("Continuous", "Full Corridors",
+                       labels = c("Continuous", "Full Corridors",   # Continuous / Contiguous ?
                                   "Pseudo-Corridors", "Isolated")
                        )
     ## Recode Time to approximate dates: replace t3 with NA, since it has no date (yet)
