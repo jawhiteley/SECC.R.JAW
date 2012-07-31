@@ -232,6 +232,9 @@ Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
                 coord_equal(ratio = 1) 
+## log-transforming axes doesn't agree with gam - too many 0s?
+Cells.logplot <- Cells.plot + xlab(SECC.axislab(SECC, "Cells")) + ylab(SECC.axislab(SECC, "Cells")) +
+                    scale_x_log10() + scale_y_log10() + Spp.points + jaw.ggplot() + Square.plot
 Cells.plot <- Cells.plot + Spp.lines + Spp.points + jaw.ggplot() + Square.plot 
 ## jaw.ggplot() won't work in large call above
 
@@ -309,6 +312,7 @@ geom_point(aes(y=Stigonema.H, colour="Stigonema",
 HCells.plot <- HCells.plot + jaw.ggplot() + Square.plot
 
 if (DrawExplorationGraphs) {
+  print(Cells.logplot)
   print(Cells.plot)
   print(HCells.plot)
 }

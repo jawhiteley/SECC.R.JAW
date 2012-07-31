@@ -422,7 +422,8 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
 }
 
 SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, multiline=FALSE,
-                         trans.func=NULL, unit.mult = 1, ...) {
+                         trans.func=NULL, unit.mult = 1, ...) 
+{
   ax.label <- attr(SECC.df, "labels")[[col.name]] 
   ax.units <- attr(SECC.df, "units" )[[col.name]] 
   if (FALSE)
@@ -450,14 +451,16 @@ SECC.axislab <- function(SECC.df=SECC, col.name="ARA.m", parens=TRUE, multiline=
       ax.units <- sprintf(trans.func, ax.units)
     }
     unit.pre <- ""                     # default
-    if (unit.mult!=1) unit.pre <- paste("%*%", format(unit.mult, ...))
+    if (unit.mult!=1) unit.pre <- paste("%*%", deparse( paste( format(unit.mult, ...), "") ) )
     sepc <- if (multiline==TRUE) "\n" else " "
     axis.text <- if (parens==TRUE) {
-      paste( deparse(paste(ax.label, sepc, "(", unit.pre, sep="")), 
-            ax.units, deparse(")"), sep = " * " )
+      paste( deparse(paste(ax.label, sepc, "(", sep="")), 
+            sprintf(" %s * %s * ", unit.pre, ax.units), 
+            deparse(")"), sep = "" )
     } else {
-      paste( deparse(paste(ax.label, sepc, unit.pre,  sep="")), 
-            ax.units,               sep = " * " )
+      paste(deparse(paste(ax.label, sepc, sep="")), 
+            sprintf(" %s * %s", unit.pre, ax.units), 
+            sep = "" )
     }
     axis.lab <- parse(text = axis.text)
   }
