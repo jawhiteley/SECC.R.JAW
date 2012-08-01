@@ -1045,6 +1045,28 @@ Trophic.corplot  <- ggplot(data = droplevels( subset(Trophicor, Group %in% c('Pr
 
 print(Trophic.corplot)
 
+Within.corplot  <- ggplot(data = droplevels( subset(Trophicor, Group %in% c('Predators', 'Grazers', 'Cyanobacteria')) ), 
+                           aes(x = Group, y = cor.mean, group = id)) +
+                    geom_line(aes(colour = Chamber, size = Position, lty = Chamber)) +
+                    ##                     geom_errorbar(aes(ymax = cor.mean + cor.sd, ymin = cor.mean - cor.sd, 
+                    ##                                       colour = Chamber, size = Position, lty = Chamber), alpha = 0.3) +
+                    geom_point(aes(shape = Position, colour = Chamber, fill = Chamber), size = 3) +
+                    geom_hline(aes(x = 0)) + ylim(c(-1, 1)) +
+                    xlab("Trophic level comparisons") + ylab("mean spearman correlation coefficient") +
+                    scale_shape_manual(name = Position.label,
+                                       values = Position.map$pch) +
+                    scale_colour_manual(name = Chamber.label,
+                                        values = Chamber.map$col) +
+                    scale_fill_manual(name = Chamber.label,
+                                      values = Chamber.map$bg) +
+                    scale_linetype_manual(name = Chamber.label,
+                                          values = c(3, 1)) +
+                    scale_size_manual(name = Position.label,
+                                      values = Position.map$lwd*0.5) +
+                    jaw.ggplot()
+
+print(Within.corplot)
+
 
 ##==============================================================
 ## Change in Abundance between Treatments (Gonzalez-style)
