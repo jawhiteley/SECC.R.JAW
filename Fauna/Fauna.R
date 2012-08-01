@@ -1,7 +1,7 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Analyses of Fauna data (microarthropod morphospecies counts)
-### Jonathan Whiteley     R v2.12     2012-04-03
+### Jonathan Whiteley     R v2.12     2012-07-31
 ###===============================================
 ### Species identified to morphospecies (usually family-level)
 ### Counts / sample converted to # / g dwt of moss substrate (using 'Patch.dwt' column)
@@ -10,189 +10,15 @@
 ##################################################
 if (FALSE) {  # do not run automatically
   ## Working Directory: see lib/init.R below
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (Mac).
-  getwd()  # Check that we're in the right place
+  setwd("./ SECC/")                    # relative to my usual default wd in R GUI (Mac).
+  setwd("..")                          # relative to this file (\rd in vim).
+  getwd()                              # Check that we're in the right place
 }
 
 ## Load data, functions, etc.  Includes rm(list=ls()) to clear memory
-source('./lib/init.R')
-
-## Load packages
-library(vegan)
-library(ggplot2)
-library(xtable)
+source('./Fauna/Fauna_setup.R')
 
 
-##################################################
-## SETTINGS
-##################################################
-cat("STARTING Fauna Analysis ...\n")
-## t4 samples only: I'm not really using the other data yet anyway.
-Samples.fauna <- which(SECC.fauna$Time == 4)
-Vars.fauna    <- setdiff(colnames(SECC.fauna), 
-                         SECC.fauna.meta$ID[SECC.fauna.meta$Taxonomic.Group 
-                                            %in% c("Other", "Prostigmata")]
-)
-Spp.fauna <- intersect(SECC.fauna.meta$ID, Vars.fauna)
-Spp.cols  <- intersect(colnames(SECC.fauna), SECC.fauna.meta$ID)
-
-
-##################################################
-## CHECK & PROCESS DATA
-##################################################
-SECC.fauna.full <- SECC.fauna   # save a copy, just in case
-## Filter data early on to maintain correspondence in row numbers 
-##   between the various data frames.  
-Fauna.sp <- SECC.fauna[Samples.fauna, Vars.fauna]
-Fauna.meta <- SECC.fauna.meta[which(SECC.fauna.meta$ID %in% Spp.fauna), ]
-Fauna.meta$Trophic <- ifelse(Fauna.meta$Taxonomic.Group == "Mesostigmata" | Fauna.meta$Taxonomic.Group == "Prostigmata", "Predator", "Grazer")
-Fauna.meta$Trophic <- ifelse(Fauna.meta$Major.Taxa == "Uropodina",  "Grazer", Fauna.meta$Trophic)
-Fauna.meta$Trophic <- ifelse(Fauna.meta$Taxonomic.Group == "Other", "Other",  Fauna.meta$Trophic)
-
-
-##================================================
-## Aggregate 'morphospecies' records into 'species'
-##================================================
-## Aggregate count data by morphospecies with "confidence" 
-## (i.e. lumping things together that are probably the same)
-SECC.sp <- Fauna.sp[, c('SampleID', Spp.fauna)]
-
-if (F)
-{                                      # now handled when loaded & data sets merged (JAW + ZL)
-  SECC.sp <- data.frame(SampleID = Fauna.sp[['SampleID']])
-
-  Taxa.groups <- rev( unique(Fauna.meta$sp_alias) )
-  SECC.sp <- within(SECC.sp, 
-                    {
-                      for (taxa in Taxa.groups) {
-                        taxa.sp <- Fauna.meta$ID[which(Fauna.meta$sp_alias == taxa)]
-                        taxa.sp <- intersect(taxa.sp, colnames(Fauna.sp))
-                        if (length(taxa.sp) > 0) {
-                          assign( taxa, 
-                                 if (length(taxa.sp) > 1) 
-                                   apply(Fauna.sp[, taxa.sp], 1, sum) 
-                                 else 
-                                   Fauna.sp[, taxa.sp] 
-                          )
-                        }
-                      }
-                      rm(taxa, taxa.sp)
-                    })
-}
-
-rownames(SECC.sp) <- SECC.sp$SampleID
-SECC.sp <- SECC.sp[, -1]    # Data matrix only: remove SampleID column, leave IDs in rownames
-  
-## Data matrix only: more convenient name :P
-Fauna <- SECC.sp  
-
-
-##================================================
-## Summary variables for univariate analyses
-## suitable for merging into main SECC dataframe
-##================================================
-## Already calculated in`/lib/load_fauna.R`
-SECC.sp.sum <- SECC.fauna.sum[Samples.fauna, ]
-## filter additional data frames to match
-Fauna.xy <- SECC.xy[which(SECC.xy$SampleID %in% rownames(Fauna)), ]
-SECC.env <- SECC[which(SECC$SampleID %in% rownames(Fauna)), ]
-## This also keeps the same *order*, assuming the rownames all match
-Fauna.xy <- SECC.xy[rownames(Fauna), ]
-SECC.env <- SECC[rownames(Fauna), ]
-
-
-
-##================================================
-## Species Richness & Diversity metrics
-##================================================
-cat("Calculating Diversity metrics\n")
-## diversity() and specpool() in vegan
-SECC.sp.sum <- within(SECC.sp.sum, {
-    Richness <- apply(SECC.sp, 1, function(x) length(which(x>0)) )  # observed # spp.
-    Evenness <- diversity(SECC.sp, index = "invsimpson")
-})
-
-attr(SECC.sp.sum, "labels") <- attr(SECC, "labels")        # starting point
-attr(SECC.sp.sum, "units" ) <- attr(SECC, "units" )        # starting point
-attr(SECC.sp.sum, "labels")[["Richness"]] <- "Morphospecies Richness"
-attr(SECC.sp.sum, "units" )[["Richness"]] <- quote("# observed taxa")
-attr(SECC.sp.sum, "labels")[["Evenness"]] <- "Inverse Simpson's Index"
-attr(SECC.sp.sum, "units" )[["Evenness"]] <- quote("# effective taxa")
-attr(SECC.sp.sum, "labels")[["Predators"]] <- "Predators (Mesostigmata + Prostigmata)"
-attr(SECC.sp.sum, "units" )[["Predators"]] <- quote("#" %.% g^-1)
-attr(SECC.sp.sum, "labels")[["Grazers"]]   <- "Grazers (fungivorous Acari + Collembola)"
-attr(SECC.sp.sum, "units" )[["Grazers"]]   <- quote("#" %.% g^-1)
-
-## Merge with SECC data for direct comparisons
-SECC.sum <- merge(SECC.env, recodeSECC(SECC.sp.sum), all = TRUE)
-
-
-##################################################
-## DATA EXPLORATION
-##################################################
-if (FALSE) 
-{
-
-  library(mgcv)                        # for GAMs
-  Fauna.bip <- qplot(Grazers, Predators, data = SECC.fauna.sum,
-                     ) + stat_smooth(aes(x = Grazers), method = "gam") + jaw.ggplot() # group = Chamber, shape = Pos, colour = Chamber
-  print(Fauna.bip)
-  Fauna.bip <- Fauna.bip + facet_grid(facets = Chamber~Pos)
-  print(Fauna.bip)
-
-  ## check variation & transformations
-  ##   boxplot( Fauna            , horizontal = TRUE, show.names = FALSE, main = "raw data")
-  boxplot( Fauna            , main = "raw data")
-  boxplot( sqrt( Fauna )    , main = "sqrt")
-  boxplot( Fauna ^0.25      , main = "4th rt")
-  boxplot( log( Fauna +1 )  , main = "log_e(X +1)")
-  boxplot( log1p(Fauna)     , main = "log1p(X)")
-  boxplot( log( Fauna +1 , base = 2)  , main = "log_2(X +1)")
-  boxplot( decostand( Fauna, method = 'log' )         , main = "log (decostand)") # ?? wtf?
-  boxplot( decostand( Fauna, method = 'max' )         , main = "max") 
-  boxplot( decostand( Fauna, method = 'normalize' )   , main = "normalized") ## Chord transformation
-  ##   boxplot( decostand( Fauna, method = 'standardize' )   , main = "standardize") # problems (warnings)
-  boxplot( decostand( Fauna, method = 'hellinger' )   , main = "hellinger") 
-  ## Chord transformation?
-
-  with(SECC.sp.sum, plotMeans(Richness, Chamber, Pos, error.bars="conf.int", level=0.95) )
-  with(SECC.sp.sum, plotMeans(Richness, Chamber, Frag, error.bars="conf.int", level=0.95) )
-
-  pairplot(SECC.sp.sum[, which(sapply(SECC.sp.sum, class) == "numeric")])
-  pairplot(SECC.sum[, c("Richness", "Evenness", "Predators", "Grazers", "fauna.jaw", "H2O")])
-
-  ## Species Occurences
-  sp.pr <- apply(Fauna > 0, 2, sum)
-  sort(sp.pr)
-  sp.refr <- 100*sp.pr/nrow(Fauna)
-  par(mfrow = c(1, 2))
-  hist(sp.pr, right = FALSE, main = "Species Occurences", xlab = "Number of occurences", ylab = "Number of species", col = "grey", border = NA)
-  hist(sp.refr, right = FALSE, main = "Species Relative Frequencies", xlab = "Frequencey of occurences (%)", ylab = "Number of species", col = "grey", border = NA)
-  par(mfrow = c(1,1))
-  
-  ## 1 single patch with no Predators!
-  hist(SECC.sum$Predators, color = "grey")
-  hist(SECC.sum$Grazers, color = "grey")
-  sum(SECC.sum$Predators == 0)
-  SECC.sum$SampleID[ which(SECC.sum$Predators == 0) ] # 14C-2.0
-  sum(SECC.sum$Grazers == 0)
-
-  ## Blocks 1 & 7 are kind of diversity hotspots
-  qplot(xE, yN, data = Fauna.xy, size = SECC.sp.sum$Richness, shape = 20, alpha = 0.1 )
-  with(SECC.sum, plot(Richness ~ Block) )
-  with(SECC.sum, plot(Evenness ~ Block) )
-  ## although it looks like drying may have been less severe in block 3 (remember, it got flooded during spring); fewer low-richness patches
-
-  plot(specaccum(Fauna), ci.type = "polygon", ci.col = "lightgrey")
-
-  plot(radfit(Fauna[1:12, ]))
-
-  ## BD-EF relationships?
-  library(mgcv)
-  qplot(x = Richness, y = Decomposition, data = SECC.sum) + stat_smooth(method = "gam")
-  qplot(x = H2O, y = Richness, data = SECC.sum) + stat_smooth(method = "gam")
-  qplot(x = H2O, y = Decomposition, data = SECC.sum) + stat_smooth(method = "gam")
-}
 
 
 ##################################################
@@ -232,7 +58,7 @@ SECCcbind.aovlist <- function(FullANOVA = Fauna.ANOVA, newANOVA = SECCxtract.aov
 Y.col <- 'Richness' # Column to analyze as response variable           *****
 Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
 Y.lim1 <- c(0, 20)  # consistent Y limits :/
-source('Fauna-univariate.R')
+source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 Fauna.ANOVA <- ANOVAtable
 Ycols <- grep("^p?F$", colnames(Fauna.ANOVA))
@@ -241,7 +67,7 @@ colnames(Fauna.ANOVA)[Ycols] <- paste(Y.col, colnames(Fauna.ANOVA)[Ycols], sep="
 Y.col <- 'Evenness'
 Y.use <- 'Y'
 Y.lim1 <- c(0, 10)  # consistent Y limits :/
-source('Fauna-univariate.R')
+source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 if (ANOVAtable$Df == Fauna.ANOVA$Df)
 {
@@ -253,7 +79,7 @@ if (ANOVAtable$Df == Fauna.ANOVA$Df)
 Y.col <- 'Predators'
 Y.use <- 'Y'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
-source('Fauna-univariate.R')
+source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 if (ANOVAtable$Df == Fauna.ANOVA$Df)
 {
@@ -314,7 +140,7 @@ ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 3, height
 Y.col <- 'Grazers'
 Y.use <- 'Y.sqrt'
 Y.lim1 <- c(0, 25)  # consistent Y limits :/
-source('Fauna-univariate.R')
+source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 if (ANOVAtable$Df == Fauna.ANOVA$Df)
 {
@@ -328,7 +154,7 @@ if (TRUE)
   Y.col <- 'Richness' # Column to analyze as response variable           *****
   Y.use <- 'Y'        # Which transformation is being used (for labels)? *****
   Y.lim1 <- c(0, 26)  # consistent Y limits :/
-  source('Fauna-regional.R')
+  source('Fauna/Fauna-regional.R')
   Fauna.mcANOVA <- SECCxtract.aovlist(Ymc.aov)
 }
 
@@ -603,8 +429,8 @@ text(Fauna.pcoa.spscores, rownames(Fauna.pcoa.spscores), cex = 0.8, col = "red",
 cat("Computing fauna species correllations\n")
 
 cols.numeric <- sapply(SECC.sp.sum, function (x) class(x) == "numeric")
-Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "pearson")
-Spp.cor <- cor(SECC.sp)
+Sum.cor <- cor(SECC.sp.sum[, cols.numeric], method = "spearman")     # spearman rank correlation - non-parametric, doesn't have to be linear, just monotonic
+Spp.cor <- cor(SECC.sp, method = "spearman")
 summary(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE) # lower triangle of the correlation matrix (lower.tri) :D
 Spp.meancor       <- mean(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
 Spp.meancor.sd    <- sd(Spp.cor[lower.tri(Spp.cor)], na.rm = TRUE)
@@ -617,53 +443,60 @@ truehist(Spp.cor[lower.tri(Spp.cor)], xlim = c(-1, 1), col = "#999999",
          xlab = "Species correlations", ylab = "frequency")
 abline(v = 0, lty = "dashed", lwd = 3, col = "#333333")
 
-## Correlations *within groups* (Predators, Grazers, etc.)?
+##==============================================================
+## Correlations *within groups* (Predators, Grazers, Cyanobacteria)?
 ## data.frame with:  column of correlation values, column of Group (including "Between Groups")
-Spp.cort  <- Spp.cor
+Spp.cort  <- cor(Trophic.sp, method = "spearman")
 Spp.cort[upper.tri(Spp.cort, diag = TRUE)] <- NA
 Spp.cordf <- reshape(data = as.data.frame(Spp.cort), 
-                     varying = list(colnames(Spp.cor)),
-                     times = colnames(Spp.cor),
+                     varying = list(colnames(Spp.cort)),
+                     times = colnames(Spp.cort),
                      timevar = "Species2",
                      idvar = "Species1",
-                     ids = rownames(Spp.cor),
+                     ids = rownames(Spp.cort),
                      v.names = "cor",
                      direction = "long"
                      )
 Spp.cordf <- subset(Spp.cordf, !is.na(cor) )
-Spp.cordf <- within(Spp.cordf[, c("cor", "Species1", "Species2")], {
-                    Group1 <- match(Species1, SECC.fauna.meta$ID)
-                    Group1 <- SECC.fauna.meta$Taxonomic.Group[Group1]
-                    Taxa <- match(Species1, SECC.fauna.meta$ID)
-                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
-                    Group1 <- ifelse(Taxa == "Uropodina", Taxa, Group1)
-                    Group2 <- match(Species2, SECC.fauna.meta$ID)
-                    Group2 <- SECC.fauna.meta$Taxonomic.Group[Group2]
-                    Taxa <- match(Species2, SECC.fauna.meta$ID)
-                    Taxa <- SECC.fauna.meta$Major.Taxa[Taxa]
-                    Group2 <- ifelse(Taxa == "Uropodina", Taxa, Group2)
-                    ## 1 column of between Group labels
-                    Group <- ifelse(Group1 == Group2, Group1, "Between Groups")
-                    Group <- ifelse(Group %in% c("Mesostigmata", "Prostigmata"), "Predators", Group)
-                    Group <- ifelse(Group %in% c("Collembola", "Uropodina"), "Grazers", Group)
-                    rm(Taxa)
-                     })
+Spp.cordf <- within(Spp.cordf[, c("cor", "Species1", "Species2")], 
+                    {
+                      Group1 <- match(Species1, SECC.fauna.meta$ID)
+                      Group1 <- SECC.fauna.meta$Trophic.Group[Group1]
+                      Group1 <- ifelse(Species1 %in% c("Stigonema", "Nostoc"), "Cyanobacteria", Group1)
+                      Group2 <- match(Species2, SECC.fauna.meta$ID)
+                      Group2 <- SECC.fauna.meta$Trophic.Group[Group2]
+                      Group2 <- ifelse(Species2 %in% c("Stigonema", "Nostoc"), "Cyanobacteria", Group2)
+                      ## 1 column of between Group labels
+                      Group <- ifelse(Group1 == Group2, Group1, 
+                                      paste(substr(Group1, 1, 4), substr(Group2, 1, 4), sep="-") 
+                      )
+                      Group <- gsub("Grazer"    , "Grazers"   , Group , fixed = TRUE)
+                      Group <- gsub("Predator"  , "Predators" , Group , fixed = TRUE)
+                      Group <- gsub("Graz-Pred" , "Pred-Graz" , Group , fixed = TRUE)
+                      Group <- gsub("Cyan-Graz" , "Graz-Cyan" , Group , fixed = TRUE)
+                      Group <- gsub("Cyan-Pred" , "Pred-Cyan" , Group , fixed = TRUE)
+                    })
 
 ## Predators are essentially uncorrelated (~0), Grazers & Between Groups are slightly +vely correlated (~0.05)
 Graz.cortest <- t.test( subset(Spp.cordf, Group == "Grazers", select = "cor") )
 Pred.cortest <- t.test( subset(Spp.cordf, Group == "Predators", select = "cor") )
-Btwn.cortest <- t.test( subset(Spp.cordf, Group == "Between Groups", select = "cor") )
+## Cyan.cortest <- t.test( subset(Spp.cordf, Group == "Cyanobacteria", select = "cor") )  # only 1 correlation (>0)!
+Btwn.cortest <- t.test( subset(Spp.cordf, ! Group %in% c("Grazers", "Predators", "Cyanobacteria"), select = "cor") )
+PrGr.cortest <- t.test( subset(Spp.cordf, Group == "Pred-Graz", select = "cor") )
+GrCy.cortest <- t.test( subset(Spp.cordf, Group == "Graz-Cyan", select = "cor") )
+PrCy.cortest <- t.test( subset(Spp.cordf, Group == "Pred-Cyan", select = "cor") )
 Spp.cortest
 Graz.cortest
 Pred.cortest
 Btwn.cortest
 
 ## Stacked bar graph :D
-Spp.corplot <- ggplot( Spp.cordf, aes(x = cor, fill = Group)) + 
+Spp.corplot <- ggplot(subset(Spp.cordf, Group %in% c("Predators", "Grazers", "Pred-Graz")), 
+                      aes(x = cor, fill = Group)) + 
     xlim(-1, 1) + xlab("Species correlation") + ylab("frequency") +
     geom_bar(binwidth = 0.1, colour = "#333333", lwd = 0.2) + 
     scale_fill_manual(values = c("#CCCCCC", "#999999", "#444444"), 
-                      breaks = c("Predators", "Grazers", "Between Groups")) +
+                      breaks = c("Predators", "Grazers", "Pred-Graz")) +
     geom_vline(xintercept = 0, colour = "#666666", lwd = 1, lty = "dashed") +
     jaw.ggplot()
 print(Spp.corplot)
@@ -673,13 +506,13 @@ pairplot(SECC.sum[, c("Predators", "Grazers", "Cells.g", "H2O")])
 
 ## Correlations between groups, within experimental treatment combinations
 library(plyr)
-cordf <- function(data)
+cordf <- function(data, ...)
 {
   ## aggregate over species groups: Predators, Grazers, cyanobacteria
   ## pass in SECC.sum: already aggregated.  Pull out relevant columns
   cols.numeric <- sapply(data, is.numeric)
   ## calculate pairwise correlations
-  data.cor <- cor(data[, cols.numeric])
+  data.cor <- cor(data[, cols.numeric], ...)
 
   ## convert result to a data.frame for output
   colnames.cor <- paste(rep( dimnames(data.cor)[[1]], each  = length(dimnames(data.cor)[[2]]) ), 
@@ -692,15 +525,70 @@ cordf <- function(data)
 }
 
 Trophic.cor <- ddply(.data = SECC.sum[, c("Chamber", "Frag", "Position", "Predators", "Grazers", "Cells.g")], 
-                     .variables = c("Chamber", "Position"), .fun = cordf )
+                     .variables = c("Chamber", "Position"), .fun = cordf , method = "spearman")
 Trophic.cor <- Trophic.cor[, c(1, 2, 3, 5, 4)] # rearrange columns: the number of columns MATTERS!
 Trophic.cor$Chamber  <- factor(Trophic.cor$Chamber,  labels = c("Ambient", "Chamber"))
 Trophic.cor$Position <- factor(Trophic.cor$Position)
 
+## Correlations among **individual species**
+corag <- function(data, ...)
+{
+  ## aggregate over species groups: Predators, Grazers, cyanobacteria
+  ## pass in SECC.sum: already aggregated.  Pull out relevant columns
+  cols.numeric <- sapply(data, is.numeric)
+  ## calculate pairwise correlations
+  data.cor <- cor(data[, cols.numeric], ...)
+
+  ## convert result to a data.frame for output
+  data.cor[upper.tri(data.cor, diag = TRUE)] <- NA
+  data.cordf <- reshape(data = as.data.frame(data.cor), 
+                       varying = list(colnames(data.cor)),
+                       times = colnames(data.cor),
+                       timevar = "Species2",
+                       idvar = "Species1",
+                       ids = rownames(data.cor),
+                       v.names = "cor",
+                       direction = "long"
+                       )
+  data.cordf <- subset(data.cordf, !is.na(cor) )
+  data.cordf <- within(data.cordf[, c("cor", "Species1", "Species2")], 
+                      {
+                        Group1 <- match(Species1, SECC.fauna.meta$ID)
+                        Group1 <- SECC.fauna.meta$Trophic.Group[Group1]
+                        Group1 <- ifelse(Species1 %in% c("Stigonema", "Nostoc"), "Cyanobacteria", Group1)
+                        Group2 <- match(Species2, SECC.fauna.meta$ID)
+                        Group2 <- SECC.fauna.meta$Trophic.Group[Group2]
+                        Group2 <- ifelse(Species2 %in% c("Stigonema", "Nostoc"), "Cyanobacteria", Group2)
+                        ## 1 column of between Group labels
+                        Group <- ifelse(Group1 == Group2, Group1, 
+                                        paste(substr(Group1, 1, 4), substr(Group2, 1, 4), sep="-") 
+                        )
+                        Group <- gsub("Grazer"    , "Grazers"   , Group , fixed = TRUE)
+                        Group <- gsub("Predator"  , "Predators" , Group , fixed = TRUE)
+                        Group <- gsub("Graz-Pred" , "Pred-Graz" , Group , fixed = TRUE)
+                        Group <- gsub("Cyan-Graz" , "Graz-Cyan" , Group , fixed = TRUE)
+                        Group <- gsub("Cyan-Pred" , "Pred-Cyan" , Group , fixed = TRUE)
+                      })
+
+  cor.mean <- aggregate(data.cordf$cor, by = list(Group = data.cordf$Group), FUN = mean)
+  cor.sd   <- aggregate(data.cordf$cor, by = list(Group = data.cordf$Group), FUN = sd  , simplify = TRUE)
+  cordf <- cbind(cor.mean, cor.sd$x)
+  colnames(cordf) <- c("Group", "cor.mean", "cor.sd")
+
+  cordf
+}
+
+Trophicor <- ddply(.data = cbind(SECC.env[, c("Chamber", "Frag", "Position")], Trophic.sp), 
+                     .variables = c("Chamber", "Position"), .fun = corag , method = "spearman")
+Trophicor$Chamber  <- factor(Trophicor$Chamber,  labels = c("Ambient", "Chamber"))
+Trophicor$Position <- factor(Trophicor$Position)
+Trophicor$Group <- factor(Trophicor$Group, levels = c("Predators", "Grazers", "Cyanobacteria", "Pred-Graz", "Graz-Cyan", "Pred-Cyan"))
+Trophicor$id     <- factor(paste(Trophicor$Chamber, Trophicor$Position, sep="_"))
+
 ## On average: 
 ## * Predators & Grazers are +vely correlated,
 ## * Grazers & Cells are weakly +vely correlated,
-## * and Predators & Cells are weakly negatively correlated.
+## * and Predators & Cells are weakly negatively / un- correlated.
 
 
 ##================================================
@@ -831,7 +719,7 @@ cat("Constrained ordinations of fauna data ...\n")
 Fauna.sort <- match( rownames(Fauna.trans), SECC$SampleID )
 Fauna.sort <- na.omit(Fauna.sort)
 Fauna.env  <- SECC[Fauna.sort, ]
-## Process standardized environmental variables
+## Process standardized environmental variables - should be able to substitue with SECC.env, which already has this
 Fauna.env <- within(Fauna.env,
                     {
                       Stigonema.g <- Stigonema / Cells.dwt
@@ -841,17 +729,6 @@ Fauna.env <- within(Fauna.env,
                       Trt <- paste(Chamber, Frag, Position, sep="\n")
                     })
 
-##================================================
-## Merge some tables ...
-##================================================
-## data frame with microarthropod and cyanobacteria sp - look for correlations?
-if (all(rownames(SECC.sp) == rownames(Fauna.env))) 
-  Trophic.sp <- cbind(SECC.sp, Fauna.env[, c("Stigonema.g", "Nostoc.g")])
-
-if (FALSE)
-{
-  pairplot(Trophic.sp)  # way too much going on: nothing seems strongly correlated with either cyanobacteria group
-}
 
 
 ## Post Hoc fit of environmental variables to nMDS (not really constrained ordination)
@@ -1125,7 +1002,8 @@ if (FALSE)
 ##==============================================================
 ## Correlations between hypothesized "trophic groups"
 ## Uses Chamber.map & Position.map from above
-## reorganize data for plotting
+if (FALSE)
+{   ## reorganize data for plotting
 Trophicor <- reshape(data = Trophic.cor, 
                      varying = list(colnames(Trophic.cor)[3:5]),
                      times = colnames(Trophic.cor)[3:5],
@@ -1135,20 +1013,22 @@ Trophicor <- reshape(data = Trophic.cor,
                      v.names = "cor",
                      direction = "long"
                      )
+}
 ## Modify labels (now done in ggplot code directly)
 ## Trophicor$Groups <- gsub("Cells\\.g", "cyanobacteria", Trophicor$Groups)
 ## Trophicor$Groups <- gsub("\\.", " %prop% \n", Trophicor$Groups)
-Trophicor$Groups <- factor(Trophicor$Groups, levels = unique(Trophicor$Groups))
-Trophicor$id     <- factor(paste(Trophic.cor$Chamber, Trophic.cor$Position, sep="_"))
 
-Trophic.corplot  <- ggplot(data = Trophicor, aes(x = Groups, y = cor, group = id)) +
+Trophic.corplot  <- ggplot(data = droplevels( subset(Trophicor, Group %in% c('Pred-Graz', 'Graz-Cyan', 'Pred-Cyan')) ), 
+                           aes(x = Group, y = cor.mean, group = id)) +
                     geom_line(aes(colour = Chamber, size = Position, lty = Chamber)) +
+                    ##                     geom_errorbar(aes(ymax = cor.mean + cor.sd, ymin = cor.mean - cor.sd, 
+                    ##                                       colour = Chamber, size = Position, lty = Chamber), alpha = 0.3) +
                     geom_point(aes(shape = Position, colour = Chamber, fill = Chamber), size = 3) +
                     geom_hline(aes(x = 0)) + ylim(c(-1, 1)) +
-                    xlab("Trophic level comparisons") + ylab(expression("correlation coefficient "*rho)) +
-                    scale_x_discrete(labels = c('Predators.Grazers' = "Predators &\nGrazers",
-                                                'Grazers.Cells.g'   = "Grazers &\nCyanobacteria",
-                                                'Predators.Cells.g' = "Predators &\nCyanobacteria"
+                    xlab("Trophic level comparisons") + ylab("mean spearman correlation coefficient") +
+                    scale_x_discrete(labels = c('Pred-Graz' = "Predators &\nGrazers",
+                                                'Graz-Cyan' = "Grazers &\nCyanobacteria",
+                                                'Pred-Cyan' = "Predators &\nCyanobacteria"
                                                 )
                     ) + 
                     scale_shape_manual(name = Position.label,

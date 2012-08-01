@@ -44,6 +44,7 @@ ARA cyanobacteria regression models
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
 
+
 Microarthropods: Fauna
 ================================
 + Use 2-3 transformations / measures of association to compare importance of abundant species.
@@ -53,7 +54,7 @@ Microarthropods: Fauna
 - Nestedness?
 + Correlations between Predators, Grazers, and Cyanobacteria
   ~ trophic cascade?
-- Table of species presnce / absence by experimental treatment
++ Table of species presence / absence by experimental treatment
 
 AG:
 I am curious about changes in patterns of community diversity per patch across treatments. Could you calculate Renyi entropy (see Vegan package) for each community of predators and grazers. What about community abundance distributions (e.g SADs).
@@ -66,6 +67,9 @@ also in:
 Schmitz, O. J. 2006. Predators have large effects on ecosystem properties by changing plant diversity, not plant biomass. Ecology 87:1432-1437.
 
 
+-> Reorganize files: separate Univariate and multivariate code into separate scripts (called from main script, to collect all results?)
+
+
 Follow-up analyses (in later chapter?)
 ________________________________
 ~ Constrained ordination?
@@ -73,6 +77,7 @@ ________________________________
 
 - Explore: relationships between fauna, richness & decomposition, available N
     - BD-EF?
+
 
 Ecosystem Processes
 ================================
