@@ -616,6 +616,43 @@ abline(0, 1, lwd = 2, lty = 3)
 plot(Fauna.dab$C_4.I, Fauna.dab$C_4.O, xlim = axl, ylim = axl )
 abline(0, 1, lwd = 2, lty = 3)
 
+with(SECC.sp.sum, plot(Richness, Predators/(Predators + Grazers), pch = 21, ylim = c(0,1) ))
+with(SECC.sp.sum, plot(Richness, Mesostigmata/fauna, pch = 21, ylim = c(0,1) ))
+with(SECC.sp.sum, plot(Richness, Collembola/fauna, pch = 21, ylim = c(0,1) ))
+
+## Proportion (abundance) by Richness
+library(mgcv)
+PredProp.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = Predators/fauna)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(PredProp.plot)
+MesoProp.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = Mesostigmata/fauna)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(MesoProp.plot)
+CollProp.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = Collembola/fauna)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(CollProp.plot)
+
+## Proportion (# species) by Richness
+SECC.sp.sum <- within(SECC.sp.sum, {
+    PredRich <- apply(SECC.sp[, which(SECC.fauna.meta[match(colnames(SECC.sp), SECC.fauna.meta$ID), 
+                                          "Trophic.Group"] == "Predator")], 
+                          1, function(x) length(which(x>0)) 
+                          )  # observed # spp.
+    MesostigRich <- apply(SECC.sp[, which(SECC.fauna.meta[match(colnames(SECC.sp), SECC.fauna.meta$ID), 
+                                          "Taxonomic.Group"] == "Mesostigmata")], 
+                          1, function(x) length(which(x>0)) 
+                          )  # observed # spp.
+    CollemboRich <- apply(SECC.sp[, which(SECC.fauna.meta[match(colnames(SECC.sp), SECC.fauna.meta$ID), 
+                                          "Taxonomic.Group"] == "Collembola")], 
+                          1, function(x) length(which(x>0)) 
+                          )  # observed # spp.
+})
+
+PredRich.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = PredRich/Richness)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(PredRich.plot)
+MesoRich.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = MesostigRich/Richness)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(MesoRich.plot)
+CollRich.plot <- ggplot(SECC.sp.sum, aes(x = Richness, y = CollemboRich/Richness)) + geom_point() + stat_smooth(method = "gam") + ylim(c(0,1))
+print(CollRich.plot)
+
+
 
 
 ##================================================
