@@ -123,6 +123,8 @@ SYNTHESIS
   - I really should include Position, to account for Chamber:Position interactions
     - Collapse Chamber & Position into a 'Climate' factor with 3 levels: Ambient, Inner Chamber, Outer Chamber ?
     - Inner Chamber = "Warm"; Outer Chamber = "Warm + Dry"
+    * BUT: this hogs too much variance away from moisture (they are confounded / co-linear).
+      - probably actually better to stick with just Chamber, and limit interactions that will cause unrealistic fitted values for non-existent ambient patches with low moisture.
   - Try to start over and choose sensible interactions a priori
     - See if I can use all of them, or if I need to screen some out
     - use glmulti output to screen out any that are not "important"

@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Thu Jul 19 11:00:46 2012
+Sun Aug  5 13:09:01 2012
 ================================================================
 
 Analysis of Variance Table
@@ -15,341 +15,342 @@ Response: Y.trans
 H2O                                        1 40.383  40.383                0.39452
 Chamber                                    1 18.134  18.134                0.17716
 Block                                      7 12.548   1.793                0.12259
-Frag:I(H2O^2)                              3  3.131   1.044                0.03059
-Frag:I(H2O^2):log10(TAN)                   3  2.497   0.832                0.02439
-Frag:H2O:log10(TAN)                        3  1.901   0.634                0.01857
-H2O:I(H2O^2)                               1  1.776   1.776                0.01735
-Chamber:I(H2O^2):logCells                  1  1.581   1.581                0.01545
-log10(TAN)                                 1  1.513   1.513                0.01478
-Frag:H2O:I(H2O^2)                          3  1.438   0.479                0.01405
-Chamber:Frag:I(H2O^2):log10(TAN)           3  1.275   0.425                0.01245
-Chamber:Frag:H2O:logCells:log10(TAN)       3  1.200   0.400                0.01172
-Chamber:Frag                               3  0.967   0.322                0.00944
-Chamber:Frag:logCells                      3  0.869   0.290                0.00849
-Chamber:H2O:logCells                       1  0.857   0.857                0.00837
-Frag:log10(TAN)                            3  0.800   0.267                0.00781
-Frag:H2O:logCells:log10(TAN)               3  0.642   0.214                0.00628
+Frag:I(H2O^2)                              3  3.135   1.045                0.03063
+Frag:I(H2O^2):log10(TAN)                   3  2.777   0.926                0.02713
+H2O:I(H2O^2)                               1  1.848   1.848                0.01805
+Frag:H2O:log10(TAN)                        3  1.642   0.547                0.01605
+Chamber:I(H2O^2):logCells                  1  1.631   1.631                0.01593
+log10(TAN)                                 1  1.514   1.514                0.01479
+Frag:H2O:I(H2O^2)                          3  1.509   0.503                0.01474
+Chamber:Frag:I(H2O^2):log10(TAN)           3  1.250   0.417                0.01221
+Chamber:H2O:logCells                       1  1.034   1.034                0.01011
+Chamber:Frag                               3  0.911   0.304                0.00890
+Frag:H2O:logCells:log10(TAN)               3  0.798   0.266                0.00780
+Frag:log10(TAN)                            3  0.744   0.248                0.00727
+Chamber:Frag:H2O:I(H2O^2):logCells         3  0.684   0.228                0.00668
+Chamber:Frag:H2O:I(H2O^2)                  3  0.678   0.226                0.00662
+Chamber:Frag:H2O:logCells:log10(TAN)       3  0.615   0.205                0.00601
+Chamber:H2O:I(H2O^2)                       1  0.609   0.609                0.00595
 I(H2O^2)                                   1  0.579   0.579                0.00566
-Chamber:Frag:H2O:log10(TAN)                3  0.566   0.189                0.00553
-Chamber:Frag:H2O:I(H2O^2):log10(TAN)       3  0.553   0.184                0.00540
-Chamber:Frag:H2O:I(H2O^2)                  3  0.540   0.180                0.00528
-Frag:logCells:log10(TAN)                   3  0.535   0.178                0.00523
-Chamber:Frag:I(H2O^2):logCells             3  0.532   0.177                0.00520
-Chamber:H2O:I(H2O^2)                       1  0.517   0.517                0.00505
-Chamber:H2O                                1  0.488   0.488                0.00476
-Chamber:Frag:H2O                           3  0.462   0.154                0.00452
-Chamber:Frag:logCells:log10(TAN)           3  0.429   0.143                0.00419
-Frag:H2O:I(H2O^2):logCells                 3  0.423   0.141                0.00413
-Frag:H2O:I(H2O^2):log10(TAN)               3  0.422   0.141                0.00413
-H2O:log10(TAN)                             1  0.422   0.422                0.00413
-Chamber:logCells:log10(TAN)                1  0.413   0.413                0.00403
-Chamber:Frag:H2O:logCells                  3  0.311   0.104                0.00304
-Chamber:Frag:I(H2O^2)                      3  0.301   0.100                0.00294
+Chamber:logCells:log10(TAN)                1  0.545   0.545                0.00533
+Frag:I(H2O^2):logCells:log10(TAN)          3  0.545   0.182                0.00533
+Frag:logCells:log10(TAN)                   3  0.545   0.182                0.00533
+Chamber:Frag:H2O:log10(TAN)                3  0.518   0.173                0.00506
+Chamber:H2O                                1  0.478   0.478                0.00467
+Chamber:Frag:H2O                           3  0.442   0.147                0.00432
+H2O:log10(TAN)                             1  0.417   0.417                0.00407
+Chamber:Frag:logCells:log10(TAN)           3  0.404   0.135                0.00394
+Frag:H2O:I(H2O^2):log10(TAN)               3  0.394   0.131                0.00385
+Chamber:Frag:logCells                      3  0.371   0.124                0.00362
+H2O:logCells:log10(TAN)                    1  0.356   0.356                0.00348
+H2O:logCells                               1  0.352   0.352                0.00344
+Frag:H2O:I(H2O^2):logCells                 3  0.329   0.110                0.00321
 Frag                                       3  0.293   0.098                0.00286
-I(H2O^2):logCells:log10(TAN)               1  0.271   0.271                0.00265
-Frag:H2O:logCells                          3  0.241   0.080                0.00236
-H2O:logCells                               1  0.239   0.239                0.00234
-Chamber:logCells                           1  0.219   0.219                0.00214
-Chamber:Frag:log10(TAN)                    3  0.216   0.072                0.00211
-Chamber:I(H2O^2)                           1  0.215   0.215                0.00210
-Frag:I(H2O^2):logCells                     3  0.197   0.066                0.00193
-logCells                                   1  0.181   0.181                0.00177
-Frag:I(H2O^2):logCells:log10(TAN)          3  0.175   0.058                0.00171
-Chamber:Frag:H2O:I(H2O^2):logCells         3  0.171   0.057                0.00167
-H2O:logCells:log10(TAN)                    1  0.158   0.158                0.00155
-I(H2O^2):log10(TAN)                        1  0.110   0.110                0.00107
-H2O:I(H2O^2):log10(TAN)                    1  0.107   0.107                0.00104
-I(H2O^2):logCells                          1  0.105   0.105                0.00102
-Chamber:H2O:I(H2O^2):logCells              1  0.076   0.076                0.00074
-logCells:log10(TAN)                        1  0.073   0.073                0.00071
-Frag:H2O                                   3  0.060   0.020                0.00058
-Chamber:H2O:log10(TAN)                     1  0.059   0.059                0.00057
-H2O:I(H2O^2):logCells:log10(TAN)           1  0.055   0.055                0.00053
-H2O:I(H2O^2):logCells                      1  0.054   0.054                0.00053
-Frag:logCells                              3  0.030   0.010                0.00029
-Chamber:log10(TAN)                         1  0.021   0.021                0.00021
-Chamber:H2O:I(H2O^2):log10(TAN)            1  0.009   0.009                0.00009
-Chamber:I(H2O^2):logCells:log10(TAN)       1  0.009   0.009                0.00009
-Chamber:I(H2O^2):log10(TAN)                1  0.005   0.005                0.00005
-Chamber:H2O:logCells:log10(TAN)            1  0.003   0.003                0.00003
-Chamber:Frag:I(H2O^2):logCells:log10(TAN)  1  0.000   0.000                0.00000
+Chamber:Frag:H2O:logCells                  3  0.276   0.092                0.00270
+Frag:H2O:logCells                          3  0.262   0.087                0.00256
+Chamber:Frag:I(H2O^2)                      3  0.254   0.085                0.00248
+Chamber:Frag:I(H2O^2):logCells             3  0.250   0.083                0.00244
+Chamber:I(H2O^2)                           1  0.217   0.217                0.00212
+Chamber:logCells                           1  0.205   0.205                0.00200
+Frag:I(H2O^2):logCells                     3  0.192   0.064                0.00188
+Chamber:H2O:log10(TAN)                     1  0.191   0.191                0.00187
+Chamber:Frag:H2O:I(H2O^2):log10(TAN)       3  0.191   0.064                0.00186
+logCells                                   1  0.184   0.184                0.00179
+Chamber:Frag:log10(TAN)                    3  0.178   0.059                0.00174
+I(H2O^2):logCells                          1  0.163   0.163                0.00159
+H2O:I(H2O^2):logCells                      1  0.162   0.162                0.00158
+H2O:I(H2O^2):log10(TAN)                    1  0.116   0.116                0.00113
+I(H2O^2):log10(TAN)                        1  0.103   0.103                0.00100
+logCells:log10(TAN)                        1  0.102   0.102                0.00099
+Chamber:H2O:logCells:log10(TAN)            1  0.088   0.088                0.00086
+Frag:H2O                                   3  0.067   0.022                0.00066
+Chamber:Frag:I(H2O^2):logCells:log10(TAN)  1  0.033   0.033                0.00032
+Chamber:H2O:I(H2O^2):log10(TAN)            1  0.028   0.028                0.00028
+H2O:I(H2O^2):logCells:log10(TAN)           1  0.026   0.026                0.00025
+Chamber:log10(TAN)                         1  0.023   0.023                0.00022
+Chamber:H2O:I(H2O^2):logCells              1  0.017   0.017                0.00017
+Frag:logCells                              3  0.011   0.004                0.00011
+I(H2O^2):logCells:log10(TAN)               1  0.006   0.006                0.00006
+Chamber:I(H2O^2):log10(TAN)                1  0.002   0.002                0.00001
+Chamber:I(H2O^2):logCells:log10(TAN)       1  0.000   0.000                0.00000
 Residuals                                  0  0.000                        0.00000
 
 
 consensus of 6-glmulti.analysis Method: g / Fitting: lm / IC used: aic Level: 2 / Marginality: TRUE 
-From 256 models: Best IC: 157.990660453775 Best model: 
-[1] "Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells + "     
-[2] "    log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + "           
-[3] "    I(H2O^2):H2O + logCells:I(H2O^2) + log10(TAN):H2O + Block:H2O + "    
-[4] "    Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + Chamber:H2O + " 
-[5] "    Chamber:I(H2O^2) + Chamber:logCells + Chamber:log10(TAN) + "         
-[6] "    Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)"          
-Evidence weight: 0.0949143020907873 Worst IC: 190.490671804547 11 models within 2 IC units. 
-33 models to reach 95% of evidence weight. Convergence after 720 generations. 
-Time elapsed: 4.11031618118286 minutes.
+From 256 models: Best IC: 152.832946037496 Best model: 
+[1] "Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells + "           
+[2] "    log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + "                 
+[3] "    I(H2O^2):H2O + logCells:I(H2O^2) + log10(TAN):I(H2O^2) + "                 
+[4] "    Block:H2O + Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + "         
+[5] "    Chamber:H2O + Chamber:I(H2O^2) + Chamber:logCells + Chamber:log10(TAN) + " 
+[6] "    Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)"                
+Evidence weight: 0.0741805249909529 Worst IC: 189.6420678093 12 models within 2 IC units. 
+29 models to reach 95% of evidence weight. Convergence after 1180 generations. 
+Time elapsed: 6.79041099945704 minutes.
                                            Term Importance
-I(H2O^2):log10(TAN)          Moisture^2:Total N  0.2882871
-log10(TAN):logCells       Total N:Cyanobacteria  0.4460295
-I(H2O^2):logCells      Moisture^2:Cyanobacteria  0.4573149
-H2O:logCells             Moisture:Cyanobacteria  0.4927943
-Block:log10(TAN)                  Block:Total N  0.5324212
-Frag:logCells       Fragmentation:Cyanobacteria  0.8662840
-H2O:log10(TAN)                 Moisture:Total N  0.9275633
-Frag:I(H2O^2)          Fragmentation:Moisture^2  0.9840967
-Frag:H2O                 Fragmentation:Moisture  0.9878216
-Chamber:logCells          Chamber:Cyanobacteria  0.9935301
-Block:logCells              Block:Cyanobacteria  0.9961291
-Frag:log10(TAN)           Fragmentation:Total N  0.9967182
-Chamber:log10(TAN)              Chamber:Total N  0.9982887
-Chamber:I(H2O^2)             Chamber:Moisture^2  0.9999138
-Block:Chamber                     Block:Chamber  0.9999715
-Block:Frag                  Block:Fragmentation  0.9999911
-Chamber:H2O                    Chamber:Moisture  0.9999952
-Block:I(H2O^2)                 Block:Moisture^2  0.9999961
-Chamber:Frag              Chamber:Fragmentation  0.9999997
-Block:H2O                        Block:Moisture  0.9999997
-log10(TAN)                              Total N  0.9999998
-H2O:I(H2O^2)                Moisture:Moisture^2  0.9999999
+I(H2O^2):logCells      Moisture^2:Cyanobacteria  0.3390543
+H2O:logCells             Moisture:Cyanobacteria  0.5112474
+log10(TAN):logCells       Total N:Cyanobacteria  0.5269115
+I(H2O^2):log10(TAN)          Moisture^2:Total N  0.5593173
+Block:log10(TAN)                  Block:Total N  0.5628974
+H2O:log10(TAN)                 Moisture:Total N  0.6322666
+Frag:log10(TAN)           Fragmentation:Total N  0.9805047
+Frag:logCells       Fragmentation:Cyanobacteria  0.9844796
+Chamber:log10(TAN)              Chamber:Total N  0.9902668
+Frag:I(H2O^2)          Fragmentation:Moisture^2  0.9994603
+Block:logCells              Block:Cyanobacteria  0.9997169
+Chamber:logCells          Chamber:Cyanobacteria  0.9997675
+Frag:H2O                 Fragmentation:Moisture  0.9998153
+Block:Chamber                     Block:Chamber  0.9999826
+Chamber:I(H2O^2)             Chamber:Moisture^2  0.9999896
+Chamber:H2O                    Chamber:Moisture  0.9999993
+Block:Frag                  Block:Fragmentation  0.9999996
+Block:I(H2O^2)                 Block:Moisture^2  0.9999999
+log10(TAN)                              Total N  0.9999999
+Chamber:Frag              Chamber:Fragmentation  1.0000000
+Block:H2O                        Block:Moisture  1.0000000
 Block                                     Block  1.0000000
 Chamber                                 Chamber  1.0000000
 Frag                              Fragmentation  1.0000000
 H2O                                    Moisture  1.0000000
 I(H2O^2)                             Moisture^2  1.0000000
 logCells                          Cyanobacteria  1.0000000
+H2O:I(H2O^2)                Moisture:Moisture^2  1.0000000
 
 
 Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
     log10(TAN) + Block:Chamber + Block:Frag + Chamber:Frag + 
     Block:H2O + Block:I(H2O^2) + Frag:H2O + Frag:I(H2O^2) + Frag:logCells + 
     Frag:log10(TAN) + Block:Chamber:Frag
-<environment: 0x2aa645b8>
-Denom. DF: 32 
-                   numDF      F-value p-value
-(Intercept)            1 290613125618  <.0001
-Block                  7          714  <.0001
-Chamber                1  19032641168  <.0001
-Frag                   3    328419393  <.0001
-H2O                    1  46958568788  <.0001
-I(H2O^2)               1   4462156259  <.0001
-logCells               1    411326781  <.0001
-log10(TAN)             1    153391781  <.0001
-Block:Chamber          7           35  <.0001
-Block:Frag            21           17  <.0001
-Chamber:Frag           3    486572275  <.0001
-Block:H2O              7           98  <.0001
-Block:I(H2O^2)         7           74  <.0001
-Frag:H2O               3     42772303  <.0001
-Frag:I(H2O^2)          3     19347926  <.0001
-Frag:logCells          3          201  <.0001
-Frag:log10(TAN)        3          367  <.0001
-Block:Chamber:Frag    21           54  <.0001
-Generalized least squares fit by REML
-  Model: Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells +      log10(TAN) + Block:Chamber + Block:Frag + Chamber:Frag +      Block:H2O + Block:I(H2O^2) + Frag:H2O + Frag:I(H2O^2) + Frag:logCells +      Frag:log10(TAN) + Block:Chamber:Frag 
-  Data: SECCa 
-       AIC      BIC    logLik
-  677.0027 826.5078 -236.5014
+<environment: 0x4c27a7dc>
+                   numDF denDF   F-value p-value
+(Intercept)            1    32  47.44281  <.0001
+Block                  7     0   0.40093     NaN
+Chamber                1     0   5.96288     NaN
+Frag                   3     0   0.04449     NaN
+H2O                    1    32 200.42451  <.0001
+I(H2O^2)               1    32   1.53833  0.2239
+logCells               1    32   1.14346  0.2929
+log10(TAN)             1    32   4.63780  0.0389
+Block:Chamber          7     0   0.10925     NaN
+Block:Frag            21     0   0.14946     NaN
+Chamber:Frag           3     0   0.18728     NaN
+Block:H2O              7    32   2.13373  0.0682
+Block:I(H2O^2)         7    32   1.18085  0.3412
+Frag:H2O               3    32   0.41082  0.7463
+Frag:I(H2O^2)          3    32   1.20668  0.3231
+Frag:logCells          3    32   2.12394  0.1166
+Frag:log10(TAN)        3    32   1.06236  0.3788
+Block:Chamber:Frag    21     0   0.31740     NaN
+Linear mixed-effects model fit by REML
+ Data: SECCa 
+      AIC      BIC    logLik
+  679.276 822.9182 -241.6380
 
-Variance function:
- Structure: Different standard deviations per stratum
- Formula: ~1 | Block 
- Parameter estimates:
-           1            2            3            4            5            6            7 
-1.000000e+00 7.424191e-01 1.038383e+00 6.828136e-01 1.952059e-05 1.930895e-01 8.051791e-01 
-           8 
-8.397251e-02 
+Random effects:
+ Formula: ~1 | Block
+        (Intercept)
+StdDev:   0.3075733
 
-Coefficients:
-                                               Value Std.Error   t-value p-value
-(Intercept)                                -1.079200 0.9040779  -1.19370  0.2414
-Block2                                     -0.534467 1.2488530  -0.42797  0.6715
-Block3                                      0.190940 1.3127906   0.14545  0.8853
-Block4                                      0.115161 1.1855342   0.09714  0.9232
-Block5                                      0.567720 0.8790375   0.64584  0.5230
-Block6                                      0.510535 1.1506551   0.44369  0.6603
-Block7                                     -0.307343 1.0599268  -0.28997  0.7737
-Block8                                      0.798604 0.9325645   0.85635  0.3982
-ChamberChamber                              0.231248 0.6415531   0.36045  0.7209
-FragFull Corridors                         -0.604216 0.9403814  -0.64252  0.5251
-FragPseudo-Corridors                        1.732016 0.7270955   2.38210  0.0233
-FragIsolated                                2.620429 1.2213120   2.14559  0.0396
-H2O                                        -0.009195 0.0046327  -1.98488  0.0558
-I(H2O^2)                                    0.000011 0.0000064   1.64292  0.1102
-logCells                                    0.011183 0.0000689 162.21695  0.0000
-log10(TAN)                                 -2.092426 0.1379621 -15.16667  0.0000
-Block2:ChamberChamber                       0.821932 1.0804933   0.76070  0.4524
-Block3:ChamberChamber                      -1.210398 0.9599239  -1.26093  0.2164
-Block4:ChamberChamber                      -1.935187 1.3863001  -1.39594  0.1723
-Block5:ChamberChamber                      -0.347962 0.6489133  -0.53622  0.5955
-Block6:ChamberChamber                      -2.218921 0.6603736  -3.36010  0.0020
-Block7:ChamberChamber                      -0.845829 0.8394767  -1.00757  0.3212
-Block8:ChamberChamber                      -2.969080 0.6482161  -4.58039  0.0001
-Block2:FragFull Corridors                   0.129902 1.1370508   0.11424  0.9098
-Block3:FragFull Corridors                  -1.375444 0.9527907  -1.44360  0.1586
-Block4:FragFull Corridors                  -1.123574 1.5707662  -0.71530  0.4796
-Block5:FragFull Corridors                  -1.044311 0.6532702  -1.59859  0.1197
-Block6:FragFull Corridors                  -1.526584 0.6608263  -2.31011  0.0275
-Block7:FragFull Corridors                  -0.362100 0.8880990  -0.40772  0.6862
-Block8:FragFull Corridors                  -2.172024 0.6654252  -3.26411  0.0026
-Block2:FragPseudo-Corridors                -0.359022 1.0394298  -0.34540  0.7321
-Block3:FragPseudo-Corridors                -1.571806 0.9383614  -1.67505  0.1037
-Block4:FragPseudo-Corridors                -1.531396 1.3601162  -1.12593  0.2686
-Block5:FragPseudo-Corridors                -0.937352 0.6497639  -1.44260  0.1588
-Block6:FragPseudo-Corridors                -2.123027 0.6676330  -3.17993  0.0033
-Block7:FragPseudo-Corridors                 0.388383 0.8877514   0.43749  0.6647
-Block8:FragPseudo-Corridors                -1.948914 0.6615517  -2.94597  0.0060
-Block2:FragIsolated                        -0.514240 1.0372621  -0.49577  0.6234
-Block3:FragIsolated                        -1.610185 0.9640996  -1.67014  0.1046
-Block4:FragIsolated                        -1.388716 0.9909198  -1.40144  0.1707
-Block5:FragIsolated                        -1.086423 0.6825115  -1.59180  0.1213
-Block6:FragIsolated                        -2.399556 0.7667419  -3.12955  0.0037
-Block7:FragIsolated                         0.208380 0.8550069   0.24372  0.8090
-Block8:FragIsolated                        -1.340806 0.6877292  -1.94961  0.0600
-ChamberChamber:FragFull Corridors          -0.009007 0.9846045  -0.00915  0.9928
-ChamberChamber:FragPseudo-Corridors        -0.286541 0.9952067  -0.28792  0.7753
-ChamberChamber:FragIsolated                -1.023607 1.2052238  -0.84931  0.4020
-Block2:H2O                                  0.001317 0.0065305   0.20173  0.8414
-Block3:H2O                                  0.007703 0.0062608   1.23043  0.2275
-Block4:H2O                                  0.011040 0.0080285   1.37516  0.1786
-Block5:H2O                                  0.005713 0.0041006   1.39320  0.1732
-Block6:H2O                                  0.005149 0.0054870   0.93835  0.3551
-Block7:H2O                                  0.000487 0.0055072   0.08845  0.9301
-Block8:H2O                                  0.000949 0.0044732   0.21224  0.8333
-Block2:I(H2O^2)                             0.000001 0.0000106   0.14110  0.8887
-Block3:I(H2O^2)                            -0.000009 0.0000080  -1.13298  0.2656
-Block4:I(H2O^2)                            -0.000016 0.0000131  -1.19317  0.2416
-Block5:I(H2O^2)                            -0.000008 0.0000059  -1.33036  0.1928
-Block6:I(H2O^2)                            -0.000005 0.0000071  -0.73544  0.4674
-Block7:I(H2O^2)                             0.000003 0.0000085   0.36177  0.7199
-Block8:I(H2O^2)                            -0.000003 0.0000063  -0.40924  0.6851
-FragFull Corridors:H2O                      0.012376 0.0016264   7.60966  0.0000
-FragPseudo-Corridors:H2O                    0.009739 0.0016792   5.79972  0.0000
-FragIsolated:H2O                            0.007245 0.0022953   3.15670  0.0035
-FragFull Corridors:I(H2O^2)                -0.000011 0.0000021  -5.29528  0.0000
-FragPseudo-Corridors:I(H2O^2)              -0.000006 0.0000019  -3.17340  0.0033
-FragIsolated:I(H2O^2)                      -0.000004 0.0000029  -1.47146  0.1509
-FragFull Corridors:logCells                 0.089857 0.0548306   1.63881  0.1110
-FragPseudo-Corridors:logCells               0.023869 0.0210484   1.13399  0.2652
-FragIsolated:logCells                      -0.013017 0.0137300  -0.94807  0.3502
-FragFull Corridors:log10(TAN)               1.358865 0.1461895   9.29523  0.0000
-FragPseudo-Corridors:log10(TAN)             2.464448 0.2168017  11.36729  0.0000
-FragIsolated:log10(TAN)                     2.511918 0.3726026   6.74155  0.0000
-Block2:ChamberChamber:FragFull Corridors   -0.749445 1.3732025  -0.54576  0.5890
-Block3:ChamberChamber:FragFull Corridors    1.135113 1.4014435   0.80996  0.4239
-Block4:ChamberChamber:FragFull Corridors    1.829545 2.0966380   0.87261  0.3894
-Block5:ChamberChamber:FragFull Corridors    0.099522 0.9916854   0.10036  0.9207
-Block6:ChamberChamber:FragFull Corridors    2.746432 1.1658602   2.35571  0.0248
-Block7:ChamberChamber:FragFull Corridors    0.501687 1.2735680   0.39392  0.6963
-Block8:ChamberChamber:FragFull Corridors    3.544967 0.9921755   3.57292  0.0011
-Block2:ChamberChamber:FragPseudo-Corridors -0.918001 1.2366345  -0.74234  0.4633
-Block3:ChamberChamber:FragPseudo-Corridors  0.867664 1.4125772   0.61424  0.5434
-Block4:ChamberChamber:FragPseudo-Corridors  1.983225 1.6058351   1.23501  0.2258
-Block5:ChamberChamber:FragPseudo-Corridors  0.358078 1.0006138   0.35786  0.7228
-Block6:ChamberChamber:FragPseudo-Corridors  2.027073 1.0413115   1.94665  0.0604
-Block7:ChamberChamber:FragPseudo-Corridors  0.339641 1.2573735   0.27012  0.7888
-Block8:ChamberChamber:FragPseudo-Corridors  3.905769 1.0345569   3.77531  0.0007
-Block2:ChamberChamber:FragIsolated          0.045018 1.6079482   0.02800  0.9778
-Block3:ChamberChamber:FragIsolated          2.380241 1.5885425   1.49838  0.1438
-Block4:ChamberChamber:FragIsolated          3.034503 1.7763682   1.70826  0.0973
-Block5:ChamberChamber:FragIsolated          0.809327 1.1912045   0.67942  0.5018
-Block6:ChamberChamber:FragIsolated          3.918093 1.2921831   3.03215  0.0048
-Block7:ChamberChamber:FragIsolated          1.172842 1.4084178   0.83274  0.4112
-Block8:ChamberChamber:FragIsolated          3.608495 1.2209612   2.95545  0.0058
+ Formula: ~1 | Chamber %in% Block
+        (Intercept)
+StdDev:    0.434971
 
+ Formula: ~1 | Frag %in% Chamber %in% Block
+        (Intercept)  Residual
+StdDev:   0.8699336 0.4577378
+
+Fixed effects: Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells +      log10(TAN) + Block:Chamber + Block:Frag + Chamber:Frag +      Block:H2O + Block:I(H2O^2) + Frag:H2O + Frag:I(H2O^2) + Frag:logCells +      Frag:log10(TAN) + Block:Chamber:Frag 
+                                               Value Std.Error DF    t-value p-value
+(Intercept)                                 0.879521  1.786838 32  0.4922218  0.6259
+Block2                                     -1.682731  1.932807  0 -0.8706149     NaN
+Block3                                     -2.003441  1.964950  0 -1.0195887     NaN
+Block4                                     -0.667232  1.909977  0 -0.3493403     NaN
+Block5                                     -0.694118  1.759779  0 -0.3944349     NaN
+Block6                                     -1.010403  3.697312  0 -0.2732805     NaN
+Block7                                     -1.043622  1.734926  0 -0.6015368     NaN
+Block8                                     -0.977318  1.921853  0 -0.5085290     NaN
+ChamberChamber                              0.305030  1.463400  0  0.2084390     NaN
+FragFull Corridors                         -2.817530  2.323461  0 -1.2126435     NaN
+FragPseudo-Corridors                       -0.247481  2.059927  0 -0.1201408     NaN
+FragIsolated                                0.188679  2.343810  0  0.0805011     NaN
+H2O                                        -0.017642  0.006999 32 -2.5207888  0.0169
+I(H2O^2)                                    0.000024  0.000009 32  2.7394303  0.0100
+logCells                                    0.024544  0.082915 32  0.2960166  0.7691
+log10(TAN)                                 -1.583916  0.632781 32 -2.5031017  0.0176
+Block2:ChamberChamber                       0.796674  2.226849  0  0.3577583     NaN
+Block3:ChamberChamber                      -0.836500  2.073510  0 -0.4034222     NaN
+Block4:ChamberChamber                      -2.515462  2.443968  0 -1.0292531     NaN
+Block5:ChamberChamber                      -1.014217  2.151939  0 -0.4713036     NaN
+Block6:ChamberChamber                      -1.529094  2.104487  0 -0.7265876     NaN
+Block7:ChamberChamber                      -0.937284  2.072577  0 -0.4522310     NaN
+Block8:ChamberChamber                      -2.630200  2.090958  0 -1.2578922     NaN
+Block2:FragFull Corridors                   0.255036  2.099281  0  0.1214873     NaN
+Block3:FragFull Corridors                  -0.282988  2.057042  0 -0.1375706     NaN
+Block4:FragFull Corridors                  -1.642549  2.439565  0 -0.6732959     NaN
+Block5:FragFull Corridors                  -0.011376  1.944074  0 -0.0058517     NaN
+Block6:FragFull Corridors                  -0.718362  1.921366  0 -0.3738810     NaN
+Block7:FragFull Corridors                  -0.503895  1.906955  0 -0.2642404     NaN
+Block8:FragFull Corridors                  -1.536233  1.970626  0 -0.7795662     NaN
+Block2:FragPseudo-Corridors                 0.062644  2.038354  0  0.0307326     NaN
+Block3:FragPseudo-Corridors                -0.353572  1.936759  0 -0.1825585     NaN
+Block4:FragPseudo-Corridors                -1.905527  2.260514  0 -0.8429618     NaN
+Block5:FragPseudo-Corridors                -0.067969  1.925807  0 -0.0352937     NaN
+Block6:FragPseudo-Corridors                -1.129725  1.944114  0 -0.5810999     NaN
+Block7:FragPseudo-Corridors                 0.324764  1.893205  0  0.1715422     NaN
+Block8:FragPseudo-Corridors                -0.758221  1.972291  0 -0.3844367     NaN
+Block2:FragIsolated                         0.181305  2.047204  0  0.0885622     NaN
+Block3:FragIsolated                        -0.424874  1.968149  0 -0.2158748     NaN
+Block4:FragIsolated                        -1.152571  2.019574  0 -0.5707000     NaN
+Block5:FragIsolated                        -0.284233  1.929538  0 -0.1473061     NaN
+Block6:FragIsolated                        -1.467684  2.125696  0 -0.6904485     NaN
+Block7:FragIsolated                         0.321218  1.881587  0  0.1707167     NaN
+Block8:FragIsolated                        -0.349917  1.987544  0 -0.1760550     NaN
+ChamberChamber:FragFull Corridors          -0.760895  1.952200  0 -0.3897628     NaN
+ChamberChamber:FragPseudo-Corridors        -0.412863  1.993886  0 -0.2070643     NaN
+ChamberChamber:FragIsolated                -2.209285  2.080426  0 -1.0619388     NaN
+Block2:H2O                                  0.008944  0.006630 32  1.3489187  0.1868
+Block3:H2O                                  0.014794  0.005977 32  2.4753289  0.0188
+Block4:H2O                                  0.022202  0.009050 32  2.4534085  0.0198
+Block5:H2O                                  0.009326  0.004762 32  1.9586753  0.0589
+Block6:H2O                                  0.008554  0.015760 32  0.5427545  0.5911
+Block7:H2O                                  0.006705  0.005283 32  1.2692922  0.2135
+Block8:H2O                                  0.011203  0.006355 32  1.7629463  0.0875
+Block2:I(H2O^2)                            -0.000011  0.000011 32 -0.9668897  0.3409
+Block3:I(H2O^2)                            -0.000018  0.000008 32 -2.3482513  0.0252
+Block4:I(H2O^2)                            -0.000034  0.000015 32 -2.2701757  0.0301
+Block5:I(H2O^2)                            -0.000014  0.000007 32 -1.9838890  0.0559
+Block6:I(H2O^2)                            -0.000010  0.000017 32 -0.5770307  0.5680
+Block7:I(H2O^2)                            -0.000008  0.000008 32 -0.9435462  0.3525
+Block8:I(H2O^2)                            -0.000017  0.000009 32 -1.9715475  0.0574
+FragFull Corridors:H2O                      0.015549  0.005560 32  2.7968899  0.0087
+FragPseudo-Corridors:H2O                    0.017469  0.005744 32  3.0412074  0.0047
+FragIsolated:H2O                            0.011429  0.005400 32  2.1161956  0.0422
+FragFull Corridors:I(H2O^2)                -0.000018  0.000007 32 -2.5551398  0.0156
+FragPseudo-Corridors:I(H2O^2)              -0.000018  0.000006 32 -2.7851347  0.0089
+FragIsolated:I(H2O^2)                      -0.000012  0.000006 32 -1.8027442  0.0809
+FragFull Corridors:logCells                 0.291335  0.137233 32  2.1229233  0.0416
+FragPseudo-Corridors:logCells               0.039958  0.170786 32  0.2339660  0.8165
+FragIsolated:logCells                      -0.079744  0.118582 32 -0.6724785  0.5061
+FragFull Corridors:log10(TAN)               0.172167  0.988059 32  0.1742480  0.8628
+FragPseudo-Corridors:log10(TAN)             1.908373  0.991507 32  1.9247191  0.0632
+FragIsolated:log10(TAN)                     1.198154  1.033458 32  1.1593638  0.2549
+Block2:ChamberChamber:FragFull Corridors   -0.260782  2.781970  0 -0.0937401     NaN
+Block3:ChamberChamber:FragFull Corridors    1.233022  2.699995  0  0.4566758     NaN
+Block4:ChamberChamber:FragFull Corridors    3.254219  3.369185  0  0.9658773     NaN
+Block5:ChamberChamber:FragFull Corridors    0.643135  2.744993  0  0.2342937     NaN
+Block6:ChamberChamber:FragFull Corridors    2.834302  3.307802  0  0.8568537     NaN
+Block7:ChamberChamber:FragFull Corridors    0.865094  2.695917  0  0.3208905     NaN
+Block8:ChamberChamber:FragFull Corridors    3.483632  2.727343  0  1.2772987     NaN
+Block2:ChamberChamber:FragPseudo-Corridors -1.208432  2.767073  0 -0.4367186     NaN
+Block3:ChamberChamber:FragPseudo-Corridors  0.668457  2.742414  0  0.2437475     NaN
+Block4:ChamberChamber:FragPseudo-Corridors  2.649814  3.039729  0  0.8717270     NaN
+Block5:ChamberChamber:FragPseudo-Corridors  1.250887  2.755653  0  0.4539349     NaN
+Block6:ChamberChamber:FragPseudo-Corridors  1.469657  2.908245  0  0.5053417     NaN
+Block7:ChamberChamber:FragPseudo-Corridors  0.981875  2.730830  0  0.3595520     NaN
+Block8:ChamberChamber:FragPseudo-Corridors  4.052903  2.865884  0  1.4141896     NaN
+Block2:ChamberChamber:FragIsolated          0.961353  2.913089  0  0.3300115     NaN
+Block3:ChamberChamber:FragIsolated          3.055273  2.790020  0  1.0950720     NaN
+Block4:ChamberChamber:FragIsolated          4.678744  3.126541  0  1.4964600     NaN
+Block5:ChamberChamber:FragIsolated          2.269779  2.800465  0  0.8105007     NaN
+Block6:ChamberChamber:FragIsolated          4.046994  3.528804  0  1.1468459     NaN
+Block7:ChamberChamber:FragIsolated          2.279387  2.758151  0  0.8264184     NaN
+Block8:ChamberChamber:FragIsolated          4.285069  2.835628  0  1.5111535     NaN
  Correlation: 
                                            (Intr) Block2 Block3 Block4 Block5 Block6 Block7 Block8
-Block2                                     -0.700                                                 
-Block3                                     -0.680  0.512                                          
-Block4                                     -0.715  0.546  0.516                                   
-Block5                                     -0.984  0.703  0.678  0.723                            
-Block6                                     -0.757  0.530  0.539  0.558  0.750                     
-Block7                                     -0.805  0.604  0.570  0.613  0.812  0.606              
-Block8                                     -0.988  0.696  0.685  0.710  0.975  0.782  0.792       
-ChamberChamber                             -0.353  0.256  0.245  0.269  0.362  0.282  0.300  0.345
-FragFull Corridors                         -0.525  0.354  0.365  0.334  0.467  0.400  0.373  0.556
-FragPseudo-Corridors                       -0.341  0.239  0.228  0.233  0.316  0.188  0.263  0.334
-FragIsolated                               -0.309  0.034  0.101  0.080  0.296  0.264  0.123  0.313
-H2O                                        -0.800  0.548  0.555  0.553  0.771  0.658  0.611  0.827
-I(H2O^2)                                    0.732 -0.498 -0.506 -0.504 -0.709 -0.604 -0.559 -0.758
-logCells                                   -0.143  0.116  0.174  0.111  0.146  0.341  0.065  0.268
-log10(TAN)                                 -0.201  0.136  0.199  0.125  0.159  0.369  0.085  0.316
-Block2:ChamberChamber                       0.225 -0.573 -0.179 -0.190 -0.226 -0.193 -0.201 -0.231
-Block3:ChamberChamber                       0.244 -0.171 -0.297 -0.180 -0.250 -0.201 -0.199 -0.244
-Block4:ChamberChamber                       0.133 -0.104 -0.097 -0.591 -0.145 -0.119 -0.122 -0.128
-Block5:ChamberChamber                       0.316 -0.230 -0.208 -0.245 -0.331 -0.216 -0.282 -0.288
-Block6:ChamberChamber                       0.330 -0.243 -0.225 -0.254 -0.345 -0.189 -0.287 -0.314
-Block7:ChamberChamber                       0.279 -0.205 -0.194 -0.213 -0.286 -0.217 -0.388 -0.272
-Block8:ChamberChamber                       0.320 -0.237 -0.218 -0.251 -0.339 -0.233 -0.286 -0.304
-Block2:FragFull Corridors                   0.191 -0.567 -0.157 -0.172 -0.197 -0.166 -0.180 -0.194
-Block3:FragFull Corridors                   0.236 -0.179 -0.396 -0.189 -0.239 -0.239 -0.198 -0.248
-Block4:FragFull Corridors                   0.156 -0.122 -0.109 -0.616 -0.169 -0.101 -0.141 -0.147
-Block5:FragFull Corridors                   0.376 -0.278 -0.270 -0.288 -0.389 -0.312 -0.316 -0.381
-Block6:FragFull Corridors                   0.326 -0.244 -0.232 -0.257 -0.342 -0.260 -0.283 -0.322
-Block7:FragFull Corridors                   0.285 -0.206 -0.189 -0.211 -0.298 -0.177 -0.401 -0.267
-Block8:FragFull Corridors                   0.347 -0.255 -0.256 -0.269 -0.351 -0.335 -0.285 -0.364
-Block2:FragPseudo-Corridors                 0.223 -0.560 -0.176 -0.190 -0.228 -0.181 -0.202 -0.226
-Block3:FragPseudo-Corridors                 0.245 -0.180 -0.337 -0.186 -0.254 -0.186 -0.205 -0.246
-Block4:FragPseudo-Corridors                 0.130 -0.103 -0.095 -0.585 -0.144 -0.112 -0.121 -0.124
-Block5:FragPseudo-Corridors                 0.356 -0.264 -0.256 -0.275 -0.369 -0.299 -0.300 -0.361
-Block6:FragPseudo-Corridors                 0.320 -0.238 -0.226 -0.247 -0.334 -0.267 -0.274 -0.316
-Block7:FragPseudo-Corridors                 0.222 -0.161 -0.151 -0.174 -0.232 -0.181 -0.354 -0.210
-Block8:FragPseudo-Corridors                 0.367 -0.271 -0.266 -0.279 -0.375 -0.306 -0.301 -0.381
-Block2:FragIsolated                         0.303 -0.572 -0.208 -0.215 -0.305 -0.256 -0.239 -0.310
-Block3:FragIsolated                         0.317 -0.182 -0.380 -0.204 -0.328 -0.273 -0.232 -0.323
-Block4:FragIsolated                         0.272 -0.180 -0.179 -0.580 -0.288 -0.229 -0.221 -0.269
-Block5:FragIsolated                         0.430 -0.258 -0.269 -0.287 -0.451 -0.360 -0.326 -0.431
-Block6:FragIsolated                         0.397 -0.196 -0.229 -0.236 -0.408 -0.483 -0.271 -0.406
-Block7:FragIsolated                         0.316 -0.244 -0.226 -0.253 -0.326 -0.246 -0.434 -0.304
-Block8:FragIsolated                         0.449 -0.279 -0.293 -0.304 -0.462 -0.396 -0.338 -0.464
-ChamberChamber:FragFull Corridors          -0.046  0.025  0.034  0.026  0.034  0.066  0.025  0.057
-ChamberChamber:FragPseudo-Corridors        -0.098  0.064  0.063  0.060  0.094  0.059  0.073  0.099
-ChamberChamber:FragIsolated                -0.299  0.243  0.230  0.227  0.277  0.221  0.252  0.308
-Block2:H2O                                  0.506 -0.125 -0.334 -0.351 -0.506 -0.375 -0.403 -0.499
-Block3:H2O                                  0.551 -0.415 -0.771 -0.414 -0.540 -0.439 -0.458 -0.558
-Block4:H2O                                  0.453 -0.327 -0.319  0.021 -0.443 -0.344 -0.365 -0.459
-Block5:H2O                                  0.803 -0.558 -0.541 -0.570 -0.805 -0.588 -0.650 -0.792
-Block6:H2O                                  0.618 -0.419 -0.436 -0.441 -0.601 -0.882 -0.479 -0.645
-Block7:H2O                                  0.632 -0.470 -0.451 -0.468 -0.628 -0.472 -0.672 -0.635
-Block8:H2O                                  0.807 -0.556 -0.559 -0.562 -0.785 -0.650 -0.627 -0.830
-Block2:I(H2O^2)                            -0.399 -0.059  0.253  0.263  0.399  0.301  0.306  0.394
-Block3:I(H2O^2)                            -0.551  0.405  0.684  0.406  0.540  0.442  0.451  0.559
-Block4:I(H2O^2)                            -0.368  0.256  0.254 -0.148  0.357  0.280  0.288  0.375
-Block5:I(H2O^2)                            -0.725  0.497  0.486  0.509  0.723  0.538  0.580  0.719
-Block6:I(H2O^2)                            -0.615  0.413  0.429  0.434  0.599  0.809  0.476  0.639
-Block7:I(H2O^2)                            -0.544  0.397  0.385  0.395  0.538  0.410  0.534  0.550
-Block8:I(H2O^2)                            -0.733  0.500  0.506  0.506  0.713  0.598  0.564  0.757
-FragFull Corridors:H2O                      0.204 -0.120 -0.184 -0.108 -0.124 -0.362 -0.070 -0.303
-FragPseudo-Corridors:H2O                    0.241 -0.147 -0.205 -0.126 -0.158 -0.337 -0.096 -0.338
-FragIsolated:H2O                            0.138  0.087 -0.010  0.048 -0.114 -0.224  0.051 -0.193
-FragFull Corridors:I(H2O^2)                -0.177  0.108  0.174  0.100  0.110  0.364  0.057  0.284
-FragPseudo-Corridors:I(H2O^2)              -0.223  0.146  0.199  0.121  0.158  0.297  0.090  0.325
-FragIsolated:I(H2O^2)                      -0.121 -0.098 -0.001 -0.056  0.110  0.211 -0.059  0.177
-FragFull Corridors:logCells                 0.343 -0.231 -0.223 -0.191 -0.318 -0.125 -0.240 -0.353
-FragPseudo-Corridors:logCells              -0.093  0.072  0.066  0.073  0.092  0.126  0.080  0.094
-FragIsolated:logCells                      -0.059  0.231  0.174  0.170  0.010  0.071  0.148  0.083
-FragFull Corridors:log10(TAN)              -0.239  0.132  0.167  0.108  0.126  0.242  0.123  0.283
-FragPseudo-Corridors:log10(TAN)             0.137 -0.078 -0.145 -0.097 -0.106 -0.421 -0.058 -0.227
-FragIsolated:log10(TAN)                    -0.043 -0.184 -0.113 -0.143  0.026  0.001 -0.100  0.029
-Block2:ChamberChamber:FragFull Corridors    0.017  0.202 -0.005 -0.004 -0.011 -0.022 -0.007 -0.016
-Block3:ChamberChamber:FragFull Corridors    0.022 -0.022 -0.043 -0.020 -0.014 -0.024 -0.021 -0.022
-Block4:ChamberChamber:FragFull Corridors    0.010 -0.005 -0.012  0.420  0.002 -0.040 -0.002 -0.019
-Block5:ChamberChamber:FragFull Corridors    0.015 -0.006 -0.016 -0.011 -0.010 -0.059 -0.003 -0.028
-Block6:ChamberChamber:FragFull Corridors    0.174 -0.106 -0.127 -0.101 -0.147 -0.344 -0.107 -0.205
-Block7:ChamberChamber:FragFull Corridors   -0.041  0.026  0.020  0.018  0.044 -0.021  0.081  0.035
-Block8:ChamberChamber:FragFull Corridors    0.057 -0.029 -0.040 -0.030 -0.038 -0.076 -0.028 -0.067
-Block2:ChamberChamber:FragPseudo-Corridors  0.069  0.111 -0.036 -0.038 -0.067 -0.031 -0.051 -0.061
-Block3:ChamberChamber:FragPseudo-Corridors  0.069 -0.053 -0.038 -0.050 -0.063 -0.054 -0.057 -0.068
-Block4:ChamberChamber:FragPseudo-Corridors  0.088 -0.061 -0.059  0.308 -0.077 -0.046 -0.065 -0.089
-Block5:ChamberChamber:FragPseudo-Corridors  0.116 -0.075 -0.083 -0.072 -0.108 -0.108 -0.079 -0.131
-Block6:ChamberChamber:FragPseudo-Corridors  0.109 -0.069 -0.076 -0.069 -0.099 -0.174 -0.076 -0.120
-Block7:ChamberChamber:FragPseudo-Corridors  0.087 -0.068 -0.066 -0.062 -0.081 -0.066 -0.033 -0.092
-Block8:ChamberChamber:FragPseudo-Corridors  0.150 -0.089 -0.104 -0.085 -0.119 -0.154 -0.092 -0.168
-Block2:ChamberChamber:FragIsolated          0.196  0.061 -0.148 -0.156 -0.189 -0.128 -0.176 -0.191
-Block3:ChamberChamber:FragIsolated          0.215 -0.190 -0.209 -0.176 -0.200 -0.152 -0.193 -0.216
-Block4:ChamberChamber:FragIsolated          0.222 -0.178 -0.169  0.157 -0.203 -0.158 -0.184 -0.228
-Block5:ChamberChamber:FragIsolated          0.301 -0.235 -0.228 -0.224 -0.286 -0.235 -0.246 -0.315
-Block6:ChamberChamber:FragIsolated          0.258 -0.212 -0.210 -0.207 -0.237 -0.418 -0.215 -0.279
-Block7:ChamberChamber:FragIsolated          0.244 -0.197 -0.186 -0.187 -0.231 -0.181 -0.182 -0.250
-Block8:ChamberChamber:FragIsolated          0.314 -0.246 -0.238 -0.230 -0.284 -0.242 -0.253 -0.326
+Block2                                     -0.541                                                 
+Block3                                     -0.634  0.523                                          
+Block4                                     -0.555  0.511  0.516                                   
+Block5                                     -0.588  0.539  0.556  0.525                            
+Block6                                     -0.384  0.333  0.424  0.324  0.352                     
+Block7                                     -0.562  0.536  0.518  0.503  0.546  0.328              
+Block8                                     -0.695  0.547  0.567  0.516  0.556  0.390  0.547       
+ChamberChamber                             -0.377  0.387  0.352  0.371  0.409  0.204  0.427  0.392
+FragFull Corridors                         -0.761  0.373  0.478  0.395  0.382  0.358  0.365  0.539
+FragPseudo-Corridors                       -0.618  0.256  0.313  0.237  0.294  0.108  0.263  0.359
+FragIsolated                               -0.640  0.197  0.269  0.213  0.284  0.159  0.240  0.403
+H2O                                        -0.602  0.337  0.404  0.310  0.317  0.346  0.263  0.530
+I(H2O^2)                                    0.587 -0.345 -0.444 -0.314 -0.344 -0.358 -0.271 -0.523
+logCells                                   -0.089 -0.121  0.065  0.040 -0.033 -0.074 -0.130 -0.144
+log10(TAN)                                  0.263  0.056 -0.049  0.031 -0.011  0.067 -0.010  0.070
+Block2:ChamberChamber                       0.280 -0.650 -0.287 -0.307 -0.315 -0.193 -0.316 -0.310
+Block3:ChamberChamber                       0.301 -0.275 -0.541 -0.287 -0.307 -0.148 -0.291 -0.278
+Block4:ChamberChamber                       0.229 -0.237 -0.207 -0.652 -0.256 -0.115 -0.237 -0.212
+Block5:ChamberChamber                       0.177 -0.224 -0.163 -0.195 -0.510 -0.084 -0.278 -0.211
+Block6:ChamberChamber                       0.321 -0.268 -0.269 -0.262 -0.297 -0.167 -0.299 -0.267
+Block7:ChamberChamber                       0.263 -0.278 -0.247 -0.261 -0.290 -0.145 -0.599 -0.281
+Block8:ChamberChamber                       0.265 -0.264 -0.259 -0.254 -0.293 -0.134 -0.303 -0.523
+Block2:FragFull Corridors                   0.249 -0.613 -0.272 -0.280 -0.291 -0.213 -0.291 -0.274
+Block3:FragFull Corridors                   0.352 -0.291 -0.594 -0.299 -0.323 -0.348 -0.290 -0.306
+Block4:FragFull Corridors                   0.184 -0.206 -0.172 -0.609 -0.226 -0.097 -0.202 -0.163
+Block5:FragFull Corridors                   0.315 -0.301 -0.336 -0.293 -0.580 -0.258 -0.302 -0.302
+Block6:FragFull Corridors                   0.309 -0.265 -0.310 -0.268 -0.300 -0.309 -0.281 -0.260
+Block7:FragFull Corridors                   0.218 -0.231 -0.201 -0.212 -0.252 -0.110 -0.530 -0.212
+Block8:FragFull Corridors                   0.304 -0.304 -0.321 -0.283 -0.312 -0.292 -0.308 -0.549
+Block2:FragPseudo-Corridors                 0.267 -0.610 -0.278 -0.287 -0.300 -0.172 -0.300 -0.287
+Block3:FragPseudo-Corridors                 0.318 -0.266 -0.526 -0.272 -0.298 -0.116 -0.270 -0.263
+Block4:FragPseudo-Corridors                 0.204 -0.212 -0.185 -0.610 -0.231 -0.092 -0.210 -0.181
+Block5:FragPseudo-Corridors                 0.308 -0.294 -0.308 -0.293 -0.570 -0.170 -0.293 -0.293
+Block6:FragPseudo-Corridors                 0.280 -0.231 -0.266 -0.238 -0.268 -0.243 -0.247 -0.231
+Block7:FragPseudo-Corridors                 0.243 -0.234 -0.211 -0.226 -0.251 -0.122 -0.534 -0.237
+Block8:FragPseudo-Corridors                 0.293 -0.294 -0.292 -0.277 -0.300 -0.137 -0.293 -0.531
+Block2:FragIsolated                         0.321 -0.619 -0.293 -0.297 -0.324 -0.203 -0.313 -0.335
+Block3:FragIsolated                         0.362 -0.273 -0.554 -0.292 -0.334 -0.187 -0.276 -0.306
+Block4:FragIsolated                         0.288 -0.264 -0.256 -0.609 -0.297 -0.148 -0.263 -0.259
+Block5:FragIsolated                         0.320 -0.287 -0.300 -0.293 -0.585 -0.179 -0.289 -0.301
+Block6:FragIsolated                         0.346 -0.265 -0.330 -0.275 -0.328 -0.540 -0.274 -0.315
+Block7:FragIsolated                         0.266 -0.265 -0.248 -0.250 -0.278 -0.144 -0.557 -0.261
+Block8:FragIsolated                         0.319 -0.303 -0.319 -0.290 -0.337 -0.207 -0.299 -0.557
+ChamberChamber:FragFull Corridors           0.097 -0.160 -0.122 -0.144 -0.179 -0.077 -0.193 -0.118
+ChamberChamber:FragPseudo-Corridors         0.126 -0.132 -0.121 -0.141 -0.151 -0.022 -0.159 -0.139
+ChamberChamber:FragIsolated                 0.018 -0.086 -0.036 -0.106 -0.121 -0.001 -0.114 -0.044
+Block2:H2O                                  0.290 -0.012 -0.225 -0.117 -0.180 -0.105 -0.156 -0.227
+Block3:H2O                                  0.438 -0.323 -0.565 -0.292 -0.318 -0.402 -0.284 -0.413
+Block4:H2O                                  0.298 -0.200 -0.296  0.057 -0.200 -0.207 -0.200 -0.285
+Block5:H2O                                  0.331 -0.242 -0.270 -0.198 -0.317 -0.186 -0.257 -0.299
+Block6:H2O                                  0.213 -0.180 -0.262 -0.166 -0.180 -0.893 -0.160 -0.252
+Block7:H2O                                  0.403 -0.357 -0.412 -0.312 -0.342 -0.301 -0.386 -0.402
+Block8:H2O                                  0.574 -0.347 -0.447 -0.328 -0.344 -0.340 -0.291 -0.554
+Block2:I(H2O^2)                            -0.241 -0.100  0.176  0.061  0.132  0.073  0.103  0.174
+Block3:I(H2O^2)                            -0.438  0.304  0.517  0.276  0.310  0.375  0.269  0.408
+Block4:I(H2O^2)                            -0.259  0.156  0.258 -0.134  0.165  0.176  0.162  0.245
+Block5:I(H2O^2)                            -0.321  0.208  0.255  0.160  0.260  0.167  0.228  0.285
+Block6:I(H2O^2)                            -0.236  0.190  0.274  0.174  0.194  0.867  0.170  0.272
+Block7:I(H2O^2)                            -0.374  0.317  0.392  0.273  0.315  0.281  0.316  0.375
+Block8:I(H2O^2)                            -0.531  0.330  0.441  0.309  0.337  0.327  0.273  0.512
+FragFull Corridors:H2O                      0.434 -0.202 -0.273 -0.186 -0.167 -0.391 -0.118 -0.368
+FragPseudo-Corridors:H2O                    0.447 -0.164 -0.237 -0.170 -0.131 -0.158 -0.073 -0.366
+FragIsolated:H2O                            0.387 -0.103 -0.182 -0.118 -0.148 -0.197 -0.039 -0.310
+FragFull Corridors:I(H2O^2)                -0.425  0.233  0.351  0.217  0.210  0.487  0.145  0.378
+FragPseudo-Corridors:I(H2O^2)              -0.429  0.188  0.280  0.184  0.163  0.134  0.085  0.354
+FragIsolated:I(H2O^2)                      -0.369  0.125  0.235  0.141  0.192  0.219  0.050  0.305
+FragFull Corridors:logCells                 0.288 -0.106 -0.262 -0.177 -0.159 -0.111 -0.081 -0.139
+FragPseudo-Corridors:logCells              -0.076  0.213  0.085  0.114  0.130  0.216  0.200  0.201
+FragIsolated:logCells                       0.052  0.075  0.075 -0.078  0.010  0.104  0.101  0.105
+FragFull Corridors:log10(TAN)              -0.460  0.127  0.251  0.164  0.133  0.161  0.137  0.247
+FragPseudo-Corridors:log10(TAN)            -0.165  0.016  0.018 -0.050  0.046 -0.061  0.048 -0.045
+FragIsolated:log10(TAN)                    -0.306 -0.053  0.038 -0.066  0.023 -0.026  0.018  0.080
+Block2:ChamberChamber:FragFull Corridors   -0.101  0.360  0.135  0.148  0.164  0.113  0.162  0.129
+Block3:ChamberChamber:FragFull Corridors   -0.122  0.132  0.284  0.140  0.159  0.112  0.144  0.112
+Block4:ChamberChamber:FragFull Corridors   -0.052  0.095  0.050  0.416  0.115  0.008  0.096  0.043
+Block5:ChamberChamber:FragFull Corridors   -0.071  0.119  0.082  0.093  0.286  0.061  0.158  0.103
+Block6:ChamberChamber:FragFull Corridors   -0.025  0.026 -0.020  0.028  0.045 -0.380  0.056 -0.025
+Block7:ChamberChamber:FragFull Corridors   -0.106  0.139  0.114  0.122  0.151  0.069  0.335  0.124
+Block8:ChamberChamber:FragFull Corridors   -0.075  0.130  0.133  0.120  0.153  0.100  0.157  0.246
+Block2:ChamberChamber:FragPseudo-Corridors -0.109  0.300  0.119  0.127  0.130  0.030  0.124  0.123
+Block3:ChamberChamber:FragPseudo-Corridors -0.099  0.092  0.238  0.105  0.119 -0.015  0.104  0.084
+Block4:ChamberChamber:FragPseudo-Corridors -0.069  0.070  0.063  0.371  0.095 -0.008  0.076  0.056
+Block5:ChamberChamber:FragPseudo-Corridors -0.034  0.083  0.034  0.064  0.248 -0.016  0.124  0.065
+Block6:ChamberChamber:FragPseudo-Corridors -0.100  0.064  0.064  0.074  0.090 -0.112  0.088  0.058
+Block7:ChamberChamber:FragPseudo-Corridors -0.068  0.082  0.056  0.077  0.099  0.005  0.279  0.081
+Block8:ChamberChamber:FragPseudo-Corridors  0.016  0.078  0.057  0.069  0.102 -0.046  0.108  0.145
+Block2:ChamberChamber:FragIsolated         -0.076  0.334  0.069  0.134  0.132  0.060  0.122  0.109
+Block3:ChamberChamber:FragIsolated         -0.050  0.063  0.183  0.095  0.106 -0.009  0.076  0.043
+Block4:ChamberChamber:FragIsolated         -0.024  0.067  0.015  0.358  0.093 -0.007  0.066  0.021
+Block5:ChamberChamber:FragIsolated          0.011  0.053 -0.012  0.049  0.223 -0.025  0.090  0.025
+Block6:ChamberChamber:FragIsolated         -0.022  0.008 -0.032  0.022  0.044 -0.426  0.033 -0.023
+Block7:ChamberChamber:FragIsolated         -0.029  0.072  0.023  0.080  0.089  0.001  0.259  0.051
+Block8:ChamberChamber:FragIsolated          0.003  0.068  0.044  0.084  0.106 -0.003  0.088  0.166
                                            ChmbrC FrgFlC FrgP-C FrgIsl H2O    I(H2O^ lgClls l10(TA
 Block2                                                                                            
 Block3                                                                                            
@@ -359,91 +360,91 @@ Block6
 Block7                                                                                            
 Block8                                                                                            
 ChamberChamber                                                                                    
-FragFull Corridors                          0.349                                                 
-FragPseudo-Corridors                        0.444  0.390                                          
-FragIsolated                                0.262  0.268  0.248                                   
-H2O                                        -0.001  0.353  0.024  0.211                            
-I(H2O^2)                                    0.004 -0.296 -0.001 -0.230 -0.978                     
-logCells                                    0.018  0.327  0.047  0.123  0.390 -0.358              
-log10(TAN)                                  0.019  0.420  0.095  0.150  0.450 -0.408  0.965       
-Block2:ChamberChamber                      -0.596 -0.247 -0.280 -0.067 -0.033  0.025 -0.099 -0.103
-Block3:ChamberChamber                      -0.669 -0.247 -0.307 -0.210 -0.021  0.018 -0.067 -0.065
-Block4:ChamberChamber                      -0.463 -0.110 -0.196 -0.095  0.033 -0.032 -0.012  0.000
-Block5:ChamberChamber                      -0.985 -0.275 -0.424 -0.234  0.077 -0.073  0.147  0.151
-Block6:ChamberChamber                      -0.970 -0.309 -0.449 -0.242  0.031 -0.032  0.047  0.053
-Block7:ChamberChamber                      -0.764 -0.284 -0.340 -0.191 -0.008  0.004 -0.013 -0.015
-Block8:ChamberChamber                      -0.987 -0.288 -0.422 -0.237  0.061 -0.057  0.097  0.108
-Block2:FragFull Corridors                  -0.285 -0.393 -0.266 -0.033  0.017 -0.035 -0.070 -0.067
-Block3:FragFull Corridors                  -0.341 -0.485 -0.312 -0.159 -0.010 -0.010 -0.150 -0.149
-Block4:FragFull Corridors                  -0.204 -0.304 -0.171 -0.072  0.012 -0.024  0.016  0.027
-Block5:FragFull Corridors                  -0.495 -0.748 -0.445 -0.251 -0.021 -0.008 -0.125 -0.117
-Block6:FragFull Corridors                  -0.488 -0.655 -0.444 -0.232  0.044 -0.066 -0.048 -0.037
-Block7:FragFull Corridors                  -0.361 -0.547 -0.313 -0.177  0.017 -0.036  0.068  0.073
-Block8:FragFull Corridors                  -0.488 -0.706 -0.453 -0.255 -0.020 -0.009 -0.196 -0.198
-Block2:FragPseudo-Corridors                -0.311 -0.242 -0.568 -0.065 -0.003 -0.013 -0.078 -0.077
-Block3:FragPseudo-Corridors                -0.344 -0.253 -0.641 -0.186 -0.002 -0.012 -0.072 -0.066
-Block4:FragPseudo-Corridors                -0.236 -0.108 -0.412 -0.091  0.053 -0.058 -0.002  0.012
-Block5:FragPseudo-Corridors                -0.497 -0.376 -0.889 -0.255 -0.009 -0.011 -0.121 -0.113
-Block6:FragPseudo-Corridors                -0.482 -0.332 -0.922 -0.239  0.035 -0.051 -0.050 -0.041
-Block7:FragPseudo-Corridors                -0.361 -0.203 -0.633 -0.178  0.063 -0.071  0.036  0.040
-Block8:FragPseudo-Corridors                -0.489 -0.400 -0.902 -0.263 -0.042  0.019 -0.184 -0.180
-Block2:FragIsolated                        -0.309 -0.267 -0.282 -0.408 -0.144  0.154 -0.118 -0.123
-Block3:FragIsolated                        -0.332 -0.264 -0.286 -0.561 -0.147  0.162 -0.117 -0.111
-Block4:FragIsolated                        -0.322 -0.195 -0.269 -0.428 -0.084  0.101 -0.048 -0.035
-Block5:FragIsolated                        -0.468 -0.340 -0.396 -0.738 -0.174  0.197 -0.118 -0.102
-Block6:FragIsolated                        -0.418 -0.327 -0.318 -0.817 -0.193  0.215 -0.166 -0.160
-Block7:FragIsolated                        -0.373 -0.233 -0.318 -0.347 -0.076  0.092  0.018  0.018
-Block8:FragIsolated                        -0.467 -0.386 -0.406 -0.715 -0.219  0.236 -0.211 -0.203
-ChamberChamber:FragFull Corridors          -0.653 -0.424 -0.286 -0.107  0.336 -0.333  0.080  0.096
-ChamberChamber:FragPseudo-Corridors        -0.647 -0.142 -0.608 -0.112  0.361 -0.350  0.016  0.026
-ChamberChamber:FragIsolated                -0.536 -0.010 -0.235 -0.326  0.596 -0.600  0.096  0.137
-Block2:H2O                                  0.006 -0.127  0.025 -0.147 -0.588  0.586 -0.045 -0.063
-Block3:H2O                                  0.003 -0.197  0.015  0.003 -0.658  0.647 -0.153 -0.185
-Block4:H2O                                  0.003 -0.189  0.000 -0.053 -0.539  0.529 -0.115 -0.145
-Block5:H2O                                  0.009 -0.199  0.029 -0.169 -0.931  0.927 -0.078 -0.105
-Block6:H2O                                  0.001 -0.218  0.089 -0.171 -0.786  0.775 -0.327 -0.364
-Block7:H2O                                  0.005 -0.224  0.013 -0.023 -0.744  0.732 -0.138 -0.165
-Block8:H2O                                  0.003 -0.329 -0.011 -0.203 -0.992  0.975 -0.316 -0.369
-Block2:I(H2O^2)                            -0.006  0.089 -0.032  0.196  0.505 -0.530  0.040  0.055
-Block3:I(H2O^2)                            -0.006  0.184 -0.029  0.050  0.711 -0.732  0.159  0.192
-Block4:I(H2O^2)                            -0.003  0.161 -0.003  0.087  0.473 -0.484  0.109  0.137
-Block5:I(H2O^2)                            -0.011  0.173 -0.038  0.199  0.915 -0.955  0.090  0.121
-Block6:I(H2O^2)                            -0.004  0.203 -0.094  0.200  0.831 -0.857  0.294  0.332
-Block7:I(H2O^2)                            -0.006  0.207 -0.019  0.062  0.694 -0.712  0.152  0.178
-Block8:I(H2O^2)                            -0.005  0.283 -0.006  0.226  0.970 -0.996  0.312  0.359
-FragFull Corridors:H2O                     -0.018 -0.412 -0.133 -0.160 -0.439  0.394 -0.876 -0.968
-FragPseudo-Corridors:H2O                   -0.018 -0.475 -0.188 -0.166 -0.473  0.424 -0.861 -0.959
-FragIsolated:H2O                           -0.009 -0.223 -0.051 -0.750 -0.303  0.292 -0.548 -0.567
-FragFull Corridors:I(H2O^2)                 0.019  0.377  0.121  0.151  0.417 -0.376  0.902  0.974
-FragPseudo-Corridors:I(H2O^2)               0.018  0.439  0.216  0.158  0.456 -0.409  0.878  0.950
-FragIsolated:I(H2O^2)                       0.009  0.194  0.037  0.759  0.282 -0.276  0.537  0.539
-FragFull Corridors:logCells                -0.001 -0.598 -0.022 -0.073 -0.374  0.335 -0.116 -0.161
-FragPseudo-Corridors:logCells               0.000  0.034 -0.289  0.006  0.098 -0.088  0.029  0.032
-FragIsolated:logCells                       0.005  0.172  0.062 -0.716  0.075 -0.043  0.131  0.198
-FragFull Corridors:log10(TAN)               0.006  0.488  0.129  0.097  0.316 -0.281  0.178  0.343
-FragPseudo-Corridors:log10(TAN)            -0.015 -0.328  0.138 -0.108 -0.330  0.299 -0.744 -0.768
-FragIsolated:log10(TAN)                    -0.005  0.004  0.005  0.794  0.050 -0.073 -0.152 -0.120
-Block2:ChamberChamber:FragFull Corridors    0.470  0.338  0.216  0.063 -0.207  0.209  0.019  0.009
-Block3:ChamberChamber:FragFull Corridors    0.460  0.318  0.208  0.130 -0.208  0.207  0.006 -0.006
-Block4:ChamberChamber:FragFull Corridors    0.306  0.215  0.125  0.060 -0.152  0.151 -0.052 -0.069
-Block5:ChamberChamber:FragFull Corridors    0.648  0.476  0.289  0.110 -0.308  0.308 -0.109 -0.111
-Block6:ChamberChamber:FragFull Corridors    0.548  0.103  0.278  0.041 -0.467  0.446 -0.245 -0.283
-Block7:ChamberChamber:FragFull Corridors    0.505  0.461  0.228  0.124 -0.174  0.180 -0.032 -0.033
-Block8:ChamberChamber:FragFull Corridors    0.647  0.404  0.275  0.098 -0.352  0.347 -0.106 -0.131
-Block2:ChamberChamber:FragPseudo-Corridors  0.522  0.138  0.505  0.080 -0.264  0.259  0.053  0.045
-Block3:ChamberChamber:FragPseudo-Corridors  0.456  0.095  0.449  0.120 -0.249  0.241  0.003 -0.008
-Block4:ChamberChamber:FragPseudo-Corridors  0.401  0.041  0.365  0.077 -0.252  0.243 -0.010 -0.028
-Block5:ChamberChamber:FragPseudo-Corridors  0.642  0.093  0.597  0.095 -0.407  0.392 -0.131 -0.143
-Block6:ChamberChamber:FragPseudo-Corridors  0.617  0.107  0.624  0.094 -0.382  0.368 -0.094 -0.110
-Block7:ChamberChamber:FragPseudo-Corridors  0.512  0.090  0.484  0.126 -0.303  0.291 -0.051 -0.060
-Block8:ChamberChamber:FragPseudo-Corridors  0.619  0.019  0.575  0.073 -0.446  0.425 -0.162 -0.207
-Block2:ChamberChamber:FragIsolated          0.404  0.061  0.195  0.268 -0.393  0.400  0.021  0.001
-Block3:ChamberChamber:FragIsolated          0.408  0.027  0.186  0.309 -0.426  0.430 -0.031 -0.060
-Block4:ChamberChamber:FragIsolated          0.364 -0.028  0.156  0.221 -0.424  0.424 -0.061 -0.096
-Block5:ChamberChamber:FragIsolated          0.542  0.013  0.243  0.284 -0.614  0.618 -0.148 -0.178
-Block6:ChamberChamber:FragIsolated          0.498  0.028  0.256  0.306 -0.560  0.563 -0.194 -0.228
-Block7:ChamberChamber:FragIsolated          0.459  0.032  0.209  0.269 -0.495  0.500 -0.075 -0.101
-Block8:ChamberChamber:FragIsolated          0.528 -0.024  0.220  0.298 -0.621  0.621 -0.141 -0.192
+FragFull Corridors                          0.238                                                 
+FragPseudo-Corridors                        0.263  0.515                                          
+FragIsolated                                0.228  0.524  0.520                                   
+H2O                                         0.021  0.548  0.260  0.379                            
+I(H2O^2)                                   -0.011 -0.523 -0.240 -0.385 -0.970                     
+logCells                                   -0.128  0.054  0.085  0.089 -0.086  0.053              
+log10(TAN)                                  0.069 -0.174 -0.268 -0.238  0.321 -0.219 -0.184       
+Block2:ChamberChamber                      -0.661 -0.225 -0.175 -0.118 -0.112  0.100  0.089 -0.128
+Block3:ChamberChamber                      -0.686 -0.201 -0.215 -0.187 -0.046  0.050 -0.066 -0.033
+Block4:ChamberChamber                      -0.583 -0.143 -0.151 -0.128 -0.021  0.008 -0.067 -0.075
+Block5:ChamberChamber                      -0.690 -0.077 -0.144 -0.115  0.113 -0.131  0.174 -0.020
+Block6:ChamberChamber                      -0.680 -0.207 -0.260 -0.208  0.024 -0.008  0.033  0.131
+Block7:ChamberChamber                      -0.710 -0.166 -0.183 -0.152 -0.019  0.009  0.123 -0.059
+Block8:ChamberChamber                      -0.687 -0.160 -0.193 -0.167  0.084 -0.058  0.056  0.130
+Block2:FragFull Corridors                  -0.297 -0.416 -0.195 -0.112 -0.079  0.073  0.120 -0.064
+Block3:FragFull Corridors                  -0.277 -0.528 -0.264 -0.210 -0.135  0.154 -0.053  0.045
+Block4:FragFull Corridors                  -0.236 -0.274 -0.146 -0.109  0.003 -0.016 -0.068 -0.050
+Block5:FragFull Corridors                  -0.306 -0.464 -0.240 -0.190 -0.101  0.118  0.039  0.013
+Block6:FragFull Corridors                  -0.297 -0.455 -0.267 -0.205 -0.017  0.037 -0.030  0.103
+Block7:FragFull Corridors                  -0.320 -0.322 -0.203 -0.166  0.066 -0.068  0.105  0.036
+Block8:FragFull Corridors                  -0.319 -0.489 -0.233 -0.184 -0.138  0.134  0.152 -0.066
+Block2:FragPseudo-Corridors                -0.304 -0.256 -0.410 -0.135 -0.085  0.083  0.115 -0.046
+Block3:FragPseudo-Corridors                -0.290 -0.264 -0.515 -0.224 -0.045  0.064 -0.080  0.078
+Block4:FragPseudo-Corridors                -0.255 -0.158 -0.357 -0.138  0.001 -0.011 -0.065 -0.038
+Block5:FragPseudo-Corridors                -0.307 -0.262 -0.440 -0.197 -0.087  0.105  0.028  0.015
+Block6:FragPseudo-Corridors                -0.293 -0.231 -0.533 -0.212  0.020  0.001 -0.035  0.110
+Block7:FragPseudo-Corridors                -0.322 -0.185 -0.428 -0.193  0.031 -0.034  0.102  0.029
+Block8:FragPseudo-Corridors                -0.316 -0.260 -0.434 -0.190 -0.113  0.115  0.132 -0.047
+Block2:FragIsolated                        -0.301 -0.291 -0.234 -0.446 -0.172  0.184  0.107 -0.046
+Block3:FragIsolated                        -0.284 -0.289 -0.276 -0.497 -0.150  0.197 -0.086  0.063
+Block4:FragIsolated                        -0.285 -0.224 -0.222 -0.414 -0.083  0.097 -0.048 -0.009
+Block5:FragIsolated                        -0.305 -0.254 -0.247 -0.451 -0.119  0.151  0.021  0.017
+Block6:FragIsolated                        -0.272 -0.288 -0.214 -0.477 -0.184  0.232 -0.007  0.036
+Block7:FragIsolated                        -0.324 -0.204 -0.219 -0.365 -0.012  0.020  0.108  0.027
+Block8:FragIsolated                        -0.313 -0.268 -0.232 -0.408 -0.194  0.222  0.128 -0.065
+ChamberChamber:FragFull Corridors          -0.618 -0.223 -0.156 -0.093  0.169 -0.183  0.100 -0.042
+ChamberChamber:FragPseudo-Corridors        -0.603 -0.103 -0.430 -0.142  0.134 -0.145  0.086 -0.027
+ChamberChamber:FragIsolated                -0.581 -0.008 -0.129 -0.216  0.263 -0.290  0.090 -0.051
+Block2:H2O                                  0.015 -0.118 -0.097 -0.234 -0.344  0.411 -0.042  0.142
+Block3:H2O                                  0.004 -0.383 -0.088 -0.146 -0.662  0.725  0.000 -0.024
+Block4:H2O                                 -0.002 -0.263 -0.086 -0.133 -0.391  0.450  0.084  0.098
+Block5:H2O                                  0.005 -0.200 -0.095 -0.203 -0.446  0.482  0.000  0.035
+Block6:H2O                                 -0.016 -0.247  0.042 -0.075 -0.408  0.420  0.098 -0.140
+Block7:H2O                                 -0.001 -0.326 -0.072 -0.113 -0.623  0.682  0.039 -0.034
+Block8:H2O                                  0.004 -0.547 -0.220 -0.368 -0.831  0.870 -0.009 -0.054
+Block2:I(H2O^2)                            -0.017  0.085  0.092  0.256  0.280 -0.359  0.049 -0.162
+Block3:I(H2O^2)                            -0.007  0.365  0.090  0.204  0.682 -0.767  0.013  0.017
+Block4:I(H2O^2)                             0.001  0.223  0.093  0.153  0.342 -0.412 -0.084 -0.113
+Block5:I(H2O^2)                            -0.007  0.196  0.103  0.246  0.450 -0.509  0.006 -0.048
+Block6:I(H2O^2)                             0.014  0.253 -0.039  0.109  0.454 -0.481 -0.090  0.138
+Block7:I(H2O^2)                             0.000  0.307  0.082  0.141  0.607 -0.689 -0.040  0.025
+Block8:I(H2O^2)                            -0.006  0.499  0.194  0.356  0.810 -0.878  0.017  0.052
+FragFull Corridors:H2O                     -0.034 -0.516 -0.251 -0.283 -0.796  0.714  0.131 -0.416
+FragPseudo-Corridors:H2O                   -0.027 -0.466 -0.293 -0.328 -0.770  0.697  0.098 -0.351
+FragIsolated:H2O                           -0.029 -0.389 -0.249 -0.356 -0.745  0.688  0.106 -0.392
+FragFull Corridors:I(H2O^2)                 0.024  0.546  0.230  0.241  0.742 -0.703 -0.108  0.297
+FragPseudo-Corridors:I(H2O^2)               0.018  0.455  0.313  0.296  0.713 -0.676 -0.073  0.254
+FragIsolated:I(H2O^2)                       0.018  0.368  0.227  0.340  0.701 -0.698 -0.073  0.283
+FragFull Corridors:logCells                 0.077 -0.324 -0.116 -0.126 -0.260  0.284 -0.586  0.109
+FragPseudo-Corridors:logCells               0.067  0.077 -0.298 -0.051  0.232 -0.205 -0.509  0.151
+FragIsolated:logCells                       0.089 -0.020 -0.062 -0.244  0.087 -0.101 -0.719  0.088
+FragFull Corridors:log10(TAN)              -0.042  0.635  0.285  0.309  0.198 -0.252  0.106 -0.591
+FragPseudo-Corridors:log10(TAN)            -0.042  0.086  0.434  0.148 -0.217  0.161  0.108 -0.637
+FragIsolated:log10(TAN)                    -0.048  0.217  0.278  0.645 -0.013 -0.073  0.129 -0.654
+Block2:ChamberChamber:FragFull Corridors    0.437  0.220  0.116  0.054 -0.036  0.049 -0.074  0.088
+Block3:ChamberChamber:FragFull Corridors    0.432  0.231  0.145  0.105 -0.065  0.069  0.044  0.023
+Block4:ChamberChamber:FragFull Corridors    0.346  0.106  0.081  0.050 -0.096  0.115  0.067  0.067
+Block5:ChamberChamber:FragFull Corridors    0.448  0.189  0.107  0.063 -0.134  0.153 -0.144  0.014
+Block6:ChamberChamber:FragFull Corridors    0.347  0.049  0.167  0.078 -0.269  0.262  0.029 -0.154
+Block7:ChamberChamber:FragFull Corridors    0.451  0.208  0.127  0.085 -0.072  0.085 -0.097  0.036
+Block8:ChamberChamber:FragFull Corridors    0.434  0.188  0.109  0.048 -0.179  0.159 -0.052 -0.099
+Block2:ChamberChamber:FragPseudo-Corridors  0.435  0.111  0.328  0.100 -0.050  0.056 -0.056  0.046
+Block3:ChamberChamber:FragPseudo-Corridors  0.423  0.077  0.377  0.121 -0.106  0.108  0.057  0.004
+Block4:ChamberChamber:FragPseudo-Corridors  0.383  0.052  0.268  0.091 -0.107  0.116  0.058  0.035
+Block5:ChamberChamber:FragPseudo-Corridors  0.445  0.016  0.279  0.063 -0.187  0.205 -0.134  0.007
+Block6:ChamberChamber:FragPseudo-Corridors  0.400  0.063  0.382  0.129 -0.172  0.162 -0.004 -0.130
+Block7:ChamberChamber:FragPseudo-Corridors  0.443  0.047  0.341  0.103 -0.129  0.143 -0.081  0.027
+Block8:ChamberChamber:FragPseudo-Corridors  0.411 -0.040  0.263 -0.003 -0.291  0.267 -0.036 -0.110
+Block2:ChamberChamber:FragIsolated          0.418  0.104  0.116  0.240 -0.060  0.087 -0.066  0.108
+Block3:ChamberChamber:FragIsolated          0.417  0.032  0.125  0.230 -0.155  0.162  0.055  0.024
+Block4:ChamberChamber:FragIsolated          0.374  0.009  0.094  0.180 -0.157  0.181  0.053  0.060
+Block5:ChamberChamber:FragIsolated          0.439 -0.019  0.084  0.179 -0.242  0.269 -0.132  0.021
+Block6:ChamberChamber:FragIsolated          0.324 -0.048  0.147  0.198 -0.237  0.221  0.035 -0.135
+Block7:ChamberChamber:FragIsolated          0.441  0.022  0.110  0.205 -0.178  0.204 -0.087  0.044
+Block8:ChamberChamber:FragIsolated          0.417 -0.017  0.083  0.145 -0.269  0.254 -0.038 -0.085
                                            Bl2:CC Bl3:CC Bl4:CC Bl5:CC Bl6:CC Bl7:CC Bl8:CC B2:FFC
 Block2                                                                                            
 Block3                                                                                            
@@ -461,83 +462,83 @@ I(H2O^2)
 logCells                                                                                          
 log10(TAN)                                                                                        
 Block2:ChamberChamber                                                                             
-Block3:ChamberChamber                       0.400                                                 
-Block4:ChamberChamber                       0.277  0.310                                          
-Block5:ChamberChamber                       0.571  0.651  0.457                                   
-Block6:ChamberChamber                       0.574  0.648  0.449  0.968                            
-Block7:ChamberChamber                       0.457  0.511  0.352  0.753  0.742                     
-Block8:ChamberChamber                       0.577  0.654  0.458  0.994  0.967  0.754              
-Block2:FragFull Corridors                   0.735  0.191  0.138  0.270  0.274  0.218  0.274       
-Block3:FragFull Corridors                   0.220  0.442  0.163  0.311  0.319  0.258  0.319  0.404
-Block4:FragFull Corridors                   0.122  0.134  0.843  0.206  0.202  0.159  0.206  0.233
-Block5:FragFull Corridors                   0.306  0.337  0.227  0.469  0.474  0.380  0.476  0.571
-Block6:FragFull Corridors                   0.296  0.329  0.231  0.476  0.496  0.372  0.479  0.565
-Block7:FragFull Corridors                   0.206  0.236  0.158  0.369  0.358  0.401  0.366  0.401
-Block8:FragFull Corridors                   0.310  0.337  0.230  0.448  0.459  0.370  0.461  0.573
-Block2:FragPseudo-Corridors                 0.713  0.210  0.147  0.294  0.301  0.239  0.299  0.724
-Block3:FragPseudo-Corridors                 0.212  0.509  0.160  0.329  0.337  0.262  0.333  0.205
-Block4:FragPseudo-Corridors                 0.142  0.158  0.839  0.236  0.231  0.179  0.236  0.143
-Block5:FragPseudo-Corridors                 0.308  0.340  0.232  0.472  0.479  0.380  0.479  0.297
-Block6:FragPseudo-Corridors                 0.293  0.328  0.226  0.470  0.488  0.368  0.473  0.285
-Block7:FragPseudo-Corridors                 0.210  0.240  0.172  0.364  0.352  0.385  0.363  0.208
-Block8:FragPseudo-Corridors                 0.311  0.340  0.227  0.453  0.471  0.374  0.465  0.298
-Block2:FragIsolated                         0.688  0.216  0.138  0.285  0.294  0.236  0.291  0.683
-Block3:FragIsolated                         0.179  0.468  0.148  0.309  0.315  0.251  0.315  0.156
-Block4:FragIsolated                         0.183  0.222  0.714  0.312  0.311  0.244  0.315  0.167
-Block5:FragIsolated                         0.255  0.329  0.213  0.445  0.449  0.355  0.452  0.225
-Block6:FragIsolated                         0.208  0.299  0.185  0.386  0.380  0.314  0.394  0.176
-Block7:FragIsolated                         0.228  0.246  0.175  0.372  0.363  0.429  0.371  0.212
-Block8:FragIsolated                         0.268  0.331  0.211  0.427  0.440  0.355  0.440  0.235
-ChamberChamber:FragFull Corridors           0.381  0.431  0.304  0.662  0.642  0.501  0.659  0.371
-ChamberChamber:FragPseudo-Corridors         0.384  0.431  0.311  0.644  0.630  0.491  0.644  0.196
-ChamberChamber:FragIsolated                 0.285  0.360  0.268  0.553  0.530  0.402  0.548  0.150
-Block2:H2O                                 -0.481  0.000 -0.023 -0.016 -0.010  0.001 -0.014 -0.532
-Block3:H2O                                  0.028 -0.144 -0.021 -0.034 -0.019  0.006 -0.027 -0.001
-Block4:H2O                                  0.015  0.002 -0.688 -0.027 -0.012  0.005 -0.021 -0.011
-Block5:H2O                                 -0.004  0.000 -0.033 -0.026 -0.013  0.002 -0.022 -0.045
-Block6:H2O                                  0.019  0.011 -0.018 -0.062 -0.103  0.002 -0.047 -0.017
-Block7:H2O                                  0.024  0.000 -0.027 -0.032 -0.014  0.106 -0.025 -0.010
-Block8:H2O                                  0.025  0.016 -0.036 -0.065 -0.028  0.007 -0.050 -0.024
-Block2:I(H2O^2)                             0.547 -0.002  0.021  0.016  0.011  0.002  0.013  0.605
-Block3:I(H2O^2)                            -0.022  0.148  0.024  0.038  0.022 -0.003  0.030  0.019
-Block4:I(H2O^2)                            -0.009 -0.003  0.732  0.026  0.012 -0.003  0.020  0.021
-Block5:I(H2O^2)                             0.006  0.000  0.033  0.031  0.017  0.001  0.026  0.059
-Block6:I(H2O^2)                            -0.012 -0.008  0.022  0.060  0.093  0.000  0.046  0.037
-Block7:I(H2O^2)                            -0.019 -0.001  0.027  0.035  0.016 -0.128  0.028  0.023
-Block8:I(H2O^2)                            -0.020 -0.015  0.034  0.066  0.030 -0.003  0.051  0.039
-FragFull Corridors:H2O                      0.101  0.060 -0.002 -0.145 -0.055  0.012 -0.111  0.065
-FragPseudo-Corridors:H2O                    0.102  0.062 -0.012 -0.144 -0.045  0.015 -0.111  0.062
-FragIsolated:H2O                           -0.043  0.064 -0.013 -0.087 -0.031 -0.003 -0.068 -0.075
-FragFull Corridors:I(H2O^2)                -0.102 -0.062 -0.003  0.146  0.056 -0.010  0.109 -0.070
-FragPseudo-Corridors:I(H2O^2)              -0.105 -0.067  0.008  0.143  0.032 -0.015  0.107 -0.068
-FragIsolated:I(H2O^2)                       0.048 -0.064  0.011  0.083  0.029  0.004  0.062  0.078
-FragFull Corridors:logCells                 0.011  0.001 -0.071 -0.025 -0.003  0.031 -0.019 -0.036
-FragPseudo-Corridors:logCells              -0.010 -0.002  0.002  0.005  0.017 -0.001  0.004 -0.009
-FragIsolated:logCells                      -0.137  0.023 -0.003  0.027  0.012 -0.018  0.020 -0.138
-FragFull Corridors:log10(TAN)              -0.042 -0.010  0.057  0.050  0.031 -0.012  0.039 -0.007
-FragPseudo-Corridors:log10(TAN)             0.061  0.031  0.004 -0.116 -0.089  0.011 -0.083  0.032
-FragIsolated:log10(TAN)                     0.132 -0.020  0.037 -0.016 -0.001  0.015 -0.010  0.149
-Block2:ChamberChamber:FragFull Corridors   -0.740 -0.313 -0.219 -0.463 -0.458 -0.361 -0.464 -0.740
-Block3:ChamberChamber:FragFull Corridors   -0.267 -0.673 -0.213 -0.455 -0.449 -0.352 -0.456 -0.258
-Block4:ChamberChamber:FragFull Corridors   -0.173 -0.201 -0.878 -0.314 -0.304 -0.237 -0.312 -0.167
-Block5:ChamberChamber:FragFull Corridors   -0.376 -0.425 -0.293 -0.659 -0.638 -0.500 -0.655 -0.363
-Block6:ChamberChamber:FragFull Corridors   -0.307 -0.359 -0.279 -0.590 -0.617 -0.412 -0.579 -0.320
-Block7:ChamberChamber:FragFull Corridors   -0.294 -0.334 -0.219 -0.505 -0.496 -0.657 -0.504 -0.275
-Block8:ChamberChamber:FragFull Corridors   -0.374 -0.425 -0.302 -0.662 -0.640 -0.497 -0.663 -0.366
-Block2:ChamberChamber:FragPseudo-Corridors -0.630 -0.352 -0.251 -0.509 -0.506 -0.396 -0.512 -0.396
-Block3:ChamberChamber:FragPseudo-Corridors -0.267 -0.685 -0.219 -0.452 -0.449 -0.345 -0.453 -0.134
-Block4:ChamberChamber:FragPseudo-Corridors -0.234 -0.268 -0.832 -0.401 -0.390 -0.302 -0.401 -0.120
-Block5:ChamberChamber:FragPseudo-Corridors -0.371 -0.422 -0.309 -0.659 -0.636 -0.487 -0.653 -0.188
-Block6:ChamberChamber:FragPseudo-Corridors -0.360 -0.409 -0.296 -0.629 -0.651 -0.469 -0.625 -0.183
-Block7:ChamberChamber:FragPseudo-Corridors -0.293 -0.341 -0.246 -0.516 -0.502 -0.622 -0.514 -0.146
-Block8:ChamberChamber:FragPseudo-Corridors -0.353 -0.408 -0.305 -0.647 -0.626 -0.469 -0.645 -0.182
-Block2:ChamberChamber:FragIsolated         -0.687 -0.277 -0.198 -0.399 -0.393 -0.303 -0.400 -0.530
-Block3:ChamberChamber:FragIsolated         -0.213 -0.610 -0.201 -0.413 -0.401 -0.304 -0.411 -0.107
-Block4:ChamberChamber:FragIsolated         -0.192 -0.245 -0.773 -0.376 -0.360 -0.271 -0.373 -0.103
-Block5:ChamberChamber:FragIsolated         -0.291 -0.359 -0.268 -0.566 -0.538 -0.407 -0.559 -0.155
-Block6:ChamberChamber:FragIsolated         -0.257 -0.332 -0.239 -0.531 -0.555 -0.376 -0.522 -0.129
-Block7:ChamberChamber:FragIsolated         -0.248 -0.308 -0.227 -0.471 -0.453 -0.572 -0.467 -0.131
-Block8:ChamberChamber:FragIsolated         -0.277 -0.352 -0.266 -0.554 -0.527 -0.396 -0.552 -0.147
+Block3:ChamberChamber                       0.465                                                 
+Block4:ChamberChamber                       0.415  0.427                                          
+Block5:ChamberChamber                       0.431  0.446  0.373                                   
+Block6:ChamberChamber                       0.442  0.482  0.396  0.465                            
+Block7:ChamberChamber                       0.470  0.482  0.409  0.494  0.480                     
+Block8:ChamberChamber                       0.440  0.475  0.393  0.481  0.500  0.486              
+Block2:FragFull Corridors                   0.543  0.207  0.196  0.185  0.201  0.213  0.199       
+Block3:FragFull Corridors                   0.228  0.426  0.182  0.141  0.206  0.192  0.205  0.476
+Block4:FragFull Corridors                   0.182  0.181  0.632  0.140  0.159  0.165  0.155  0.363
+Block5:FragFull Corridors                   0.230  0.228  0.188  0.367  0.221  0.217  0.221  0.476
+Block6:FragFull Corridors                   0.212  0.230  0.183  0.183  0.454  0.208  0.231  0.466
+Block7:FragFull Corridors                   0.196  0.206  0.175  0.240  0.225  0.439  0.232  0.433
+Block8:FragFull Corridors                   0.251  0.221  0.180  0.197  0.212  0.229  0.421  0.498
+Block2:FragPseudo-Corridors                 0.532  0.215  0.195  0.190  0.217  0.218  0.207  0.590
+Block3:FragPseudo-Corridors                 0.212  0.458  0.188  0.169  0.246  0.201  0.219  0.239
+Block4:FragPseudo-Corridors                 0.200  0.198  0.620  0.150  0.179  0.177  0.170  0.215
+Block5:FragPseudo-Corridors                 0.231  0.233  0.196  0.364  0.232  0.217  0.221  0.257
+Block6:FragPseudo-Corridors                 0.196  0.230  0.178  0.184  0.454  0.205  0.228  0.225
+Block7:FragPseudo-Corridors                 0.206  0.209  0.178  0.233  0.225  0.439  0.231  0.225
+Block8:FragPseudo-Corridors                 0.238  0.229  0.180  0.195  0.239  0.226  0.419  0.264
+Block2:FragIsolated                         0.521  0.213  0.194  0.180  0.208  0.214  0.205  0.569
+Block3:FragIsolated                         0.204  0.445  0.195  0.136  0.222  0.195  0.213  0.219
+Block4:FragIsolated                         0.217  0.221  0.546  0.158  0.204  0.198  0.199  0.232
+Block5:FragIsolated                         0.223  0.230  0.205  0.377  0.225  0.214  0.221  0.242
+Block6:FragIsolated                         0.193  0.206  0.172  0.130  0.346  0.189  0.201  0.211
+Block7:FragIsolated                         0.216  0.213  0.177  0.228  0.228  0.447  0.233  0.237
+Block8:FragIsolated                         0.235  0.223  0.187  0.167  0.216  0.223  0.413  0.253
+ChamberChamber:FragFull Corridors           0.392  0.415  0.366  0.450  0.417  0.441  0.427  0.429
+ChamberChamber:FragPseudo-Corridors         0.371  0.411  0.350  0.423  0.423  0.428  0.417  0.190
+ChamberChamber:FragIsolated                 0.372  0.392  0.370  0.415  0.393  0.413  0.397  0.206
+Block2:H2O                                 -0.267 -0.001 -0.073 -0.038  0.015 -0.012  0.017 -0.324
+Block3:H2O                                  0.055 -0.012 -0.033 -0.096 -0.013 -0.002 -0.005  0.052
+Block4:H2O                                  0.005  0.006 -0.453 -0.031  0.025  0.005  0.025  0.005
+Block5:H2O                                  0.009  0.005 -0.046  0.087  0.003 -0.001  0.003 -0.004
+Block6:H2O                                  0.065  0.003 -0.002 -0.044 -0.139  0.014 -0.012  0.086
+Block7:H2O                                  0.073  0.026 -0.014 -0.074  0.007  0.037  0.001  0.070
+Block8:H2O                                  0.075  0.040 -0.014 -0.117  0.007 -0.004 -0.023  0.057
+Block2:I(H2O^2)                             0.300  0.002  0.079  0.036 -0.016  0.014 -0.019  0.362
+Block3:I(H2O^2)                            -0.043  0.015  0.034  0.101  0.015  0.005  0.005 -0.029
+Block4:I(H2O^2)                             0.008 -0.004  0.478  0.026 -0.027 -0.004 -0.028  0.010
+Block5:I(H2O^2)                             0.006 -0.004  0.063 -0.087 -0.005  0.004 -0.004  0.025
+Block6:I(H2O^2)                            -0.060 -0.002  0.005  0.051  0.140 -0.012  0.013 -0.072
+Block7:I(H2O^2)                            -0.062 -0.028  0.021  0.083 -0.011 -0.042 -0.003 -0.056
+Block8:I(H2O^2)                            -0.070 -0.043  0.016  0.123 -0.009  0.006  0.025 -0.050
+FragFull Corridors:H2O                      0.155  0.052  0.063 -0.098 -0.036  0.027 -0.103  0.157
+FragPseudo-Corridors:H2O                    0.092  0.057  0.033 -0.109  0.003  0.022 -0.095  0.064
+FragIsolated:H2O                            0.089  0.053  0.051 -0.114 -0.026  0.023 -0.103  0.055
+FragFull Corridors:I(H2O^2)                -0.160 -0.061 -0.050  0.114  0.018 -0.018  0.069 -0.189
+FragPseudo-Corridors:I(H2O^2)              -0.099 -0.073 -0.031  0.123 -0.040 -0.014  0.071 -0.091
+FragIsolated:I(H2O^2)                      -0.086 -0.062 -0.053  0.143  0.006 -0.012  0.073 -0.067
+FragFull Corridors:logCells                -0.038  0.048  0.004 -0.135 -0.016 -0.064 -0.032 -0.076
+FragPseudo-Corridors:logCells              -0.105  0.028  0.020 -0.072  0.017 -0.065 -0.020 -0.123
+FragIsolated:logCells                      -0.035  0.047  0.153 -0.117 -0.034 -0.090 -0.049 -0.061
+FragFull Corridors:log10(TAN)               0.001  0.001  0.060  0.073 -0.084  0.037 -0.071 -0.027
+FragPseudo-Corridors:log10(TAN)             0.050  0.020  0.057 -0.020 -0.088  0.035 -0.084  0.001
+FragIsolated:log10(TAN)                     0.127  0.021  0.095  0.008 -0.082  0.046 -0.083  0.114
+Block2:ChamberChamber:FragFull Corridors   -0.654 -0.303 -0.275 -0.297 -0.290 -0.311 -0.291 -0.713
+Block3:ChamberChamber:FragFull Corridors   -0.290 -0.629 -0.277 -0.290 -0.299 -0.304 -0.300 -0.319
+Block4:ChamberChamber:FragFull Corridors   -0.235 -0.252 -0.734 -0.232 -0.229 -0.243 -0.228 -0.247
+Block5:ChamberChamber:FragFull Corridors   -0.272 -0.283 -0.231 -0.656 -0.299 -0.323 -0.313 -0.297
+Block6:ChamberChamber:FragFull Corridors   -0.189 -0.247 -0.210 -0.271 -0.591 -0.243 -0.270 -0.204
+Block7:ChamberChamber:FragFull Corridors   -0.284 -0.300 -0.255 -0.326 -0.303 -0.634 -0.309 -0.305
+Block8:ChamberChamber:FragFull Corridors   -0.274 -0.298 -0.247 -0.315 -0.317 -0.308 -0.635 -0.317
+Block2:ChamberChamber:FragPseudo-Corridors -0.595 -0.308 -0.264 -0.290 -0.311 -0.308 -0.296 -0.342
+Block3:ChamberChamber:FragPseudo-Corridors -0.270 -0.623 -0.267 -0.288 -0.313 -0.296 -0.296 -0.139
+Block4:ChamberChamber:FragPseudo-Corridors -0.250 -0.282 -0.686 -0.249 -0.272 -0.267 -0.260 -0.131
+Block5:ChamberChamber:FragPseudo-Corridors -0.266 -0.282 -0.235 -0.656 -0.305 -0.319 -0.311 -0.138
+Block6:ChamberChamber:FragPseudo-Corridors -0.230 -0.285 -0.232 -0.286 -0.627 -0.282 -0.303 -0.110
+Block7:ChamberChamber:FragPseudo-Corridors -0.269 -0.293 -0.253 -0.326 -0.303 -0.617 -0.304 -0.136
+Block8:ChamberChamber:FragPseudo-Corridors -0.253 -0.287 -0.239 -0.314 -0.321 -0.290 -0.604 -0.150
+Block2:ChamberChamber:FragIsolated         -0.655 -0.292 -0.293 -0.280 -0.274 -0.295 -0.273 -0.427
+Block3:ChamberChamber:FragIsolated         -0.271 -0.610 -0.288 -0.276 -0.293 -0.292 -0.289 -0.141
+Block4:ChamberChamber:FragIsolated         -0.263 -0.273 -0.704 -0.246 -0.252 -0.261 -0.250 -0.151
+Block5:ChamberChamber:FragIsolated         -0.265 -0.276 -0.254 -0.640 -0.292 -0.314 -0.305 -0.140
+Block6:ChamberChamber:FragIsolated         -0.171 -0.231 -0.202 -0.235 -0.549 -0.227 -0.251 -0.052
+Block7:ChamberChamber:FragIsolated         -0.279 -0.292 -0.275 -0.321 -0.295 -0.615 -0.299 -0.152
+Block8:ChamberChamber:FragIsolated         -0.262 -0.288 -0.269 -0.294 -0.306 -0.294 -0.607 -0.154
                                            B3:FFC B4:FFC B5:FFC B6:FFC B7:FFC B8:FFC B2:FP- B3:FP-
 Block2                                                                                            
 Block3                                                                                            
@@ -563,75 +564,75 @@ Block7:ChamberChamber
 Block8:ChamberChamber                                                                             
 Block2:FragFull Corridors                                                                         
 Block3:FragFull Corridors                                                                         
-Block4:FragFull Corridors                   0.268                                                 
-Block5:FragFull Corridors                   0.685  0.414                                          
-Block6:FragFull Corridors                   0.674  0.400  0.972                                   
-Block7:FragFull Corridors                   0.468  0.321  0.724  0.703                            
-Block8:FragFull Corridors                   0.698  0.385  0.980  0.963  0.676                     
-Block2:FragPseudo-Corridors                 0.228  0.130  0.321  0.314  0.221  0.323              
-Block3:FragPseudo-Corridors                 0.479  0.141  0.352  0.346  0.247  0.351  0.435       
-Block4:FragPseudo-Corridors                 0.167  0.841  0.235  0.239  0.166  0.237  0.297  0.327
-Block5:FragPseudo-Corridors                 0.358  0.205  0.511  0.498  0.357  0.510  0.628  0.694
-Block6:FragPseudo-Corridors                 0.338  0.199  0.488  0.500  0.349  0.484  0.607  0.677
-Block7:FragPseudo-Corridors                 0.248  0.146  0.355  0.360  0.540  0.354  0.446  0.494
-Block8:FragPseudo-Corridors                 0.361  0.199  0.510  0.493  0.344  0.519  0.625  0.692
-Block2:FragIsolated                         0.214  0.116  0.306  0.291  0.208  0.308  0.671  0.216
-Block3:FragIsolated                         0.468  0.125  0.327  0.311  0.228  0.325  0.180  0.473
-Block4:FragIsolated                         0.214  0.699  0.309  0.305  0.220  0.308  0.186  0.219
-Block5:FragIsolated                         0.309  0.181  0.457  0.440  0.326  0.449  0.258  0.323
-Block6:FragIsolated                         0.283  0.149  0.409  0.395  0.280  0.413  0.206  0.280
-Block7:FragIsolated                         0.243  0.148  0.352  0.351  0.503  0.346  0.232  0.247
-Block8:FragIsolated                         0.323  0.177  0.465  0.440  0.315  0.470  0.269  0.326
-ChamberChamber:FragFull Corridors           0.430  0.288  0.651  0.644  0.503  0.618  0.204  0.226
-ChamberChamber:FragPseudo-Corridors         0.235  0.127  0.320  0.332  0.222  0.331  0.405  0.447
-ChamberChamber:FragIsolated                 0.196  0.115  0.275  0.301  0.202  0.281  0.154  0.199
-Block2:H2O                                 -0.032 -0.001 -0.013 -0.040  0.008 -0.037 -0.471 -0.017
-Block3:H2O                                  0.080 -0.001  0.001 -0.036 -0.003 -0.011  0.008 -0.068
-Block4:H2O                                 -0.013 -0.690  0.003 -0.031  0.006 -0.015  0.000 -0.008
-Block5:H2O                                 -0.047  0.001 -0.019 -0.060  0.011 -0.056 -0.026 -0.022
-Block6:H2O                                  0.024 -0.024  0.008 -0.058 -0.039  0.029 -0.012 -0.026
-Block7:H2O                                 -0.023  0.008  0.002 -0.042 -0.137 -0.028  0.004 -0.013
-Block8:H2O                                 -0.003 -0.012  0.011 -0.049 -0.012  0.002 -0.005 -0.005
-Block2:I(H2O^2)                             0.038  0.010  0.027  0.048  0.006  0.045  0.537  0.022
-Block3:I(H2O^2)                            -0.064  0.011  0.020  0.057  0.019  0.031  0.007  0.081
-Block4:I(H2O^2)                             0.018  0.745  0.008  0.038  0.004  0.022  0.009  0.011
-Block5:I(H2O^2)                             0.059  0.015  0.045  0.082  0.015  0.073  0.039  0.033
-Block6:I(H2O^2)                             0.001  0.031  0.018  0.080  0.049  0.004  0.027  0.037
-Block7:I(H2O^2)                             0.030  0.001  0.013  0.056  0.193  0.038  0.006  0.018
-Block8:I(H2O^2)                             0.018  0.025  0.015  0.070  0.034  0.019  0.018  0.016
-FragFull Corridors:H2O                      0.149 -0.046  0.096  0.030 -0.092  0.198  0.071  0.058
-FragPseudo-Corridors:H2O                    0.136 -0.038  0.101  0.027 -0.074  0.186  0.075  0.068
-FragIsolated:H2O                            0.055 -0.033  0.057  0.009 -0.036  0.099 -0.056  0.044
-FragFull Corridors:I(H2O^2)                -0.157  0.052 -0.096 -0.035  0.103 -0.207 -0.074 -0.061
-FragPseudo-Corridors:I(H2O^2)              -0.135  0.035 -0.104 -0.036  0.073 -0.187 -0.084 -0.085
-FragIsolated:I(H2O^2)                      -0.052  0.031 -0.056 -0.011  0.034 -0.094  0.060 -0.044
-FragFull Corridors:logCells                -0.060  0.087  0.076 -0.039  0.154 -0.058  0.004  0.000
-FragPseudo-Corridors:logCells              -0.002 -0.003 -0.006  0.005 -0.005 -0.004 -0.011  0.006
-FragIsolated:logCells                      -0.058 -0.004 -0.023 -0.009  0.023 -0.051 -0.126  0.001
-FragFull Corridors:log10(TAN)              -0.044  0.051 -0.017  0.020  0.030 -0.068 -0.020 -0.001
-FragPseudo-Corridors:log10(TAN)             0.123 -0.014  0.091  0.011 -0.052  0.150  0.026 -0.012
-FragIsolated:log10(TAN)                     0.056  0.039  0.036  0.030 -0.010  0.045  0.131  0.009
-Block2:ChamberChamber:FragFull Corridors   -0.321 -0.206 -0.477 -0.466 -0.355 -0.459 -0.523 -0.169
-Block3:ChamberChamber:FragFull Corridors   -0.620 -0.198 -0.464 -0.455 -0.347 -0.447 -0.142 -0.345
-Block4:ChamberChamber:FragFull Corridors   -0.191 -0.904 -0.310 -0.300 -0.253 -0.278 -0.092 -0.105
-Block5:ChamberChamber:FragFull Corridors   -0.418 -0.290 -0.647 -0.633 -0.512 -0.603 -0.201 -0.221
-Block6:ChamberChamber:FragFull Corridors   -0.356 -0.222 -0.510 -0.588 -0.390 -0.509 -0.169 -0.198
-Block7:ChamberChamber:FragFull Corridors   -0.320 -0.239 -0.520 -0.489 -0.631 -0.466 -0.156 -0.175
-Block8:ChamberChamber:FragFull Corridors   -0.423 -0.287 -0.644 -0.639 -0.501 -0.612 -0.201 -0.222
-Block2:ChamberChamber:FragPseudo-Corridors -0.200 -0.101 -0.266 -0.271 -0.173 -0.280 -0.646 -0.367
-Block3:ChamberChamber:FragPseudo-Corridors -0.300 -0.089 -0.227 -0.237 -0.156 -0.235 -0.284 -0.677
-Block4:ChamberChamber:FragPseudo-Corridors -0.148 -0.685 -0.196 -0.209 -0.132 -0.207 -0.247 -0.277
-Block5:ChamberChamber:FragPseudo-Corridors -0.215 -0.129 -0.304 -0.327 -0.229 -0.306 -0.396 -0.441
-Block6:ChamberChamber:FragPseudo-Corridors -0.208 -0.128 -0.298 -0.332 -0.224 -0.297 -0.385 -0.432
-Block7:ChamberChamber:FragPseudo-Corridors -0.178 -0.100 -0.247 -0.261 -0.321 -0.254 -0.312 -0.354
-Block8:ChamberChamber:FragPseudo-Corridors -0.199 -0.133 -0.291 -0.321 -0.228 -0.287 -0.383 -0.433
-Block2:ChamberChamber:FragIsolated         -0.161 -0.080 -0.217 -0.228 -0.143 -0.231 -0.506 -0.157
-Block3:ChamberChamber:FragIsolated         -0.272 -0.084 -0.213 -0.229 -0.150 -0.220 -0.113 -0.319
-Block4:ChamberChamber:FragIsolated         -0.136 -0.639 -0.185 -0.207 -0.131 -0.194 -0.104 -0.136
-Block5:ChamberChamber:FragIsolated         -0.193 -0.115 -0.272 -0.301 -0.206 -0.276 -0.159 -0.196
-Block6:ChamberChamber:FragIsolated         -0.154 -0.119 -0.251 -0.293 -0.215 -0.229 -0.139 -0.189
-Block7:ChamberChamber:FragIsolated         -0.169 -0.097 -0.236 -0.256 -0.271 -0.243 -0.135 -0.170
-Block8:ChamberChamber:FragIsolated         -0.186 -0.117 -0.267 -0.297 -0.203 -0.269 -0.150 -0.193
+Block4:FragFull Corridors                   0.355                                                 
+Block5:FragFull Corridors                   0.533  0.385                                          
+Block6:FragFull Corridors                   0.533  0.376  0.520                                   
+Block7:FragFull Corridors                   0.426  0.381  0.474  0.474                            
+Block8:FragFull Corridors                   0.540  0.355  0.524  0.510  0.461                     
+Block2:FragPseudo-Corridors                 0.262  0.194  0.263  0.252  0.223  0.281              
+Block3:FragPseudo-Corridors                 0.490  0.191  0.268  0.281  0.224  0.253  0.475       
+Block4:FragPseudo-Corridors                 0.203  0.672  0.209  0.208  0.194  0.198  0.404  0.413
+Block5:FragPseudo-Corridors                 0.272  0.198  0.521  0.269  0.232  0.272  0.488  0.509
+Block6:FragPseudo-Corridors                 0.264  0.181  0.261  0.505  0.233  0.248  0.458  0.525
+Block7:FragPseudo-Corridors                 0.214  0.178  0.234  0.236  0.510  0.243  0.454  0.460
+Block8:FragPseudo-Corridors                 0.261  0.178  0.273  0.263  0.233  0.510  0.498  0.513
+Block2:FragIsolated                         0.255  0.187  0.257  0.240  0.214  0.273  0.563  0.240
+Block3:FragIsolated                         0.484  0.192  0.272  0.261  0.210  0.243  0.229  0.496
+Block4:FragIsolated                         0.237  0.577  0.245  0.236  0.214  0.230  0.236  0.242
+Block5:FragIsolated                         0.258  0.206  0.502  0.256  0.229  0.258  0.249  0.260
+Block6:FragIsolated                         0.281  0.168  0.272  0.443  0.199  0.256  0.205  0.213
+Block7:FragIsolated                         0.227  0.177  0.246  0.244  0.503  0.253  0.243  0.234
+Block8:FragIsolated                         0.259  0.181  0.281  0.247  0.223  0.502  0.260  0.249
+ChamberChamber:FragFull Corridors           0.415  0.389  0.460  0.461  0.506  0.451  0.214  0.209
+ChamberChamber:FragPseudo-Corridors         0.185  0.169  0.212  0.219  0.240  0.220  0.411  0.446
+ChamberChamber:FragIsolated                 0.159  0.206  0.200  0.202  0.243  0.203  0.206  0.196
+Block2:H2O                                 -0.007 -0.060  0.022  0.000  0.001 -0.030 -0.268  0.006
+Block3:H2O                                  0.182 -0.037  0.116  0.055 -0.042  0.107  0.046  0.011
+Block4:H2O                                  0.080 -0.527  0.063  0.039 -0.018  0.064  0.021  0.038
+Block5:H2O                                  0.037 -0.036 -0.031  0.012 -0.009  0.019  0.007  0.015
+Block6:H2O                                  0.206 -0.005  0.122  0.032 -0.017  0.160  0.039 -0.043
+Block7:H2O                                  0.118 -0.004  0.103  0.047 -0.083  0.087  0.079  0.052
+Block8:H2O                                  0.146 -0.039  0.100  0.045 -0.073  0.107  0.073  0.070
+Block2:I(H2O^2)                             0.015  0.075 -0.011  0.003  0.002  0.038  0.302 -0.002
+Block3:I(H2O^2)                            -0.154  0.045 -0.098 -0.037  0.049 -0.083 -0.026  0.002
+Block4:I(H2O^2)                            -0.069  0.559 -0.054 -0.035  0.015 -0.053 -0.006 -0.034
+Block5:I(H2O^2)                            -0.027  0.065  0.046 -0.003  0.018 -0.009  0.011 -0.010
+Block6:I(H2O^2)                            -0.187  0.012 -0.113 -0.019  0.023 -0.144 -0.029  0.050
+Block7:I(H2O^2)                            -0.116  0.016 -0.104 -0.047  0.100 -0.084 -0.068 -0.056
+Block8:I(H2O^2)                            -0.143  0.044 -0.101 -0.044  0.075 -0.102 -0.067 -0.072
+FragFull Corridors:H2O                      0.241  0.031  0.137  0.068 -0.057  0.226  0.130  0.052
+FragPseudo-Corridors:H2O                    0.118  0.003  0.092  0.027 -0.059  0.139  0.082  0.090
+FragIsolated:H2O                            0.097  0.020  0.088  0.004 -0.054  0.125  0.058  0.040
+FragFull Corridors:I(H2O^2)                -0.326 -0.021 -0.188 -0.126  0.058 -0.273 -0.157 -0.091
+FragPseudo-Corridors:I(H2O^2)              -0.158 -0.006 -0.124 -0.071  0.054 -0.158 -0.119 -0.156
+FragIsolated:I(H2O^2)                      -0.131 -0.026 -0.122 -0.035  0.052 -0.133 -0.071 -0.071
+FragFull Corridors:logCells                 0.078  0.079  0.066  0.043 -0.039 -0.064 -0.050  0.073
+FragPseudo-Corridors:logCells              -0.003  0.016 -0.043  0.019 -0.045 -0.103 -0.120  0.058
+FragIsolated:logCells                      -0.008  0.171 -0.053 -0.005 -0.066 -0.134 -0.062  0.040
+FragFull Corridors:log10(TAN)              -0.135  0.105 -0.040 -0.084  0.079 -0.061 -0.053 -0.089
+FragPseudo-Corridors:log10(TAN)            -0.020  0.034  0.006 -0.067 -0.033  0.046  0.005 -0.064
+FragIsolated:log10(TAN)                    -0.007  0.103  0.025 -0.042 -0.009  0.063  0.089 -0.039
+Block2:ChamberChamber:FragFull Corridors   -0.335 -0.289 -0.350 -0.341 -0.344 -0.354 -0.405 -0.166
+Block3:ChamberChamber:FragFull Corridors   -0.662 -0.293 -0.357 -0.361 -0.347 -0.344 -0.162 -0.347
+Block4:ChamberChamber:FragFull Corridors   -0.224 -0.812 -0.263 -0.257 -0.290 -0.230 -0.123 -0.125
+Block5:ChamberChamber:FragFull Corridors   -0.281 -0.248 -0.631 -0.320 -0.366 -0.325 -0.148 -0.135
+Block6:ChamberChamber:FragFull Corridors   -0.145 -0.214 -0.206 -0.540 -0.295 -0.178 -0.108 -0.169
+Block7:ChamberChamber:FragFull Corridors   -0.297 -0.278 -0.340 -0.331 -0.699 -0.329 -0.155 -0.151
+Block8:ChamberChamber:FragFull Corridors   -0.341 -0.268 -0.356 -0.365 -0.364 -0.662 -0.164 -0.174
+Block2:ChamberChamber:FragPseudo-Corridors -0.162 -0.131 -0.172 -0.174 -0.165 -0.181 -0.655 -0.347
+Block3:ChamberChamber:FragPseudo-Corridors -0.295 -0.137 -0.153 -0.171 -0.162 -0.147 -0.302 -0.682
+Block4:ChamberChamber:FragPseudo-Corridors -0.131 -0.488 -0.141 -0.149 -0.146 -0.132 -0.274 -0.305
+Block5:ChamberChamber:FragPseudo-Corridors -0.099 -0.106 -0.279 -0.143 -0.190 -0.147 -0.297 -0.301
+Block6:ChamberChamber:FragPseudo-Corridors -0.102 -0.111 -0.132 -0.321 -0.168 -0.117 -0.277 -0.346
+Block7:ChamberChamber:FragPseudo-Corridors -0.118 -0.121 -0.140 -0.149 -0.349 -0.151 -0.292 -0.308
+Block8:ChamberChamber:FragPseudo-Corridors -0.131 -0.127 -0.150 -0.179 -0.187 -0.295 -0.307 -0.343
+Block2:ChamberChamber:FragIsolated         -0.152 -0.168 -0.158 -0.153 -0.156 -0.179 -0.413 -0.155
+Block3:ChamberChamber:FragIsolated         -0.274 -0.163 -0.149 -0.155 -0.164 -0.135 -0.145 -0.328
+Block4:ChamberChamber:FragIsolated         -0.114 -0.519 -0.134 -0.136 -0.150 -0.123 -0.146 -0.140
+Block5:ChamberChamber:FragIsolated         -0.087 -0.130 -0.275 -0.134 -0.191 -0.138 -0.141 -0.124
+Block6:ChamberChamber:FragIsolated          0.025 -0.102 -0.057 -0.225 -0.141 -0.014 -0.088 -0.146
+Block7:ChamberChamber:FragIsolated         -0.113 -0.150 -0.143 -0.146 -0.346 -0.152 -0.152 -0.142
+Block8:ChamberChamber:FragIsolated         -0.131 -0.155 -0.160 -0.169 -0.184 -0.298 -0.155 -0.162
                                            B4:FP- B5:FP- B6:FP- B7:FP- B8:FP- Bl2:FI Bl3:FI Bl4:FI
 Block2                                                                                            
 Block3                                                                                            
@@ -665,67 +666,67 @@ Block8:FragFull Corridors
 Block2:FragPseudo-Corridors                                                                       
 Block3:FragPseudo-Corridors                                                                       
 Block4:FragPseudo-Corridors                                                                       
-Block5:FragPseudo-Corridors                 0.471                                                 
-Block6:FragPseudo-Corridors                 0.460  0.965                                          
-Block7:FragPseudo-Corridors                 0.348  0.714  0.698                                   
-Block8:FragPseudo-Corridors                 0.462  0.992  0.957  0.698                            
-Block2:FragIsolated                         0.136  0.310  0.293  0.210  0.315                     
-Block3:FragIsolated                         0.146  0.330  0.313  0.228  0.332  0.453              
-Block4:FragIsolated                         0.709  0.316  0.304  0.228  0.312  0.422  0.471       
-Block5:FragIsolated                         0.210  0.463  0.442  0.325  0.462  0.629  0.720  0.661
-Block6:FragIsolated                         0.181  0.411  0.402  0.290  0.408  0.577  0.688  0.606
-Block7:FragIsolated                         0.174  0.358  0.349  0.519  0.351  0.472  0.498  0.495
-Block8:FragIsolated                         0.207  0.470  0.442  0.318  0.480  0.634  0.716  0.654
-ChamberChamber:FragFull Corridors           0.163  0.326  0.327  0.246  0.312  0.155  0.170  0.175
-ChamberChamber:FragPseudo-Corridors         0.321  0.644  0.651  0.484  0.630  0.159  0.171  0.179
-ChamberChamber:FragIsolated                 0.161  0.281  0.292  0.233  0.266  0.258  0.315  0.311
-Block2:H2O                                 -0.033 -0.022 -0.035 -0.033 -0.018 -0.368  0.089  0.058
-Block3:H2O                                 -0.034 -0.010 -0.035 -0.040  0.002  0.078  0.075  0.042
-Block4:H2O                                 -0.691 -0.008 -0.026 -0.035  0.003  0.068  0.059 -0.449
-Block5:H2O                                 -0.049 -0.031 -0.052 -0.054 -0.021  0.113  0.125  0.086
-Block6:H2O                                 -0.036 -0.004 -0.039 -0.039  0.006  0.111  0.122  0.076
-Block7:H2O                                 -0.040 -0.013 -0.036 -0.220  0.000  0.088  0.072  0.051
-Block8:H2O                                 -0.055 -0.001 -0.040 -0.061  0.027  0.139  0.143  0.083
-Block2:I(H2O^2)                             0.034  0.030  0.040  0.034  0.026  0.419 -0.102 -0.066
-Block3:I(H2O^2)                             0.042  0.025  0.050  0.051  0.013 -0.097 -0.102 -0.062
-Block4:I(H2O^2)                             0.737  0.014  0.029  0.036  0.003 -0.069 -0.068  0.476
-Block5:I(H2O^2)                             0.056  0.047  0.067  0.064  0.036 -0.128 -0.143 -0.101
-Block6:I(H2O^2)                             0.047  0.024  0.057  0.052  0.013 -0.127 -0.142 -0.093
-Block7:I(H2O^2)                             0.044  0.021  0.043  0.276  0.008 -0.095 -0.086 -0.060
-Block8:I(H2O^2)                             0.060  0.018  0.054  0.070 -0.010 -0.151 -0.159 -0.100
-FragFull Corridors:H2O                     -0.016  0.099  0.032 -0.034  0.167  0.117  0.096  0.025
-FragPseudo-Corridors:H2O                   -0.025  0.101  0.048 -0.043  0.176  0.122  0.097  0.020
-FragIsolated:H2O                           -0.021  0.057  0.018 -0.020  0.097  0.117  0.245  0.100
-FragFull Corridors:I(H2O^2)                 0.011 -0.103 -0.036  0.031 -0.171 -0.117 -0.098 -0.029
-FragPseudo-Corridors:I(H2O^2)               0.018 -0.111 -0.067  0.044 -0.193 -0.125 -0.100 -0.025
-FragIsolated:I(H2O^2)                       0.018 -0.056 -0.019  0.018 -0.094 -0.115 -0.249 -0.104
-FragFull Corridors:logCells                -0.073  0.009 -0.016 -0.066  0.018  0.041  0.039 -0.025
-FragPseudo-Corridors:logCells               0.003 -0.022  0.143  0.004 -0.014 -0.016 -0.008 -0.005
-FragIsolated:logCells                       0.000 -0.020 -0.005  0.014 -0.033  0.028  0.196  0.099
-FragFull Corridors:log10(TAN)               0.067 -0.008  0.013  0.029 -0.038 -0.058 -0.016  0.041
-FragPseudo-Corridors:log10(TAN)            -0.012  0.059 -0.036 -0.022  0.072  0.076  0.085  0.028
-FragIsolated:log10(TAN)                     0.039  0.033  0.021 -0.004  0.038 -0.052 -0.198 -0.072
-Block2:ChamberChamber:FragFull Corridors   -0.117 -0.244 -0.239 -0.173 -0.240 -0.483 -0.124 -0.125
-Block3:ChamberChamber:FragFull Corridors   -0.113 -0.236 -0.233 -0.171 -0.231 -0.120 -0.298 -0.131
-Block4:ChamberChamber:FragFull Corridors   -0.773 -0.152 -0.152 -0.112 -0.143 -0.071 -0.084 -0.619
-Block5:ChamberChamber:FragFull Corridors   -0.152 -0.319 -0.320 -0.240 -0.304 -0.155 -0.167 -0.167
-Block6:ChamberChamber:FragFull Corridors   -0.164 -0.263 -0.293 -0.232 -0.248 -0.104 -0.114 -0.151
-Block7:ChamberChamber:FragFull Corridors   -0.109 -0.254 -0.249 -0.264 -0.246 -0.132 -0.147 -0.132
-Block8:ChamberChamber:FragFull Corridors   -0.162 -0.321 -0.324 -0.246 -0.306 -0.150 -0.166 -0.173
-Block2:ChamberChamber:FragPseudo-Corridors -0.259 -0.527 -0.531 -0.387 -0.522 -0.356 -0.140 -0.144
-Block3:ChamberChamber:FragPseudo-Corridors -0.227 -0.458 -0.467 -0.340 -0.453 -0.118 -0.290 -0.132
-Block4:ChamberChamber:FragPseudo-Corridors -0.835 -0.399 -0.405 -0.304 -0.388 -0.095 -0.109 -0.575
-Block5:ChamberChamber:FragPseudo-Corridors -0.321 -0.629 -0.642 -0.485 -0.610 -0.145 -0.157 -0.173
-Block6:ChamberChamber:FragPseudo-Corridors -0.308 -0.609 -0.658 -0.463 -0.596 -0.143 -0.155 -0.168
-Block7:ChamberChamber:FragPseudo-Corridors -0.254 -0.505 -0.516 -0.651 -0.493 -0.124 -0.143 -0.145
-Block8:ChamberChamber:FragPseudo-Corridors -0.320 -0.610 -0.631 -0.473 -0.594 -0.133 -0.149 -0.173
-Block2:ChamberChamber:FragIsolated         -0.116 -0.222 -0.223 -0.170 -0.219 -0.655 -0.248 -0.235
-Block3:ChamberChamber:FragIsolated         -0.119 -0.218 -0.223 -0.175 -0.210 -0.206 -0.543 -0.243
-Block4:ChamberChamber:FragIsolated         -0.657 -0.192 -0.200 -0.161 -0.181 -0.173 -0.215 -0.694
-Block5:ChamberChamber:FragIsolated         -0.160 -0.278 -0.291 -0.236 -0.260 -0.254 -0.300 -0.304
-Block6:ChamberChamber:FragIsolated         -0.142 -0.254 -0.277 -0.212 -0.239 -0.235 -0.287 -0.282
-Block7:ChamberChamber:FragIsolated         -0.135 -0.241 -0.249 -0.294 -0.229 -0.223 -0.266 -0.262
-Block8:ChamberChamber:FragIsolated         -0.161 -0.273 -0.287 -0.232 -0.255 -0.247 -0.303 -0.305
+Block5:FragPseudo-Corridors                 0.416                                                 
+Block6:FragPseudo-Corridors                 0.403  0.492                                          
+Block7:FragPseudo-Corridors                 0.397  0.474  0.468                                   
+Block8:FragPseudo-Corridors                 0.399  0.515  0.502  0.472                            
+Block2:FragIsolated                         0.209  0.259  0.224  0.228  0.262                     
+Block3:FragIsolated                         0.211  0.276  0.256  0.218  0.246  0.473              
+Block4:FragIsolated                         0.584  0.252  0.230  0.219  0.231  0.462  0.490       
+Block5:FragIsolated                         0.222  0.507  0.251  0.235  0.259  0.488  0.535  0.496
+Block6:FragIsolated                         0.179  0.251  0.424  0.210  0.204  0.450  0.527  0.454
+Block7:FragIsolated                         0.194  0.247  0.238  0.509  0.250  0.460  0.462  0.450
+Block8:FragIsolated                         0.201  0.283  0.240  0.233  0.503  0.484  0.526  0.473
+ChamberChamber:FragFull Corridors           0.203  0.215  0.225  0.246  0.220  0.190  0.180  0.202
+ChamberChamber:FragPseudo-Corridors         0.384  0.442  0.493  0.474  0.466  0.180  0.191  0.197
+ChamberChamber:FragIsolated                 0.220  0.210  0.216  0.236  0.209  0.362  0.394  0.412
+Block2:H2O                                 -0.083  0.009  0.002 -0.014 -0.006 -0.188  0.092 -0.003
+Block3:H2O                                 -0.049  0.070 -0.015 -0.026  0.038  0.113  0.142  0.042
+Block4:H2O                                 -0.475  0.048  0.017 -0.006  0.058  0.058  0.076 -0.252
+Block5:H2O                                 -0.055 -0.074 -0.023 -0.021  0.002  0.076  0.048  0.007
+Block6:H2O                                 -0.022  0.032 -0.031 -0.003 -0.009  0.093  0.070  0.033
+Block7:H2O                                 -0.022  0.081 -0.002 -0.091  0.070  0.133  0.121  0.057
+Block8:H2O                                 -0.026  0.094  0.012 -0.028  0.109  0.169  0.172  0.077
+Block2:I(H2O^2)                             0.090 -0.002 -0.007  0.012  0.014  0.218 -0.099  0.007
+Block3:I(H2O^2)                             0.055 -0.062  0.025  0.029 -0.021 -0.120 -0.163 -0.053
+Block4:I(H2O^2)                             0.502 -0.040 -0.020  0.005 -0.049 -0.049 -0.080  0.267
+Block5:I(H2O^2)                             0.076  0.085  0.022  0.023  0.004 -0.074 -0.060  0.000
+Block6:I(H2O^2)                             0.030 -0.030  0.040  0.007  0.018 -0.099 -0.087 -0.039
+Block7:I(H2O^2)                             0.029 -0.084 -0.009  0.109 -0.073 -0.131 -0.146 -0.061
+Block8:I(H2O^2)                             0.029 -0.098 -0.017  0.031 -0.111 -0.171 -0.193 -0.084
+FragFull Corridors:H2O                      0.049  0.089  0.006 -0.018  0.135  0.164  0.097  0.077
+FragPseudo-Corridors:H2O                    0.027  0.103  0.068 -0.013  0.196  0.111  0.103  0.059
+FragIsolated:H2O                            0.033  0.088 -0.001 -0.022  0.113  0.107  0.179  0.093
+FragFull Corridors:I(H2O^2)                -0.046 -0.121 -0.046  0.016 -0.158 -0.182 -0.129 -0.084
+FragPseudo-Corridors:I(H2O^2)              -0.039 -0.142 -0.129  0.015 -0.247 -0.129 -0.132 -0.072
+FragIsolated:I(H2O^2)                      -0.042 -0.123 -0.029  0.023 -0.125 -0.127 -0.240 -0.122
+FragFull Corridors:logCells                 0.000  0.017  0.022 -0.086 -0.044 -0.025  0.097  0.030
+FragPseudo-Corridors:logCells               0.030 -0.061  0.167 -0.045 -0.076 -0.117  0.032  0.006
+FragIsolated:logCells                       0.155 -0.031  0.003 -0.062 -0.114  0.004  0.062  0.135
+FragFull Corridors:log10(TAN)               0.041 -0.064 -0.080 -0.011 -0.039 -0.080 -0.101 -0.015
+FragPseudo-Corridors:log10(TAN)             0.038  0.027 -0.052  0.005  0.096 -0.002 -0.023  0.014
+FragIsolated:log10(TAN)                     0.083  0.022 -0.058 -0.019  0.046 -0.046 -0.087  0.004
+Block2:ChamberChamber:FragFull Corridors   -0.162 -0.175 -0.164 -0.168 -0.181 -0.381 -0.145 -0.163
+Block3:ChamberChamber:FragFull Corridors   -0.160 -0.171 -0.181 -0.163 -0.168 -0.148 -0.322 -0.164
+Block4:ChamberChamber:FragFull Corridors   -0.556 -0.126 -0.124 -0.127 -0.110 -0.113 -0.121 -0.451
+Block5:ChamberChamber:FragFull Corridors   -0.114 -0.289 -0.152 -0.183 -0.156 -0.129 -0.096 -0.114
+Block6:ChamberChamber:FragFull Corridors   -0.129 -0.124 -0.301 -0.147 -0.145 -0.075 -0.101 -0.113
+Block7:ChamberChamber:FragFull Corridors   -0.135 -0.159 -0.161 -0.341 -0.167 -0.141 -0.135 -0.142
+Block8:ChamberChamber:FragFull Corridors   -0.138 -0.171 -0.188 -0.179 -0.327 -0.140 -0.147 -0.145
+Block2:ChamberChamber:FragPseudo-Corridors -0.292 -0.339 -0.378 -0.338 -0.366 -0.329 -0.154 -0.156
+Block3:ChamberChamber:FragPseudo-Corridors -0.295 -0.323 -0.378 -0.327 -0.333 -0.132 -0.315 -0.156
+Block4:ChamberChamber:FragPseudo-Corridors -0.739 -0.297 -0.336 -0.301 -0.302 -0.121 -0.145 -0.420
+Block5:ChamberChamber:FragPseudo-Corridors -0.259 -0.607 -0.327 -0.350 -0.316 -0.121 -0.090 -0.113
+Block6:ChamberChamber:FragPseudo-Corridors -0.267 -0.308 -0.687 -0.325 -0.333 -0.109 -0.141 -0.135
+Block7:ChamberChamber:FragPseudo-Corridors -0.275 -0.302 -0.344 -0.683 -0.311 -0.128 -0.127 -0.137
+Block8:ChamberChamber:FragPseudo-Corridors -0.276 -0.314 -0.367 -0.330 -0.631 -0.116 -0.125 -0.133
+Block2:ChamberChamber:FragIsolated         -0.186 -0.167 -0.151 -0.165 -0.170 -0.694 -0.298 -0.329
+Block3:ChamberChamber:FragIsolated         -0.176 -0.165 -0.172 -0.162 -0.151 -0.278 -0.643 -0.329
+Block4:ChamberChamber:FragIsolated         -0.510 -0.146 -0.143 -0.146 -0.127 -0.265 -0.283 -0.708
+Block5:ChamberChamber:FragIsolated         -0.141 -0.282 -0.147 -0.186 -0.143 -0.267 -0.252 -0.281
+Block6:ChamberChamber:FragIsolated         -0.121 -0.123 -0.268 -0.135 -0.122 -0.187 -0.259 -0.243
+Block7:ChamberChamber:FragIsolated         -0.160 -0.151 -0.158 -0.344 -0.156 -0.283 -0.286 -0.307
+Block8:ChamberChamber:FragIsolated         -0.166 -0.169 -0.179 -0.176 -0.307 -0.270 -0.315 -0.315
                                            Bl5:FI Bl6:FI Bl7:FI Bl8:FI CC:FFC CC:FP- ChC:FI B2:H2O
 Block2                                                                                            
 Block3                                                                                            
@@ -767,59 +768,59 @@ Block2:FragIsolated
 Block3:FragIsolated                                                                               
 Block4:FragIsolated                                                                               
 Block5:FragIsolated                                                                               
-Block6:FragIsolated                         0.941                                                 
-Block7:FragIsolated                         0.708  0.617                                          
-Block8:FragIsolated                         0.990  0.932  0.703                                   
-ChamberChamber:FragFull Corridors           0.248  0.206  0.208  0.236                            
-ChamberChamber:FragPseudo-Corridors         0.246  0.214  0.208  0.242  0.551                     
-ChamberChamber:FragIsolated                 0.451  0.421  0.324  0.424  0.558  0.577              
-Block2:H2O                                  0.114  0.122  0.055  0.117 -0.211 -0.248 -0.374       
-Block3:H2O                                  0.071  0.059  0.070  0.096 -0.230 -0.258 -0.448  0.410
-Block4:H2O                                  0.072  0.067  0.050  0.089 -0.181 -0.212 -0.355  0.340
-Block5:H2O                                  0.163  0.158  0.093  0.171 -0.336 -0.394 -0.605  0.632
-Block6:H2O                                  0.144  0.297  0.066  0.180 -0.291 -0.286 -0.469  0.469
-Block7:H2O                                  0.093  0.072 -0.034  0.114 -0.252 -0.302 -0.501  0.477
-Block8:H2O                                  0.171  0.186  0.080  0.208 -0.341 -0.372 -0.608  0.604
-Block2:I(H2O^2)                            -0.130 -0.149 -0.051 -0.129  0.182  0.206  0.314 -0.974
-Block3:I(H2O^2)                            -0.107 -0.100 -0.085 -0.130  0.249  0.272  0.485 -0.448
-Block4:I(H2O^2)                            -0.083 -0.085 -0.047 -0.097  0.156  0.179  0.309 -0.297
-Block5:I(H2O^2)                            -0.186 -0.186 -0.107 -0.195  0.331  0.373  0.605 -0.618
-Block6:I(H2O^2)                            -0.172 -0.304 -0.085 -0.203  0.304  0.303  0.515 -0.509
-Block7:I(H2O^2)                            -0.111 -0.097  0.061 -0.131  0.230  0.270  0.467 -0.441
-Block8:I(H2O^2)                            -0.194 -0.211 -0.094 -0.230  0.336  0.355  0.605 -0.594
-FragFull Corridors:H2O                      0.079  0.144 -0.017  0.180 -0.109 -0.016 -0.140  0.050
-FragPseudo-Corridors:H2O                    0.080  0.127 -0.018  0.181 -0.104 -0.027 -0.164  0.072
-FragIsolated:H2O                            0.277  0.425 -0.066  0.298 -0.067 -0.032  0.071  0.107
-FragFull Corridors:I(H2O^2)                -0.082 -0.149  0.016 -0.183  0.114  0.008  0.126 -0.037
-FragPseudo-Corridors:I(H2O^2)              -0.087 -0.113  0.018 -0.185  0.101  0.025  0.151 -0.064
-FragIsolated:I(H2O^2)                      -0.284 -0.432  0.067 -0.300  0.063  0.030 -0.084 -0.104
-FragFull Corridors:logCells                 0.038  0.025 -0.015  0.056  0.037 -0.138 -0.221  0.220
-FragPseudo-Corridors:logCells              -0.010 -0.035 -0.006 -0.014  0.034  0.147  0.059 -0.053
-FragIsolated:logCells                       0.250  0.363 -0.060  0.184  0.016 -0.007  0.233  0.053
-FragFull Corridors:log10(TAN)               0.018 -0.034  0.006 -0.033  0.097  0.055  0.197 -0.100
-FragPseudo-Corridors:log10(TAN)             0.076  0.197 -0.015  0.154 -0.063 -0.013 -0.096  0.056
-FragIsolated:log10(TAN)                    -0.226 -0.374  0.064 -0.176  0.025  0.031 -0.126 -0.108
-Block2:ChamberChamber:FragFull Corridors   -0.179 -0.146 -0.150 -0.179 -0.710 -0.392 -0.385  0.534
-Block3:ChamberChamber:FragFull Corridors   -0.196 -0.178 -0.141 -0.192 -0.695 -0.385 -0.396  0.142
-Block4:ChamberChamber:FragFull Corridors   -0.125 -0.101 -0.096 -0.115 -0.481 -0.250 -0.263  0.087
-Block5:ChamberChamber:FragFull Corridors   -0.243 -0.201 -0.206 -0.231 -0.994 -0.534 -0.532  0.190
-Block6:ChamberChamber:FragFull Corridors   -0.184 -0.072 -0.184 -0.152 -0.849 -0.513 -0.561  0.259
-Block7:ChamberChamber:FragFull Corridors   -0.208 -0.178 -0.261 -0.202 -0.779 -0.395 -0.388  0.113
-Block8:ChamberChamber:FragFull Corridors   -0.245 -0.201 -0.207 -0.231 -0.995 -0.547 -0.560  0.212
-Block2:ChamberChamber:FragPseudo-Corridors -0.199 -0.170 -0.168 -0.203 -0.438 -0.805 -0.453  0.370
-Block3:ChamberChamber:FragPseudo-Corridors -0.189 -0.166 -0.143 -0.185 -0.386 -0.704 -0.417  0.172
-Block4:ChamberChamber:FragPseudo-Corridors -0.159 -0.142 -0.128 -0.153 -0.344 -0.630 -0.382  0.167
-Block5:ChamberChamber:FragPseudo-Corridors -0.232 -0.190 -0.209 -0.217 -0.557 -0.991 -0.587  0.252
-Block6:ChamberChamber:FragPseudo-Corridors -0.228 -0.165 -0.200 -0.215 -0.540 -0.965 -0.563  0.242
-Block7:ChamberChamber:FragPseudo-Corridors -0.204 -0.183 -0.304 -0.195 -0.438 -0.793 -0.473  0.196
-Block8:ChamberChamber:FragPseudo-Corridors -0.228 -0.171 -0.204 -0.206 -0.552 -0.966 -0.597  0.259
-Block2:ChamberChamber:FragIsolated         -0.347 -0.331 -0.241 -0.338 -0.405 -0.427 -0.728  0.679
-Block3:ChamberChamber:FragIsolated         -0.364 -0.352 -0.241 -0.345 -0.417 -0.434 -0.761  0.273
-Block4:ChamberChamber:FragIsolated         -0.309 -0.288 -0.220 -0.289 -0.379 -0.399 -0.694  0.265
-Block5:ChamberChamber:FragIsolated         -0.433 -0.395 -0.332 -0.405 -0.566 -0.583 -0.995  0.380
-Block6:ChamberChamber:FragIsolated         -0.414 -0.329 -0.302 -0.379 -0.536 -0.525 -0.918  0.328
-Block7:ChamberChamber:FragIsolated         -0.380 -0.353 -0.495 -0.360 -0.475 -0.491 -0.841  0.315
-Block8:ChamberChamber:FragIsolated         -0.438 -0.402 -0.322 -0.409 -0.558 -0.572 -0.996  0.375
+Block6:FragIsolated                         0.510                                                 
+Block7:FragIsolated                         0.482  0.436                                          
+Block8:FragIsolated                         0.532  0.514  0.481                                   
+ChamberChamber:FragFull Corridors           0.206  0.170  0.238  0.202                            
+ChamberChamber:FragPseudo-Corridors         0.208  0.157  0.232  0.210  0.492                     
+ChamberChamber:FragIsolated                 0.430  0.362  0.439  0.424  0.512  0.497              
+Block2:H2O                                  0.048  0.111  0.011  0.057 -0.106 -0.078 -0.219       
+Block3:H2O                                  0.094  0.205  0.030  0.143 -0.161 -0.161 -0.299  0.419
+Block4:H2O                                  0.044  0.104  0.033  0.086 -0.122 -0.094 -0.221  0.350
+Block5:H2O                                  0.038  0.060  0.017  0.027 -0.124 -0.178 -0.275  0.385
+Block6:H2O                                  0.060  0.370  0.020  0.099 -0.052 -0.113 -0.131  0.147
+Block7:H2O                                  0.097  0.145 -0.008  0.133 -0.151 -0.182 -0.285  0.388
+Block8:H2O                                  0.125  0.198  0.017  0.184 -0.220 -0.159 -0.317  0.420
+Block2:I(H2O^2)                            -0.050 -0.121 -0.009 -0.059  0.091  0.050  0.187 -0.977
+Block3:I(H2O^2)                            -0.109 -0.229 -0.029 -0.155  0.170  0.162  0.313 -0.462
+Block4:I(H2O^2)                            -0.044 -0.109 -0.031 -0.086  0.106  0.076  0.202 -0.339
+Block5:I(H2O^2)                            -0.040 -0.075 -0.018 -0.034  0.128  0.163  0.291 -0.412
+Block6:I(H2O^2)                            -0.072 -0.388 -0.021 -0.112  0.069  0.124  0.156 -0.201
+Block7:I(H2O^2)                            -0.114 -0.171  0.017 -0.156  0.142  0.155  0.267 -0.392
+Block8:I(H2O^2)                            -0.140 -0.220 -0.020 -0.207  0.215  0.153  0.314 -0.436
+FragFull Corridors:H2O                      0.084  0.146  0.003  0.167 -0.050 -0.039 -0.100 -0.016
+FragPseudo-Corridors:H2O                    0.082  0.077 -0.002  0.161 -0.090  0.076 -0.105  0.133
+FragIsolated:H2O                            0.150  0.216 -0.007  0.248 -0.066 -0.013  0.021  0.092
+FragFull Corridors:I(H2O^2)                -0.108 -0.186 -0.013 -0.185  0.063  0.051  0.117  0.004
+FragPseudo-Corridors:I(H2O^2)              -0.105 -0.072 -0.004 -0.180  0.090 -0.077  0.104 -0.124
+FragIsolated:I(H2O^2)                      -0.199 -0.278  0.001 -0.292  0.076  0.023 -0.022 -0.130
+FragFull Corridors:logCells                 0.022  0.061 -0.062 -0.028 -0.103 -0.134 -0.191  0.264
+FragPseudo-Corridors:logCells              -0.025 -0.060 -0.062 -0.084 -0.001  0.196  0.036 -0.004
+FragIsolated:logCells                       0.022 -0.010 -0.100 -0.125 -0.065 -0.066 -0.016 -0.079
+FragFull Corridors:log10(TAN)              -0.055 -0.099 -0.025 -0.034  0.216  0.078  0.166 -0.128
+FragPseudo-Corridors:log10(TAN)            -0.003  0.007 -0.015  0.061  0.017  0.142  0.041 -0.033
+FragIsolated:log10(TAN)                    -0.023 -0.086  0.014  0.061  0.079  0.039  0.188 -0.294
+Block2:ChamberChamber:FragFull Corridors   -0.165 -0.138 -0.169 -0.169 -0.689 -0.327 -0.353  0.273
+Block3:ChamberChamber:FragFull Corridors   -0.164 -0.149 -0.160 -0.153 -0.699 -0.338 -0.347  0.067
+Block4:ChamberChamber:FragFull Corridors   -0.137 -0.097 -0.119 -0.111 -0.584 -0.273 -0.320  0.095
+Block5:ChamberChamber:FragFull Corridors   -0.286 -0.095 -0.177 -0.123 -0.704 -0.350 -0.347  0.058
+Block6:ChamberChamber:FragFull Corridors   -0.109 -0.037 -0.135 -0.081 -0.578 -0.333 -0.334  0.078
+Block7:ChamberChamber:FragFull Corridors   -0.153 -0.130 -0.341 -0.156 -0.712 -0.351 -0.355  0.037
+Block8:ChamberChamber:FragFull Corridors   -0.160 -0.143 -0.178 -0.308 -0.703 -0.343 -0.354  0.057
+Block2:ChamberChamber:FragPseudo-Corridors -0.165 -0.118 -0.168 -0.172 -0.348 -0.725 -0.356  0.144
+Block3:ChamberChamber:FragPseudo-Corridors -0.157 -0.106 -0.155 -0.144 -0.348 -0.704 -0.358  0.074
+Block4:ChamberChamber:FragPseudo-Corridors -0.152 -0.106 -0.138 -0.135 -0.327 -0.666 -0.353  0.105
+Block5:ChamberChamber:FragPseudo-Corridors -0.280 -0.069 -0.174 -0.114 -0.376 -0.692 -0.369  0.096
+Block6:ChamberChamber:FragPseudo-Corridors -0.145 -0.175 -0.158 -0.131 -0.333 -0.712 -0.348  0.045
+Block7:ChamberChamber:FragPseudo-Corridors -0.144 -0.110 -0.339 -0.143 -0.370 -0.714 -0.377  0.079
+Block8:ChamberChamber:FragPseudo-Corridors -0.142 -0.077 -0.168 -0.278 -0.372 -0.663 -0.380  0.117
+Block2:ChamberChamber:FragIsolated         -0.326 -0.274 -0.308 -0.314 -0.340 -0.325 -0.666  0.383
+Block3:ChamberChamber:FragIsolated         -0.339 -0.294 -0.312 -0.322 -0.359 -0.356 -0.722  0.133
+Block4:ChamberChamber:FragIsolated         -0.305 -0.248 -0.276 -0.275 -0.337 -0.318 -0.669  0.190
+Block5:ChamberChamber:FragIsolated         -0.607 -0.231 -0.330 -0.276 -0.388 -0.376 -0.719  0.156
+Block6:ChamberChamber:FragIsolated         -0.261 -0.313 -0.252 -0.242 -0.276 -0.313 -0.584  0.055
+Block7:ChamberChamber:FragIsolated         -0.315 -0.262 -0.661 -0.306 -0.382 -0.377 -0.729  0.151
+Block8:ChamberChamber:FragIsolated         -0.335 -0.289 -0.327 -0.627 -0.373 -0.359 -0.733  0.143
                                            B3:H2O B4:H2O B5:H2O B6:H2O B7:H2O B8:H2O B2:I(H B3:I(H
 Block2                                                                                            
 Block3                                                                                            
@@ -869,51 +870,51 @@ ChamberChamber:FragPseudo-Corridors
 ChamberChamber:FragIsolated                                                                       
 Block2:H2O                                                                                        
 Block3:H2O                                                                                        
-Block4:H2O                                  0.382                                                 
-Block5:H2O                                  0.659  0.541                                          
-Block6:H2O                                  0.532  0.420  0.732                                   
-Block7:H2O                                  0.540  0.436  0.766  0.578                            
-Block8:H2O                                  0.667  0.548  0.956  0.784  0.757                     
-Block2:I(H2O^2)                            -0.341 -0.286 -0.543 -0.409 -0.398 -0.519              
-Block3:I(H2O^2)                            -0.974 -0.408 -0.715 -0.578 -0.575 -0.720  0.396       
-Block4:I(H2O^2)                            -0.327 -0.986 -0.470 -0.368 -0.374 -0.480  0.265  0.367
-Block5:I(H2O^2)                            -0.642 -0.527 -0.975 -0.725 -0.743 -0.939  0.559  0.733
-Block6:I(H2O^2)                            -0.564 -0.449 -0.794 -0.976 -0.621 -0.833  0.466  0.643
-Block7:I(H2O^2)                            -0.494 -0.402 -0.704 -0.539 -0.970 -0.704  0.389  0.552
-Block8:I(H2O^2)                            -0.650 -0.533 -0.938 -0.772 -0.737 -0.978  0.537  0.736
-FragFull Corridors:H2O                      0.176  0.134  0.083  0.360  0.142  0.354 -0.045 -0.183
-FragPseudo-Corridors:H2O                    0.195  0.161  0.122  0.335  0.177  0.391 -0.061 -0.202
-FragIsolated:H2O                            0.002  0.050  0.113  0.244  0.015  0.251 -0.154 -0.042
-FragFull Corridors:I(H2O^2)                -0.162 -0.121 -0.063 -0.357 -0.124 -0.336  0.035  0.169
-FragPseudo-Corridors:I(H2O^2)              -0.179 -0.152 -0.116 -0.285 -0.169 -0.376  0.053  0.184
-FragIsolated:I(H2O^2)                       0.010 -0.041 -0.108 -0.231 -0.005 -0.235  0.154  0.031
-FragFull Corridors:logCells                 0.250  0.254  0.342  0.172  0.333  0.375 -0.172 -0.250
-FragPseudo-Corridors:logCells              -0.069 -0.058 -0.097 -0.138 -0.080 -0.098  0.038  0.066
-FragIsolated:logCells                      -0.180 -0.090  0.019 -0.053 -0.144 -0.063 -0.117  0.141
-FragFull Corridors:log10(TAN)              -0.188 -0.183 -0.159 -0.266 -0.175 -0.323  0.081  0.191
-FragPseudo-Corridors:log10(TAN)             0.164  0.105  0.064  0.445  0.119  0.267 -0.056 -0.173
-FragIsolated:log10(TAN)                     0.098  0.009 -0.091 -0.044  0.074 -0.069  0.167 -0.052
-Block2:ChamberChamber:FragFull Corridors    0.148  0.117  0.234  0.186  0.164  0.217 -0.532 -0.163
-Block3:ChamberChamber:FragFull Corridors    0.326  0.122  0.228  0.182  0.175  0.216 -0.118 -0.310
-Block4:ChamberChamber:FragFull Corridors    0.104  0.752  0.139  0.143  0.105  0.154 -0.075 -0.113
-Block5:ChamberChamber:FragFull Corridors    0.207  0.156  0.303  0.277  0.223  0.309 -0.166 -0.226
-Block6:ChamberChamber:FragFull Corridors    0.307  0.254  0.403  0.565  0.340  0.461 -0.220 -0.326
-Block7:ChamberChamber:FragFull Corridors    0.126  0.085  0.183  0.184  0.123  0.178 -0.099 -0.140
-Block8:ChamberChamber:FragFull Corridors    0.235  0.184  0.337  0.300  0.256  0.352 -0.183 -0.255
-Block2:ChamberChamber:FragPseudo-Corridors  0.195  0.162  0.313  0.217  0.231  0.279 -0.351 -0.208
-Block3:ChamberChamber:FragPseudo-Corridors  0.355  0.152  0.274  0.217  0.217  0.258 -0.140 -0.349
-Block4:ChamberChamber:FragPseudo-Corridors  0.182  0.704  0.267  0.190  0.212  0.261 -0.137 -0.190
-Block5:ChamberChamber:FragPseudo-Corridors  0.277  0.225  0.399  0.334  0.316  0.409 -0.211 -0.293
-Block6:ChamberChamber:FragPseudo-Corridors  0.266  0.214  0.382  0.403  0.299  0.386 -0.203 -0.281
-Block7:ChamberChamber:FragPseudo-Corridors  0.221  0.178  0.315  0.245  0.349  0.309 -0.159 -0.230
-Block8:ChamberChamber:FragPseudo-Corridors  0.298  0.243  0.406  0.381  0.329  0.443 -0.217 -0.315
-Block2:ChamberChamber:FragIsolated          0.312  0.245  0.437  0.313  0.354  0.408 -0.660 -0.339
-Block3:ChamberChamber:FragIsolated          0.515  0.263  0.447  0.338  0.377  0.438 -0.225 -0.515
-Block4:ChamberChamber:FragIsolated          0.319  0.775  0.428  0.329  0.358  0.433 -0.222 -0.344
-Block5:ChamberChamber:FragIsolated          0.445  0.354  0.612  0.484  0.501  0.620 -0.324 -0.485
-Block6:ChamberChamber:FragIsolated          0.413  0.315  0.531  0.648  0.445  0.561 -0.278 -0.448
-Block7:ChamberChamber:FragIsolated          0.371  0.293  0.510  0.392  0.460  0.505 -0.267 -0.403
-Block8:ChamberChamber:FragIsolated          0.453  0.360  0.607  0.488  0.505  0.626 -0.317 -0.491
+Block4:H2O                                  0.472                                                 
+Block5:H2O                                  0.472  0.361                                          
+Block6:H2O                                  0.456  0.227  0.224                                   
+Block7:H2O                                  0.654  0.438  0.522  0.338                            
+Block8:H2O                                  0.703  0.480  0.507  0.382  0.673                     
+Block2:I(H2O^2)                            -0.354 -0.313 -0.320 -0.116 -0.307 -0.353              
+Block3:I(H2O^2)                            -0.979 -0.479 -0.492 -0.447 -0.663 -0.727  0.412       
+Block4:I(H2O^2)                            -0.425 -0.988 -0.324 -0.197 -0.383 -0.428  0.321  0.446
+Block5:I(H2O^2)                            -0.480 -0.381 -0.975 -0.216 -0.508 -0.515  0.369  0.524
+Block6:I(H2O^2)                            -0.503 -0.259 -0.263 -0.991 -0.382 -0.434  0.172  0.512
+Block7:I(H2O^2)                            -0.634 -0.431 -0.474 -0.321 -0.972 -0.653  0.336  0.664
+Block8:I(H2O^2)                            -0.709 -0.484 -0.500 -0.376 -0.675 -0.983  0.385  0.752
+FragFull Corridors:H2O                      0.379  0.135  0.116  0.409  0.299  0.516  0.039 -0.359
+FragPseudo-Corridors:H2O                    0.312  0.182  0.054  0.162  0.248  0.536 -0.112 -0.308
+FragIsolated:H2O                            0.274  0.113  0.047  0.237  0.211  0.463 -0.105 -0.300
+FragFull Corridors:I(H2O^2)                -0.445 -0.198 -0.135 -0.481 -0.354 -0.551 -0.029  0.411
+FragPseudo-Corridors:I(H2O^2)              -0.300 -0.207 -0.063 -0.101 -0.277 -0.536  0.103  0.287
+FragIsolated:I(H2O^2)                      -0.324 -0.150 -0.044 -0.249 -0.260 -0.489  0.148  0.358
+FragFull Corridors:logCells                 0.337  0.208  0.270  0.107  0.341  0.353 -0.212 -0.324
+FragPseudo-Corridors:logCells              -0.186 -0.154 -0.164 -0.263 -0.245 -0.187 -0.047  0.166
+FragIsolated:logCells                      -0.177 -0.267 -0.015 -0.119 -0.114 -0.027  0.090  0.154
+FragFull Corridors:log10(TAN)              -0.300 -0.306 -0.167 -0.121 -0.252 -0.448  0.112  0.291
+FragPseudo-Corridors:log10(TAN)             0.048 -0.048 -0.166  0.116 -0.029  0.050  0.024 -0.049
+FragIsolated:log10(TAN)                    -0.068 -0.175 -0.219  0.039 -0.041 -0.196  0.327  0.131
+Block2:ChamberChamber:FragFull Corridors    0.062  0.071  0.072 -0.018  0.049  0.085 -0.273 -0.077
+Block3:ChamberChamber:FragFull Corridors    0.109  0.067  0.066 -0.008  0.067  0.089 -0.059 -0.114
+Block4:ChamberChamber:FragFull Corridors    0.133  0.563  0.096  0.065  0.099  0.150 -0.095 -0.136
+Block5:ChamberChamber:FragFull Corridors    0.107  0.044  0.009  0.029  0.097  0.145 -0.052 -0.122
+Block6:ChamberChamber:FragFull Corridors    0.277  0.134  0.136  0.592  0.208  0.248 -0.054 -0.269
+Block7:ChamberChamber:FragFull Corridors    0.072  0.045  0.054  0.020  0.063  0.104 -0.032 -0.081
+Block8:ChamberChamber:FragFull Corridors    0.080  0.040  0.072  0.010  0.076  0.147 -0.047 -0.095
+Block2:ChamberChamber:FragPseudo-Corridors  0.096  0.061  0.130  0.077  0.103  0.076 -0.128 -0.103
+Block3:ChamberChamber:FragPseudo-Corridors  0.183  0.089  0.111  0.127  0.131  0.116 -0.054 -0.180
+Block4:ChamberChamber:FragPseudo-Corridors  0.152  0.425  0.168  0.103  0.156  0.139 -0.083 -0.151
+Block5:ChamberChamber:FragPseudo-Corridors  0.182  0.087  0.064  0.112  0.165  0.196 -0.079 -0.189
+Block6:ChamberChamber:FragPseudo-Corridors  0.179  0.076  0.137  0.324  0.162  0.150 -0.019 -0.176
+Block7:ChamberChamber:FragPseudo-Corridors  0.149  0.094  0.118  0.087  0.193  0.156 -0.056 -0.147
+Block8:ChamberChamber:FragPseudo-Corridors  0.209  0.103  0.123  0.171  0.161  0.258 -0.095 -0.220
+Block2:ChamberChamber:FragIsolated          0.154  0.149  0.143  0.031  0.129  0.106 -0.378 -0.163
+Block3:ChamberChamber:FragIsolated          0.248  0.158  0.188  0.108  0.189  0.183 -0.105 -0.239
+Block4:ChamberChamber:FragIsolated          0.225  0.511  0.202  0.096  0.197  0.207 -0.174 -0.229
+Block5:ChamberChamber:FragIsolated          0.251  0.160  0.156  0.118  0.236  0.265 -0.133 -0.260
+Block6:ChamberChamber:FragIsolated          0.258  0.129  0.174  0.601  0.203  0.218 -0.023 -0.234
+Block7:ChamberChamber:FragIsolated          0.218  0.158  0.186  0.094  0.226  0.216 -0.130 -0.226
+Block8:ChamberChamber:FragIsolated          0.212  0.149  0.207  0.110  0.197  0.245 -0.116 -0.219
                                            B4:I(H B5:I(H B6:I(H B7:I(H B8:I(H FFC:H2 FP-C:H FI:H2O
 Block2                                                                                            
 Block3                                                                                            
@@ -971,43 +972,43 @@ Block8:H2O
 Block2:I(H2O^2)                                                                                   
 Block3:I(H2O^2)                                                                                   
 Block4:I(H2O^2)                                                                                   
-Block5:I(H2O^2)                             0.480                                                 
-Block6:I(H2O^2)                             0.411  0.825                                          
-Block7:I(H2O^2)                             0.361  0.717  0.605                                   
-Block8:I(H2O^2)                             0.487  0.966  0.857  0.716                            
-FragFull Corridors:H2O                     -0.128 -0.105 -0.327 -0.154 -0.344                     
-FragPseudo-Corridors:H2O                   -0.152 -0.140 -0.311 -0.187 -0.376  0.984              
-FragIsolated:H2O                           -0.081 -0.135 -0.242 -0.056 -0.262  0.549  0.545       
-FragFull Corridors:I(H2O^2)                 0.117  0.087  0.321  0.138  0.329 -0.993 -0.971 -0.546
-FragPseudo-Corridors:I(H2O^2)               0.144  0.132  0.264  0.180  0.363 -0.953 -0.985 -0.541
-FragIsolated:I(H2O^2)                       0.074  0.130  0.230  0.047  0.248 -0.507 -0.502 -0.997
-FragFull Corridors:logCells                -0.220 -0.307 -0.196 -0.316 -0.335  0.074  0.188  0.097
-FragPseudo-Corridors:logCells               0.045  0.085  0.127  0.066  0.087 -0.029  0.023 -0.013
-FragIsolated:logCells                       0.046 -0.028  0.030  0.106  0.037 -0.242 -0.246  0.672
-FragFull Corridors:log10(TAN)               0.167  0.169  0.255  0.170  0.296 -0.429 -0.474 -0.131
-FragPseudo-Corridors:log10(TAN)            -0.098 -0.078 -0.401 -0.130 -0.262  0.738  0.652  0.430
-FragIsolated:log10(TAN)                     0.033  0.113  0.073 -0.036  0.087  0.091  0.080 -0.676
-Block2:ChamberChamber:FragFull Corridors   -0.102 -0.230 -0.198 -0.149 -0.215  0.006  0.000  0.028
-Block3:ChamberChamber:FragFull Corridors   -0.103 -0.223 -0.192 -0.156 -0.211  0.019  0.016 -0.034
-Block4:ChamberChamber:FragFull Corridors   -0.779 -0.141 -0.146 -0.095 -0.153  0.090  0.080  0.025
-Block5:ChamberChamber:FragFull Corridors   -0.135 -0.301 -0.288 -0.203 -0.307  0.124  0.107  0.080
-Block6:ChamberChamber:FragFull Corridors   -0.221 -0.391 -0.545 -0.317 -0.442  0.267  0.275  0.174
-Block7:ChamberChamber:FragFull Corridors   -0.072 -0.186 -0.188 -0.085 -0.182  0.061  0.032  0.004
-Block8:ChamberChamber:FragFull Corridors   -0.160 -0.333 -0.313 -0.234 -0.346  0.151  0.145  0.090
-Block2:ChamberChamber:FragPseudo-Corridors -0.137 -0.296 -0.232 -0.206 -0.266 -0.049 -0.043  0.007
-Block3:ChamberChamber:FragPseudo-Corridors -0.126 -0.259 -0.226 -0.192 -0.245  0.006  0.006 -0.026
-Block4:ChamberChamber:FragPseudo-Corridors -0.711 -0.253 -0.201 -0.190 -0.247  0.026  0.042  0.006
-Block5:ChamberChamber:FragPseudo-Corridors -0.192 -0.381 -0.346 -0.286 -0.391  0.129  0.136  0.099
-Block6:ChamberChamber:FragPseudo-Corridors -0.181 -0.365 -0.400 -0.269 -0.369  0.105  0.095  0.078
-Block7:ChamberChamber:FragPseudo-Corridors -0.149 -0.298 -0.255 -0.315 -0.294  0.051  0.058  0.004
-Block8:ChamberChamber:FragPseudo-Corridors -0.209 -0.391 -0.389 -0.301 -0.423  0.215  0.217  0.127
-Block2:ChamberChamber:FragIsolated         -0.212 -0.435 -0.349 -0.327 -0.408  0.000  0.015 -0.112
-Block3:ChamberChamber:FragIsolated         -0.225 -0.445 -0.372 -0.348 -0.435  0.064  0.081 -0.130
-Block4:ChamberChamber:FragIsolated         -0.767 -0.427 -0.361 -0.333 -0.429  0.099  0.122 -0.054
-Block5:ChamberChamber:FragIsolated         -0.310 -0.613 -0.529 -0.470 -0.620  0.169  0.192  0.002
-Block6:ChamberChamber:FragIsolated         -0.275 -0.536 -0.648 -0.416 -0.562  0.234  0.227 -0.013
-Block7:ChamberChamber:FragIsolated         -0.256 -0.510 -0.431 -0.412 -0.504  0.099  0.117 -0.050
-Block8:ChamberChamber:FragIsolated         -0.315 -0.608 -0.531 -0.472 -0.623  0.202  0.226 -0.023
+Block5:I(H2O^2)                             0.361                                                 
+Block6:I(H2O^2)                             0.234  0.269                                          
+Block7:I(H2O^2)                             0.394  0.487  0.374                                   
+Block8:I(H2O^2)                             0.446  0.529  0.438  0.677                            
+FragFull Corridors:H2O                     -0.108 -0.116 -0.403 -0.299 -0.487                     
+FragPseudo-Corridors:H2O                   -0.157 -0.074 -0.173 -0.272 -0.509  0.790              
+FragIsolated:H2O                           -0.112 -0.063 -0.263 -0.257 -0.463  0.779  0.766       
+FragFull Corridors:I(H2O^2)                 0.167  0.130  0.465  0.356  0.531 -0.957 -0.714 -0.687
+FragPseudo-Corridors:I(H2O^2)               0.184  0.078  0.105  0.306  0.520 -0.736 -0.962 -0.703
+FragIsolated:I(H2O^2)                       0.153  0.064  0.281  0.322  0.511 -0.701 -0.692 -0.965
+FragFull Corridors:logCells                -0.170 -0.245 -0.124 -0.317 -0.332  0.026  0.098  0.044
+FragPseudo-Corridors:logCells               0.118  0.131  0.267  0.197  0.164 -0.166  0.019 -0.093
+FragIsolated:logCells                       0.279  0.052  0.120  0.142  0.048 -0.105 -0.092 -0.097
+FragFull Corridors:log10(TAN)               0.273  0.176  0.128  0.237  0.413 -0.068 -0.096  0.008
+FragPseudo-Corridors:log10(TAN)             0.064  0.150 -0.119  0.010 -0.057  0.287  0.467  0.296
+FragIsolated:log10(TAN)                     0.213  0.279 -0.006  0.070  0.200  0.174  0.099  0.175
+Block2:ChamberChamber:FragFull Corridors   -0.069 -0.085  0.002 -0.048 -0.084 -0.071 -0.004 -0.024
+Block3:ChamberChamber:FragFull Corridors   -0.060 -0.072 -0.007 -0.062 -0.087 -0.031  0.013  0.003
+Block4:ChamberChamber:FragFull Corridors   -0.576 -0.117 -0.074 -0.101 -0.150  0.032  0.051  0.014
+Block5:ChamberChamber:FragFull Corridors   -0.038 -0.004 -0.044 -0.100 -0.152  0.075  0.090  0.106
+Block6:ChamberChamber:FragFull Corridors   -0.111 -0.128 -0.589 -0.192 -0.237  0.257  0.120  0.159
+Block7:ChamberChamber:FragFull Corridors   -0.038 -0.060 -0.030 -0.050 -0.105  0.027  0.028  0.020
+Block8:ChamberChamber:FragFull Corridors   -0.031 -0.078 -0.028 -0.070 -0.138  0.106  0.140  0.136
+Block2:ChamberChamber:FragPseudo-Corridors -0.052 -0.122 -0.089 -0.083 -0.071 -0.039 -0.118 -0.038
+Block3:ChamberChamber:FragPseudo-Corridors -0.074 -0.104 -0.137 -0.113 -0.110  0.034 -0.027  0.008
+Block4:ChamberChamber:FragPseudo-Corridors -0.424 -0.166 -0.114 -0.138 -0.133  0.005 -0.062 -0.013
+Block5:ChamberChamber:FragPseudo-Corridors -0.073 -0.050 -0.126 -0.161 -0.198  0.113  0.095  0.120
+Block6:ChamberChamber:FragPseudo-Corridors -0.056 -0.122 -0.327 -0.136 -0.141  0.132 -0.021  0.072
+Block7:ChamberChamber:FragPseudo-Corridors -0.076 -0.110 -0.096 -0.173 -0.152  0.052  0.024  0.025
+Block8:ChamberChamber:FragPseudo-Corridors -0.085 -0.125 -0.189 -0.149 -0.234  0.209  0.197  0.196
+Block2:ChamberChamber:FragIsolated         -0.146 -0.159 -0.048 -0.127 -0.113 -0.075 -0.015 -0.067
+Block3:ChamberChamber:FragIsolated         -0.141 -0.193 -0.119 -0.168 -0.175  0.058  0.045 -0.055
+Block4:ChamberChamber:FragIsolated         -0.511 -0.224 -0.112 -0.192 -0.207  0.027  0.053 -0.029
+Block5:ChamberChamber:FragIsolated         -0.144 -0.153 -0.137 -0.230 -0.269  0.132  0.130  0.090
+Block6:ChamberChamber:FragIsolated         -0.102 -0.161 -0.577 -0.172 -0.199  0.274  0.105  0.046
+Block7:ChamberChamber:FragIsolated         -0.145 -0.194 -0.111 -0.207 -0.219  0.064  0.058  0.006
+Block8:ChamberChamber:FragIsolated         -0.133 -0.217 -0.126 -0.178 -0.230  0.172  0.170  0.071
                                            FFC:I( FP-C:I FI:I(H FrFC:C FP-C:C FrgI:C FFC:10 FP-C:1
 Block2                                                                                            
 Block3                                                                                            
@@ -1073,35 +1074,35 @@ FragFull Corridors:H2O
 FragPseudo-Corridors:H2O                                                                          
 FragIsolated:H2O                                                                                  
 FragFull Corridors:I(H2O^2)                                                                       
-FragPseudo-Corridors:I(H2O^2)               0.948                                                 
-FragIsolated:I(H2O^2)                       0.509  0.505                                          
-FragFull Corridors:logCells                -0.017 -0.167 -0.085                                   
-FragPseudo-Corridors:logCells               0.027 -0.034  0.012 -0.041                            
-FragIsolated:logCells                       0.234  0.220 -0.707 -0.062  0.014                     
-FragFull Corridors:log10(TAN)               0.430  0.413  0.091 -0.309  0.023  0.284              
-FragPseudo-Corridors:log10(TAN)            -0.743 -0.554 -0.409  0.140 -0.081 -0.156 -0.257       
-FragIsolated:log10(TAN)                    -0.100 -0.091  0.696 -0.037 -0.007 -0.844  0.088  0.100
-Block2:ChamberChamber:FragFull Corridors   -0.007  0.005 -0.027 -0.042 -0.017  0.029 -0.039 -0.003
-Block3:ChamberChamber:FragFull Corridors   -0.020 -0.011  0.037 -0.028 -0.023 -0.055 -0.046  0.003
-Block4:ChamberChamber:FragFull Corridors   -0.096 -0.076 -0.021 -0.086 -0.015 -0.043 -0.086  0.044
-Block5:ChamberChamber:FragFull Corridors   -0.133 -0.109 -0.078 -0.123 -0.031 -0.002 -0.025  0.074
-Block6:ChamberChamber:FragFull Corridors   -0.255 -0.237 -0.161  0.300 -0.083 -0.067 -0.258  0.323
-Block7:ChamberChamber:FragFull Corridors   -0.077 -0.034 -0.003 -0.245 -0.018 -0.024  0.002  0.015
-Block8:ChamberChamber:FragFull Corridors   -0.151 -0.139 -0.082 -0.033 -0.035 -0.026 -0.097  0.089
-Block2:ChamberChamber:FragPseudo-Corridors  0.057  0.048 -0.007  0.105 -0.125  0.038 -0.027 -0.022
-Block3:ChamberChamber:FragPseudo-Corridors  0.001  0.008  0.029  0.102 -0.111 -0.047 -0.054  0.047
-Block4:ChamberChamber:FragPseudo-Corridors -0.017 -0.039 -0.002  0.143 -0.102 -0.033 -0.095  0.005
-Block5:ChamberChamber:FragPseudo-Corridors -0.122 -0.127 -0.094  0.156 -0.115 -0.016 -0.093  0.130
-Block6:ChamberChamber:FragPseudo-Corridors -0.099 -0.077 -0.073  0.121 -0.233 -0.016 -0.100  0.143
-Block7:ChamberChamber:FragPseudo-Corridors -0.045 -0.053  0.000  0.124 -0.124 -0.054 -0.064  0.053
-Block8:ChamberChamber:FragPseudo-Corridors -0.202 -0.187 -0.114  0.187 -0.128 -0.064 -0.203  0.219
-Block2:ChamberChamber:FragIsolated          0.011 -0.006  0.118  0.144 -0.036 -0.146 -0.082  0.006
-Block3:ChamberChamber:FragIsolated         -0.053 -0.070  0.140  0.157 -0.044 -0.227 -0.133  0.048
-Block4:ChamberChamber:FragIsolated         -0.087 -0.109  0.064  0.198 -0.044 -0.174 -0.175  0.068
-Block5:ChamberChamber:FragIsolated         -0.157 -0.183  0.009  0.220 -0.061 -0.171 -0.167  0.127
-Block6:ChamberChamber:FragIsolated         -0.231 -0.199  0.027  0.107 -0.082 -0.233 -0.204  0.242
-Block7:ChamberChamber:FragIsolated         -0.088 -0.109  0.059  0.171 -0.051 -0.166 -0.135  0.072
-Block8:ChamberChamber:FragIsolated         -0.185 -0.209  0.040  0.232 -0.061 -0.232 -0.231  0.138
+FragPseudo-Corridors:I(H2O^2)               0.712                                                 
+FragIsolated:I(H2O^2)                       0.663  0.675                                          
+FragFull Corridors:logCells                -0.070 -0.117 -0.073                                   
+FragPseudo-Corridors:logCells               0.160 -0.054  0.072  0.192                            
+FragIsolated:logCells                       0.125  0.097  0.092  0.387  0.348                     
+FragFull Corridors:log10(TAN)               0.199  0.151  0.053 -0.243  0.015 -0.033              
+FragPseudo-Corridors:log10(TAN)            -0.215 -0.370 -0.235 -0.075 -0.040 -0.084  0.340       
+FragIsolated:log10(TAN)                    -0.128 -0.065 -0.119 -0.109 -0.117 -0.218  0.460  0.427
+Block2:ChamberChamber:FragFull Corridors    0.077  0.015  0.022  0.050  0.044  0.035 -0.118 -0.032
+Block3:ChamberChamber:FragFull Corridors    0.047  0.003  0.001 -0.028 -0.045 -0.045 -0.094 -0.008
+Block4:ChamberChamber:FragFull Corridors   -0.061 -0.057 -0.017 -0.043 -0.054 -0.169 -0.201 -0.036
+Block5:ChamberChamber:FragFull Corridors   -0.079 -0.097 -0.132  0.057  0.044  0.113 -0.088  0.006
+Block6:ChamberChamber:FragFull Corridors   -0.288 -0.068 -0.151  0.133 -0.154 -0.040 -0.082  0.115
+Block7:ChamberChamber:FragFull Corridors   -0.036 -0.032 -0.030 -0.001  0.021  0.070 -0.118 -0.021
+Block8:ChamberChamber:FragFull Corridors   -0.058 -0.105 -0.107  0.028 -0.007  0.057 -0.033  0.068
+Block2:ChamberChamber:FragPseudo-Corridors  0.042  0.139  0.039  0.088 -0.159  0.041 -0.037 -0.123
+Block3:ChamberChamber:FragPseudo-Corridors -0.036  0.055 -0.006  0.033 -0.215 -0.056 -0.055  0.006
+Block4:ChamberChamber:FragPseudo-Corridors -0.018  0.068  0.015  0.062 -0.220 -0.115 -0.091 -0.144
+Block5:ChamberChamber:FragPseudo-Corridors -0.129 -0.095 -0.147  0.160 -0.031  0.097 -0.086  0.012
+Block6:ChamberChamber:FragPseudo-Corridors -0.134  0.064 -0.060  0.078 -0.265  0.009  0.008  0.018
+Block7:ChamberChamber:FragPseudo-Corridors -0.071 -0.032 -0.040  0.128 -0.138  0.048 -0.087 -0.010
+Block8:ChamberChamber:FragPseudo-Corridors -0.173 -0.128 -0.163  0.118 -0.111  0.039 -0.067  0.113
+Block2:ChamberChamber:FragIsolated          0.065  0.017  0.063  0.121  0.031 -0.092 -0.062 -0.044
+Block3:ChamberChamber:FragIsolated         -0.069 -0.035  0.071  0.067 -0.087 -0.096 -0.101 -0.021
+Block4:ChamberChamber:FragIsolated         -0.048 -0.054  0.035  0.088 -0.073 -0.199 -0.142 -0.037
+Block5:ChamberChamber:FragIsolated         -0.154 -0.142 -0.109  0.191  0.002  0.040 -0.123 -0.010
+Block6:ChamberChamber:FragIsolated         -0.321 -0.071 -0.014  0.085 -0.148 -0.033 -0.055  0.084
+Block7:ChamberChamber:FragIsolated         -0.084 -0.067 -0.017  0.148 -0.020 -0.003 -0.116 -0.037
+Block8:ChamberChamber:FragIsolated         -0.148 -0.138 -0.026  0.126 -0.047 -0.007 -0.064  0.047
                                            FI:10( B2:CCC B3:CCC B4:CCC B5:CCC B6:CCC B7:CCC B8:CCC
 Block2                                                                                            
 Block3                                                                                            
@@ -1175,27 +1176,27 @@ FragIsolated:logCells
 FragFull Corridors:log10(TAN)                                                                     
 FragPseudo-Corridors:log10(TAN)                                                                   
 FragIsolated:log10(TAN)                                                                           
-Block2:ChamberChamber:FragFull Corridors   -0.058                                                 
-Block3:ChamberChamber:FragFull Corridors    0.027  0.497                                          
-Block4:ChamberChamber:FragFull Corridors   -0.003  0.339  0.333                                   
-Block5:ChamberChamber:FragFull Corridors   -0.010  0.705  0.689  0.481                            
-Block6:ChamberChamber:FragFull Corridors   -0.022  0.589  0.581  0.392  0.818                     
-Block7:ChamberChamber:FragFull Corridors    0.017  0.556  0.544  0.389  0.793  0.589              
-Block8:ChamberChamber:FragFull Corridors   -0.023  0.704  0.690  0.479  0.991  0.851  0.774       
-Block2:ChamberChamber:FragPseudo-Corridors -0.058  0.562  0.309  0.197  0.423  0.401  0.315  0.433
-Block3:ChamberChamber:FragPseudo-Corridors  0.020  0.276  0.549  0.177  0.373  0.372  0.278  0.384
-Block4:ChamberChamber:FragPseudo-Corridors -0.014  0.243  0.241  0.761  0.326  0.338  0.235  0.342
-Block5:ChamberChamber:FragPseudo-Corridors -0.016  0.389  0.383  0.256  0.543  0.548  0.396  0.558
-Block6:ChamberChamber:FragPseudo-Corridors -0.023  0.379  0.373  0.251  0.526  0.580  0.390  0.539
-Block7:ChamberChamber:FragPseudo-Corridors  0.029  0.308  0.307  0.201  0.425  0.422  0.488  0.437
-Block8:ChamberChamber:FragPseudo-Corridors -0.028  0.382  0.377  0.260  0.531  0.577  0.384  0.560
-Block2:ChamberChamber:FragIsolated          0.098  0.653  0.294  0.186  0.386  0.389  0.286  0.403
-Block3:ChamberChamber:FragIsolated          0.157  0.289  0.562  0.196  0.397  0.412  0.294  0.417
-Block4:ChamberChamber:FragIsolated          0.083  0.261  0.269  0.741  0.355  0.397  0.253  0.380
-Block5:ChamberChamber:FragIsolated          0.096  0.388  0.395  0.263  0.543  0.572  0.392  0.568
-Block6:ChamberChamber:FragIsolated          0.157  0.363  0.373  0.262  0.522  0.641  0.394  0.539
-Block7:ChamberChamber:FragIsolated          0.098  0.329  0.336  0.221  0.455  0.469  0.498  0.475
-Block8:ChamberChamber:FragIsolated          0.115  0.381  0.392  0.264  0.531  0.573  0.384  0.566
+Block2:ChamberChamber:FragFull Corridors   -0.121                                                 
+Block3:ChamberChamber:FragFull Corridors   -0.041  0.497                                          
+Block4:ChamberChamber:FragFull Corridors   -0.107  0.411  0.421                                   
+Block5:ChamberChamber:FragFull Corridors   -0.026  0.479  0.484  0.385                            
+Block6:ChamberChamber:FragFull Corridors    0.067  0.369  0.386  0.346  0.397                     
+Block7:ChamberChamber:FragFull Corridors   -0.051  0.492  0.499  0.415  0.515  0.399              
+Block8:ChamberChamber:FragFull Corridors    0.005  0.488  0.504  0.395  0.504  0.405  0.504       
+Block2:ChamberChamber:FragPseudo-Corridors -0.059  0.492  0.250  0.198  0.240  0.238  0.247  0.246
+Block3:ChamberChamber:FragPseudo-Corridors -0.013  0.239  0.497  0.213  0.235  0.268  0.243  0.246
+Block4:ChamberChamber:FragPseudo-Corridors -0.065  0.226  0.239  0.593  0.204  0.236  0.221  0.221
+Block5:ChamberChamber:FragPseudo-Corridors -0.019  0.243  0.240  0.192  0.529  0.260  0.265  0.262
+Block6:ChamberChamber:FragPseudo-Corridors  0.069  0.208  0.227  0.188  0.233  0.564  0.235  0.245
+Block7:ChamberChamber:FragPseudo-Corridors -0.025  0.243  0.246  0.205  0.266  0.246  0.496  0.252
+Block8:ChamberChamber:FragPseudo-Corridors -0.015  0.247  0.254  0.206  0.262  0.304  0.252  0.516
+Block2:ChamberChamber:FragIsolated         -0.084  0.539  0.247  0.231  0.224  0.194  0.234  0.228
+Block3:ChamberChamber:FragIsolated         -0.075  0.250  0.497  0.244  0.225  0.253  0.246  0.247
+Block4:ChamberChamber:FragIsolated         -0.126  0.244  0.244  0.628  0.200  0.224  0.223  0.221
+Block5:ChamberChamber:FragIsolated         -0.059  0.253  0.246  0.222  0.519  0.260  0.269  0.265
+Block6:ChamberChamber:FragIsolated          0.047  0.155  0.162  0.186  0.173  0.657  0.192  0.182
+Block7:ChamberChamber:FragIsolated         -0.085  0.260  0.256  0.235  0.266  0.247  0.501  0.259
+Block8:ChamberChamber:FragIsolated         -0.071  0.254  0.255  0.234  0.245  0.266  0.255  0.510
                                            B2:CC:FP B3:CC:FP B4:CC:FP B5:CC:FP B6:CC:FP B7:CC:FP
 Block2                                                                                          
 Block3                                                                                          
@@ -1277,19 +1278,19 @@ Block6:ChamberChamber:FragFull Corridors
 Block7:ChamberChamber:FragFull Corridors                                                        
 Block8:ChamberChamber:FragFull Corridors                                                        
 Block2:ChamberChamber:FragPseudo-Corridors                                                      
-Block3:ChamberChamber:FragPseudo-Corridors  0.568                                               
-Block4:ChamberChamber:FragPseudo-Corridors  0.506    0.444                                      
-Block5:ChamberChamber:FragPseudo-Corridors  0.791    0.699    0.624                             
-Block6:ChamberChamber:FragPseudo-Corridors  0.775    0.686    0.608    0.968                    
-Block7:ChamberChamber:FragPseudo-Corridors  0.635    0.561    0.501    0.791    0.771           
-Block8:ChamberChamber:FragPseudo-Corridors  0.769    0.688    0.615    0.984    0.958    0.776  
-Block2:ChamberChamber:FragIsolated          0.575    0.310    0.279    0.424    0.409    0.347  
-Block3:ChamberChamber:FragIsolated          0.343    0.570    0.288    0.437    0.421    0.358  
-Block4:ChamberChamber:FragIsolated          0.314    0.289    0.755    0.406    0.389    0.328  
-Block5:ChamberChamber:FragIsolated          0.457    0.417    0.382    0.598    0.572    0.477  
-Block6:ChamberChamber:FragIsolated          0.408    0.386    0.340    0.551    0.585    0.437  
-Block7:ChamberChamber:FragIsolated          0.387    0.353    0.322    0.498    0.478    0.571  
-Block8:ChamberChamber:FragIsolated          0.447    0.413    0.381    0.589    0.564    0.471  
+Block3:ChamberChamber:FragPseudo-Corridors  0.519                                               
+Block4:ChamberChamber:FragPseudo-Corridors  0.493    0.484                                      
+Block5:ChamberChamber:FragPseudo-Corridors  0.489    0.491    0.437                             
+Block6:ChamberChamber:FragPseudo-Corridors  0.522    0.524    0.482    0.490                    
+Block7:ChamberChamber:FragPseudo-Corridors  0.511    0.513    0.469    0.518    0.506           
+Block8:ChamberChamber:FragPseudo-Corridors  0.484    0.502    0.443    0.505    0.510    0.492  
+Block2:ChamberChamber:FragIsolated          0.489    0.245    0.247    0.237    0.212    0.246  
+Block3:ChamberChamber:FragIsolated          0.260    0.509    0.271    0.246    0.260    0.266  
+Block4:ChamberChamber:FragIsolated          0.236    0.249    0.591    0.219    0.224    0.241  
+Block5:ChamberChamber:FragIsolated          0.258    0.259    0.247    0.537    0.263    0.291  
+Block6:ChamberChamber:FragIsolated          0.219    0.248    0.225    0.226    0.536    0.232  
+Block7:ChamberChamber:FragIsolated          0.267    0.267    0.262    0.283    0.261    0.518  
+Block8:ChamberChamber:FragIsolated          0.258    0.264    0.260    0.262    0.272    0.269  
                                            B8:CC:FP B2:CC:FI B3:CC:FI B4:CC:FI B5:CC:FI B6:CC:FI
 Block2                                                                                          
 Block3                                                                                          
@@ -1377,13 +1378,13 @@ Block5:ChamberChamber:FragPseudo-Corridors
 Block6:ChamberChamber:FragPseudo-Corridors                                                      
 Block7:ChamberChamber:FragPseudo-Corridors                                                      
 Block8:ChamberChamber:FragPseudo-Corridors                                                      
-Block2:ChamberChamber:FragIsolated          0.422                                               
-Block3:ChamberChamber:FragIsolated          0.443    0.560                                      
-Block4:ChamberChamber:FragIsolated          0.417    0.504    0.528                             
-Block5:ChamberChamber:FragIsolated          0.604    0.723    0.753    0.688                    
-Block6:ChamberChamber:FragIsolated          0.570    0.662    0.697    0.632    0.920           
-Block7:ChamberChamber:FragIsolated          0.501    0.615    0.640    0.582    0.840    0.773  
-Block8:ChamberChamber:FragIsolated          0.609    0.719    0.754    0.692    0.993    0.919  
+Block2:ChamberChamber:FragIsolated          0.235                                               
+Block3:ChamberChamber:FragIsolated          0.270    0.495                                      
+Block4:ChamberChamber:FragIsolated          0.241    0.485    0.505                             
+Block5:ChamberChamber:FragIsolated          0.286    0.485    0.508    0.470                    
+Block6:ChamberChamber:FragIsolated          0.269    0.358    0.451    0.390    0.425           
+Block7:ChamberChamber:FragIsolated          0.274    0.501    0.526    0.491    0.540    0.425  
+Block8:ChamberChamber:FragIsolated          0.525    0.482    0.536    0.494    0.523    0.455  
                                            B7:CC:FI
 Block2                                             
 Block3                                             
@@ -1477,22 +1478,24 @@ Block4:ChamberChamber:FragIsolated
 Block5:ChamberChamber:FragIsolated                 
 Block6:ChamberChamber:FragIsolated                 
 Block7:ChamberChamber:FragIsolated                 
-Block8:ChamberChamber:FragIsolated          0.836  
+Block8:ChamberChamber:FragIsolated          0.530  
 
-Standardized residuals:
+Standardized Within-Group Residuals:
           Min            Q1           Med            Q3           Max 
--1.493665e+00 -2.373658e-01  4.352464e-13  2.373658e-01  1.493665e+00 
+-1.849745e+00 -3.161248e-01  4.299896e-16  3.161248e-01  1.849745e+00 
 
-Residual standard error: 0.6413549 
-Degrees of freedom: 126 total; 32 residual
+Number of Observations: 126
+Number of Groups: 
+                       Block           Chamber %in% Block Frag %in% Chamber %in% Block 
+                           8                           16                           64 
 
 
 Anova Table (Type II tests)
 
 Response: Y.re
-          Sum Sq  Df F value   Pr(>F)   
-X.re      0.6351   1  8.6109 0.003983 **
-Residuals 9.1463 124                    
+          Sum Sq  Df F value  Pr(>F)  
+X.re      0.3933   1  5.9324 0.01629 *
+Residuals 8.2216 124                  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -1501,18 +1504,18 @@ lm(formula = Y.re ~ X.re)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--0.9775 -0.1186  0.0000  0.1186  0.9775 
+-0.8410 -0.1262  0.0000  0.1262  0.8410 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)   
-(Intercept) -4.154e-15  2.420e-02   0.000  1.00000   
-X.re         3.599e-02  1.227e-02   2.934  0.00398 **
+             Estimate Std. Error t value Pr(>|t|)  
+(Intercept) 6.536e-17  2.294e-02   0.000   1.0000  
+X.re        6.294e-02  2.584e-02   2.436   0.0163 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 0.2716 on 124 degrees of freedom
-Multiple R-squared: 0.06493,	Adjusted R-squared: 0.05739 
-F-statistic: 8.611 on 1 and 124 DF,  p-value: 0.003983 
+Residual standard error: 0.2575 on 124 degrees of freedom
+Multiple R-squared: 0.04566,	Adjusted R-squared: 0.03796 
+F-statistic: 5.932 on 1 and 124 DF,  p-value: 0.01629 
 
 
 
@@ -1520,8 +1523,8 @@ Anova Table (Type II tests)
 
 Response: Y.re
           Sum Sq  Df F value    Pr(>F)    
-N.re      1.0762   1  15.087 0.0001661 ***
-Residuals 8.8450 124                      
+N.re      1.0201   1  16.617 8.113e-05 ***
+Residuals 7.6121 124                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -1530,18 +1533,18 @@ lm(formula = Y.re ~ N.re)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--0.9039 -0.1366  0.0000  0.1366  0.9039 
+-0.8683 -0.1599  0.0000  0.1599  0.8683 
 
 Coefficients:
               Estimate Std. Error t value Pr(>|t|)    
-(Intercept)  4.009e-15  2.379e-02   0.000 1.000000    
-N.re        -8.179e-01  2.106e-01  -3.884 0.000166 ***
+(Intercept)  2.340e-16  2.207e-02   0.000        1    
+N.re        -8.239e-01  2.021e-01  -4.076 8.11e-05 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 0.2671 on 124 degrees of freedom
-Multiple R-squared: 0.1085,	Adjusted R-squared: 0.1013 
-F-statistic: 15.09 on 1 and 124 DF,  p-value: 0.0001661 
+Residual standard error: 0.2478 on 124 degrees of freedom
+Multiple R-squared: 0.1182,	Adjusted R-squared: 0.1111 
+F-statistic: 16.62 on 1 and 124 DF,  p-value: 8.113e-05 
 
 
 

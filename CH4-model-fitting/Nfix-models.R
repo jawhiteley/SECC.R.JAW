@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression models for N-fixation (ARA)
 ###  With quadratic H2O term
-### Jonathan Whiteley     R v2.12     2012-07-18
+### Jonathan Whiteley     R v2.12     2012-08-05
 ################################################################
 if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
@@ -32,7 +32,7 @@ cat("- Processing Data (excluding NAs)\n")
 SECCf <- SECCa
 if (TRUE)
 {
-  Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, TempC, H2O, ARA.m, Cells.m, logCells, TAN, Y, Y.log, Y.trans", 
+  Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, Climate, H2O, ARA.m, Cells, logCells, TAN, Y, Y.log, Y.trans", 
                        ", ", fixed = TRUE) ) # include untransformed columns to use their NA values for filtering
   SECCa <- na.exclude( SECCa[, Mod.cols] ) # only exclude NAs from relevant (used) columns
 } else {
@@ -67,7 +67,7 @@ cat("- Fitting models:", Y.col, "\n")
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)
 library(mgcv)
-Y.gam     <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O) + s(Cells.m) + s(TAN), data = SECCa)
+Y.gam     <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O) + s(Cells) + s(TAN), data = SECCa)
 Y.log.gam <- gam(Y.trans ~ Block + Chamber + Frag + s(H2O) + s(logCells) + s(log10(TAN)), data = SECCa)
 anova(Y.gam)
 anova(Y.log.gam)
@@ -234,8 +234,10 @@ if (file.exists(Save.glmulti))
 	   Y.mtable1, Y.mtable2, Y.coef2, Y.imp1, Y.imp2, 
 	   ## Y.coef1, Y.importance1, Y.est1, Y.importance2, Y.est2,
 	   Y.multipred, file=Save.glmulti)
+  cat("- glmulti objects saved.\n")
 
   rm(Y.glmulti1, Y.glmulti2, Y.glmultiB, Y.glmultiBr) # save memory? not right away, but maybe eventually :(
+  cat("- glmulti objects clean-up.\n")
 }
 
 
@@ -373,7 +375,12 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 ##  e.g. fitting values higher than the data, particularly in dry Ambient patches (where there is NO DATA).
 ##  It's basically fitting a cubic polynomial function, which isn't really what I want :P
 ##  Better to avoid it in the model fitting (but I will need it for plotting effects).
+
 ##  I should probably avoid Chamber interactions (especially Chamber:H20 AND H2O^2), given that I have no data on dry Ambient patches :(
+##    This leads to unrealistic predicted values for non-existent "dry ambient" patches with low moisture.
+##  The problem with Chamber:Position interactions (or Climate), is that this is confounded with moisture:
+##    These factors already account for much of the variation that moisture can also (and probably should) explain.
+
 
 ## based on Y.best2, keeping only interactions of interest, or high "Importance"
 Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
@@ -407,7 +414,7 @@ AIC(Y.best2lm, Y.fxlm, Y.fHlm)
 Y.f2   <- gls(Y.best2, data = SECCa, method = "ML")
 Y.fx   <- gls(Y.fixed, data = SECCa, method = "ML")
 Y.fH   <- gls(Y.fixHi, data = SECCa, method = "ML")
-anova(Y.fx, Y.f2, Y.fH)                # Adding higher-order interactions is better (without mixed effects)
+anova(Y.f2, Y.fx, Y.fH)                # Adding higher-order interactions is better (without mixed effects)
 Y.f2   <- update(Y.f2, method = "REML")
 Y.fx   <- update(Y.fx, method = "REML")
 Y.fH   <- update(Y.fH, method = "REML")
@@ -450,6 +457,7 @@ if (TryMM)
 ##  Higher-order interactions seem to be a better fit, but the residuals may be worse.
 ## Y.fit  <- Y.me
 Y.fit  <- Y.mH
+Y.fit  <- Y.mr
 
 
 
@@ -745,7 +753,7 @@ TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 ## Axis Labels:
 Y.label <- SECC.axislab(SECCa, col = Y.col, parens=TRUE)
 Y.lim   <- range(SECCa$Y)
-Y.lim   <- c(0, 400)
+Y.lim   <- c(0, 500)                   # > 400 to leave room for some big confidence intervals.
 
 ##______________________________________________________________
 ## utility functions
@@ -819,20 +827,20 @@ FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 ##______________________________________________________________
 ## cyanobacteria effects
 C.pdata <- effect.to.df(C.eff, fun = alog0)
-C.pdata <- within(C.pdata, Cells.m <- 10^logCells )
-C.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
+C.pdata <- within(C.pdata, Cells <- 10^logCells )
+C.plot  <- ggplot(SECCa, aes(y = Y, x = Cells)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = C.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
+			xlab(SECC.axislab(SECCa, col = "Cells", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 ## This just looks weird
 CT.pdata <- effect.to.df(CT.eff, fun = alog0)
-CT.pdata <- within(CT.pdata, Cells.m <- 10^logCells )
-CT.plot  <- ggplot(SECCa, aes(y = Y, x = Cells.m)) + ylim(Y.lim) +
+CT.pdata <- within(CT.pdata, Cells <- 10^logCells )
+CT.plot  <- ggplot(SECCa, aes(y = Y, x = Cells)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.Tlayer(eff = CT.pdata, conf.int = TRUE) +
-			xlab(SECC.axislab(SECCa, col = "Cells.m", parens=TRUE)) + ylab(Y.label) +
+			xlab(SECC.axislab(SECCa, col = "Cells", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_ARA() + jaw.ggplot() + ChamberPts + TopLegend
 
 ##______________________________________________________________

@@ -1,7 +1,7 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression trees: N-fixation (ARA)
-### Jonathan Whiteley     R v2.12     2012-07-16
+### Jonathan Whiteley     R v2.12     2012-08-05
 ################################################################
 ## INITIALISE
 ################################################################
@@ -50,8 +50,8 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ##  - splits do not change, but group means do.
 ##  - The position of the offset variable **does** matter
 ##    - I think it should be first, to account for Blocks *before* any other factors?
-Y.main   <- Y ~ Block + Chamber + Frag + H2O + logCells + log10(TAN)
-Y.mainB  <- Y ~ offset(Block) + TempC + Frag + H2O + logCells + log10(TAN)
+Y.main   <- Y ~ Block + Climate + Frag + H2O + logCells + log10(TAN)
+Y.mainB  <- Y ~ offset(Block) + Climate + Frag + H2O + logCells + log10(TAN)
  
 BlockOffset <- FALSE
 if (BlockOffset) Y.main <- Y.mainB
@@ -95,8 +95,8 @@ if (FALSE)
 
   ## Approx. long-term averages:
   ## Block as a Factor
-  ## cpMin:           minsplit 20: 0.024 ; minsplit 10: 0.040
-  ## cpMinError:      minsplit 20: 0.006 ; minsplit 10: 0.015
+  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.11
+  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.042
   ## log10(TAN)
   ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.12
   ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.045
