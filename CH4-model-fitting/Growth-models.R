@@ -14,6 +14,7 @@ if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
 }
 ## Clear memory, load data, functions, etc.  Process data & setup config. settings
 source('./CH4-model-fitting/Growth_setup.R')
+Save.results   <- FALSE
 
 
 library(nlme)

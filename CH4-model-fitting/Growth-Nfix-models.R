@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Regression models for Moss Growth
 ###   Including Nfix as a predictor variable (highly correlated with H2O)
-### Jonathan Whiteley     R v2.12     2012-07-17
+### Jonathan Whiteley     R v2.12     2012-08-05
 ################################################################
 if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
@@ -21,6 +21,7 @@ source('./CH4-model-fitting/Growth_setup.R')
 Save.glmulti  <- paste(SaveDir.obj(), "Growth-Nfix.glmulti.R", sep="")
 Old.label <- sprintf("%s~", Y.col) 
 New.label <- sprintf("%s~Nfix-", Y.col) 
+Fig.oldfile    <- Fig.filename
 Save.filename  <- gsub(Old.label, New.label, Save.filename,  fixed = TRUE)
 Save.text      <- gsub(Old.label, New.label, Save.text,      fixed = TRUE)
 Save.plots     <- gsub(Old.label, New.label, Save.plots,     fixed = TRUE)
@@ -522,9 +523,11 @@ Y.X.df <- data.frame(X=X.re, Y=Y.re, fit=Y.X.pred[, "fit"],
 ## Partial regression on H2O
 ##  Maybe I should NOT account for Nfix here: "What is the effect of H2O, without removing the effect of Nfixation?"
 ##  - If I believe that H2O is driving everything...
-Parts <- PartialFormula("Y.fit", x.var = "H2O")
-Y.part <- eval(Parts$y) # problems fitting with gls? :(
+Parts <- PartialFormula("Y.part", x.var = "H2O")     # using previous `Y.part`, which already has logNfix removed ;)
+Y.part <- eval(Parts$y)
 H.part <- eval(Parts$x)
+## Y.part <- update(Y.part, .~. -logNfix - Chamber:logNfix)
+## H.part <- update(H.part, .~. -logNfix - Chamber:logNfix)
 
 Y.re     <- resid(Y.part, type = "response")
 H.re     <- resid(H.part,  type = "response")
@@ -816,7 +819,7 @@ if (Save.results == TRUE)
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN-partial.eps",  Fig.filename), plot = N.part.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sH2O-partial.eps",  Fig.filename), plot = H.part.plot, 
+  ggsave(filename = sprintf("%sH2O-Nfix-partial.eps",  Fig.oldfile), plot = H.part.plot,  # **
          width = 4, height = 4, scale = 1.5)
 } else {
   print(T.plot)

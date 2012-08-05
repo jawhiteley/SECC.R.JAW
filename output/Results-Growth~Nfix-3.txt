@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Tue Jul 17 16:34:29 2012
+Sun Aug  5 14:43:50 2012
 ================================================================
 
 Analysis of Variance Table
@@ -69,7 +69,7 @@ logNfix                       N-fixation 1.000000000
 
 
 Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
-<environment: 0x17f1da78>
+<environment: 0x29a5c6e0>
 Denom. DF: 96 
                     numDF  F-value p-value
 (Intercept)             1 450.8367  <.0001
@@ -223,9 +223,9 @@ F-statistic: 0.3579 on 1 and 113 DF,  p-value: 0.5509
 Anova Table (Type II tests)
 
 Response: Y.re
-          Sum Sq  Df F value  Pr(>F)  
-H.re        83.0   1  4.8562 0.02957 *
-Residuals 1931.3 113                  
+          Sum Sq  Df F value    Pr(>F)    
+H.re      1214.2   1  62.224 2.131e-12 ***
+Residuals 2204.9 113                      
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -234,18 +234,18 @@ lm(formula = Y.re ~ H.re)
 
 Residuals:
      Min       1Q   Median       3Q      Max 
--11.8826  -2.3178  -0.3092   1.7592  14.8967 
+-11.0097  -2.6040  -0.4108   1.8015  15.5929 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)  
-(Intercept) -1.750e-15  3.855e-01   0.000   1.0000  
-H.re         7.139e-03  3.239e-03   2.204   0.0296 *
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 3.802e-15  4.119e-01   0.000        1    
+H.re        1.698e-02  2.152e-03   7.888 2.13e-12 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 4.134 on 113 degrees of freedom
-Multiple R-squared: 0.0412,	Adjusted R-squared: 0.03272 
-F-statistic: 4.856 on 1 and 113 DF,  p-value: 0.02957 
+Residual standard error: 4.417 on 113 degrees of freedom
+Multiple R-squared: 0.3551,	Adjusted R-squared: 0.3494 
+F-statistic: 62.22 on 1 and 113 DF,  p-value: 2.131e-12 
 
 
 
