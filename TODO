@@ -54,6 +54,7 @@ Microarthropods: Fauna
 - Nestedness?
 + Correlations between Predators, Grazers, and Cyanobacteria
   ~ trophic cascade?
+~ Proportion of Predators / Mesostigs / Collembola, etc. vs. Species Richness (non-random extinctions?)
 + Table of species presence / absence by experimental treatment
 
 AG:
@@ -73,6 +74,8 @@ Schmitz, O. J. 2006. Predators have large effects on ecosystem properties by cha
 Follow-up analyses (in later chapter?)
 ________________________________
 ~ Constrained ordination?
+    - CCA
+    - RDA
 - Other multivariate analyses?
 
 - Explore: relationships between fauna, richness & decomposition, available N
@@ -97,7 +100,7 @@ SYNTHESIS
 ================================
 
 ~ Multiple Regressions
-  - Cyanobacteria density
+  ~ Cyanobacteria density (per shoot?)
     - H2O
     - TAN
     - Frag
@@ -112,12 +115,14 @@ SYNTHESIS
     - Chamber:Position
     - N-fixation (after H2O)
     - TAN
-  X Decomposition?
+  X Decomposition?  (see Fauna chapter)
 
 - Redo analyses with more sensible terms and interactions
   - There are no dry patches in the ambient, which can do screwy things to predicted values in ambient only.
   - For now, I've had to remove all Chamber interactions.
   - I really should include Position, to account for Chamber:Position interactions
+    - Collapse Chamber & Position into a 'Climate' factor with 3 levels: Ambient, Inner Chamber, Outer Chamber ?
+    - Inner Chamber = "Warm"; Outer Chamber = "Warm + Dry"
   - Try to start over and choose sensible interactions a priori
     - See if I can use all of them, or if I need to screen some out
     - use glmulti output to screen out any that are not "important"

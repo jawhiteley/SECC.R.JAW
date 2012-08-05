@@ -46,7 +46,7 @@ SECC <- within( SECC, {
   H2O.wwt <- H2O.wwt * 100
   Growth  <- grow12 + grow23           # moss growth during second year **
   ## Should I be log-transforming moss Growth, or just use non-linear GLMM (log-link?)?  Note negative values!
-  logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria
+  logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria;  log10(Cells +1) 
   ##   logCells[Cells.m <= 0] <- 0
   Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
   logTAN <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
@@ -65,8 +65,8 @@ SECC <- within( SECC, {
   Climate <- factor(Climate)
 })
 
-attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]]
-attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% m^-2) )
+attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]] # Cells ?
+attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% m^-2) )    # cells / shoot ?
 attr(SECC, "labels")[["Growth"]] <- "Moss growth"
 attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
 attr(SECC, "labels")[["Decomp.asq"]] <- attr(SECC, "labels")[["Decomposition"]]
