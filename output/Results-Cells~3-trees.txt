@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Sat Aug  4 22:19:13 2012
+Sun Aug  5 14:14:37 2012
 ================================================================
 
 n=127 (1 observation deleted due to missingness)
@@ -32,13 +32,13 @@ Call:
 rpart(formula = Y.main, data = SECCa, control = rpc)
   n=127 (1 observation deleted due to missingness)
 
-          CP nsplit rel error    xerror      xstd
-1 0.22681885      0 1.0000000 1.0177378 0.1221288
-2 0.04483650      1 0.7731811 0.8655145 0.1124906
-3 0.04460181      2 0.7283446 1.0035311 0.1455233
-4 0.04455092      4 0.6391410 1.0032539 0.1469081
-5 0.04194012      6 0.5500392 1.0032539 0.1469081
-6 0.04000000      7 0.5080991 1.0223771 0.1484265
+          CP nsplit rel error   xerror      xstd
+1 0.22681885      0 1.0000000 1.032454 0.1240804
+2 0.04483650      1 0.7731811 0.914958 0.1082191
+3 0.04460181      2 0.7283446 1.069528 0.1415998
+4 0.04455092      4 0.6391410 1.069528 0.1415998
+5 0.04194012      6 0.5500392 1.069315 0.1416018
+6 0.04000000      7 0.5080991 1.097959 0.1628487
 
 Node number 1: 127 observations,    complexity param=0.2268189
   mean=22690.29, MSE=6.986241e+08 
@@ -47,7 +47,7 @@ Node number 1: 127 observations,    complexity param=0.2268189
       Block      splits as  LRLLLLRR, improve=0.226818900, (0 missing)
       log10(TAN) < -1.199841 to the left,  improve=0.082509490, (0 missing)
       H2O        < 597.1577  to the right, improve=0.057785820, (1 missing)
-      Climate    splits as  L---RR-, improve=0.021156950, (0 missing)
+      Climate    splits as  LRR, improve=0.021156950, (0 missing)
       Frag       splits as  LRLR, improve=0.007525831, (0 missing)
   Surrogate splits:
       log10(TAN) < -1.274138 to the left,  agree=0.654, adj=0.064, (0 split)
@@ -58,7 +58,7 @@ Node number 2: 80 observations,    complexity param=0.04460181
   Primary splits:
       Block      splits as  L-RRLL--, improve=0.10033520, (0 missing)
       log10(TAN) < -1.391987 to the left,  improve=0.07168674, (0 missing)
-      Climate    splits as  L---RR-, improve=0.01811307, (0 missing)
+      Climate    splits as  LRR, improve=0.01811307, (0 missing)
       H2O        < 591.2493  to the right, improve=0.01798602, (1 missing)
       Frag       splits as  LLRL, improve=0.01517382, (0 missing)
   Surrogate splits:
@@ -71,7 +71,7 @@ Node number 3: 47 observations,    complexity param=0.0448365
       log10(TAN) < -1.334698 to the left,  improve=0.10557140, (0 missing)
       H2O        < 616.9733  to the right, improve=0.07559153, (0 missing)
       Frag       splits as  LRLR, improve=0.05323977, (0 missing)
-      Climate    splits as  L---RR-, improve=0.04849627, (0 missing)
+      Climate    splits as  LRR, improve=0.04849627, (0 missing)
       Block      splits as  -R----LR, improve=0.02023540, (0 missing)
 
 Node number 4: 48 observations
@@ -82,7 +82,7 @@ Node number 5: 32 observations,    complexity param=0.04460181
   left son=10 (29 obs) right son=11 (3 obs)
   Primary splits:
       log10(TAN) < -1.405148 to the left,  improve=0.275546800, (0 missing)
-      Climate    splits as  L---RR-, improve=0.248278500, (0 missing)
+      Climate    splits as  LRR, improve=0.248278500, (0 missing)
       H2O        < 146.8229  to the right, improve=0.096126570, (0 missing)
       Frag       splits as  LRRR, improve=0.050256580, (0 missing)
       Block      splits as  --LR----, improve=0.003758802, (0 missing)
@@ -94,14 +94,14 @@ Node number 6: 42 observations,    complexity param=0.04455092
   left son=12 (20 obs) right son=13 (22 obs)
   Primary splits:
       log10(TAN) < -1.6547   to the right, improve=0.102490500, (0 missing)
-      Climate    splits as  L---RR-, improve=0.061897150, (0 missing)
+      Climate    splits as  LRR, improve=0.061897150, (0 missing)
       H2O        < 616.9733  to the right, improve=0.056717760, (0 missing)
       Frag       splits as  RRLR, improve=0.024836620, (0 missing)
       Block      splits as  -R----LR, improve=0.004744976, (0 missing)
   Surrogate splits:
       Block   splits as  -L----RR, agree=0.690, adj=0.35, (0 split)
       H2O     < 411.9858  to the right, agree=0.667, adj=0.30, (0 split)
-      Climate splits as  L---RR-, agree=0.619, adj=0.20, (0 split)
+      Climate splits as  LRR, agree=0.619, adj=0.20, (0 split)
       Frag    splits as  LRLR, agree=0.619, adj=0.20, (0 split)
 
 Node number 7: 5 observations
@@ -124,7 +124,7 @@ Node number 13: 22 observations,    complexity param=0.04455092
       log10(TAN) < -1.692091 to the left,  improve=0.22355310, (0 missing)
       H2O        < 635.2259  to the right, improve=0.18464020, (0 missing)
       Block      splits as  -R----LL, improve=0.11892520, (0 missing)
-      Climate    splits as  L---RR-, improve=0.05030328, (0 missing)
+      Climate    splits as  LRR, improve=0.05030328, (0 missing)
   Surrogate splits:
       H2O < 15.14766  to the left,  agree=0.818, adj=0.2, (0 split)
 
@@ -139,7 +139,7 @@ Node number 27: 17 observations,    complexity param=0.04194012
       log10(TAN) < -1.692091 to the left,  improve=0.17553490, (0 missing)
       Frag       splits as  RL-R, improve=0.10091370, (0 missing)
       Block      splits as  -R----LL, improve=0.08103476, (0 missing)
-      Climate    splits as  L---RR-, improve=0.07875775, (0 missing)
+      Climate    splits as  LRR, improve=0.07875775, (0 missing)
 
 Node number 54: 3 observations
   mean=20277.78, MSE=5.961934e+07 

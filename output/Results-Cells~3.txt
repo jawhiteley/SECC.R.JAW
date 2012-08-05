@@ -5,256 +5,207 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Sun Aug  5 00:03:09 2012
+Sun Aug  5 14:16:16 2012
 ================================================================
 
 Analysis of Variance Table
 
 Response: Y.trans
-                                     Df Sum Sq Mean Sq F value  Pr(>F)  PropVar
-Block                                 7 78.227 11.1753  5.1659 0.00098 0.215373
-Residuals                            25 54.083  2.1633                 0.148898
-Frag:I(H2O^2)                         3 27.762  9.2540  4.2777 0.01440 0.076434
-Climate:Frag:log10(TAN)               6 23.903  3.9838  1.8415 0.13147 0.065808
-Climate:Frag:H2O                      6 18.487  3.0812  1.4243 0.24476 0.050899
-Climate:Frag:H2O:I(H2O^2)             6 16.212  2.7020  1.2490 0.31583 0.044635
-Frag                                  3 13.429  4.4764  2.0692 0.12984 0.036973
-Climate:Frag:I(H2O^2)                 6 12.630  2.1051  0.9731 0.46361 0.034773
-Climate:H2O                           2 12.575  6.2875  2.9064 0.07330 0.034621
-Climate:Frag:H2O:log10(TAN)           6 12.162  2.0269  0.9370 0.48634 0.033483
-Climate:Frag:H2O:I(H2O^2):log10(TAN)  4 11.404  2.8509  1.3179 0.29061 0.031396
-log10(TAN)                            1  9.916  9.9156  4.5835 0.04222 0.027299
-Frag:H2O:I(H2O^2):log10(TAN)          3  8.382  2.7941  1.2916 0.29910 0.023077
-Frag:log10(TAN)                       3  7.415  2.4717  1.1425 0.35119 0.020415
-Frag:H2O                              3  6.700  2.2334  1.0324 0.39522 0.018447
-Climate:H2O:I(H2O^2):log10(TAN)       2  6.155  3.0773  1.4225 0.25997 0.016944
-Climate:Frag:I(H2O^2):log10(TAN)      6  5.640  0.9400  0.4345 0.84878 0.015527
-I(H2O^2)                              1  5.476  5.4758  2.5312 0.12418 0.015076
-Climate:I(H2O^2)                      2  4.658  2.3292  1.0767 0.35600 0.012825
-Climate:I(H2O^2):log10(TAN)           2  4.499  2.2494  1.0398 0.36833 0.012386
-Climate:H2O:I(H2O^2)                  2  4.066  2.0328  0.9397 0.40412 0.011194
-Climate:H2O:log10(TAN)                2  3.361  1.6803  0.7767 0.47070 0.009252
-H2O:log10(TAN)                        1  3.185  3.1853  1.4724 0.23630 0.008770
-Climate                               2  2.778  1.3889  0.6420 0.53469 0.007648
-Frag:H2O:I(H2O^2)                     3  2.307  0.7688  0.3554 0.78563 0.006350
-Climate:Frag                          6  2.075  0.3458  0.1598 0.98507 0.005712
-Frag:H2O:log10(TAN)                   3  1.847  0.6157  0.2846 0.83602 0.005085
-Frag:I(H2O^2):log10(TAN)              3  1.832  0.6105  0.2822 0.83772 0.005043
-H2O                                   1  1.035  1.0346  0.4783 0.49558 0.002848
-H2O:I(H2O^2):log10(TAN)               1  0.920  0.9200  0.4253 0.52027 0.002533
-I(H2O^2):log10(TAN)                   1  0.068  0.0683  0.0316 0.86037 0.000188
-Climate:log10(TAN)                    2  0.028  0.0142  0.0066 0.99345 0.000078
-H2O:I(H2O^2)                          1  0.004  0.0039  0.0018 0.96628 0.000011
+                                     Df  Sum Sq Mean Sq F value  Pr(>F)  PropVar
+Residuals                            55 101.101  1.8382                 0.278348
+Block                                 7  78.227 11.1753  6.0795 0.00003 0.215373
+Chamber:Frag:I(H2O^2)                 3  22.760  7.5866  4.1272 0.01037 0.062661
+Chamber:Frag:H2O:I(H2O^2):log10(TAN)  3  16.244  5.4148  2.9457 0.04078 0.044724
+Frag                                  3  13.384  4.4612  2.4269 0.07520 0.036847
+Frag:H2O:I(H2O^2)                     3  12.439  4.1464  2.2557 0.09210 0.034247
+Chamber:Frag:log10(TAN)               3  11.899  3.9664  2.1577 0.10342 0.032760
+Chamber:Frag:H2O:log10(TAN)           3  11.496  3.8322  2.0847 0.11276 0.031652
+log10(TAN)                            1  11.255 11.2545  6.1226 0.01646 0.030986
+Chamber:H2O:log10(TAN)                1  10.407 10.4071  5.6615 0.02084 0.028652
+Chamber:Frag:H2O                      3   9.693  3.2308  1.7576 0.16602 0.026685
+Chamber:H2O                           1   8.978  8.9778  4.8840 0.03129 0.024717
+Chamber:Frag:I(H2O^2):log10(TAN)      3   8.011  2.6704  1.4527 0.23751 0.022056
+Frag:I(H2O^2)                         3   5.667  1.8890  1.0276 0.38756 0.015602
+Frag:H2O                              3   5.661  1.8868  1.0265 0.38807 0.015584
+Frag:log10(TAN)                       3   5.476  1.8254  0.9930 0.40297 0.015077
+I(H2O^2)                              1   4.268  4.2676  2.3216 0.13332 0.011750
+Chamber:Frag:H2O:I(H2O^2)             3   4.002  1.3341  0.7257 0.54098 0.011019
+Frag:I(H2O^2):log10(TAN)              3   3.597  1.1991  0.6523 0.58491 0.009904
+Chamber:I(H2O^2):log10(TAN)           1   2.703  2.7031  1.4705 0.23045 0.007442
+Chamber                               1   2.434  2.4339  1.3240 0.25485 0.006701
+Chamber:H2O:I(H2O^2):log10(TAN)       1   2.246  2.2464  1.2221 0.27377 0.006185
+Chamber:H2O:I(H2O^2)                  1   2.245  2.2454  1.2215 0.27387 0.006182
+Frag:H2O:log10(TAN)                   3   1.991  0.6635  0.3610 0.78141 0.005481
+Frag:H2O:I(H2O^2):log10(TAN)          3   1.742  0.5807  0.3159 0.81381 0.004796
+H2O                                   1   1.268  1.2679  0.6898 0.40983 0.003491
+H2O:I(H2O^2)                          1   1.161  1.1613  0.6317 0.43013 0.003197
+Chamber:I(H2O^2)                      1   1.152  1.1523  0.6269 0.43191 0.003173
+Chamber:Frag                          3   1.084  0.3612  0.1965 0.89835 0.002983
+H2O:I(H2O^2):log10(TAN)               1   0.393  0.3934  0.2140 0.64545 0.001083
+H2O:log10(TAN)                        1   0.119  0.1194  0.0649 0.79980 0.000329
+Chamber:log10(TAN)                    1   0.091  0.0909  0.0495 0.82484 0.000250
+I(H2O^2):log10(TAN)                   1   0.023  0.0233  0.0127 0.91075 0.000064
 
 
 consensus of 6-glmulti.analysis Method: g / Fitting: lm / IC used: aic Level: 2 / Marginality: TRUE 
-From 256 models: Best IC: 471.769645617367 Best model: 
-[1] "Y.trans ~ 1 + Block + Climate + Frag + H2O + I(H2O^2) + log10(TAN) + " 
-[2] "    Block:H2O + Climate:I(H2O^2)"                                      
-Evidence weight: 0.0378543347525563 Worst IC: 481.268677027078 19 models within 2 IC units. 
-159 models to reach 95% of evidence weight. Convergence after 830 generations. 
-Time elapsed: 4.75130911668142 minutes.
+From 256 models: Best IC: 468.739212992101 Best model: 
+[1] "Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + log10(TAN) + " 
+[2] "    Block:H2O + Chamber:I(H2O^2)"                                      
+Evidence weight: 0.0280720426922968 Worst IC: 476.241061123673 25 models within 2 IC units. 
+192 models to reach 95% of evidence weight. Convergence after 690 generations. 
+Time elapsed: 3.54134754737218 minutes.
                                         Term  Importance
-Block:Frag               Block:Fragmentation 0.008341308
-Block:log10(TAN)               Block:Total N 0.010685127
-Block:Climate                  Block:Climate 0.012710881
-Climate:Frag           Climate:Fragmentation 0.016904512
-Frag:log10(TAN)        Fragmentation:Total N 0.025678402
-Frag:H2O              Fragmentation:Moisture 0.034885665
-Frag:I(H2O^2)       Fragmentation:Moisture^2 0.042590890
-Climate:log10(TAN)           Climate:Total N 0.083334185
-H2O:I(H2O^2)             Moisture:Moisture^2 0.182743059
-H2O:log10(TAN)              Moisture:Total N 0.233308974
-Block:I(H2O^2)              Block:Moisture^2 0.240587129
-I(H2O^2):log10(TAN)       Moisture^2:Total N 0.276107465
-Climate:H2O                 Climate:Moisture 0.436007106
-Climate:I(H2O^2)          Climate:Moisture^2 0.457322324
-Frag                           Fragmentation 0.534328631
-Block:H2O                     Block:Moisture 0.743292924
-log10(TAN)                           Total N 0.906012697
-Climate                              Climate 0.929798451
-I(H2O^2)                          Moisture^2 0.971339573
-H2O                                 Moisture 0.986319179
+Block:log10(TAN)               Block:Total N 0.002657079
+Frag:H2O              Fragmentation:Moisture 0.014704164
+Frag:log10(TAN)        Fragmentation:Total N 0.023709930
+Frag:I(H2O^2)       Fragmentation:Moisture^2 0.030103600
+Chamber:Frag           Chamber:Fragmentation 0.052941425
+Chamber:log10(TAN)           Chamber:Total N 0.138296348
+H2O:I(H2O^2)             Moisture:Moisture^2 0.201242240
+I(H2O^2):log10(TAN)       Moisture^2:Total N 0.255605960
+Block:I(H2O^2)              Block:Moisture^2 0.271806877
+H2O:log10(TAN)              Moisture:Total N 0.283629741
+Block:Chamber                  Block:Chamber 0.380589000
+Chamber:H2O                 Chamber:Moisture 0.390523990
+Chamber:I(H2O^2)          Chamber:Moisture^2 0.595762331
+Frag                           Fragmentation 0.669842133
+Block:H2O                     Block:Moisture 0.718158192
+log10(TAN)                           Total N 0.901209664
+I(H2O^2)                          Moisture^2 0.978810724
+H2O                                 Moisture 0.989329355
+Chamber                              Chamber 0.993766584
 Block                                  Block 1.000000000
 
 
-Y.trans ~ Block + Climate + Frag + H2O + I(H2O^2) + log10(TAN) + 
-    Block:H2O + Climate:I(H2O^2) + Climate:H2O
-<environment: 0x170b43dc>
-Denom. DF: 99 
-                 numDF      F-value p-value
-(Intercept)          1 441231004617  <.0001
-Block                7           28  <.0001
-Climate              2     28854359  <.0001
-Frag                 3     29148602  <.0001
-H2O                  1     28929458  <.0001
-I(H2O^2)             1     70329270  <.0001
-log10(TAN)           1     77275124  <.0001
-Block:H2O            7           10  <.0001
-Climate:I(H2O^2)     2           42  <.0001
-Climate:H2O          2           23  <.0001
+Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + log10(TAN) + 
+    Block:H2O
+<environment: 0x5fb4fd3c>
+Denom. DF: 104 
+            numDF  F-value p-value
+(Intercept)     1 8991.923  <.0001
+Block           7   13.764  <.0001
+Chamber         1    1.631  0.2045
+Frag            3    3.639  0.0152
+H2O             1    0.096  0.7569
+I(H2O^2)        1    1.179  0.2801
+log10(TAN)      1    0.001  0.9779
+Block:H2O       7    3.833  0.0010
 Generalized least squares fit by REML
-  Model: Y.trans ~ Block + Climate + Frag + H2O + I(H2O^2) + log10(TAN) +      Block:H2O + Climate:I(H2O^2) + Climate:H2O 
+  Model: Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + log10(TAN) +      Block:H2O 
   Data: SECCa 
        AIC      BIC    logLik
-  622.2912 733.8814 -268.1456
+  566.3097 666.7965 -245.1548
 
 Variance function:
  Structure: Different standard deviations per stratum
  Formula: ~1 | Block * Chamber 
  Parameter estimates:
-   1*Ambient    1*Chamber    2*Ambient    2*Chamber    3*Ambient    3*Chamber    4*Ambient 
-1.000000e+00 1.313848e+00 1.150708e+00 1.490382e-05 1.395953e+00 1.302450e+00 1.732063e+00 
-   4*Chamber    5*Ambient    5*Chamber    6*Ambient    6*Chamber    7*Ambient    7*Chamber 
-3.772243e-01 1.540080e+00 5.889609e-01 1.191815e+00 1.255222e+00 1.379022e+00 1.293666e-01 
-   8*Ambient    8*Chamber 
-3.837865e-01 2.700894e-01 
+1*Ambient 1*Chamber 2*Ambient 2*Chamber 3*Ambient 3*Chamber 4*Ambient 4*Chamber 5*Ambient 5*Chamber 
+1.0000000 1.2933915 1.1701000 0.1485365 1.2773922 1.1283281 1.7508243 0.3945813 1.5811104 0.7844368 
+6*Ambient 6*Chamber 7*Ambient 7*Chamber 8*Ambient 8*Chamber 
+1.1762666 1.3727037 1.2014211 0.1765079 0.4003802 0.2630697 
 
 Coefficients:
-                                Value Std.Error   t-value p-value
-(Intercept)                  4.614067  3.420178  1.349072  0.1804
-Block2                       3.688232  0.940253  3.922595  0.0002
-Block3                       1.751536  1.464532  1.195970  0.2346
-Block4                       3.406436  0.994504  3.425263  0.0009
-Block5                       3.160356  1.044783  3.024892  0.0032
-Block6                      -0.909282  1.516562 -0.599568  0.5502
-Block7                       3.793679  0.943876  4.019256  0.0001
-Block8                       3.411809  0.955845  3.569417  0.0006
-ClimateWarm                -14.410803  3.823536 -3.768973  0.0003
-ClimateWarm + Dry           -3.156396  3.428943 -0.920516  0.3595
-FragFull Corridors           0.147734  0.071109  2.077561  0.0403
-FragPseudo-Corridors        -0.010263  0.076586 -0.134001  0.8937
-FragIsolated                 0.245098  0.055922  4.382874  0.0000
-H2O                         -0.006089  0.012612 -0.482801  0.6303
-I(H2O^2)                     0.000009  0.000011  0.849291  0.3978
-log10(TAN)                   0.393296  0.158024  2.488828  0.0145
-Block2:H2O                  -0.005882  0.002197 -2.677633  0.0087
-Block3:H2O                  -0.003830  0.002895 -1.322849  0.1889
-Block4:H2O                  -0.006406  0.002332 -2.747028  0.0071
-Block5:H2O                  -0.008466  0.002337 -3.622095  0.0005
-Block6:H2O                  -0.001133  0.002961 -0.382703  0.7028
-Block7:H2O                  -0.006909  0.002206 -3.131410  0.0023
-Block8:H2O                  -0.005087  0.002224 -2.287483  0.0243
-ClimateWarm:I(H2O^2)        -0.000052  0.000013 -3.987186  0.0001
-ClimateWarm + Dry:I(H2O^2)  -0.000012  0.000011 -1.090971  0.2779
-ClimateWarm:H2O              0.056465  0.014338  3.938032  0.0002
-ClimateWarm + Dry:H2O        0.013290  0.012637  1.051735  0.2955
+                         Value Std.Error   t-value p-value
+(Intercept)           0.726010 1.0044021  0.722828  0.4714
+Block2                3.262530 0.9479292  3.441744  0.0008
+Block3                1.305583 1.3701732  0.952860  0.3429
+Block4                3.048988 1.0001706  3.048468  0.0029
+Block5                2.866920 1.1275906  2.542519  0.0125
+Block6               -1.184562 1.6284827 -0.727403  0.4686
+Block7                3.259461 0.9476118  3.439658  0.0008
+Block8                2.934746 0.9547614  3.073800  0.0027
+ChamberChamber        0.376644 0.2122514  1.774521  0.0789
+FragFull Corridors    0.274050 0.1498039  1.829390  0.0702
+FragPseudo-Corridors  0.115933 0.1471513  0.787850  0.4326
+FragIsolated          0.303900 0.1526198  1.991224  0.0491
+H2O                   0.006208 0.0024508  2.533283  0.0128
+I(H2O^2)             -0.000003 0.0000017 -1.572554  0.1189
+log10(TAN)           -0.037110 0.2289336 -0.162100  0.8715
+Block2:H2O           -0.004533 0.0022385 -2.025083  0.0454
+Block3:H2O           -0.002758 0.0027958 -0.986500  0.3262
+Block4:H2O           -0.005160 0.0023660 -2.180892  0.0314
+Block5:H2O           -0.008112 0.0024831 -3.266703  0.0015
+Block6:H2O           -0.000500 0.0031382 -0.159428  0.8736
+Block7:H2O           -0.005440 0.0022384 -2.430356  0.0168
+Block8:H2O           -0.003737 0.0022371 -1.670280  0.0979
 
  Correlation: 
-                           (Intr) Block2 Block3 Block4 Block5 Block6 Block7 Block8 ClmtWr ClmW+D
-Block2                     -0.114                                                               
-Block3                     -0.042  0.642                                                        
-Block4                     -0.112  0.947  0.608                                                 
-Block5                     -0.092  0.896  0.575  0.847                                          
-Block6                     -0.052  0.618  0.401  0.585  0.554                                   
-Block7                     -0.107  0.991  0.636  0.937  0.891  0.612                            
-Block8                     -0.104  0.978  0.629  0.925  0.879  0.604  0.974                     
-ClimateWarm                -0.860 -0.180 -0.136 -0.171 -0.159 -0.106 -0.177 -0.183              
-ClimateWarm + Dry          -0.959 -0.166 -0.138 -0.153 -0.155 -0.122 -0.165 -0.165  0.911       
-FragFull Corridors         -0.095  0.092  0.061  0.106  0.035  0.044  0.035  0.044 -0.225  0.010
-FragPseudo-Corridors       -0.113  0.075  0.059  0.090  0.019  0.055  0.010  0.015 -0.069  0.027
-FragIsolated                0.080  0.015 -0.016  0.008  0.029 -0.044  0.056  0.064 -0.344 -0.049
-H2O                        -0.984  0.008 -0.031  0.011  0.000 -0.018  0.007  0.002  0.879  0.977
-I(H2O^2)                    0.940  0.131  0.126  0.121  0.125  0.107  0.131  0.138 -0.879 -0.972
-log10(TAN)                  0.116 -0.059 -0.054 -0.074 -0.009 -0.058  0.006  0.004 -0.031 -0.035
-Block2:H2O                  0.183 -0.887 -0.569 -0.839 -0.795 -0.544 -0.881 -0.873  0.112  0.063
-Block3:H2O                  0.104 -0.672 -0.890 -0.636 -0.602 -0.421 -0.666 -0.661  0.086  0.084
-Block4:H2O                  0.182 -0.837 -0.538 -0.883 -0.750 -0.514 -0.831 -0.823  0.101  0.053
-Block5:H2O                  0.188 -0.829 -0.536 -0.785 -0.872 -0.516 -0.820 -0.811  0.048  0.046
-Block6:H2O                  0.141 -0.652 -0.425 -0.618 -0.584 -0.901 -0.646 -0.640  0.036  0.042
-Block7:H2O                  0.181 -0.880 -0.565 -0.833 -0.791 -0.540 -0.887 -0.867  0.103  0.062
-Block8:H2O                  0.172 -0.872 -0.565 -0.825 -0.783 -0.541 -0.868 -0.888  0.100  0.069
-ClimateWarm:I(H2O^2)       -0.813 -0.146 -0.118 -0.138 -0.130 -0.084 -0.148 -0.160  0.973  0.851
-ClimateWarm + Dry:I(H2O^2) -0.942 -0.120 -0.116 -0.108 -0.122 -0.096 -0.130 -0.137  0.870  0.960
-ClimateWarm:H2O             0.842  0.161  0.126  0.152  0.143  0.094  0.161  0.170 -0.991 -0.886
-ClimateWarm + Dry:H2O       0.958  0.142  0.127  0.130  0.138  0.108  0.147  0.150 -0.903 -0.988
-                           FrgFlC FrgP-C FrgIsl H2O    I(H2O^ l10(TA B2:H2O B3:H2O B4:H2O B5:H2O
-Block2                                                                                          
-Block3                                                                                          
-Block4                                                                                          
-Block5                                                                                          
-Block6                                                                                          
-Block7                                                                                          
-Block8                                                                                          
-ClimateWarm                                                                                     
-ClimateWarm + Dry                                                                               
-FragFull Corridors                                                                              
-FragPseudo-Corridors        0.930                                                               
-FragIsolated               -0.153 -0.505                                                        
-H2O                         0.026  0.035 -0.032                                                 
-I(H2O^2)                   -0.020 -0.032  0.040 -0.979                                          
-log10(TAN)                 -0.825 -0.975  0.684 -0.038  0.037                                   
-Block2:H2O                 -0.088 -0.045 -0.087 -0.106 -0.068  0.015                            
-Block3:H2O                 -0.056 -0.055  0.016 -0.037 -0.103  0.051  0.749                     
-Block4:H2O                 -0.106 -0.067 -0.069 -0.107 -0.056  0.039  0.942  0.706              
-Block5:H2O                 -0.082 -0.089  0.046 -0.110 -0.052  0.087  0.925  0.705  0.873       
-Block6:H2O                 -0.046 -0.057  0.045 -0.077 -0.057  0.059  0.724  0.563  0.684  0.686
-Block7:H2O                 -0.061 -0.021 -0.087 -0.105 -0.068 -0.005  0.993  0.744  0.934  0.919
-Block8:H2O                 -0.057 -0.027 -0.063 -0.092 -0.086  0.006  0.978  0.748  0.922  0.911
-ClimateWarm:I(H2O^2)       -0.203 -0.014 -0.440  0.845 -0.868 -0.101  0.123  0.097  0.110  0.048
-ClimateWarm + Dry:I(H2O^2)  0.143  0.179 -0.144  0.968 -0.988 -0.188  0.065  0.094  0.049  0.038
-ClimateWarm:H2O             0.211  0.037  0.397 -0.869  0.882  0.071 -0.120 -0.092 -0.107 -0.049
-ClimateWarm + Dry:H2O      -0.064 -0.093  0.101 -0.982  0.992  0.105 -0.068 -0.090 -0.055 -0.045
-                           B6:H2O B7:H2O B8:H2O CW:I(H CW+D:I CW:H2O
-Block2                                                              
-Block3                                                              
-Block4                                                              
-Block5                                                              
-Block6                                                              
-Block7                                                              
-Block8                                                              
-ClimateWarm                                                         
-ClimateWarm + Dry                                                   
-FragFull Corridors                                                  
-FragPseudo-Corridors                                                
-FragIsolated                                                        
-H2O                                                                 
-I(H2O^2)                                                            
-log10(TAN)                                                          
-Block2:H2O                                                          
-Block3:H2O                                                          
-Block4:H2O                                                          
-Block5:H2O                                                          
-Block6:H2O                                                          
-Block7:H2O                  0.720                                   
-Block8:H2O                  0.724  0.972                            
-ClimateWarm:I(H2O^2)        0.042  0.115  0.119                     
-ClimateWarm + Dry:I(H2O^2)  0.047  0.067  0.084  0.869              
-ClimateWarm:H2O            -0.038 -0.111 -0.110 -0.994 -0.878       
-ClimateWarm + Dry:H2O      -0.045 -0.069 -0.079 -0.875 -0.991  0.897
+                     (Intr) Block2 Block3 Block4 Block5 Block6 Block7 Block8 ChmbrC FrgFlC FrgP-C
+Block2               -0.916                                                                      
+Block3               -0.627  0.671                                                               
+Block4               -0.881  0.927  0.637                                                        
+Block5               -0.755  0.817  0.561  0.774                                                 
+Block6               -0.521  0.562  0.393  0.533  0.471                                          
+Block7               -0.893  0.973  0.668  0.921  0.818  0.561                                   
+Block8               -0.888  0.964  0.663  0.914  0.811  0.558  0.967                            
+ChamberChamber       -0.090 -0.093 -0.070 -0.094 -0.061 -0.060 -0.081 -0.087                     
+FragFull Corridors   -0.116 -0.033  0.019 -0.010 -0.026  0.017 -0.032  0.003  0.035              
+FragPseudo-Corridors -0.046 -0.030  0.006 -0.031 -0.031  0.019 -0.034  0.005  0.097  0.558       
+FragIsolated          0.035 -0.045 -0.027 -0.042 -0.015 -0.014 -0.018  0.021  0.052  0.445  0.490
+H2O                  -0.774  0.820  0.534  0.776  0.693  0.442  0.828  0.820  0.042 -0.080 -0.072
+I(H2O^2)              0.023 -0.059  0.035 -0.053 -0.059  0.046 -0.078 -0.072  0.039  0.248  0.228
+log10(TAN)            0.326 -0.052 -0.034 -0.083  0.005 -0.014  0.021  0.028  0.129 -0.103  0.108
+Block2:H2O            0.843 -0.897 -0.601 -0.831 -0.736 -0.504 -0.875 -0.866 -0.050  0.034  0.015
+Block3:H2O            0.662 -0.697 -0.892 -0.661 -0.583 -0.415 -0.693 -0.689  0.018 -0.046 -0.035
+Block4:H2O            0.809 -0.831 -0.571 -0.891 -0.696 -0.478 -0.827 -0.819 -0.033  0.006  0.017
+Block5:H2O            0.753 -0.784 -0.547 -0.743 -0.871 -0.461 -0.781 -0.775 -0.031 -0.015 -0.007
+Block6:H2O            0.583 -0.621 -0.439 -0.589 -0.520 -0.911 -0.619 -0.615  0.034 -0.039 -0.041
+Block7:H2O            0.836 -0.874 -0.601 -0.828 -0.735 -0.504 -0.895 -0.865 -0.056  0.022  0.024
+Block8:H2O            0.824 -0.874 -0.609 -0.829 -0.734 -0.513 -0.874 -0.895  0.019 -0.038 -0.030
+                     FrgIsl H2O    I(H2O^ l10(TA B2:H2O B3:H2O B4:H2O B5:H2O B6:H2O B7:H2O
+Block2                                                                                    
+Block3                                                                                    
+Block4                                                                                    
+Block5                                                                                    
+Block6                                                                                    
+Block7                                                                                    
+Block8                                                                                    
+ChamberChamber                                                                            
+FragFull Corridors                                                                        
+FragPseudo-Corridors                                                                      
+FragIsolated                                                                              
+H2O                   0.085                                                               
+I(H2O^2)             -0.192 -0.434                                                        
+log10(TAN)            0.357  0.081 -0.179                                                 
+Block2:H2O            0.041 -0.907  0.048  0.023                                          
+Block3:H2O            0.038 -0.655 -0.119  0.038  0.768                                   
+Block4:H2O            0.040 -0.853  0.033  0.059  0.922  0.729                            
+Block5:H2O            0.043 -0.767 -0.072  0.034  0.871  0.706  0.826                     
+Block6:H2O            0.027 -0.580 -0.111  0.022  0.683  0.567  0.648  0.629              
+Block7:H2O            0.039 -0.902  0.036  0.007  0.974  0.769  0.921  0.872  0.684       
+Block8:H2O            0.005 -0.864 -0.045  0.006  0.964  0.781  0.913  0.875  0.697  0.964
 
 Standardized residuals:
-        Min          Q1         Med          Q3         Max 
--2.68835288 -0.45239536  0.03753592  0.53186509  1.61185743 
+       Min         Q1        Med         Q3        Max 
+-2.7233578 -0.4711835  0.1119144  0.5934636  1.6522133 
 
-Residual standard error: 1.355163 
-Degrees of freedom: 126 total; 99 residual
+Residual standard error: 1.395127 
+Degrees of freedom: 126 total; 104 residual
 
 
 Anova Table (Type II tests)
 
 Response: Y.re
            Sum Sq  Df F value Pr(>F)
-H.re        1.579   1  0.6841 0.4098
-Residuals 286.166 124               
+H.re        1.842   1  0.7951 0.3743
+Residuals 287.271 124               
 
 Call:
 lm(formula = Y.re ~ H.re)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--4.3172 -0.3729  0.3542  0.9276  2.8666 
+-4.3225 -0.3775  0.3704  0.8816  2.8697 
 
 Coefficients:
-              Estimate Std. Error t value Pr(>|t|)  
-(Intercept) -0.2320010  0.1360560  -1.705   0.0907 .
-H.re         0.0009055  0.0010948   0.827   0.4098  
----
-Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept) -0.221473   0.135631  -1.633    0.105
+H.re         0.000634   0.000711   0.892    0.374
 
-Residual standard error: 1.519 on 124 degrees of freedom
-Multiple R-squared: 0.005487,	Adjusted R-squared: -0.002533 
-F-statistic: 0.6841 on 1 and 124 DF,  p-value: 0.4098 
+Residual standard error: 1.522 on 124 degrees of freedom
+Multiple R-squared: 0.006371,	Adjusted R-squared: -0.001642 
+F-statistic: 0.7951 on 1 and 124 DF,  p-value: 0.3743 
 
 
 
@@ -262,8 +213,8 @@ Anova Table (Type II tests)
 
 Response: Y.re
            Sum Sq  Df F value  Pr(>F)  
-N.re        7.303   1  3.7767 0.05424 .
-Residuals 239.763 124                  
+N.re        7.911   1   4.009 0.04744 *
+Residuals 244.706 124                  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
@@ -272,18 +223,18 @@ lm(formula = Y.re ~ N.re)
 
 Residuals:
     Min      1Q  Median      3Q     Max 
--4.6211 -0.2907  0.1300  0.7683  3.4519 
+-4.2732 -0.4734  0.1953  0.8194  3.7695 
 
 Coefficients:
             Estimate Std. Error t value Pr(>|t|)  
-(Intercept)  -0.1026     0.1239  -0.828   0.4093  
-N.re          1.2520     0.6442   1.943   0.0542 .
+(Intercept)  -0.1209     0.1252  -0.966   0.3358  
+N.re          1.2442     0.6214   2.002   0.0474 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-Residual standard error: 1.391 on 124 degrees of freedom
-Multiple R-squared: 0.02956,	Adjusted R-squared: 0.02173 
-F-statistic: 3.777 on 1 and 124 DF,  p-value: 0.05424 
+Residual standard error: 1.405 on 124 degrees of freedom
+Multiple R-squared: 0.03132,	Adjusted R-squared: 0.02351 
+F-statistic: 4.009 on 1 and 124 DF,  p-value: 0.04744 
 
 
 
