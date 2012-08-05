@@ -2,8 +2,8 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 4:
 ### Ecosystem-level synthesis of all measured variables
-### N-fixation, cyanobacteria, Fauna, Moisture, Moss Growth, Decomposition, Available N, etc.
-### Jonathan Whiteley		R v2.12		2012-07-17
+### N-fixation, Cyanobacteria, Fauna, Moisture, Moss Growth, Decomposition, Available N, etc.
+### Jonathan Whiteley		R v2.12		2012-08-04
 ##################################################
 ## INITIALIZE
 if (FALSE) {  ## Project Directory
@@ -25,6 +25,13 @@ RegDir <- "./CH4-model-fitting/"       # directory for scripts used in these ana
 
 ## DO
 ## _setup.R scripts also include source("./lib/init.R"); memore is cleared, data re-loaded & processed every time.
+cat("Cyanobacteria ~ \n")
+source("CH4-model-fitting/Cyanobacteria_setup.R")  # Cyanobacteria: settings
+cat("Cyanobacteria ~ : Data Exploration\n")
+source("CH4-model-fitting/2_reg_Explore.R")        # Data Exploration
+source("CH4-model-fitting/Cyanobacteria-trees.R")  # Cyanobacteria: regression trees
+source("CH4-model-fitting/Cyanobacteria-models.R") # Cyanobacteria: regression models
+
 cat("N-fixation ~ \n")
 source("CH4-model-fitting/Nfix_setup.R")    # N-fixation: settings
 cat("N-fixation ~ : Data Exploration\n")

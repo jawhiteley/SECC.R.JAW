@@ -59,7 +59,10 @@ SECC <- within( SECC, {
   TempC   <- factor( Chamber, levels = c("Ambient", "Partial Chamber", "Full Chamber"), 
                     labels = c(6.65, 6.98, 7.32) )
   TempC   <- as.numeric(as.character(TempC))
-  Climate <- factor( paste(Position, Chamber) ) # pseudo-factor to simplify modelling: fewer interactions to deal with.
+  Climate <- paste(Position, Chamber) # pseudo-factor to simplify modelling: fewer interactions to deal with.
+  Climate <- gsub(".*Ambient", "Ambient", Climate)
+  Climate <- gsub("(.*)Full Chamber", "\\1Chamber", Climate)
+  Climate <- factor(Climate)
 })
 
 attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]]

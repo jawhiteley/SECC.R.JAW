@@ -1,0 +1,104 @@
+Results for: Cyanobacteria Cell Density ( Cells.m ) ~ (others) 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer
+
+R version 2.12.0 (2010-10-15)
+Sat Aug  4 15:32:41 2012
+================================================================
+
+n=127 (1 observation deleted due to missingness)
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 127 1.056240e+20  747447500  
+   2) Block=1,3,4,5,6 80 3.166238e+19  425446400 *
+   3) Block=2,7,8 47 5.154803e+19 1295535000  
+     6) H2O>=616.9733 10 5.954714e+18  784318700 *
+     7) H2O< 616.9733 37 4.227357e+19 1433701000  
+      14) Frag=Pseudo-Corridors 9 2.690404e+18  696575800 *
+      15) Frag=Continuous,Full Corridors,Isolated 28 3.312114e+19 1670634000  
+        30) log10(TAN)>=-1.6547 14 1.297718e+19 1274644000 *
+        31) log10(TAN)< -1.6547 14 1.575333e+19 2066624000 *
+Call:
+rpart(formula = Y.main, data = SECCa, control = rpc)
+  n=127 (1 observation deleted due to missingness)
+
+          CP nsplit rel error    xerror      xstd
+1 0.21220133      0 1.0000000 1.0223758 0.1637719
+2 0.04630468      1 0.7877987 0.8491802 0.1300690
+3 0.04156848      3 0.6951893 1.0646001 0.1703237
+4 0.04000000      4 0.6536208 1.0778781 0.1739626
+
+Node number 1: 127 observations,    complexity param=0.2122013
+  mean=7.474475e+08, MSE=8.316847e+17 
+  left son=2 (80 obs) right son=3 (47 obs)
+  Primary splits:
+      Block      splits as  LRLLLLRR, improve=0.212201300, (0 missing)
+      log10(TAN) < -1.199841 to the left,  improve=0.070724680, (0 missing)
+      H2O        < 597.1577  to the right, improve=0.049919570, (1 missing)
+      Chamber    splits as  LR, improve=0.011240530, (0 missing)
+      Frag       splits as  LRLR, improve=0.007721414, (0 missing)
+  Surrogate splits:
+      log10(TAN) < -1.274138 to the left,  agree=0.654, adj=0.064, (0 split)
+
+Node number 2: 80 observations
+  mean=4.254464e+08, MSE=3.957798e+17 
+
+Node number 3: 47 observations,    complexity param=0.04630468
+  mean=1.295535e+09, MSE=1.096767e+18 
+  left son=6 (10 obs) right son=7 (37 obs)
+  Primary splits:
+      H2O        < 616.9733  to the right, improve=0.06440099, (0 missing)
+      log10(TAN) < -1.199841 to the left,  improve=0.06021381, (0 missing)
+      Frag       splits as  RRLR, improve=0.04747957, (0 missing)
+      Block      splits as  -R----LR, improve=0.02615974, (0 missing)
+      Chamber    splits as  LR, improve=0.01967312, (0 missing)
+
+Node number 6: 10 observations
+  mean=7.843187e+08, MSE=5.954714e+17 
+
+Node number 7: 37 observations,    complexity param=0.04630468
+  mean=1.433701e+09, MSE=1.142529e+18 
+  left son=14 (9 obs) right son=15 (28 obs)
+  Primary splits:
+      Frag       splits as  RRLR, improve=0.15286200, (0 missing)
+      H2O        < 573.1702  to the left,  improve=0.14084680, (0 missing)
+      log10(TAN) < -1.6547   to the right, improve=0.06853954, (0 missing)
+      Block      splits as  -R----LR, improve=0.06023698, (0 missing)
+      Position   splits as  RL, improve=0.03158380, (0 missing)
+  Surrogate splits:
+      H2O < 15.14766  to the left,  agree=0.784, adj=0.111, (0 split)
+
+Node number 14: 9 observations
+  mean=6.965758e+08, MSE=2.989338e+17 
+
+Node number 15: 28 observations,    complexity param=0.04156848
+  mean=1.670634e+09, MSE=1.182898e+18 
+  left son=30 (14 obs) right son=31 (14 obs)
+  Primary splits:
+      log10(TAN) < -1.6547   to the right, improve=0.132562700, (0 missing)
+      H2O        < 582.4197  to the left,  improve=0.124570900, (0 missing)
+      Block      splits as  -R----LR, improve=0.058385280, (0 missing)
+      Position   splits as  RL, improve=0.037358480, (0 missing)
+      Chamber    splits as  LR, improve=0.002200449, (0 missing)
+  Surrogate splits:
+      H2O      < 494.9502  to the right, agree=0.750, adj=0.500, (0 split)
+      Block    splits as  -L----RR, agree=0.643, adj=0.286, (0 split)
+      Chamber  splits as  LR, agree=0.643, adj=0.286, (0 split)
+      Frag     splits as  LL-R, agree=0.607, adj=0.214, (0 split)
+      Position splits as  RL, agree=0.571, adj=0.143, (0 split)
+
+Node number 30: 14 observations
+  mean=1.274644e+09, MSE=9.269418e+17 
+
+Node number 31: 14 observations
+  mean=2.066624e+09, MSE=1.125238e+18 
+
+
+
+
+
+<============================= END ============================>
