@@ -1,0 +1,154 @@
+Results for: Cyanobacteria Cell Density ( Cells ) ~ (others) 
+Expt. Time:    24 months 
+Chamber:       Ambient, Full Chamber 
+Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, Outer
+
+R version 2.12.0 (2010-10-15)
+Sat Aug  4 22:19:13 2012
+================================================================
+
+n=127 (1 observation deleted due to missingness)
+
+node), split, n, deviance, yval
+      * denotes terminal node
+
+ 1) root 127 88725260000 22690.290  
+   2) Block=1,3,4,5,6 80 30918810000 13041.670  
+     4) Block=1,5,6 48 10351770000  7957.176 *
+     5) Block=3,4 32 17464790000 20668.400  
+      10) log10(TAN)< -1.405148 29 12025830000 16724.140 *
+      11) log10(TAN)>=-1.405148 3   626594700 58796.300 *
+   3) Block=2,7,8 47 37681890000 39113.480  
+     6) log10(TAN)< -1.334698 42 32222830000 35939.150  
+      12) log10(TAN)>=-1.6547 20 11128840000 26638.890 *
+      13) log10(TAN)< -1.6547 22 17791460000 44393.940  
+        26) Frag=Pseudo-Corridors 5   446821000 17722.220 *
+        27) Frag=Continuous,Full Corridors,Isolated 17 12741580000 52238.560  
+          54) H2O>=635.2259 3   178858000 20277.780 *
+          55) H2O< 635.2259 14  8841578000 59087.300 *
+     7) log10(TAN)>=-1.334698 5  1480926000 65777.780 *
+Call:
+rpart(formula = Y.main, data = SECCa, control = rpc)
+  n=127 (1 observation deleted due to missingness)
+
+          CP nsplit rel error    xerror      xstd
+1 0.22681885      0 1.0000000 1.0177378 0.1221288
+2 0.04483650      1 0.7731811 0.8655145 0.1124906
+3 0.04460181      2 0.7283446 1.0035311 0.1455233
+4 0.04455092      4 0.6391410 1.0032539 0.1469081
+5 0.04194012      6 0.5500392 1.0032539 0.1469081
+6 0.04000000      7 0.5080991 1.0223771 0.1484265
+
+Node number 1: 127 observations,    complexity param=0.2268189
+  mean=22690.29, MSE=6.986241e+08 
+  left son=2 (80 obs) right son=3 (47 obs)
+  Primary splits:
+      Block      splits as  LRLLLLRR, improve=0.226818900, (0 missing)
+      log10(TAN) < -1.199841 to the left,  improve=0.082509490, (0 missing)
+      H2O        < 597.1577  to the right, improve=0.057785820, (1 missing)
+      Climate    splits as  L---RR-, improve=0.021156950, (0 missing)
+      Frag       splits as  LRLR, improve=0.007525831, (0 missing)
+  Surrogate splits:
+      log10(TAN) < -1.274138 to the left,  agree=0.654, adj=0.064, (0 split)
+
+Node number 2: 80 observations,    complexity param=0.04460181
+  mean=13041.67, MSE=3.864851e+08 
+  left son=4 (48 obs) right son=5 (32 obs)
+  Primary splits:
+      Block      splits as  L-RRLL--, improve=0.10033520, (0 missing)
+      log10(TAN) < -1.391987 to the left,  improve=0.07168674, (0 missing)
+      Climate    splits as  L---RR-, improve=0.01811307, (0 missing)
+      H2O        < 591.2493  to the right, improve=0.01798602, (1 missing)
+      Frag       splits as  LLRL, improve=0.01517382, (0 missing)
+  Surrogate splits:
+      log10(TAN) < -1.552603 to the left,  agree=0.625, adj=0.063, (0 split)
+
+Node number 3: 47 observations,    complexity param=0.0448365
+  mean=39113.48, MSE=8.017423e+08 
+  left son=6 (42 obs) right son=7 (5 obs)
+  Primary splits:
+      log10(TAN) < -1.334698 to the left,  improve=0.10557140, (0 missing)
+      H2O        < 616.9733  to the right, improve=0.07559153, (0 missing)
+      Frag       splits as  LRLR, improve=0.05323977, (0 missing)
+      Climate    splits as  L---RR-, improve=0.04849627, (0 missing)
+      Block      splits as  -R----LR, improve=0.02023540, (0 missing)
+
+Node number 4: 48 observations
+  mean=7957.176, MSE=2.156619e+08 
+
+Node number 5: 32 observations,    complexity param=0.04460181
+  mean=20668.4, MSE=5.457748e+08 
+  left son=10 (29 obs) right son=11 (3 obs)
+  Primary splits:
+      log10(TAN) < -1.405148 to the left,  improve=0.275546800, (0 missing)
+      Climate    splits as  L---RR-, improve=0.248278500, (0 missing)
+      H2O        < 146.8229  to the right, improve=0.096126570, (0 missing)
+      Frag       splits as  LRRR, improve=0.050256580, (0 missing)
+      Block      splits as  --LR----, improve=0.003758802, (0 missing)
+  Surrogate splits:
+      H2O < 146.8229  to the right, agree=0.938, adj=0.333, (0 split)
+
+Node number 6: 42 observations,    complexity param=0.04455092
+  mean=35939.15, MSE=7.672103e+08 
+  left son=12 (20 obs) right son=13 (22 obs)
+  Primary splits:
+      log10(TAN) < -1.6547   to the right, improve=0.102490500, (0 missing)
+      Climate    splits as  L---RR-, improve=0.061897150, (0 missing)
+      H2O        < 616.9733  to the right, improve=0.056717760, (0 missing)
+      Frag       splits as  RRLR, improve=0.024836620, (0 missing)
+      Block      splits as  -R----LR, improve=0.004744976, (0 missing)
+  Surrogate splits:
+      Block   splits as  -L----RR, agree=0.690, adj=0.35, (0 split)
+      H2O     < 411.9858  to the right, agree=0.667, adj=0.30, (0 split)
+      Climate splits as  L---RR-, agree=0.619, adj=0.20, (0 split)
+      Frag    splits as  LRLR, agree=0.619, adj=0.20, (0 split)
+
+Node number 7: 5 observations
+  mean=65777.78, MSE=2.961852e+08 
+
+Node number 10: 29 observations
+  mean=16724.14, MSE=4.146838e+08 
+
+Node number 11: 3 observations
+  mean=58796.3, MSE=2.088649e+08 
+
+Node number 12: 20 observations
+  mean=26638.89, MSE=5.564421e+08 
+
+Node number 13: 22 observations,    complexity param=0.04455092
+  mean=44393.94, MSE=8.087026e+08 
+  left son=26 (5 obs) right son=27 (17 obs)
+  Primary splits:
+      Frag       splits as  RRLR, improve=0.25872250, (0 missing)
+      log10(TAN) < -1.692091 to the left,  improve=0.22355310, (0 missing)
+      H2O        < 635.2259  to the right, improve=0.18464020, (0 missing)
+      Block      splits as  -R----LL, improve=0.11892520, (0 missing)
+      Climate    splits as  L---RR-, improve=0.05030328, (0 missing)
+  Surrogate splits:
+      H2O < 15.14766  to the left,  agree=0.818, adj=0.2, (0 split)
+
+Node number 26: 5 observations
+  mean=17722.22, MSE=8.93642e+07 
+
+Node number 27: 17 observations,    complexity param=0.04194012
+  mean=52238.56, MSE=7.49505e+08 
+  left son=54 (3 obs) right son=55 (14 obs)
+  Primary splits:
+      H2O        < 635.2259  to the right, improve=0.29204750, (0 missing)
+      log10(TAN) < -1.692091 to the left,  improve=0.17553490, (0 missing)
+      Frag       splits as  RL-R, improve=0.10091370, (0 missing)
+      Block      splits as  -R----LL, improve=0.08103476, (0 missing)
+      Climate    splits as  L---RR-, improve=0.07875775, (0 missing)
+
+Node number 54: 3 observations
+  mean=20277.78, MSE=5.961934e+07 
+
+Node number 55: 14 observations
+  mean=59087.3, MSE=6.315413e+08 
+
+
+
+
+
+<============================= END ============================>

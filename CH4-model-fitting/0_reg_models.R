@@ -24,7 +24,7 @@ RegDir <- "./CH4-model-fitting/"       # directory for scripts used in these ana
 ## I could just setwd() to this folder, but other functions or scripts for the larger projects still depend on having the working directory in the root folder for this project, so it's probably safer to avoid.
 
 ## DO
-## _setup.R scripts also include source("./lib/init.R"); memore is cleared, data re-loaded & processed every time.
+## _setup.R scripts also include source("./lib/init.R"); memory is cleared, data re-loaded & processed every time.
 cat("Cyanobacteria ~ \n")
 source("CH4-model-fitting/Cyanobacteria_setup.R")  # Cyanobacteria: settings
 cat("Cyanobacteria ~ : Data Exploration\n")

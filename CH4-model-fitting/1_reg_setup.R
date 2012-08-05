@@ -46,7 +46,7 @@ SECC <- within( SECC, {
   H2O.wwt <- H2O.wwt * 100
   Growth  <- grow12 + grow23           # moss growth during second year **
   ## Should I be log-transforming moss Growth, or just use non-linear GLMM (log-link?)?  Note negative values!
-  logCells <- log10(Cells.m +1)        # log-transform of Cyanobacteria;  log10(Cells +1) 
+  logCells <- log10(Cells +1)        # log-transform of Cyanobacteria;  log10(Cells +1) 
   ##   logCells[Cells.m <= 0] <- 0
   Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
   logTAN <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
@@ -62,11 +62,15 @@ SECC <- within( SECC, {
   Climate <- paste(Position, Chamber) # pseudo-factor to simplify modelling: fewer interactions to deal with.
   Climate <- gsub(".*Ambient", "Ambient", Climate)
   Climate <- gsub("(.*)Full Chamber", "\\1Chamber", Climate)
+  Climate <- gsub("Inner Chamber", "Warm", Climate)
+  Climate <- gsub("other Chamber", "Warm + mod. dry", Climate)
+  Climate <- gsub("Outer Chamber", "Warm + Dry", Climate)
   Climate <- factor(Climate)
 })
 
-attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells.m"]] # Cells ?
-attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% m^-2) )    # cells / shoot ?
+attr(SECC, "labels")[["Climate"]] <- "Climate Treatment: Chamber and Position"
+attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells"]] # Cells ?
+attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% "shoot"^-1) )    # cells / shoot ?
 attr(SECC, "labels")[["Growth"]] <- "Moss growth"
 attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
 attr(SECC, "labels")[["Decomp.asq"]] <- attr(SECC, "labels")[["Decomposition"]]
@@ -148,7 +152,8 @@ SECCa <- if(SECC.scale == "patch") SECCp else if (SECC.scale == "mc") SECCmc els
 ## Filter Outliers (see Exploration Graphs)
 if (ExcludeOutliers)
 {
-  SECCa$Cells.m[SECCa$Cells.m > 5e+09] <- NA # moot after transformation
+  SECCa$Cells[SECCa$Cells > 2e+5] <- NA # moot after transformation
+  ##   SECCa$Cells.m[SECCa$Cells.m > 5e+09] <- NA # moot after transformation
   SECCa$Growth[SECCa$Growth > 30] <- NA
   SECCa$H2O[SECCa$H2O > 800] <- NA     #  I believe it's real, but it may be highly influential
   ##   SECCa$Decomposition[SECCa$Decomposition > 0.30] <- NA
@@ -160,6 +165,7 @@ SECCa <- within( SECCa,
                   Y <- as.numeric( get(Y.col) )
                   Y.log <- log10(Y)    # Generic: some variables (Nfix) will use a special version
                   Y.trans <- Y         # default
+                  Climate <- droplevels(Climate)
                 })
 
 

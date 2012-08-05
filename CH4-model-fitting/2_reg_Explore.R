@@ -84,7 +84,7 @@ SECCa <- within( SECCa,
 if (DrawExplorationGraphs) {
   ## look at log transformations & check for colinearity among explanatory variables
   pairplot(SECCa[, c('Nfix', 'logNfix', 'H2O', 'Block', 'TempC','Chamber', 'Frag', 'Position')])
-  pairplot(SECCa[, c('Nfix', 'logNfix', 'Cells.m',
+  pairplot(SECCa[, c('Nfix', 'logNfix', 'Cells',
                      'Growth', 'Decomposition', 'TAN', 'Patch.dwt',
                      'H2O', 'TempC', 'Frag', 'Block' )]
           )
@@ -95,7 +95,7 @@ if (DrawExplorationGraphs) {
   dotchart(SECCa$Y, ylab=Dotplot.y, xlab=Y.label)
   dotchart(SECCa$Y.log, ylab=Dotplot.y, xlab=paste("log(", Y.label, ")"))
   dotchart(SECCa$Nfix, ylab=Dotplot.y, xlab=make.axis.title(SECCa, "Nfix"))
-  dotchart(SECCa$Cells.m, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Cells.m']]) # outliers > 5e+09
+  dotchart(SECCa$Cells, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['Cells']]) # outliers > 5e+09
   dotchart(SECCa$H2O, ylab=Dotplot.y, xlab=attr(SECCa, "labels")[['H2O']]) # outliers > 800?
   dotchart(SECCa$Growth, ylab=Dotplot.y, xlab="Moss growth - year 2") # outliers >30??
   dotchart(SECCa$Decomposition, ylab=Dotplot.y, xlab="Moss decomposition - year 2") # outliers >0.3??

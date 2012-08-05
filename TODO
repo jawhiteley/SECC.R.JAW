@@ -100,7 +100,7 @@ SYNTHESIS
 ================================
 
 ~ Multiple Regressions
-  ~ Cyanobacteria density (per shoot?)
+  ~ Cyanobacteria density (per shoot?  scaled up to m^2 by dwt)
     - H2O
     - TAN
     - Frag

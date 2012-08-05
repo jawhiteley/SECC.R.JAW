@@ -50,8 +50,8 @@ library(rpart)                         # Recursive Partitioning & Regression Tre
 ##  - splits do not change, but group means do.
 ##  - The position of the offset variable **does** matter
 ##    - I think it should be first, to account for Blocks *before* any other factors?
-Y.main   <- Y ~ Block + Chamber + Position + Frag + H2O + log10(TAN)
-Y.mainB  <- Y ~ offset(Block) + Chamber + Position + Frag + H2O + log10(TAN)
+Y.main   <- Y ~ Block + Climate + Frag + H2O + log10(TAN)
+Y.mainB  <- Y ~ offset(Block) + Climate + Frag + H2O + log10(TAN)
  
 BlockOffset <- FALSE
 if (BlockOffset) Y.main <- Y.mainB
@@ -95,8 +95,8 @@ if (FALSE)
 
   ## Approx. long-term averages:
   ## Block as a Factor
-  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.112
-  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.039
+  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.06
+  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.045
 
 }
 
@@ -104,7 +104,7 @@ if (FALSE)
 if (minsplit==20) {
   Y.cp <- 0.02
 } else {
-  Y.cp <- 0.040
+  Y.cp <- 0.04
 }
 Y.treeP  <- prune(Y.tree , cp=Y.cp)
 

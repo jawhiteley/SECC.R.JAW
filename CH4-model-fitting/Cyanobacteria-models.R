@@ -20,10 +20,11 @@ library(nlme)
 ################################################################
 ## MODEL FORMULA
 ################################################################
-Y.main   <- Y.trans ~ Block + Chamber + Frag + Position + H2O + I(H2O^2) + log10(TAN)
-Y.fixed  <- Y.trans ~ Block + Chamber * Frag * Position * H2O * I(H2O^2) * log10(TAN)
+Y.main   <- Y.trans ~ Block + Climate + Frag + H2O + I(H2O^2) + log10(TAN)
+Y.fixed  <- Y.trans ~ Block + Climate * Frag * H2O * I(H2O^2) * log10(TAN)
 Y.full   <- Y.fixed                    # not enough replication to test full range of interactions
-Y.random <-  ~ 1 | Block/Chamber/Frag 
+Y.random <-  ~ 1 | Block/Chamber/Frag  # does this still work with Climate pseudo-factor?
+Y.random <-  ~ 1 | Block/Frag/Climate
 
 ##==============================================================
 cat("- Processing Data (excluding NAs)\n")
@@ -32,7 +33,7 @@ cat("- Processing Data (excluding NAs)\n")
 SECCf <- SECCa
 if (TRUE)
 {
-  Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, H2O, Cells.m, TAN, Y, Y.log, Y.trans", 
+  Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, Climate, H2O, Cells, Cells.m, TAN, Y, Y.log, Y.trans", 
                        ", ", fixed = TRUE) ) # include untransformed columns to use their NA values for filtering
   SECCa <- na.exclude( SECCa[, Mod.cols] ) # only exclude NAs from relevant (used) columns
 } else {
@@ -51,8 +52,9 @@ levels(SECCa$Chamber)[levels(SECCa$Chamber) == "Full Chamber"] <- "Chamber"
 ## - real replication is 1 anyway, so it doesn't need to be so big in this case.
 Y.pred <- expand.grid(Block    = levels(SECCa$Block) , 
                       Frag     = levels(SECCa$Frag), 
-                      Chamber  = levels(SECCa$Chamber), 
-                      Position = levels(SECCa$Position), 
+                      ##                       Chamber  = levels(SECCa$Chamber), 
+                      ##                       Position = levels(SECCa$Position), 
+                      Climate = levels(SECCa$Climate), 
                       H2O      = seq(0, max(SECCa$H2O, na.rm = TRUE), length.out=3 ), 
                       TAN      = seq(0, max(SECCa$TAN, na.rm = TRUE), length.out=3 ) 
                       )
@@ -67,8 +69,8 @@ cat("- Fitting models:", Y.col, "\n")
 ## Compare model to GA(M)M to check that a linear fit is the most appropriate?
 ## see Zuur et al. (2007, 2009: Appendix)
 library(mgcv)
-Y.gam     <- gam(Y.trans ~ Block + Chamber + Frag + Position + s(H2O) + s(TAN), data = SECCa)
-Y.log.gam <- gam(Y.trans ~ Block + Chamber + Frag + Position + s(H2O) + s(log10(TAN)), data = SECCa)
+Y.gam     <- gam(Y.trans ~ Block + Climate + Frag + s(H2O) + s(TAN), data = SECCa)
+Y.log.gam <- gam(Y.trans ~ Block + Climate + Frag + s(H2O) + s(log10(TAN)), data = SECCa)
 anova(Y.gam)
 anova(Y.log.gam)
 AIC(Y.gam, Y.log.gam)
@@ -89,7 +91,7 @@ par(op)
 Y.lmain <- lm(Y.main, data = SECCa)
 summary(Y.lmain)
 anova(Y.lmain)                         # ORDER MATTERS! (see Zuur et al. 2009 pg. 540))
-Anova(Y.lmain, type = 2)               # logCells, H2O^2 ns
+Anova(Y.lmain, type = 2)               # 
 Y.lmfull <- lm( Y.full , data=SECCa)   # n = 2 for all interaction combinations (perfect fit)
 anova.full <- anova(Y.lmfull)
 anova.full$PropVar <- anova.full[, "Sum Sq"] / sum(anova.full[, "Sum Sq"])
@@ -109,10 +111,10 @@ if (TRUE)
   Y.lmB  <- gls(Y.main, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
   Y.lmeB <- lme(Y.main, random = Y.random, weights = varIdent(form = ~ 1 | Block), 
                 data = SECCa, method = "REML")
-  anova(Y.gls, Y.lmB, Y.lmeB)          # allowing heterogeneity among Blocks is an improvement (p = 0.0002).
+  anova(Y.gls, Y.lmB, Y.lmeB)          # allowing heterogeneity among Blocks is an improvement (p = 0.01).
   Y.lmBC <- gls(Y.main, weights = varIdent(form = ~ 1 | Block * Chamber), 
                 data = SECCa, method = "REML")
-  anova(Y.lmB, Y.lmBC)                 # allowing heterogeneity among Blocks AND Chambers IS a sig. improvement (p = 0.071)
+  anova(Y.lmB, Y.lmBC)                 # allowing heterogeneity among Blocks AND Chambers IS a sig. improvement (p < 0.0001)
 }
 
 
@@ -135,8 +137,6 @@ if (file.exists(Save.glmulti))
   load(Save.glmulti)
 } else {
   ## Note: glmulti performs an exhaustive search of all candidate models, by default.  
-  ##       2^7 = 128 candidate models (not including interactions). 256 according to glmulti
-  ## If I can ignore the random (nested) structure, I can use gls() as the fitfunc, and account for heterogeneity.
   ## gls() and nlme() don't have the same coef() methods, which makes it harder to extract coefficients after :(
   ## remember: REML for RANDOM effects, ML for Fixed effects ;)
   ## This is quite a bit slower than using lm, but should only take a few minutes.
@@ -163,14 +163,6 @@ if (file.exists(Save.glmulti))
   ## Best to run 2-4+ replicate genetic algorithms, and take consensus.
   ## use method="d" to print a summary of candidate models (no fitting)
   ## larger confsetsize -> more memory useage
-  if (FALSE)
-  { ## ML estimation crashes with weights (heterogeneity) and all terms: false convergence / Singularity at backsolve
-    Y.mm <- gls(Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-                log10(TAN) + Frag:Block + log10(TAN):TempC + Block:TempC + 
-                Block:I(H2O^2) + Block:log10(TAN) + Frag:TempC + Frag:H2O + 
-                Frag:I(H2O^2) + Frag:logCells, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
-  }    
-
   Y.multi <- list()
   for (i in 1:6) 
   {
@@ -245,6 +237,7 @@ clean.term.labels <- function(tls, coef.labels = FALSE) {
     tls <- gsub("ChamberFull Chamber", "Chamber", tls)
     tls <- gsub("ChamberChamber", "Chamber", tls)
     tls <- gsub("PositionOuter", "Position", tls)
+    tls <- gsub("Climate(.*)", "\\1", tls)
     tls <- gsub("Block(.*)", "Block \\1", tls)
     tls <- gsub("Frag([^:]*)", "Frag (\\1)", tls)
     tls <- gsub("Time([^:]*)", "Time (\\1)", tls)
@@ -313,54 +306,13 @@ print(Y.est2)
 anova(Y.best2lm)                       # order matters (Type 1)
 Anova(Y.best2lm, type=2)               # Type II: car package**
 
-if (FALSE)
-{
-### With Cells.m outlier (H2O & Growth outliers removed): not much difference
-Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-    log10(TAN) + I(H2O^2):H2O + logCells:H2O + log10(TAN):TempC + 
-    Block:I(H2O^2) + Block:logCells + Frag:H2O + Frag:I(H2O^2)
-### Without Cells.m outlier: way more terms: AIC = 157.55
-Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-    log10(TAN) + Frag:Block + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
-    logCells:TempC + logCells:I(H2O^2) + log10(TAN):TempC + log10(TAN):I(H2O^2) + 
-    Block:TempC + Block:H2O + Block:I(H2O^2) + Block:logCells + 
-    Block:log10(TAN) + Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
-    Frag:logCells + Frag:log10(TAN)
-### logCells:H2O <- logCells:I(H2O^2) :		AIC = 158.15
-Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-    log10(TAN) + Frag:Block + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
-    logCells:TempC + logCells:H2O + log10(TAN):TempC + log10(TAN):H2O + 
-    Block:TempC + Block:H2O + Block:I(H2O^2) + Block:logCells + 
-    Block:log10(TAN) + Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
-    Frag:logCells + Frag:log10(TAN)
-### log10(TAN):logCells <-  Block:log10(TAN) : AIC = 159.55
-Y.trans ~ 1 + Block + Frag + TempC + H2O + I(H2O^2) + logCells + 
-    log10(TAN) + Frag:Block + H2O:TempC + I(H2O^2):TempC + I(H2O^2):H2O + 
-    logCells:TempC + logCells:I(H2O^2) + log10(TAN):TempC + log10(TAN):H2O + 
-    log10(TAN):logCells + Block:TempC + Block:H2O + Block:I(H2O^2) + 
-    Block:logCells + Frag:TempC + Frag:H2O + Frag:I(H2O^2) + 
-    Frag:logCells + Frag:log10(TAN)
-### Using Chamber instead of TempC: AIC = 157.99
-Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells + 
-    log10(TAN) + Chamber:Block + Frag:Block + Frag:Chamber + 
-    I(H2O^2):H2O + logCells:I(H2O^2) + log10(TAN):H2O + Block:H2O + 
-    Block:I(H2O^2) + Block:logCells + Block:log10(TAN) + Chamber:H2O + 
-    Chamber:I(H2O^2) + Chamber:logCells + Chamber:log10(TAN) + 
-    Frag:H2O + Frag:I(H2O^2) + Frag:logCells + Frag:log10(TAN)
-}
 
 ## Important 2-way interactions (no mixed effects):
 ## Frag:Position
-## Block:H2O
+## Block:H2O    *
 ## Block:H2O^2
 ## Block:TAN
-## Block:Position
-## TAN:Position
-## Position:H2O
-## Position:H2O^2
-## Chamber:Position ?
-## Chamber:H2O^2
-## Block:Frag ?
+## Climate:I(H2O^2)
 
 ## Be careful with the H2O:I(H2O^2) interaction: it does screwy things to predicted values
 ##  e.g. fitting values higher than the data, particularly in dry Ambient patches (where there is NO DATA).
@@ -368,11 +320,11 @@ Y.trans ~ 1 + Block + Chamber + Frag + H2O + I(H2O^2) + logCells +
 ##  Better to avoid it in the model fitting (but I will need it for plotting effects).
 ##  I should probably avoid Chamber interactions (especially Chamber:H20 AND H2O^2), given that I have no data on dry Ambient patches :(
 
-Y.fixed <- Y.trans ~ Block + Chamber + Frag + Position + H2O + I(H2O^2) + log10(TAN) + 
-            Block:Chamber + Block:Frag + Block:Position + Chamber:Position + Frag:Position +
-			Block:H2O + Block:I(H2O^2) + # + Block:log10(TAN) + 
-            Chamber:H2O + Chamber:I(H2O^2) +
-			Position:H2O + Position:I(H2O^2) + Position:log10(TAN)
+Y.fixed <- Y.trans ~ Block + Climate + Frag + H2O + I(H2O^2) + log10(TAN) + 
+            ## Block:Chamber + Block:Frag + Block:Position + Chamber:Position + Frag:Position +
+			Block:H2O + # Block:I(H2O^2) + # + Block:log10(TAN) + 
+            Climate:I(H2O^2) + Climate:H2O # + 
+			## Position:H2O + Position:I(H2O^2) + Position:log10(TAN)
 
 ## Implied higher-order interactions
 ## Block * Chamber * Frag * H2O / I(H2O^2)
@@ -380,16 +332,17 @@ Y.fixed <- Y.trans ~ Block + Chamber + Frag + Position + H2O + I(H2O^2) + log10(
 ## Chamber * Frag * log10(TAN)
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
 ## Add 3-way interactions to Y.fixed
-Y.fixHi <- update(Y.fixed, .~. + Block:Chamber:Frag + # Chamber:Frag:Position + Chamber:Frag:log10(TAN) +
-                                    Chamber:Position:H2O + Chamber:Position:I(H2O^2) # NO! avoid H2O:I(H2O^2)
+Y.fixHi <- update(Y.fixed, .~. + Climate:Frag + Frag:H2O + Frag:I(H2O^2) + Climate:Frag:H2O + Climate:Frag:I(H2O^2)
+                  ##+  Chamber:Frag:Position + Chamber:Frag:log10(TAN) +
+                  ## Chamber:Position:H2O + Chamber:Position:I(H2O^2) # NO! avoid H2O:I(H2O^2)
 )
+## Y.fixHi <- Y.trans ~ Block + Climate * Frag * H2O * log10(TAN) + Climate * Frag * I(H2O^2) * log10(TAN) + Block:H2O
 
 
 ##==============================================================
 ## MODEL FITTING: Final Fixed & Random Effects?
 ##==============================================================
-##	Model-fitting often fails with many interaction terms + heterogeneity + random nested structure (+ ML)
-TryMM <- FALSE                         # try fitting complex Mixed Models with interaction terms?
+TryMM <- TRUE                         # try fitting complex Mixed Models with interaction terms?
 
 Y.fxlm <- lm(Y.fixed, data = SECCa)
 Y.fHlm <- lm(Y.fixHi, data = SECCa)
@@ -414,7 +367,7 @@ anova(Y.fH, Y.mr)                      # Adding random effects
 anova(Y.mH, Y.mr)                      # are these really nested?  (might not be a valid comparison)
 if (TryMM)
 {                                      # higher-order interaction models often crash here: trying to do too much!
-  Y.me <- lme(Y.fixHi, random = Y.random, weights = varIdent(form = ~ 1 | Block * Chamber), data = SECCa, method ="REML")
+  Y.me <- lme(Y.fixHi, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
   anova(Y.fH, Y.mH, Y.me, Y.mr)        # compare random structures (using REML)
   anova(Y.fH, Y.me)
 }
@@ -423,11 +376,11 @@ if (TryMM)
 
 if (TryMM)
 {  # ML estimation may fail with many interactions.
-  Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block * Chamber), data = SECCa, method = "REML")
+  Y.mef <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method = "REML")
   anova(Y.mHf, Y.mef)
   ## Compare fuller model with best model from glmulti
-  Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block * Chamber), data = SECCa, method ="ML")
-  Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block * Chamber), data = SECCa, method ="ML")
+  Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
+  Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   ## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
   anova(Y.mlf, Y.mb2)      # adding the extra interaction term does increase the AIC (worse), but not significantly so.
 }
@@ -439,7 +392,7 @@ if (TryMM)
 ##	Model-fitting often fails with many interaction terms + heterogeneity + random nested structure (+ ML)
 ##    Effects also can't handle nesting structure? X can't handle higher-order interactions :(
 ##  Adding heterogeneity to some models makes the residuals worse (less normal, more patterns?)
-##  Higher-order interactions seem to be a better fit, but the residuals may be worse.
+##  Higher-order interactions seem to be a better fit, but the residuals may be worse, and the predicted values get really weird.
 ## Y.fit  <- Y.me
 Y.fit  <- Y.mHf
 
@@ -460,7 +413,7 @@ diagnostics(Y.mr,  X.cols = c("H2O", "TAN"))     # higher-order interactions + n
 if (TryMM) diagnostics(Y.me,  X.cols = c("H2O", "TAN"))     # higher-order interactions + mixed effects
 ## I do prefer the distribution and lack of patterns in residuals in the mixed effects models
 ## There are some disturbing patterns in the residuals for the lm model
-## Allowing heterogeneity is a modest improvement: a nested random structure is about the same (but theoretically justified).
+## Allowing heterogeneity is an improvement: a nested random structure is not.
 ## There may also be some heterogeneity with H2O, but I might just have to live with it :(
 
 RE <- diagnostics(Y.fit, resType = "pearson", 
@@ -516,28 +469,28 @@ if (!inherits(Y.fit, "lm"))
 
 ## extract effects (order of terms in interactions matter)
 Y.eff     <- allEffects(Y.fit)
-T.eff     <- effect("Chamber", Y.fit)
+T.eff     <- effect("Climate", Y.fit)
 F.eff     <- effect("Frag", Y.fit)
 H.eff     <- effect("H2O:I(H2O^2)", Y.fit)
 N.eff     <- effect("log10(TAN)", Y.fit)
-TH.eff    <- effect("Chamber:H2O:I(H2O^2)", Y.fit)
-TPH.eff    <- effect("Chamber:Position:H2O:I(H2O^2)", Y.fit)
-  FP.eff    <- effect("Frag:Position", Y.fit)
-  NT.eff    <- effect("Chamber:log10(TAN)", Y.fit)
-  NP.eff    <- effect("Position:log10(TAN)", Y.fit)
-  NTP.eff    <- effect("Chamber:Position:log10(TAN)", Y.fit)
+TH.eff    <- effect("Climate:H2O:I(H2O^2)", Y.fit)
+## TPH.eff    <- effect("Chamber:Position:H2O:I(H2O^2)", Y.fit)
+##   FP.eff    <- effect("Frag:Position", Y.fit)
+##   NT.eff    <- effect("Chamber:log10(TAN)", Y.fit)
+##   NP.eff    <- effect("Position:log10(TAN)", Y.fit)
+##   NTP.eff    <- effect("Chamber:Position:log10(TAN)", Y.fit)
 
 plot(F.eff, ask = FALSE)
 plot(H.eff, ask = FALSE)
 plot(T.eff, ask = FALSE)
 plot(N.eff, ask = FALSE)
 plot(TH.eff, x.var = "H2O", ask = FALSE)
-plot(TPH.eff, x.var = "H2O", ask = FALSE)
-  plot(FP.eff, x.var = "Frag", ask = FALSE)
-  plot(FP.eff, x.var = "Position", ask = FALSE)
-  plot(NT.eff, x.var = "TAN", ask = FALSE)
-  plot(NP.eff, x.var = "TAN", ask = FALSE)
-  plot(NTP.eff, x.var = "TAN", ask = FALSE)
+## plot(TPH.eff, x.var = "H2O", ask = FALSE)
+##   plot(FP.eff, x.var = "Frag", ask = FALSE)
+##   plot(FP.eff, x.var = "Position", ask = FALSE)
+##   plot(NT.eff, x.var = "TAN", ask = FALSE)
+##   plot(NP.eff, x.var = "TAN", ask = FALSE)
+##   plot(NTP.eff, x.var = "TAN", ask = FALSE)
 
 
 ##==============================================================
@@ -579,7 +532,7 @@ lines(H.re[x.ord], Y.H.pred[x.ord, 3], col="red", lty=2)
 residualPlots(Y.H)                 # car
 
 summary(Y.H)                        # R^2 = 0.028 ! :(
-Y.H.r2 <- format(summary(Y.H)$adj.r.squared, digits=2)
+Y.H.r2 <- format(summary(Y.H)$r.squared, digits=2)
 Y.H.df <- data.frame(H=H.re, Y=Y.re, fit=Y.H.pred[, "fit"], 
                         lower=Y.H.pred[, "lwr"], upper=Y.H.pred[, "upr"])
 
@@ -631,7 +584,7 @@ lines(N.re[x.ord], Y.N.pred[x.ord, 3], col="red", lty=2)
 residualPlots(Y.N)                 # car
 
 summary(Y.N)                        # R^2 = 0.02 ! :(
-Y.N.r2 <- format(summary(Y.N)$adj.r.squared, digits=2)
+Y.N.r2 <- format(summary(Y.N)$r.squared, digits=2)
 Y.N.df <- data.frame(N=N.re, Y=Y.re, fit=Y.N.pred[, "fit"], 
                         lower=Y.N.pred[, "lwr"], upper=Y.N.pred[, "upr"])
 
@@ -684,7 +637,7 @@ TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
 ## Axis Labels:
 Y.label <- SECC.axislab(SECCa, col = Y.col, parens=TRUE)
 Y.lim   <- range(SECCa$Y)
-Y.lim   <- c(0, 5000000000)
+Y.lim   <- c(0, 100000)
 
 ##______________________________________________________________
 ## utility functions
@@ -693,15 +646,12 @@ scale_y_Cells <- function()
 {
   require(ggplot2)
   scale_y_continuous(trans = "log10", 
-                     breaks = c(0 , 1000000, 2000000, 4000000, 6000000, 8000000,
-                                10000000, 20000000, 40000000, 60000000, 80000000,
-                                100000000, 200000000, 400000000, 600000000, 800000000,
-                                1000000000, 2000000000, 4000000000, 6000000000, 8000000000,
-                                10000000000), 
-                     labels = c(0 , 1000000 , ""  , ""  , ""  , "" , 10000000 , 
-                                ""  , ""  , ""  , "" , 100000000,
-                                ""  , ""  , ""  , "" , 1000000000,
-                                ""  , ""  , ""  , "" , 10000000000),
+                     breaks = c(0 , 100, 200, 400, 600, 800, 1000, 
+                                2000, 4000, 6000, 8000, 10000, 
+                                20000, 40000, 60000, 80000, 100000), 
+                     labels = c(0 , 100 , ""  , ""  , ""  , "" , 1000 , 
+                                ""  , ""  , ""  , "" , 10000,
+                                ""  , ""  , ""  , "" , 100000),
                      )
 }
 
@@ -721,15 +671,26 @@ eff.Tlayer <- function(eff.df = NULL, conf.int = TRUE)
 
 
 ##______________________________________________________________
-## Chamber effects
-## Note that the model may fit values higher than anything I actually measured in the Chambers!
+## Climate effects
 T.pdata <- effect.to.df(T.eff, fun = alog0)
-T.plot <- ggplot(SECCa, aes(y = Y, x = Chamber)) + ylim(Y.lim) +
+T.plot <- ggplot(SECCa, aes(y = Y, x = Climate)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber),
 					   position = position_jitter(width = 0.1)) +
 			geom_crossbar(aes(y = effect, ymin = lower, ymax = upper), width = 0.3, data = T.pdata) +
 			eff.layer(eff = T.pdata, conf.int = FALSE) +
-			xlab(SECC.axislab(SECCa, col = "Chamber", parens=TRUE)) + ylab(Y.label) +
+			xlab(SECC.axislab(SECCa, col = "Climate", parens=FALSE)) + ylab(Y.label) +
+			scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+
+
+##______________________________________________________________
+## Frag effects
+F.pdata <- effect.to.df(F.eff, fun = alog0)
+F.plot <- ggplot(SECCa, aes(y = Y, x = Frag)) + ylim(Y.lim) +
+			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber),
+					   position = position_jitter(width = 0.1)) +
+			geom_crossbar(aes(y = effect, ymin = lower, ymax = upper), width = 0.3, data = F.pdata) +
+			eff.layer(eff = F.pdata, conf.int = FALSE) +
+			xlab(SECC.axislab(SECCa, col = "Frag", parens=FALSE)) + ylab(Y.label) +
 			scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
 
@@ -745,22 +706,19 @@ H.plot <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 TH.pdata <- effect.to.df(TH.eff, fun = alog0)
 TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			geom_line(data=TH.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=TH.pdata, aes(y=lower, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=TH.pdata, aes(y=upper, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
+			eff.layer(eff = TH.pdata, conf.int = TRUE) + facet_wrap(~ Climate) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend
 
-## N-fixation lower in Contiguous chambers on average: likely due to less disturbance (DeLuca pers. comm.)?
-TPH.pdata <- effect.to.df(TPH.eff, fun = alog0)
-TPH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			geom_line(data=TPH.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=TPH.pdata, aes(y=lower, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=TPH.pdata, aes(y=upper, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			scale_y_Cells() + facet_wrap(~ Position) +
-			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
-			jaw.ggplot() + ChamberPts + TopLegend
+            ## TPH.pdata <- effect.to.df(TPH.eff, fun = alog0)
+            ## TPH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
+            ##             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
+            ##             geom_line(data=TPH.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             geom_line(data=TPH.pdata, aes(y=lower, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             geom_line(data=TPH.pdata, aes(y=upper, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             scale_y_Cells() + facet_wrap(~ Position) +
+            ##             xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
+            ##             jaw.ggplot() + ChamberPts + TopLegend
 
 
 ##______________________________________________________________
@@ -772,15 +730,15 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 			xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
 			scale_x_log10() + scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend
 
-NTP.pdata <- effect.to.df(NTP.eff, fun = alog0)
-NTP.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
-			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
-			geom_line(data=NTP.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=NTP.pdata, aes(y=lower, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			geom_line(data=NTP.pdata, aes(y=upper, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
-			facet_wrap(~ Position) +
-            xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
-			scale_x_log10() + scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend
+            ## NTP.pdata <- effect.to.df(NTP.eff, fun = alog0)
+            ## NTP.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
+            ##             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
+            ##             geom_line(data=NTP.pdata, aes(y=effect, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             geom_line(data=NTP.pdata, aes(y=lower, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             geom_line(data=NTP.pdata, aes(y=upper, lty=2, group = Chamber, colour = Chamber, lwd = Chamber )) +
+            ##             facet_wrap(~ Position) +
+            ##             xlab(SECC.axislab(SECCa, col = "TAN", parens=TRUE)) + ylab(Y.label) +
+            ##             scale_x_log10() + scale_y_Cells() + jaw.ggplot() + ChamberPts + TopLegend
 
 
 ##______________________________________________________________
@@ -836,18 +794,20 @@ if (Save.results == TRUE)
   ggsave(filename = sprintf("%sEstimates.eps",	 Fig.filename), plot = Y.est2, 
          width = 4, height = 4, scale = 1.5)
   ## Effects plots
-  ggsave(filename = sprintf("%sChamber.eps",	 Fig.filename), plot = T.plot, 
+  ggsave(filename = sprintf("%sClimate.eps",	 Fig.filename), plot = T.plot, 
+         width = 4, height = 4, scale = 1.5)
+  ggsave(filename = sprintf("%sFrag.eps",	 Fig.filename), plot = F.plot, 
          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sH2O.eps",	 Fig.filename), plot = H.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sCxH2O.eps",	 Fig.filename), plot = TH.plot, 
+  ggsave(filename = sprintf("%sClxH2O.eps",	 Fig.filename), plot = TH.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sCPxH2O.eps",	 Fig.filename), plot = TPH.plot, 
-         width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sCPxH2O.eps",	 Fig.filename), plot = TPH.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN.eps",	 Fig.filename), plot = N.plot, 
          width = 4, height = 4, scale = 1.5)
-  ggsave(filename = sprintf("%sCPxTAN.eps",	 Fig.filename), plot = NTP.plot, 
-         width = 4, height = 4, scale = 1.5)
+  ##   ggsave(filename = sprintf("%sCPxTAN.eps",	 Fig.filename), plot = NTP.plot, 
+  ##          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
   ggsave(filename = sprintf("%sTAN-partial.eps",   Fig.filename), plot = N.part.plot, 
          width = 4, height = 4, scale = 1.5)
@@ -857,9 +817,9 @@ if (Save.results == TRUE)
   print(T.plot)
   print(H.plot)
   print(TH.plot)
-  print(TPH.plot)
+  ##   print(TPH.plot)
   print(N.plot)
-  print(NTP.plot)
+  ##   print(NTP.plot)
   ## Partial Regression plots
   print(H.part.plot)
   print(N.part.plot)

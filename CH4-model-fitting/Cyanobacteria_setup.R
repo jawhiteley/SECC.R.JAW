@@ -8,7 +8,7 @@
 ################################################################
 source('./CH4-model-fitting/1_reg_settings.R')
 
-Y.col <- 'Cells.m'      # Column to analyze as response variable           *****
+Y.col <- 'Cells'      # Column to analyze as response variable           *****
 # explanatory vars for data exploration (and labels)
 X.cols <- c("H2O", "TAN")  
 
