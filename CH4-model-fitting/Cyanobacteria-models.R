@@ -316,16 +316,13 @@ Anova(Y.best2lm, type=2)               # Type II: car package**
 ##  See Nfix-models.R for more notes about this.
 
 Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + log10(TAN) + 
+            ##  Not interested in Block interactions; Position is out of the model.
             ## Block:Chamber + Block:Frag + Block:Position + Chamber:Position + Frag:Position +
 			Block:H2O # + Block:I(H2O^2) + # + Block:log10(TAN) + 
             ## Chamber:I(H2O^2) + Chamber:H2O # + 
 			## Position:H2O + Position:I(H2O^2) + Position:log10(TAN)
 
 ## Implied higher-order interactions
-## Block * Chamber * Frag * H2O / I(H2O^2)
-## Block * Chamber * Frag * logCells
-## Chamber * Frag * log10(TAN)
-## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
 ## Add 3-way interactions to Y.fixed
 Y.fixHi <- update(Y.fixed, .~. + Chamber:Frag + Frag:H2O + Frag:I(H2O^2) # + Chamber:Frag:H2O + Chamber:Frag:I(H2O^2)
                   ##+  Chamber:Frag:Position + Chamber:Frag:log10(TAN) +

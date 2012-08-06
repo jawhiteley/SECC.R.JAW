@@ -319,11 +319,12 @@ Anova(Y.best2lm, type=2)               # Type II: car package**
 ## Interactions of interest (could be more or less than Y.best2, depending on how that goes)
 ##   I'm less interested in Block interactions
 Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + logNfix + logTAN + 
-            logNfix:H2O + logNfix:Chamber + H2O:Chamber
+            logNfix:H2O + logNfix:Chamber # + H2O:Chamber   # avoid Chamber:H2O interactions 
 
 ## Implied higher-order interactions
 ## except that ML estimation (and eventually REML, too) will fail with too many interactions :(
 Y.fixHi <- Y.trans ~ Block + Frag + Chamber * H2O * logNfix + logTAN
+Y.fixHi <- Y.fixed
 
 
 ##==============================================================
@@ -432,7 +433,7 @@ T.breaks    <- seq(min(SECCa$TempC), max(SECCa$TempC), length.out=2 ) # 2 groups
 H2O.9lvls   <- intermean(H2O.breaks9)  # 9 groups
 H2O.4lvls   <- intermean(H2O.breaks4)  # 4 groups
 
-if (!inherits(Y.fit, "lm"))
+if (!inherits(Y.fit, "lm"))    # not if using random effects 
 {  ## effect() throws an error if the model isn't specified explicitly :(
   Y.call <- deparse(Y.fit$call)
   Y.calf <- regexpr("(?<=formula = )[^,]+", Y.call, perl = TRUE)
@@ -514,7 +515,7 @@ lines(X.re[x.ord], Y.X.pred[x.ord, 3], col="red", lty=2)
 residualPlots(Y.X)                 # car
 
 summary(Y.X)                        # R^2 = 0.02 ! :(
-Y.X.r2 <- format(summary(Y.X)$adj.r.squared, digits=2)
+Y.X.r2 <- format(summary(Y.X)$r.squared, digits=2)
 Y.X.df <- data.frame(X=X.re, Y=Y.re, fit=Y.X.pred[, "fit"], 
                         lower=Y.X.pred[, "lwr"], upper=Y.X.pred[, "upr"])
 
@@ -546,13 +547,13 @@ lines(H.re[x.ord], Y.H.pred[x.ord, 3], col="red", lty=2)
 residualPlots(Y.H)                 # car
 
 summary(Y.H)                        # R^2 = 0.028 ! :(
-Y.H.r2 <- format(summary(Y.H)$adj.r.squared, digits=2)
+Y.H.r2 <- format(summary(Y.H)$r.squared, digits=2)
 Y.H.df <- data.frame(H=H.re, Y=Y.re, fit=Y.H.pred[, "fit"], 
                         lower=Y.H.pred[, "lwr"], upper=Y.H.pred[, "upr"])
 
 
 ##______________________________________________________________
-## Partial regression on logTAN?
+## Partial regression on logTAN
 Parts <- PartialFormula("Y.fit", x.var = "logTAN")
 Y.part <- eval(Parts$y) # problems fitting with gls? :(
 N.part <- eval(Parts$x)
@@ -574,7 +575,7 @@ lines(N.re[x.ord], Y.N.pred[x.ord, 3], col="red", lty=2)
 residualPlots(Y.N)                 # car
 
 summary(Y.N)                        # R^2 = 0.028 ! :(
-Y.N.r2 <- format(summary(Y.N)$adj.r.squared, digits=2)
+Y.N.r2 <- format(summary(Y.N)$r.squared, digits=2)
 Y.N.df <- data.frame(N=N.re, Y=Y.re, fit=Y.N.pred[, "fit"], 
                         lower=Y.N.pred[, "lwr"], upper=Y.N.pred[, "upr"])
 
@@ -691,7 +692,7 @@ TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 ##______________________________________________________________
 ## N-fixation effects
 A.pdata <- effect.to.df(A.eff)
-A.pdata <- within(A.pdata, { Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
+A.pdata <- within(A.pdata, { Nfix <- 10^logNfix }) #; Nfix[logNfix == 0] <- 0 })
 A.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = A.pdata, conf.int = TRUE) +
@@ -699,7 +700,7 @@ A.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
 			scale_x_log10() + jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
 AT.pdata <- effect.to.df(AT.eff)
-AT.pdata <- within(AT.pdata,{ Nfix <- 10^logNfix; Nfix[logNfix == 0] <- 0 })
+AT.pdata <- within(AT.pdata,{ Nfix <- 10^logNfix }) #; Nfix[logNfix == 0] <- 0 })
 AT.plot  <- ggplot(SECCa, aes(y = Y, x = Nfix)) + ylim(Y.lim) +
             geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
             eff.Tlayer(eff = AT.pdata, conf.int = TRUE) +
