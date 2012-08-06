@@ -308,11 +308,12 @@ Anova(Y.best2lm, type=2)               # Type II: car package**
 ## Interactions of interest (could be more or less than Y.best2, depending on how that goes)
 ##   I'm less interested in Block interactions
 Y.fixed <- Y.trans ~ Block + Chamber + Frag + H2O + Richness + Mesostigmata + logTAN + 
-            Richness:H2O + Mesostigmata:H2O +
-            Frag:H2O + Frag:logTAN + Frag:Richness # over-fitting?
+            # Richness:H2O + Mesostigmata:H2O # +
+            Frag:H2O #+ Frag:logTAN + Frag:Richness # over-fitting?
 
 ## Implied higher-order interactions
 Y.fixHi <- update(Y.fixed, .~. + Frag:H2O:Richness )
+Y.fixHi <- Y.fixed
 
 
 ##==============================================================
@@ -343,8 +344,8 @@ if (TryMM)
   anova(Y.fH, Y.mH, Y.me, Y.mr)        # compare random structures (using REML)
   anova(Y.fH, Y.me)
 }
-## The nested structure of random effects is technically not necessary, but it did improve the AIC in glmulti (using ML), 
-## and probably should be done on theoretical grounds, to account for the structure of the experiment.
+## The nested structure of random effects is technically not necessary,
+## but probably should be done on theoretical grounds, to account for the structure of the experiment.
 
 Y.mHf <- gls(Y.fixed, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="REML")
 anova(Y.fx, Y.mHf)                     # 2-way interactions might be better without heterogeneity!
@@ -358,7 +359,7 @@ if (TryMM)
   Y.mb2 <- lme(Y.best2, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   Y.mlf <- lme(Y.fixed, random = Y.random, weights = varIdent(form = ~ 1 | Block), data = SECCa, method ="ML")
   ## Y.mlh <- update(Y.me, method ="ML")    # X Singularity in backsolve at level 0, block 1 :(
-  anova(Y.mlf, Y.mb2)      # adding the extra interaction terms does improve the AIC, but not significantly so.
+  anova(Y.mlf, Y.mb2)      # adding the extra interaction terms
 }
 
 
@@ -444,6 +445,7 @@ M.eff     <- effect("Mesostigmata", Y.fit)
 N.eff     <- effect("logTAN", Y.fit)
 RH.eff    <- effect("H2O:Richness", Y.fit, xlevels=list(H2O=H2O.9lvls))
 MH.eff    <- effect("H2O:Mesostigmata", Y.fit, xlevels=list(H2O=H2O.9lvls))
+FH.eff    <- effect("Frag:H2O", Y.fit)
 FHR.eff   <- effect("Frag:H2O:Richness", Y.fit, xlevels = list(H2O=H2O.9lvls) )
 
 plot(T.eff, ask = FALSE)
@@ -454,6 +456,8 @@ plot(M.eff, ask = FALSE)
 plot(N.eff, ask = FALSE)
 plot(RH.eff, x.var = "Richness", ask = FALSE)
 plot(MH.eff, x.var = "Mesostigmata", ask = FALSE)
+plot(FH.eff, x.var = "Frag", ask = FALSE)
+plot(FH.eff, x.var = "H2O", ask = FALSE)
 plot(FHR.eff, x.var = "Richness", ask = FALSE)
 
 
@@ -704,6 +708,13 @@ H.plot <- ggplot(SECCa, aes(y = Decomp, x = H2O)) + ylim(Y.lim) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
 			jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
 
+FH.pdata <- eff.basq(effect.to.df(FH.eff))
+FH.plot <- ggplot(SECCa, aes(y = Decomp, x = H2O)) + ylim(Y.lim) +
+			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
+			eff.layer(eff = FH.pdata, conf.int = TRUE) + facet_wrap(~ Frag, nrow = 1) +
+			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
+			jaw.ggplot() + ChamberPts + TopLegend # yes, the order matters :/
+
 ## Missing data from 2 H2O bins, which don't show up and seem to be screwing up the faceting :(
 FHR.pdata <- eff.basq(effect.to.df(FHR.eff))
 FHR.pdata$H2Obin9 <- cut(FHR.pdata$H2O, breaks=H2O.breaks9)
@@ -774,8 +785,8 @@ X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(min(X), max(Y), label = Xpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
-                 xlab("N-fixation | others") + 
-                 ylab("Moss Growth | others") 
+                 xlab("Richness | others") + 
+                 ylab("Decomposition | others") 
 X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -793,8 +804,8 @@ M.part.plot <- ggplot(data=Y.M.df, aes(x=M, y=Y)) +
 						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(min(M), max(Y), label = Mpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
-                 xlab("N-fixation | others") + 
-                 ylab("Moss Growth | others") 
+                 xlab("Mesostigmata | others") + 
+                 ylab("Decomposition | others") 
 M.part.plot <- M.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -813,7 +824,7 @@ H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
 				 geom_text(aes(min(H), max(Y), label = Hpart.notes[3] ), 
 						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Moisture Contents | others") + 
-                 ylab("Moss Growth | others") 
+                 ylab("Decomposition | others") 
 H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -833,7 +844,7 @@ N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
 						   size = 4, hjust = 1, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
-                 ylab("Moss Growth | others") 
+                 ylab("Decomposition | others") 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
