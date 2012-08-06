@@ -7,9 +7,9 @@ if (FALSE) {  ## Working Directory: see lib/init.R below [\rd in Vim]
   ## Set Working Directory: path in quotes "".
   setwd("/Users/jonathan/Documents/ My Documents/PhD/Analysis/ SECC/")  # iMac@McGill
   setwd("/Users/jaw/Documents/ My Documents/ Academic/McGill/PhD/Analysis/ SECC/")  # JAW-MBP
-  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
-  setwd("../")       # relative to this file (\rd in Vim-R)
-  getwd()           # Check that we're in the right place
+  setwd("./ SECC/")                    # relative to my usual default wd in R GUI (MBP).
+  setwd("../")                         # relative to this file (\rd in Vim-R)
+  getwd()                              # Check that we're in the right place
 }
 ## Clear memory, load data, functions, etc.  Process data & setup config. settings
 source('./CH4-model-fitting/Decomp_setup.R')
@@ -485,6 +485,8 @@ avPlots(Y.lfit, terms= ~ H2O + Richness + logTAN, ask=FALSE) # car
 ## Removing main + interaction terms dynamically (gls should be ok here)
 Parts <- PartialFormula("Y.fit", x.var = "Mesostigmata")
 Y.part <- eval(Parts$y)
+## Parts <- PartialFormula("Y.part", x.var = "H2O")
+## Y.part <- eval(Parts$y)
 Parts <- PartialFormula("Y.part", x.var = "Richness")
 Y.part <- eval(Parts$y)
 X.part <- eval(Parts$x)
