@@ -38,7 +38,7 @@ cat("- Processing Data (excluding NAs)\n")
 ## Remove NA rows from data, but only for variables in the model ...
 ## Easier to do it once here, than in every single fitting function in the script ;)
 SECCf <- SECCa
-Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, TempC, H2O, ARA.m, Nfix, logNfix, TAN, logTAN, Growth, Richness, Grazers, Y, Y.trans", 
+Mod.cols <- unlist( strsplit("SampleID, Block, Time, Chamber, Frag, Position, Climate, H2O, Nfix, logNfix, TAN, logTAN, Growth, Richness, Grazers, Mesostigmata, Collembola, Y, Y.trans", 
                              ", ", fixed = TRUE) )
 SECCa <- na.exclude( SECCa[, Mod.cols] ) # only exclude NAs from relevant (used) columns
 attr(SECCa, "labels") <- attr(SECCf, "labels")
@@ -58,8 +58,7 @@ levels(SECCa$Chamber)[levels(SECCa$Chamber) == "Full Chamber"] <- "Chamber"
 ##==============================================================
 ## Main effects only
 ##  include Block just to see relative importance
-##  can also include Block as an 'offset' variable: offset(Block)
-Y.main   <- Y ~ Block + Chamber + Frag + H2O + Richness + Grazers + logTAN + logNfix
+Y.main   <- Y ~ Block + Chamber + Frag + H2O + Richness + Mesostigmata + Collembola + I(Mesostigmata + Collembola) + logTAN
 
 
 ##==============================================================
@@ -99,11 +98,8 @@ if (FALSE) {                           # repeated tree-fitting for 'optimal' siz
 
   ## Approx. long-term averages:
   ## Block as a Factor
-  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.24
-  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.074
-  ## Block as an Offset
-  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.
-  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.
+  ## cpMin:           minsplit 20: 0. ; minsplit 10: 0.25
+  ## cpMinError:      minsplit 20: 0. ; minsplit 10: 0.080
 }
 
 if (minsplit==20) {

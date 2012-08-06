@@ -10,7 +10,7 @@ source('./CH4-model-fitting/1_reg_settings.R')
 
 Y.col <- 'Decomp.asq'      # Column to analyze as response variable           *****
 # explanatory vars for data exploration (and labels)
-X.cols <- c("Richness", "Grazers", "H2O", "Nfix", "TAN")  
+X.cols <- c("Richness", "Mesostig.preds", "Mesostigmata", "Collembola", "H2O", "TAN")  
 ## including Richness severely reduces the available samples, and treatment coverage (no pseudo-corridors)
 
 ##==============================================================
@@ -31,6 +31,7 @@ source('./CH4-model-fitting/1_reg_setup.R')
 SECCa <- within( SECCa, 
                 {
                   Y.trans <- Y  # convenience
+                  Abundance <- Mesostigmata + Collembola
                 })
 
 

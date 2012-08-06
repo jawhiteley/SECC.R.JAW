@@ -5,7 +5,7 @@ Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Tue Jul 31 11:57:29 2012
+Sun Aug  5 17:08:35 2012
 ================================================================
 
 n= 44 
@@ -14,135 +14,136 @@ node), split, n, deviance, yval
       * denotes terminal node
 
  1) root 44 0.471265600 0.3169047  
-   2) logNfix< 0.3854107 13 0.148323800 0.2182596  
-     4) Block=3,5,7 9 0.018146350 0.1928522 *
-     5) Block=1 4 0.111295500 0.2754263 *
-   3) logNfix>=0.3854107 31 0.143391900 0.3582720  
-     6) Block=3,7 14 0.029173150 0.3159219  
-      12) logTAN< -1.534172 11 0.013473020 0.3032147  
-        24) Frag=Continuous,Full Corridors 7 0.007358152 0.2860614 *
-        25) Frag=Isolated 4 0.000450845 0.3332329 *
-      13) logTAN>=-1.534172 3 0.007411105 0.3625152 *
-     7) Block=1,5 17 0.068431020 0.3931485  
-      14) Chamber=Chamber 7 0.021204250 0.3566384 *
-      15) Chamber=Ambient 10 0.031364250 0.4187056 *
+   2) H2O< 342.6586 9 0.061288890 0.2012656 *
+   3) H2O>=342.6586 35 0.258677500 0.3466405  
+     6) Block=3,7 16 0.066183660 0.2977535  
+      12) Richness>=14.5 4 0.011965470 0.2145703 *
+      13) Richness< 14.5 12 0.017314490 0.3254812  
+        26) logTAN< -1.543085 9 0.004480918 0.3119796 *
+        27) logTAN>=-1.543085 3 0.006271024 0.3659860 *
+     7) Block=1,5 19 0.122053500 0.3878085  
+      14) Chamber=Chamber 8 0.046722080 0.3352919 *
+      15) Chamber=Ambient 11 0.037221000 0.4260024  
+        30) Mesostigmata>=8.187247 3 0.004200766 0.3841855 *
+        31) Mesostigmata< 8.187247 8 0.025807070 0.4416837 *
 Call:
 rpart(formula = Y.main, data = SECCa, control = rpc)
   n= 44 
 
           CP nsplit rel error    xerror      xstd
-1 0.38099516      0 1.0000000 1.0835091 0.2024165
-2 0.09715906      1 0.6190048 0.8362855 0.2259602
-3 0.04006647      2 0.5218458 0.7760400 0.2618691
-4 0.03365940      3 0.4817793 0.8377578 0.2610775
-5 0.01758885      4 0.4481199 0.8381543 0.2600359
-6 0.01201876      5 0.4305311 0.8867624 0.2746977
-7 0.01000000      6 0.4185123 0.8905308 0.2754351
+1 0.32104880      0 1.0000000 1.0723984 0.2029088
+2 0.14947049      1 0.6789512 1.2843724 0.2425394
+3 0.08086826      2 0.5294807 1.2590371 0.2561451
+4 0.07830763      3 0.4486125 1.1651434 0.2552021
+5 0.01530595      4 0.3703048 0.9825184 0.2283532
+6 0.01392537      5 0.3549989 0.9631461 0.2232775
+7 0.00100000      6 0.3410735 0.9653726 0.2231188
 
-Node number 1: 44 observations,    complexity param=0.3809952
+Node number 1: 44 observations,    complexity param=0.3210488
   mean=0.3169047, MSE=0.01071058 
-  left son=2 (13 obs) right son=3 (31 obs)
+  left son=2 (9 obs) right son=3 (35 obs)
   Primary splits:
-      logNfix  < 0.3854107 to the left,  improve=0.3809952, (0 missing)
-      H2O      < 342.6586  to the left,  improve=0.3210488, (0 missing)
-      Chamber  splits as  RL, improve=0.2928172, (0 missing)
-      Grazers  < 1.539951  to the left,  improve=0.2251559, (0 missing)
-      Richness < 6.5       to the left,  improve=0.1760008, (0 missing)
+      H2O                          < 342.6586  to the left,  improve=0.3210488, (0 missing)
+      Chamber                      splits as  RL, improve=0.2928172, (0 missing)
+      Mesostigmata                 < 0.0854142 to the left,  improve=0.2638552, (0 missing)
+      I(Mesostigmata + Collembola) < 1.80467   to the left,  improve=0.2251559, (0 missing)
+      Collembola                   < 1.520853  to the left,  improve=0.2181430, (0 missing)
   Surrogate splits:
-      H2O      < 342.6586  to the left,  agree=0.909, adj=0.692, (0 split)
-      Richness < 7.5       to the left,  agree=0.841, adj=0.462, (0 split)
-      Grazers  < 1.539951  to the left,  agree=0.841, adj=0.462, (0 split)
+      Richness                     < 7.5       to the left,  agree=0.932, adj=0.667, (0 split)
+      Mesostigmata                 < 0.2526767 to the left,  agree=0.932, adj=0.667, (0 split)
+      I(Mesostigmata + Collembola) < 1.80467   to the left,  agree=0.932, adj=0.667, (0 split)
+      Collembola                   < 1.520853  to the left,  agree=0.909, adj=0.556, (0 split)
 
-Node number 2: 13 observations,    complexity param=0.04006647
-  mean=0.2182596, MSE=0.01140952 
-  left son=4 (9 obs) right son=5 (4 obs)
+Node number 2: 9 observations
+  mean=0.2012656, MSE=0.006809877 
+
+Node number 3: 35 observations,    complexity param=0.1494705
+  mean=0.3466405, MSE=0.007390785 
+  left son=6 (16 obs) right son=7 (19 obs)
   Primary splits:
-      Block    splits as  R-L-L-L-, improve=0.1273022, (0 missing)
-      Richness < 12        to the right, improve=0.1155332, (0 missing)
-      H2O      < 411.6734  to the left,  improve=0.1124073, (0 missing)
-      logTAN   < -1.606852 to the right, improve=0.1008016, (0 missing)
-      Grazers  < 6.447764  to the right, improve=0.0721736, (0 missing)
+      Block                        splits as  R-L-R-L-, improve=0.27230940, (0 missing)
+      Chamber                      splits as  RL, improve=0.20652400, (0 missing)
+      Richness                     < 10        to the right, improve=0.17634380, (0 missing)
+      I(Mesostigmata + Collembola) < 33.06706  to the left,  improve=0.13037820, (0 missing)
+      logTAN                       < -1.491786 to the left,  improve=0.07300699, (0 missing)
   Surrogate splits:
-      H2O      < 12.90718  to the right, agree=0.846, adj=0.50, (0 split)
-      Richness < 2.5       to the right, agree=0.769, adj=0.25, (0 split)
-      Grazers  < 0.1625712 to the right, agree=0.769, adj=0.25, (0 split)
+      Mesostigmata                 < 4.467262  to the left,  agree=0.686, adj=0.313, (0 split)
+      Collembola                   < 11.8289   to the right, agree=0.686, adj=0.313, (0 split)
+      I(Mesostigmata + Collembola) < 18.26628  to the right, agree=0.657, adj=0.250, (0 split)
+      logTAN                       < -1.702324 to the right, agree=0.657, adj=0.250, (0 split)
+      H2O                          < 587.5958  to the right, agree=0.571, adj=0.063, (0 split)
 
-Node number 3: 31 observations,    complexity param=0.09715906
-  mean=0.358272, MSE=0.004625545 
-  left son=6 (14 obs) right son=7 (17 obs)
+Node number 6: 16 observations,    complexity param=0.07830763
+  mean=0.2977535, MSE=0.004136479 
+  left son=12 (4 obs) right son=13 (12 obs)
   Primary splits:
-      Block   splits as  R-L-R-L-, improve=0.31931880, (0 missing)
-      logNfix < 1.348156  to the right, improve=0.16805600, (0 missing)
-      logTAN  < -1.497478 to the left,  improve=0.09557059, (0 missing)
-      Grazers < 24.96437  to the left,  improve=0.08644530, (0 missing)
-      Chamber splits as  RL, improve=0.07977997, (0 missing)
+      Richness     < 14.5      to the right, improve=0.5575953, (0 missing)
+      Chamber      splits as  RL, improve=0.3290660, (0 missing)
+      Mesostigmata < 5.130598  to the right, improve=0.2178899, (0 missing)
+      H2O          < 499.712   to the left,  improve=0.2047067, (0 missing)
+      Frag         splits as  LR-R, improve=0.1803805, (0 missing)
   Surrogate splits:
-      Grazers  < 13.28887  to the right, agree=0.677, adj=0.286, (0 split)
-      logTAN   < -1.702324 to the right, agree=0.645, adj=0.214, (0 split)
-      Richness < 11.5      to the left,  agree=0.613, adj=0.143, (0 split)
-      H2O      < 587.5958  to the right, agree=0.581, adj=0.071, (0 split)
-      logNfix  < 1.501243  to the right, agree=0.581, adj=0.071, (0 split)
+      logTAN < -1.531564 to the right, agree=0.812, adj=0.25, (0 split)
 
-Node number 4: 9 observations
-  mean=0.1928522, MSE=0.002016261 
-
-Node number 5: 4 observations
-  mean=0.2754263, MSE=0.02782388 
-
-Node number 6: 14 observations,    complexity param=0.01758885
-  mean=0.3159219, MSE=0.002083797 
-  left son=12 (11 obs) right son=13 (3 obs)
+Node number 7: 19 observations,    complexity param=0.08086826
+  mean=0.3878085, MSE=0.006423869 
+  left son=14 (8 obs) right son=15 (11 obs)
   Primary splits:
-      logTAN  < -1.534172 to the left,  improve=0.2841319, (0 missing)
-      logNfix < 1.883264  to the left,  improve=0.2060783, (0 missing)
-      Grazers < 7.179682  to the right, improve=0.1580491, (0 missing)
-      Block   splits as  --R---L-, improve=0.1543374, (0 missing)
-      Frag    splits as  LL-R, improve=0.1310029, (0 missing)
-
-Node number 7: 17 observations,    complexity param=0.0336594
-  mean=0.3931485, MSE=0.004025354 
-  left son=14 (7 obs) right son=15 (10 obs)
-  Primary splits:
-      Chamber splits as  RL, improve=0.2318031, (0 missing)
-      Grazers < 6.355431  to the left,  improve=0.2118503, (0 missing)
-      logTAN  < -1.755025 to the left,  improve=0.1383170, (0 missing)
-      logNfix < 1.348156  to the right, improve=0.1346941, (0 missing)
-      H2O     < 463.6571  to the right, improve=0.0904207, (0 missing)
+      Chamber      splits as  RL, improve=0.3122436, (0 missing)
+      logTAN       < -1.734637 to the left,  improve=0.2558088, (0 missing)
+      Collembola   < 5.558891  to the left,  improve=0.2026751, (0 missing)
+      Mesostigmata < 9.540416  to the right, improve=0.1535896, (0 missing)
+      Richness     < 11.5      to the right, improve=0.1202478, (0 missing)
   Surrogate splits:
-      logTAN   < -1.755025 to the left,  agree=0.882, adj=0.714, (0 split)
-      H2O      < 728.1793  to the right, agree=0.824, adj=0.571, (0 split)
-      Grazers  < 5.565245  to the left,  agree=0.706, adj=0.286, (0 split)
-      logNfix  < 2.21972   to the right, agree=0.706, adj=0.286, (0 split)
-      Richness < 13.5      to the left,  agree=0.647, adj=0.143, (0 split)
+      logTAN                       < -1.734637 to the left,  agree=0.895, adj=0.750, (0 split)
+      H2O                          < 728.1793  to the right, agree=0.789, adj=0.500, (0 split)
+      Collembola                   < 5.558891  to the left,  agree=0.789, adj=0.500, (0 split)
+      Mesostigmata                 < 9.540416  to the right, agree=0.737, adj=0.375, (0 split)
+      I(Mesostigmata + Collembola) < 10.832    to the left,  agree=0.684, adj=0.250, (0 split)
 
-Node number 12: 11 observations,    complexity param=0.01201876
-  mean=0.3032147, MSE=0.00122482 
-  left son=24 (7 obs) right son=25 (4 obs)
+Node number 12: 4 observations
+  mean=0.2145703, MSE=0.002991368 
+
+Node number 13: 12 observations,    complexity param=0.01392537
+  mean=0.3254812, MSE=0.001442874 
+  left son=26 (9 obs) right son=27 (3 obs)
   Primary splits:
-      Frag    splits as  LL-R, improve=0.4203976, (0 missing)
-      Grazers < 17.75246  to the left,  improve=0.3517439, (0 missing)
-      logTAN  < -1.624345 to the right, improve=0.2164956, (0 missing)
-      logNfix < 1.883264  to the left,  improve=0.1709039, (0 missing)
-      H2O     < 549.131   to the right, improve=0.1235198, (0 missing)
+      logTAN                       < -1.543085 to the left,  improve=0.37902060, (0 missing)
+      Frag                         splits as  RL-R, improve=0.25050310, (0 missing)
+      Collembola                   < 6.770945  to the right, improve=0.12688010, (0 missing)
+      I(Mesostigmata + Collembola) < 12.06317  to the right, improve=0.12688010, (0 missing)
+      Block                        splits as  --R---L-, improve=0.09415473, (0 missing)
   Surrogate splits:
-      Grazers  < 17.75246  to the left,  agree=0.909, adj=0.75, (0 split)
-      Richness < 11.5      to the left,  agree=0.727, adj=0.25, (0 split)
-      logTAN   < -1.721594 to the right, agree=0.727, adj=0.25, (0 split)
+      Mesostigmata                 < 1.193228  to the right, agree=0.917, adj=0.667, (0 split)
+      Collembola                   < 6.770945  to the right, agree=0.917, adj=0.667, (0 split)
+      I(Mesostigmata + Collembola) < 3.030576  to the right, agree=0.917, adj=0.667, (0 split)
+      Frag                         splits as  RL-L, agree=0.833, adj=0.333, (0 split)
+      H2O                          < 731.2586  to the left,  agree=0.833, adj=0.333, (0 split)
 
-Node number 13: 3 observations
-  mean=0.3625152, MSE=0.002470368 
+Node number 14: 8 observations
+  mean=0.3352919, MSE=0.00584026 
 
-Node number 14: 7 observations
-  mean=0.3566384, MSE=0.003029178 
+Node number 15: 11 observations,    complexity param=0.01530595
+  mean=0.4260024, MSE=0.003383728 
+  left son=30 (3 obs) right son=31 (8 obs)
+  Primary splits:
+      Mesostigmata < 8.187247  to the right, improve=0.1937929, (0 missing)
+      H2O          < 492.0129  to the right, improve=0.1657377, (0 missing)
+      Richness     < 11.5      to the right, improve=0.1446709, (0 missing)
+      Collembola   < 6.474371  to the right, improve=0.1446709, (0 missing)
+      Block        splits as  R---L---, improve=0.1391932, (0 missing)
 
-Node number 15: 10 observations
-  mean=0.4187056, MSE=0.003136425 
+Node number 26: 9 observations
+  mean=0.3119796, MSE=0.0004978798 
 
-Node number 24: 7 observations
-  mean=0.2860614, MSE=0.001051165 
+Node number 27: 3 observations
+  mean=0.365986, MSE=0.002090341 
 
-Node number 25: 4 observations
-  mean=0.3332329, MSE=0.0001127113 
+Node number 30: 3 observations
+  mean=0.3841855, MSE=0.001400255 
+
+Node number 31: 8 observations
+  mean=0.4416837, MSE=0.003225884 
 
 
 

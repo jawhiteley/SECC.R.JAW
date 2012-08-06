@@ -48,8 +48,12 @@ SECC <- within( SECC, {
   ## Should I be log-transforming moss Growth, or just use non-linear GLMM (log-link?)?  Note negative values!
   logCells <- log10(Cells +1)        # log-transform of Cyanobacteria;  log10(Cells +1) 
   ##   logCells[Cells.m <= 0] <- 0
-  Decomp.asq <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
-  logTAN <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
+  logTAN        <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
+  Decomp.asq    <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
+  Decomp        <- Decomposition * 100 # change percent to proportions: for plotting
+  logRichness   <- log(Richness, base = 2)
+  logMesostig   <- log(Mesostigmata +1, base = 2)
+  logCollembola <- log(Collembola +1, base = 2)
   ## recoded factors / new explanatory variables
   ## Don't use these: predicted values are weird and unconvincing.
   ## Chamber treatments as degrees of warming (I'm interpolating for Partial chambers for now, but I probably have the real values somewhere - will probably never matter, as these are unlikely to be included in the analyses)
@@ -79,6 +83,18 @@ attr(SECC, "labels")[["Warming"]] <- "Warming"
 attr(SECC, "units" )[["Warming"]] <- quote(delta ~ "°C vs. ambient")
 attr(SECC, "labels")[["TempC"]] <- "Mean annual T"
 attr(SECC, "units" )[["TempC"]] <- quote("°C")
+attr(SECC, "labels")[["Mesostig.preds"]] <- "Predatory Mesostigmata"
+attr(SECC, "units" )[["Mesostig.preds"]] <- attr(SECC, "units")[["Predators"]]
+attr(SECC, "labels")[["Mesostigmata"]] <- "Mesostigmata"
+attr(SECC, "units" )[["Mesostigmata"]] <- attr(SECC, "units")[["Predators"]]
+attr(SECC, "labels")[["Collembola"]] <- "Collembola"
+attr(SECC, "units" )[["Collembola"]] <- attr(SECC, "units")[["Grazers"]]
+attr(SECC, "labels")[["logRichness"]] <- attr(SECC, "labels")[["Richness"]]
+attr(SECC, "units" )[["logRichness"]] <- attr(SECC, "units")[["Richness"]]
+attr(SECC, "labels")[["logMesostig"]] <- attr(SECC, "labels")[["Mesostigmata"]]
+attr(SECC, "units" )[["logMesostig"]] <- attr(SECC, "units")[["Mesostigmata"]]
+attr(SECC, "labels")[["logCollembola"]] <- attr(SECC, "labels")[["Collembola"]]
+attr(SECC, "units" )[["logCollembola"]] <- attr(SECC, "units")[["Collembola"]]
 
 
 
