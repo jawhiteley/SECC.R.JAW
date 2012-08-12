@@ -134,7 +134,7 @@ CxF.plot <- CxF.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 
      )
 print(CxF.plot)
 
-ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 3, height = 4, scale = 1.5)
+ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 4, height = 4, scale = 1.2)
 
 
 Y.col <- 'Grazers'
@@ -1117,12 +1117,12 @@ axl <- c(0, 4)
 Faunachange.plot  <- ggplot(data = Fauna.dab, aes(x = Fauna.dab$C_4.I, y = Fauna.dab$C_4.O)) +
                     geom_point(aes(shape = Trophic), colour = "black", size = 3) +
                     geom_abline(aes(intercept = 0, slope = 1), size = 0.5, lty = "dashed", colour = "#666666") +
-                    xlab(expression("Species density in " * italic("Isolated ") * bolditalic("Inner ") * italic("Chamber") * " patches (#" %.% g^-1 * ")")) + 
-                    ylab(expression("Species density in " * italic("Isolated ") * bolditalic("Outer ") * italic("Chamber") * " patches (#" %.% g^-1 * ")")) +
+                    xlab(expression(atop( "Species density in " , italic("Isolated ") * bolditalic("Inner ") * italic("Chamber") * " patches (#" %.% g^-1 * ")" ))) + 
+                    ylab(expression(atop( "Species density in " , italic("Isolated ") * bolditalic("Outer ") * italic("Chamber") * " patches (#" %.% g^-1 * ")" ))) +
                     scale_shape_manual(name = "Trophic group",
                                        values = c(19, 21)) +
                     xlim(axl) + ylim(axl) +
-                    coord_equal() + jaw.ggplot()
+                    coord_equal() + jaw.ggplot() + opts( plot.margin = unit(c(0, 0, 0, 1), "lines") )
 
 print(Faunachange.plot)
 
@@ -1167,8 +1167,8 @@ if (TRUE)
   ggsave(filename="./graphs/Figure - Fauna-MDS.eps", plot = Fauna.plot, width = 6, height = 6)
   ggsave(filename="./graphs/Figure - Fauna-Correlation.pdf", plot = PredGraz.corplot, width = 6, height = 2.8) # short height to push x-axis label a little closer to the axis (coord_equal bug?)
   ## semi-transparency (`alpha = `) is not supported by eps.  But it is by pdf ;)
-  ggsave(filename="./graphs/Figure - Trophic-Correlations.eps", plot = Trophic.corplot, width = 6, height = 4, scale = 1.2)
-  ggsave(filename="./graphs/Figure - Density Changes.eps", plot = Faunachange.plot, width = 5, height = 4, scale = 1.5)
+  ggsave(filename="./graphs/Figure - Trophic-Correlations.eps", plot = Trophic.corplot, width = 6, height = 4, scale = 1)
+  ggsave(filename="./graphs/Figure - Density Changes.eps", plot = Faunachange.plot, width = 5, height = 4, scale = 1)
 }
 
 

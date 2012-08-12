@@ -141,7 +141,7 @@ for ( Time.i in 1:length(levels(SECC$Time)) ) {
 ##################################################
 ### PUBLICATION GRAPHS
 ##################################################
-Plot.Title <- bquote(.(Time.label) * "\nPatch means " %+-% "95% Comparison Intervals")
+Plot.Title <- bquote(.(Time.label) * "Patch means " %+-% "95% Comparison Intervals")
 Sub.msd <- "95% comparison intervals (MSR)" 
 
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
@@ -309,9 +309,9 @@ print(CxP.plot)
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 3, height = 4, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 4, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 4, height = 4, scale = 1.5)
+  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 4, height = 4, scale = 1.2)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.2)
+  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.2)
 }
 
 

@@ -503,7 +503,7 @@ if (Save.results == TRUE && is.null(Save.text) == FALSE) {
 }
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   Save.final <- paste(SaveDir.plots(), "Figure - ", "PD-balance", sep="")
-  ggsave(file = paste(Save.final, "- PD.eps" ), plot = PD.CP.plot, width = 3, height = 3, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 3, height = 3, scale = 1.5)
-  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 3, height = 3, scale = 1.5)
+  ggsave(file = paste(Save.final, "- PD.eps" ), plot = PD.CP.plot, width = 4, height = 5, scale = 1)
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 5, scale = 1)
+  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 5, scale = 1)
 }

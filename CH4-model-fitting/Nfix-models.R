@@ -817,10 +817,11 @@ TH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
 
 ## N-fixation lower in Contiguous chambers on average: likely due to less disturbance (DeLuca pers. comm.)?
 FH.pdata <- effect.to.df(FH.eff, fun = alog0)
-FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) +
+FH.plot  <- ggplot(SECCa, aes(y = Y, x = H2O)) + ylim(Y.lim) + 
 			geom_point(size = 3, aes(group = Chamber, colour = Chamber, shape = Chamber)) +
 			eff.layer(eff = FH.pdata, conf.int = TRUE) + facet_wrap(~ Frag) +
 			xlab(SECC.axislab(SECCa, col = "H2O", parens=TRUE)) + ylab(Y.label) +
+            scale_x_continuous(limits = c(0, 900), breaks = c(0, 200, 400, 600, 800)) +
 			jaw.ggplot() + ChamberPts + TopLegend
 
 
@@ -931,7 +932,7 @@ if (Save.results == TRUE)
   ggsave(filename = sprintf("%sImportance2.eps", Fig.filename), plot = Y.importance2, 
          width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sEstimates.eps",	 Fig.filename), plot = Y.est2, 
-         width = 4, height = 4, scale = 1)
+         width = 4, height = 4, scale = 1.5)
   ## Effects plots
   ggsave(filename = sprintf("%sChamber.eps",	 Fig.filename), plot = T.plot, 
          width = 4, height = 4, scale = 1)
