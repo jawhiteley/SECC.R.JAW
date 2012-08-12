@@ -734,11 +734,11 @@ Xpart.notes <- RegPlot.annote(Y.X)
 X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(min(X), max(Y), label = Xpart.notes[1] ), 
-						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 0, parse = TRUE) +
 				 geom_text(aes(min(X), max(Y), label = Xpart.notes[2] ), 
-						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(min(X), max(Y), label = Xpart.notes[3] ), 
-						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("N-fixation | others") + 
                  ylab("Moss Growth | others") 
 X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
@@ -753,11 +753,11 @@ Hpart.notes <- RegPlot.annote(Y.H)
 H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(min(H), max(Y), label = Hpart.notes[1] ), 
-						   size = 4, hjust = 0, vjust = 0, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 0, parse = TRUE) +
 				 geom_text(aes(min(H), max(Y), label = Hpart.notes[2] ), 
-						   size = 4, hjust = 0, vjust = 1.5, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(min(H), max(Y), label = Hpart.notes[3] ), 
-						   size = 4, hjust = 0, vjust = 2.7, parse = TRUE) +
+						   size = 3.5, hjust = 0, vjust = 2.7, parse = TRUE) +
                  xlab("Moisture Contents | others") + 
                  ylab("Moss Growth | others") 
 H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
@@ -773,11 +773,11 @@ Npart.notes <- RegPlot.annote(Y.N)
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
-						   size = 4, hjust = 1, vjust = 0, parse = TRUE) +
+						   size = 3.5, hjust = 1, vjust = 0, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
-						   size = 4, hjust = 1, vjust = 1.5, parse = TRUE) +
+						   size = 3.5, hjust = 1, vjust = 1.5, parse = TRUE) +
 				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
-						   size = 4, hjust = 1, vjust = 2.7, parse = TRUE) +
+						   size = 3.5, hjust = 1, vjust = 2.7, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Moss Growth | others") 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
@@ -793,35 +793,35 @@ if (Save.results == TRUE)
 {
   ## glmulti plots
   ggsave(filename = sprintf("%sImportance1.eps", Fig.filename), plot = Y.importance1, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sImportance2.eps", Fig.filename), plot = Y.importance2, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sEstimates.eps",   Fig.filename), plot = Y.est2, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ## Effects plots
   ggsave(filename = sprintf("%sTemp.eps",   Fig.filename), plot = T.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sH2O.eps",    Fig.filename), plot = H.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sTxH2O.eps",  Fig.filename), plot = TH.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ##   ggsave(filename = sprintf("%sFxH2O.eps",  Fig.filename), plot = FH.plot, 
   ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sNfix.eps",   Fig.filename), plot = A.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sTxNfix.eps", Fig.filename), plot = AT.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sTAN.eps",    Fig.filename), plot = N.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ##   ggsave(filename = sprintf("%sTxTAN.eps",  Fig.filename), plot = NT.plot, 
   ##          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
   ggsave(filename = sprintf("%sNfix-partial.eps", Fig.filename), plot = X.part.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sTAN-partial.eps",  Fig.filename), plot = N.part.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sH2O-Nfix-partial.eps",  Fig.oldfile), plot = H.part.plot,  # **
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
 } else {
   print(T.plot)
   print(H.plot)

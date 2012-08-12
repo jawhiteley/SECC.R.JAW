@@ -237,7 +237,7 @@ clean.term.labels <- function(tls, coef.labels = FALSE) {
     tls <- gsub("PositionOuter", "Position", tls)
     tls <- gsub("Climate(.*)", "\\1", tls)
     tls <- gsub("Block(.*)", "Block \\1", tls)
-    tls <- gsub("Frag([^:]*)", "Frag (\\1)", tls)
+    tls <- gsub("Frag([^:]*)", "Isolation (\\1)", tls)
     tls <- gsub("Time([^:]*)", "Time (\\1)", tls)
   }
   ## Term labels
@@ -246,6 +246,7 @@ clean.term.labels <- function(tls, coef.labels = FALSE) {
   tls <- gsub("I(H2O^2)", "H2O^2", tls, fixed=TRUE)
   tls <- gsub("TempC", "Temperature", tls, fixed=TRUE)
   tls <- gsub("H2O", "Moisture", tls)
+  # tls <- gsub("Frag", "Isolation", tls)  # Fragmentation or Isolation
   tls <- gsub("Frag", "Fragmentation", tls)
   tls <- gsub("Fragmentationmentation", "Fragmentation", tls) # fix double-substitution
   if (FALSE) { # math expressions for axis labels?
@@ -715,11 +716,11 @@ Hpart.notes <- RegPlot.annote(Y.H)
 H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(max(H), min(Y), label = Hpart.notes[1] ), 
-						   size = 4, hjust = 1, vjust = -2.5, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = -1.3, parse = TRUE) +
 				 geom_text(aes(max(H), min(Y), label = Hpart.notes[2] ), 
-						   size = 4, hjust = 1, vjust = -1, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = 0, parse = TRUE) +
 				 geom_text(aes(max(H), min(Y), label = Hpart.notes[3] ), 
-						   size = 4, hjust = 1, vjust = 0, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = -2.5, parse = TRUE) +
                  xlab("Moisture Contents | others") + 
                  ylab("Cyanobacteria Density | others") 
 H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
@@ -735,11 +736,11 @@ Npart.notes <- RegPlot.annote(Y.N)
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
 				 geom_text(aes(max(N), min(Y), label = Npart.notes[1] ), 
-						   size = 4, hjust = 1, vjust = -2.5, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = -1.3, parse = TRUE) +
 				 geom_text(aes(max(N), min(Y), label = Npart.notes[2] ), 
-						   size = 4, hjust = 1, vjust = -1, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = 0, parse = TRUE) +
 				 geom_text(aes(max(N), min(Y), label = Npart.notes[3] ), 
-						   size = 4, hjust = 1, vjust = 0, parse = TRUE) +
+						   size = 3, hjust = 1, vjust = -2.5, parse = TRUE) +
                  xlab("Total N | others") + 
                  ylab("Cyanobacteria Density | others") 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
@@ -755,31 +756,31 @@ if (Save.results == TRUE)
 {
   ## glmulti plots
   ggsave(filename = sprintf("%sImportance1.eps", Fig.filename), plot = Y.importance1, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sImportance2.eps", Fig.filename), plot = Y.importance2, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sEstimates.eps",	 Fig.filename), plot = Y.est2, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ## Effects plots
   ggsave(filename = sprintf("%sChamber.eps",	 Fig.filename), plot = T.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sFrag.eps",	 Fig.filename), plot = F.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sH2O.eps",	 Fig.filename), plot = H.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sCxH2O.eps",	 Fig.filename), plot = TH.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ##   ggsave(filename = sprintf("%sCPxH2O.eps",	 Fig.filename), plot = TPH.plot, 
   ##          width = 4, height = 4, scale = 1.5)
   ggsave(filename = sprintf("%sTAN.eps",	 Fig.filename), plot = N.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ##   ggsave(filename = sprintf("%sCPxTAN.eps",	 Fig.filename), plot = NTP.plot, 
   ##          width = 4, height = 4, scale = 1.5)
   ## Partial Regression plots
   ggsave(filename = sprintf("%sTAN-partial.eps",   Fig.filename), plot = N.part.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
   ggsave(filename = sprintf("%sH2O-partial.eps",   Fig.filename), plot = H.part.plot, 
-         width = 4, height = 4, scale = 1.5)
+         width = 4, height = 4, scale = 1)
 } else {
   print(T.plot)
   print(H.plot)
