@@ -203,6 +203,11 @@ plot.means <- SECCplotDataANOVA(SECCp$Y.trans,
                                 error = msd["Time:Chamber:Position"]
                                 )
 levels(plot.means$Chamber)[2] <- "Chamber"
+plot.means$label <- as.character(plot.means$Position)
+plot.means$label[plot.means$Chamber == "Ambient"] <- NA
+plot.means$label[plot.means$Time != "August\n12 months"] <- NA
+plot.means$label[is.na(plot.means$label)] <- ""
+plot.means$label[plot.means$label == "Inner"] <- "Inner\n\n"
 
 CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position, 
                     geom = "line", ylim = Y.lim, size = Position,
@@ -210,8 +215,8 @@ CxP.plot <- qplot(Chamber, x, data = plot.means, group = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
-                    legend = FALSE,
-                    facets = .~Time)
+                    legend = FALSE) +
+            facet_grid(facets = .~Time)
 CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
                                          width = 0.2, size = 0.5)
 CxP.plot <- CxP.plot + geom_point(aes(group = Position), size = 3)
@@ -229,6 +234,18 @@ CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
                                          breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
+
+## Same plot with internal legend, for Oecologia
+CxP.legend <- CxP.plot + 
+                ## geom_text(aes(label = label), size = 4, hjust = 1.5, vjust = 0.5) +
+                facet_grid(facets = .~Time, scales = "free_x", space = "free") +  # adjust panel sizes to show text annotations?
+                opts(legend.position = c(0.25, 0.67),  # position legend inside main graph (for export dimensions)
+                     legend.text = theme_text(size = 10),
+                     legend.key.size = unit(1.5, "lines"),
+                     legend.title = theme_blank()
+                )
+                # opts(legend.position = "none")
+print(CxP.legend)
 
 
 ## t4-only for follow-up manuscripts
@@ -389,6 +406,7 @@ if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.2)
   ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 8, height = 4, scale = 1)
   ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 6, height = 4, scale = 1)
+  ggsave(file = paste(Save.final, "- CPL.eps"), plot = CxP.legend, width = 6, height = 4, scale = 1) # for Oecologia
   ggsave(file = paste(Save.final, "- CP4.eps"), plot = CP4.plot, width = 4, height = 4, scale = 1)
   ggsave(file = paste(Save.final, "- CP4-IO.eps"), plot = CP4IO.plot, width = 4, height = 4, scale = 1)
 }

@@ -1,6 +1,6 @@
 ##################################################
 # functions for graphing with custom error bars
-# Jonathan Whiteley     R v2.12     2011-10-05
+# Jonathan Whiteley     R v2.12     2012-10-21
 ##################################################
 ## access these functions in another file by using: 
 ## 	source("path/to/this/file.R")
@@ -404,4 +404,76 @@ picture_axis <- function (pics, icon.size = unit(1, "lines"), ...) {
            height = icon.size)
     }
 )}
+
+
+##==============================================================
+## glmutli functions for processing and graphing results
+
+getCoef.glmulti <- function(glmObj, minImportance=0) 
+{   # extract coefficient terms from a glmulti object: assumes a coef() method exists for the model fitting function
+  glm.coef <- as.data.frame(coef(glmObj))
+  ## from coef: these are weights of model *coefficients*, NOT *model terms*...
+  ## I think I want weights of model terms (variables, rather than levels of each factor)
+  ## ggplot will order the bars by levels of the explanatory factor
+  glm.coef$Term <- factor(row.names(glm.coef), levels=unique(row.names(glm.coef))) 
+  glm.order <- order(glm.coef$Importance, decreasing=TRUE)
+  ## glm.coef$Term <- factor(glm.coef$Term, levels=levels(glm.coef$Term)[glm.order])
+  ## Drop terms below the threshold
+  glm.minImp <- which(glm.coef$Importance >= minImportance)
+  glm.coef <- glm.coef[glm.minImp, ]
+  ## facilitate confidence intervals on Estimates
+  glm.coef$Emax <- glm.coef$Estimate + glm.coef[, "+/- (alpha=0.05)"]
+  glm.coef$Emin <- glm.coef$Estimate - glm.coef[, "+/- (alpha=0.05)"]
+  ## may need to clean term labels for final graphing / output
+  glm.coef
+}
+
+importance.glmulti <- function(x) 
+{   # collect importances (see plot.glmulti( type="s" )
+  ww = exp(-(x@crits - x@crits[1])/2)
+  ww = ww/sum(ww)
+  clartou = function(x) {
+    pieces <- sort(strsplit(x, ":")[[1]])
+    if (length(pieces) > 1) 
+      paste(pieces[1], ":", pieces[2], sep = "")
+    else x
+  }
+  tet = lapply(x@formulas, function(x) sapply(attr(delete.response(terms(x)), 
+                                                   "term.labels"), clartou))
+  allt <- unique(unlist(tet))
+  imp <- sapply(allt, function(x) sum(ww[sapply(tet, function(t) x %in% t)]))
+  allt <- term.labels(allt)
+  order.imp <- order(imp)
+  glm.imp <- data.frame(Term=allt[order.imp], Importance=imp[order.imp], stringsAsFactors=F)
+  glm.imp$Term <- factor(glm.imp$Term, levels=glm.imp$Term) # sorted levels?
+  glm.imp
+}
+
+bar.import <- function(glm.imp, imp.line=0.8) 
+{   # horizontal bar graph of importance of model terms from glmulti
+  ##     glm.imp <- importance.glmulti(glmObj)
+  ## include passed parameter, so the actual value is included in the ggplot call, not the variable name 
+  ## (ggplot functions build structures, they aren't evaluated until a print() call to actually draw the graph) :P
+  geom_impline <- eval(substitute( geom_hline(aes(yintercept = imp.line), colour="#000000", lty=3) )) 
+  ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
+  list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
+       scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
+       geom_impline,
+       opts(title = "Model-averaged importance of effects",
+            panel.border=theme_blank(), axis.line=theme_segment(),
+            plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")
+            )
+       )
+}
+
+est.confint <- function(glmObj) 
+{   # estimates and confidence interval of model coefficients from glmulti
+  ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
+  ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
+  ggplot(glmObj, aes(x=Term, y=Estimate) ) +
+  geom_hline(yintercept=0, colour="grey") + 
+  list(geom_point(),
+       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
+       coord_flip())
+}
 

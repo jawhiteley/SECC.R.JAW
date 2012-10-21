@@ -328,14 +328,18 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
 
   rm(ARA.glmulti1, ARA.glmulti2)         # save memory? not right away, but maybe eventually :(
 }
-## ggplot2: theme settings
-bar.import <- function(glm.imp) 
-{
+
+## ggplot2: theme settings - in jaw.graph_functions.R
+bar.import <- function(glm.imp, imp.line=0.8) 
+{   # horizontal bar graph of importance of model terms from glmulti
   ##     glm.imp <- importance.glmulti(glmObj)
+  ## include passed parameter, so the actual value is included in the ggplot call, not the variable name 
+  ## (ggplot functions build structures, they aren't evaluated until a print() call to actually draw the graph) :P
+  geom_impline <- eval(substitute( geom_hline(aes(yintercept = imp.line), colour="#000000", lty=3) )) 
   ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
   list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
        scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
-       geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
+       geom_impline,
        opts(title = "Model-averaged importance of effects",
             panel.border=theme_blank(), axis.line=theme_segment(),
             plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")
@@ -360,7 +364,7 @@ print(ARA.importance1)
 print(ARA.est1)
 
 ## ALL model terms
-ARA.importance2 <- bar.import(ARA.imp2) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
+ARA.importance2 <- bar.import(ARA.imp2, imp.line = 0.5) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
 ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ] #  sharp jump from 0.2->0.3->0.99
 ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
 ARA.est2 <- est.confint(ARA.coef2plot) + jaw.ggplot() + 
@@ -676,7 +680,7 @@ SECCa <- within( SECCa,{
 Chamber.label <- attr(SECC, "labels")[["Chamber"]]
 ChamberPts  <- ggPts.SECC(Chamber.map, Chamber.label) 
 TopLegend   <- opts(legend.position = "top", legend.direction = "horizontal")
-## Axis Labels: could also use X.plotlab, and Y.plotlab, but this is older code :P
+## Axis Labels: could also use X.plotlab, and Y.plotlab, but this is older code - and I'm back-transforming :P
 ## X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*log[10](", attr(SECCa, "units")[X.col], ")", sep="")
 ## Y.label <- paste("\"", attr(SECCa, "labels")[Y.col], " \"*log[10](", attr(SECCa, "units")[Y.col], ")", sep="")
 X.label <- paste("\"", attr(SECCa, "labels")[X.col], " \"*(", attr(SECCa, "units")[X.col], ")", sep="")
@@ -833,13 +837,18 @@ ARA.H2O.plot <- ARA.H2O.plot +
                 facet_wrap(~ H2Obin9)
 
 ## Partial Regression graph
-ARA.part.plot <- ggplot(data=ARA.cb.df, aes(x=Cells, y=ARA)) +
+ARA.part.plot <- ggplot(data=as.data.frame(alog0(ARA.cb.df)), aes(x=Cells, y=ARA)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-                 xlab("Cyanobacteria Cell Density | others") + 
-                 ylab("Acetylene Reduction | others") 
+                 xlab( bquote(paste( bold("Residual "), .(attr(SECC, "labels")[[X.col]]), 
+                                    " ", (.(attr(SECC, "units")[[X.col]])), "" ))   # different parens in text vs. literal :/
+                 ) + 
+                 ylab( bquote(paste( bold("Residual "), .(attr(SECC, "labels")[[Y.col]]), 
+                                    " ", (.(attr(SECC, "units")[[Y.col]])), "" )) 
+                 ) 
 ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#990000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
+ARA.part.plot <- ARA.part.plot + scale_y_log10() + scale_x_log10()
 
 Save.plot.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {

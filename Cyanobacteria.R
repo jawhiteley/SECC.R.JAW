@@ -155,9 +155,19 @@ CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
+## Same plot with internal legend, for Oecologia
+CxP.legend <- CxP.plot + 
+                opts(legend.position = c(0.54, 0.7),  # position legend inside main graph (for export dimensions)
+                     legend.text = theme_text(size = 10),
+                     legend.key.size = unit(1.5, "lines"),
+                     legend.title = theme_blank()
+                )
+                # opts(legend.position = "none")
+print(CxP.legend)
 
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 4, scale = 1)
+  ggsave(file = paste(Save.final, "- CPL.eps"), plot = CxP.legend, width = 6, height = 4, scale = 1) # for Oecologia
 }
