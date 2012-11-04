@@ -155,7 +155,7 @@ SECCclean <- function(data=NULL,
                       Time.lvls     = 1:3,
                       Chamber.lvls  = c("A", "B", "C"),
                       Frag.lvls     = 1:4,
-                      Position.lvls = c("Inner", "other", "Outer")
+                      Position.lvls = c("Inner", "intermediate", "Outer")
                       )
 {
   ## clean empty and unused data from SECC data frame
