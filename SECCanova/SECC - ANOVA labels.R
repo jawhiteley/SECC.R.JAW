@@ -1,7 +1,7 @@
 ##################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Default labels for standardized SECC Nested ANOVA
-### Jonathan Whiteley     R v2.12     2011-03-26
+### Jonathan Whiteley     R v2.12     2012-11-04
 ##################################################
 
 Y.plotlab <- bquote( .(Y.label) * "  (" * .(Y.units) *  ")" )
@@ -59,7 +59,7 @@ if ( !file.exists("hexagon.eps.xml") & !file.exists("Frag-Black-icons.eps.xml") 
 FragIcons   <- readPicture("Frag-Black-icons.eps.xml")
 Hex         <- readPicture("hexagon.eps.xml")
 setwd("..")
-FragIcon1 <- FragIcons[49:50]          # 1. Continuous 
+FragIcon1 <- FragIcons[49:50]          # 1. Contiguous 
 FragIcon2 <- FragIcons[29:48]          # 2. Corridors
 FragIcon3 <- FragIcons[ 9:28]          # 3. Pseudo-corridors
 FragIcon4 <- FragIcons[ 1:8 ]          # 4. Isolated

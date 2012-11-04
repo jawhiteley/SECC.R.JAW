@@ -7,7 +7,7 @@ fragIcons <- readPicture("Frag-Black-icons.eps.xml")
 Hex <- PostScriptTrace("hexagon.eps")
 Hex <- readPicture("hexagon.eps.xml")
 setwd("..")
-FragIcon1 <- fragIcons[49:50]          # 1. Continuous 
+FragIcon1 <- fragIcons[49:50]          # 1. Contiguous 
 FragIcon2 <- fragIcons[29:48]          # 2. Corridors
 FragIcon3 <- fragIcons[ 9:28]          # 3. Pseudo-corridors
 FragIcon4 <- fragIcons[ 1:8 ]          # 4. Isolated
@@ -23,7 +23,7 @@ if (FALSE)
   grid.picture(fragIcons[1:8])           # 4. Isolated
   grid.picture(fragIcons[9:28])          # 3. Pseudo-corridors
   grid.picture(fragIcons[29:48])         # 2. Corridors
-  grid.picture(fragIcons[49:50])         # 1. Continuous
+  grid.picture(fragIcons[49:50])         # 1. Contiguous
 }
 
 plot.new()

@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # standard functions used in most analyses
-# Jonathan Whiteley      R v2.12      2011-03-28
+# Jonathan Whiteley      R v2.12      2012-11-04
 ##################################################
 ## access these functions in another file by using: 
 ## 	 source("path/to/this/file.R")
@@ -398,7 +398,7 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
                  lty = c(1, 2, 3, 3),
                  stringsAsFactors = FALSE
                  )
-    ## 1) Continuous         = black, filled circles with solid line ; 
+    ## 1) Contiguous         = black, filled circles with solid line ; 
     ## 2) Full Corridors     =  grey, filled squares with dashed line ; 
     ## 3) Pseudo-Corridors   =  blue, open squares with dotted line.
     ## 4) Isolated           =   red, open circles with dotted line.
@@ -495,7 +495,7 @@ SECCicons <- function()
   Hex <- PostScriptTrace("hexagon.eps")
   Hex <- readPicture("hexagon.eps.xml")
   setwd("..")
-  FragIcon1 <- FragIcons[49:50]        # 1. Continuous 
+  FragIcon1 <- FragIcons[49:50]        # 1. Contiguous 
   FragIcon2 <- FragIcons[29:48]        # 2. Corridors
   FragIcon3 <- FragIcons[ 9:28]        # 3. Pseudo-corridors
   FragIcon4 <- FragIcons[ 1:8 ]        # 4. Isolated
