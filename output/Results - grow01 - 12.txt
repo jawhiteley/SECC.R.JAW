@@ -2,10 +2,10 @@ Nested ANOVA Results for: Moss growth  0-12 months ( grow01 )
 Transformation used:      Y 
 Expt. Time:    t3, t4 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 11:32:19 2012
+Sun Nov  4 13:18:09 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    55   0.39866  0.7545
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 11:32:30 2012
+% Sun Nov  4 13:18:23 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -91,14 +91,14 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient         6.23500         4.5425         5.734369  6.68125
   Full Chamber    5.85625         5.9325         6.595000  5.49250
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient         6.21750         5.5950             5.75  6.84875
   Full Chamber    1.63875         0.8025             0.16  1.71125
 

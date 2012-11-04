@@ -2,10 +2,10 @@ Nested ANOVA Results for:  ( Decompositng )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 11:37:54 2012
+Sun Nov  4 13:24:37 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    56  0.39868  0.7545
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 11:38:04 2012
+% Sun Nov  4 13:24:50 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -55,12 +55,12 @@ Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
 
 Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
-Full Chamber.Inner - Ambient.Inner == 0         1.798     10.460   0.172   0.9980    
-Ambient.Outer - Ambient.Inner == 0              6.140      6.347   0.967   0.7533    
-Full Chamber.Outer - Ambient.Inner == 0       -23.725     10.460  -2.268   0.0966 .  
-Ambient.Outer - Full Chamber.Inner == 0         4.342     10.460   0.415   0.9739    
+Full Chamber.Inner - Ambient.Inner == 0         1.798     10.460   0.172    0.998    
+Ambient.Outer - Ambient.Inner == 0              6.140      6.347   0.967    0.753    
+Full Chamber.Outer - Ambient.Inner == 0       -23.725     10.460  -2.268    0.096 .  
+Ambient.Outer - Full Chamber.Inner == 0         4.342     10.460   0.415    0.974    
 Full Chamber.Outer - Full Chamber.Inner == 0  -25.524      6.347  -4.021   <0.001 ***
-Full Chamber.Outer - Ambient.Outer == 0       -29.866     10.460  -2.855   0.0199 *  
+Full Chamber.Outer - Ambient.Outer == 0       -29.866     10.460  -2.855    0.020 *  
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
@@ -75,10 +75,10 @@ Fit: lme.formula(fixed = Y.trans ~ Chamber * Position, data = SECCp,
 
 Linear Hypotheses:
                         Estimate Std. Error z value Pr(>|z|)    
-Ambient:Inner == 0        50.867      7.395   6.878   <0.001 ***
-Full Chamber:Inner == 0   52.665      7.395   7.122   <0.001 ***
-Ambient:Outer == 0        57.007      7.395   7.709   <0.001 ***
-Full Chamber:Outer == 0   27.141      7.395   3.670   <0.001 ***
+Ambient:Inner == 0        50.867      7.395   6.878  < 1e-04 ***
+Full Chamber:Inner == 0   52.665      7.395   7.122  < 1e-04 ***
+Ambient:Outer == 0        57.007      7.395   7.709  < 1e-04 ***
+Full Chamber:Outer == 0   27.141      7.395   3.670  0.00101 ** 
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
@@ -91,14 +91,14 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        64.63582       47.61594         44.11345 47.10222
   Full Chamber   70.81124       39.90429         49.39199 50.55244
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        76.19466       47.62807         53.05307 51.15279
   Full Chamber   44.53329       12.20027         14.74756 37.08480
 

@@ -2,10 +2,10 @@ Nested ANOVA Results for: Moss Biomass Production
 Transformation used:      Y 
 Expt. Time:    t3, t4 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 11:36:48 2012
+Sun Nov  4 13:23:25 2012
 
 ================================================================
                       numDF denDF   F-value p-value
@@ -26,7 +26,7 @@ Chamber:Position:Year     1   106  11.15488  0.0012
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 11:36:48 2012
+% Sun Nov  4 13:23:25 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -68,24 +68,24 @@ Full Chamber.Inner.1 - Ambient.Inner.1 == 0       0.03721    0.31672   0.117  1.
 Ambient.Outer.1 - Ambient.Inner.1 == 0            0.08702    0.31341   0.278  0.99999    
 Full Chamber.Outer.1 - Ambient.Inner.1 == 0      -1.64066    0.31672  -5.180  < 0.001 ***
 Ambient.Inner.2 - Ambient.Inner.1 == 0            1.03153    0.24990   4.128  < 0.001 ***
-Full Chamber.Inner.2 - Ambient.Inner.1 == 0       1.05499    0.32337   3.262  0.02353 *  
-Ambient.Outer.2 - Ambient.Inner.1 == 0            1.23629    0.32532   3.800  0.00348 ** 
+Full Chamber.Inner.2 - Ambient.Inner.1 == 0       1.05499    0.32337   3.262  0.02376 *  
+Ambient.Outer.2 - Ambient.Inner.1 == 0            1.23629    0.32532   3.800  0.00330 ** 
 Full Chamber.Outer.2 - Ambient.Inner.1 == 0      -2.21719    0.31882  -6.954  < 0.001 ***
 Ambient.Outer.1 - Full Chamber.Inner.1 == 0       0.04981    0.31462   0.158  1.00000    
 Full Chamber.Outer.1 - Full Chamber.Inner.1 == 0 -1.67787    0.31129  -5.390  < 0.001 ***
-Ambient.Inner.2 - Full Chamber.Inner.1 == 0       0.99432    0.31895   3.118  0.03711 *  
-Full Chamber.Inner.2 - Full Chamber.Inner.1 == 0  1.01778    0.25009   4.070  0.00121 ** 
-Ambient.Outer.2 - Full Chamber.Inner.1 == 0       1.19908    0.32645   3.673  0.00553 ** 
+Ambient.Inner.2 - Full Chamber.Inner.1 == 0       0.99432    0.31895   3.118  0.03698 *  
+Full Chamber.Inner.2 - Full Chamber.Inner.1 == 0  1.01778    0.25009   4.070  0.00112 ** 
+Ambient.Outer.2 - Full Chamber.Inner.1 == 0       1.19908    0.32645   3.673  0.00575 ** 
 Full Chamber.Outer.2 - Full Chamber.Inner.1 == 0 -2.25440    0.31341  -7.193  < 0.001 ***
 Full Chamber.Outer.1 - Ambient.Outer.1 == 0      -1.72768    0.31462  -5.491  < 0.001 ***
-Ambient.Inner.2 - Ambient.Outer.1 == 0            0.94451    0.31566   2.992  0.05372 .  
-Full Chamber.Inner.2 - Ambient.Outer.1 == 0       0.96797    0.32130   3.013  0.05069 .  
+Ambient.Inner.2 - Ambient.Outer.1 == 0            0.94451    0.31566   2.992  0.05346 .  
+Full Chamber.Inner.2 - Ambient.Outer.1 == 0       0.96797    0.32130   3.013  0.05078 .  
 Ambient.Outer.2 - Ambient.Outer.1 == 0            1.14927    0.25668   4.477  < 0.001 ***
 Full Chamber.Outer.2 - Ambient.Outer.1 == 0      -2.30421    0.31672  -7.275  < 0.001 ***
 Ambient.Inner.2 - Full Chamber.Outer.1 == 0       2.67220    0.31895   8.378  < 0.001 ***
 Full Chamber.Inner.2 - Full Chamber.Outer.1 == 0  2.69565    0.31804   8.476  < 0.001 ***
 Ambient.Outer.2 - Full Chamber.Outer.1 == 0       2.87695    0.32645   8.813  < 0.001 ***
-Full Chamber.Outer.2 - Full Chamber.Outer.1 == 0 -0.57653    0.24419  -2.361  0.25189    
+Full Chamber.Outer.2 - Full Chamber.Outer.1 == 0 -0.57653    0.24419  -2.361  0.25190    
 Full Chamber.Inner.2 - Ambient.Inner.2 == 0       0.02346    0.32553   0.072  1.00000    
 Ambient.Outer.2 - Ambient.Inner.2 == 0            0.20475    0.32741   0.625  0.99841    
 Full Chamber.Outer.2 - Ambient.Inner.2 == 0      -3.24872    0.32099 -10.121  < 0.001 ***
@@ -106,14 +106,14 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        2.666555       2.175836         2.305969 3.096365
   Full Chamber   2.391389       2.656027         2.585486 2.732466
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors    Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors    Isolated
   Ambient       2.7516667     2.61832878      2.427842577  2.99555778
   Full Chamber  0.6973767    -0.07744227     -0.006482717 -0.02151834
 
@@ -122,14 +122,14 @@ Chamber        Continuous Full Corridors Pseudo-Corridors    Isolated
 , , Year = 1
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        2.129664       1.808405         1.959897 2.545160
   Full Chamber   1.287404       1.187911         1.201464 1.384304
 
 , , Year = 2
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        3.338083       3.036074         2.808702 3.589567
   Full Chamber   1.823327       1.399338         1.385064 1.324180
 

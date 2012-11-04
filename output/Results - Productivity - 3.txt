@@ -2,10 +2,10 @@ Nested ANOVA Results for:  ( Productivity )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 11:37:41 2012
+Sun Nov  4 13:24:22 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -24,7 +24,7 @@ Chamber:Frag:Position     3    43   2.89987  0.0458
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 11:37:53 2012
+% Sun Nov  4 13:24:36 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -91,14 +91,14 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient        235.2542       113.5664         128.9554 152.7849
   Full Chamber   131.0776       133.9332         135.9982 170.6883
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors  Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors  Isolated
   Ambient        164.4692      136.67577       127.410122 187.33126
   Full Chamber    31.7977      -30.10709        -0.969925 -48.01379
 

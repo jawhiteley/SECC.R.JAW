@@ -2,10 +2,10 @@ Nested ANOVA Results for: Moss growth 12-24 months ( grow13 )
 Transformation used:      Y 
 Expt. Time:    t3, t4 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 11:33:32 2012
+Sun Nov  4 13:19:33 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -32,7 +32,7 @@ Time:Chamber:Frag:Position     3    98   0.74191  0.5296
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 11:34:01 2012
+% Sun Nov  4 13:20:05 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -73,10 +73,10 @@ Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
 Full Chamber.Inner - Ambient.Inner == 0        0.3891     0.8144   0.478    0.964    
 Ambient.Outer - Ambient.Inner == 0             0.1343     0.8127   0.165    0.998    
-Full Chamber.Outer - Ambient.Inner == 0       -8.4563     0.8111 -10.425   <1e-05 ***
+Full Chamber.Outer - Ambient.Inner == 0       -8.4563     0.8111 -10.425   <1e-04 ***
 Ambient.Outer - Full Chamber.Inner == 0       -0.2549     0.8318  -0.306    0.990    
-Full Chamber.Outer - Full Chamber.Inner == 0  -8.8454     0.7989 -11.072   <1e-05 ***
-Full Chamber.Outer - Ambient.Outer == 0       -8.5905     0.8283 -10.372   <1e-05 ***
+Full Chamber.Outer - Full Chamber.Inner == 0  -8.8454     0.7989 -11.072   <1e-04 ***
+Full Chamber.Outer - Ambient.Outer == 0       -8.5905     0.8283 -10.372   <1e-04 ***
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 (Adjusted p values reported -- single-step method)
@@ -104,7 +104,7 @@ Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’
  model: Y.trans ~ Time * Chamber * Frag * Position
 
  Time*Chamber*Frag*Position effect
-, , Frag = Continuous, Position = Inner
+, , Frag = Contiguous, Position = Inner
 
     Chamber
 Time  Ambient Full Chamber
@@ -132,7 +132,7 @@ Time  Ambient Full Chamber
   t3 10.08500      7.23875
   t4 10.46469     10.30629
 
-, , Frag = Continuous, Position = Outer
+, , Frag = Contiguous, Position = Outer
 
     Chamber
 Time  Ambient Full Chamber

@@ -2,10 +2,10 @@ Nested ANOVA Results for: Decomposition ( Decomp.asq )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 10:51:56 2012
+Sun Nov  4 13:23:37 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -42,7 +42,7 @@ Residuals             56 0.294458 0.005258
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 10:51:57 2012
+% Sun Nov  4 13:23:39 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -78,7 +78,7 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
           0.3279           0.2948           0.3015           0.3274 
 
  Position 
@@ -88,7 +88,7 @@ Position
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      0.3634     0.3402         0.3378           0.3510  
   Full Chamber 0.2925     0.2494         0.2653           0.3038  
 
@@ -101,7 +101,7 @@ Chamber        Inner  Outer
  Frag:Position 
                   Position
 Frag               Inner  Outer 
-  Continuous       0.3414 0.3144
+  Contiguous       0.3414 0.3144
   Full Corridors   0.3411 0.2486
   Pseudo-Corridors 0.3320 0.2711
   Isolated         0.3557 0.2991
@@ -110,14 +110,14 @@ Frag               Inner  Outer
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      0.3512     0.3551         0.3229           0.3444  
   Full Chamber 0.3316     0.3271         0.3411           0.3670  
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      0.3755     0.3254         0.3527           0.3577  
   Full Chamber 0.2534     0.1718         0.1895           0.2405  
 
@@ -166,12 +166,12 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
           0.3279           0.2948           0.3015           0.3274 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      0.3634     0.3402         0.3378           0.3510  
   Full Chamber 0.2925     0.2494         0.2653           0.3038  
 
