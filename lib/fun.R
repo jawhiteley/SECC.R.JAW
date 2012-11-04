@@ -338,7 +338,7 @@ recodeSECC <- function(data=NULL) {
     ## Rename Fragmentation codes
     Frag     <- factor(Frag,
                        levels = 1:4,
-                       labels = c("Continuous", "Full Corridors",   # Continuous / Contiguous ?
+                       labels = c("Contiguous", "Full Corridors",   # Continuous / Contiguous ?
                                   "Pseudo-Corridors", "Isolated")
                        )
     ## Recode Time to approximate dates: replace t3 with NA, since it has no date (yet)
@@ -352,8 +352,8 @@ recodeSECC <- function(data=NULL) {
      # otherwise converts to 'NA'.
      # Requires package 'car'
     Position <- recode(Pos, 
-                       "'I'='Inner'; 'O'='Outer'; else='other'", 
-                       levels=c( "Inner", "other", "Outer" ),
+                       "'I'='Inner'; 'O'='Outer'; else='intermediate'", 
+                       levels=c( "Inner", "intermediate", "Outer" ),
                        as.factor.result=TRUE
                        )
   })
