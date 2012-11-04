@@ -3,7 +3,7 @@
 ### Data Exploration
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2011-11-02
+### Jonathan Whiteley     R v2.12     2012-10-28
 ################################################################
 ## INITIALISE
 ################################################################
@@ -164,6 +164,7 @@ Spp.lines <- list(stat_smooth(aes(y=Stigonema, linetype="Stigonema"),
                               method="gam", se=FALSE)
                   )
 
+Cyano_scaleName <- "Genus"
 if (F) {                               # using melted df & group variable?
   Cells.df <- melt(SECCa, id=c("SampleID", "Cells"), 
                    measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
@@ -179,22 +180,22 @@ if (F) {                               # using melted df & group variable?
                                      shape=variable, colour=variable, size=variable) ) +
                       scale_x_continuous(expand=c(0.01,0)) + 
                       scale_y_continuous(expand=c(0.01,0)) +
-                   scale_colour_manual(name="Species", 
+                   scale_colour_manual(name=Cyano_scaleName, 
                                        values=structure(Spp.plotMap[, "col"], 
                                                         names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
-                   scale_size_manual(name="Species", 
+                   scale_size_manual(name=Cyano_scaleName, 
                                        values=structure(Spp.plotMap[, "size"], 
                                                         names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
-                   scale_shape_manual(name="Species", 
+                   scale_shape_manual(name=Cyano_scaleName, 
                                        values=structure(Spp.plotMap[, "shape"], 
                                                         names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
                                        labels=Spp.plotMap[, "Label"]) +
-                   scale_linetype_manual(name="Species", 
+                   scale_linetype_manual(name=Cyano_scaleName, 
                                        values=structure(Spp.plotMap[, "lty"], 
                                                         names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
@@ -211,22 +212,22 @@ Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
                 xlab(Cells.axlab) + ylab(Cells.units) +
                 scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                 scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
-                scale_colour_manual(name="Species",
+                scale_colour_manual(name=Cyano_scaleName,
                                     values=structure(Spp.plotMap[, "col"], 
                                                      names=Spp.plotMap$Var), 
                                     breaks=Spp.plotMap[, "Var"], 
                                     labels=Spp.plotMap[, "Label"]) +
-                 scale_shape_manual(name="Species",
+                 scale_shape_manual(name=Cyano_scaleName,
                                     values=structure(Spp.plotMap[, "shape"], 
                                                      names=Spp.plotMap$Var), 
                                     breaks=Spp.plotMap[, "Var"], 
                                     labels=Spp.plotMap[, "Label"]) +
-                 scale_size_manual(name="Species",
+                 scale_size_manual(name=Cyano_scaleName,
                                    values=structure(Spp.plotMap[, "size"], 
                                                     names=Spp.plotMap$Var), 
                                    breaks=Spp.plotMap[, "Var"], 
                                    labels=Spp.plotMap[, "Label"]) +
-                 scale_linetype_manual(name="Species",
+                 scale_linetype_manual(name=Cyano_scaleName,
                                        values=structure(Spp.plotMap[, "lty"], 
                                                         names=Spp.plotMap$Var), 
                                        breaks=Spp.plotMap[, "Var"], 
@@ -294,17 +295,17 @@ geom_point(aes(y=Stigonema.H, colour="Stigonema",
                    xlab(Cells.axlab) + ylab(HCells.axlab) +
                    scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                    scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
-                   scale_shape_manual(name="Species",
+                   scale_shape_manual(name=Cyano_scaleName,
                                       values=structure(Hcells.plotMap[, "shape"], 
                                                        names=Hcells.plotMap$Var), 
                                       breaks=Hcells.plotMap[, "Var"], 
                                       labels=Hcells.plotMap[, "Label"]) +
-                   scale_colour_manual(name="Species",
+                   scale_colour_manual(name=Cyano_scaleName,
                                        values=structure(Hcells.plotMap[, "col"], 
                                                         names=Hcells.plotMap$Var), 
                                        breaks=Hcells.plotMap[, "Var"], 
                                        labels=Hcells.plotMap[, "Label"]) +
-                   scale_size_manual(name="Species",
+                   scale_size_manual(name=Cyano_scaleName,
                                      values=structure(Hcells.plotMap[, "size"], 
                                                       names=Hcells.plotMap$Var), 
                                      breaks=Hcells.plotMap[, "Var"], 
