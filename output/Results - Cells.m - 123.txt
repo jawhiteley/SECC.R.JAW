@@ -2,10 +2,10 @@ Nested ANOVA Results for: Cyanobacteria Cell Density ( Cells.m )
 Transformation used:      Y.4rt 
 Expt. Time:    12 months, 22 months, 24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Oct 21 15:30:20 2012
+Sun Nov  4 11:30:47 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -52,7 +52,7 @@ Residuals                  168 696412  4145.3
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Oct 21 15:30:23 2012
+% Sun Nov  4 11:30:50 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -102,7 +102,7 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
           110.80           120.14           125.15           109.53 
 
  Position 
@@ -119,14 +119,14 @@ Time        Ambient Full Chamber
 
  Time:Frag 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months 102.58     126.92         119.64           124.98  
   22 months 122.79      98.64         116.14            84.27  
   24 months 107.02     134.88         139.66           119.33  
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       94.13     108.71         113.73           104.92  
   Full Chamber 127.46     131.58         136.56           114.13  
 
@@ -146,13 +146,13 @@ Chamber        Inner  Outer
  Frag:Position 
                   Position
 Frag               Inner  Outer 
-  Continuous       113.09 108.51
+  Contiguous       113.09 108.51
   Full Corridors   125.60 114.69
   Pseudo-Corridors 138.46 111.83
   Isolated         108.64 110.41
 
  Time:Chamber:Frag 
-, , Frag = Continuous
+, , Frag = Contiguous
 
            Chamber
 Time        Ambient Full Chamber
@@ -207,7 +207,7 @@ Time        Ambient Full Chamber
 , , Position = Inner
 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months 116.17     131.09         124.04           140.45  
   22 months 130.70      96.47         138.60            71.95  
   24 months  92.39     149.23         152.74           113.53  
@@ -215,7 +215,7 @@ Time        Continuous Full Corridors Pseudo-Corridors Isolated
 , , Position = Outer
 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  88.99     122.74         115.23           109.51  
   22 months 114.87     100.82          93.69            96.60  
   24 months 121.66     120.52         126.58           125.13  
@@ -225,20 +225,20 @@ Time        Continuous Full Corridors Pseudo-Corridors Isolated
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       91.65     117.23         123.93           104.96  
   Full Chamber 134.52     133.96         152.99           112.32  
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       96.62     100.18         103.54           104.88  
   Full Chamber 120.40     129.20         120.13           115.94  
 
 
  Time:Chamber:Frag:Position 
-, , Frag = Continuous, Position = Inner
+, , Frag = Contiguous, Position = Inner
 
            Chamber
 Time        Ambient Full Chamber
@@ -270,7 +270,7 @@ Time        Ambient Full Chamber
   22 months  83.96   59.94      
   24 months  89.55  137.52      
 
-, , Frag = Continuous, Position = Outer
+, , Frag = Contiguous, Position = Outer
 
            Chamber
 Time        Ambient Full Chamber
@@ -364,7 +364,7 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
           128.22           135.17           141.65           130.33 
 
  Time:Chamber 
@@ -376,19 +376,19 @@ Time        Ambient Full Chamber
 
  Time:Frag 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months 123.51     140.70         132.31           138.80  
   22 months 137.62     116.82         140.47           107.02  
   24 months 123.53     148.00         152.17           145.18  
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      109.54     123.48         133.21           125.19  
   Full Chamber 146.90     146.87         150.09           135.48  
 
  Time:Chamber:Frag 
-, , Frag = Continuous
+, , Frag = Contiguous
 
            Chamber
 Time        Ambient Full Chamber

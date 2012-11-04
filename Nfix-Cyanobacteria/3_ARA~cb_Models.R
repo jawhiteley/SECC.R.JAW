@@ -3,7 +3,7 @@
 ### Modelling: GLMM (regression)
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2011-12-06
+### Jonathan Whiteley     R v2.12     2012-11-04
 ################################################################
 ## INITIALISE
 ################################################################
@@ -40,6 +40,7 @@ Y.pred <- expand.grid(Block    = levels(SECCa$Block) ,
                       X.trans  =seq(0, max(SECCa$X.trans), length.out=3 ),
                       H2O      =seq(0, max(SECCa$H2O), length.out=3 ) 
                       )
+## levels(Y.pred$Frag)[1] <- "Continuous" # glmulti models fitted using old level names - won't correct for old factor names in saved models :(
 
 
 

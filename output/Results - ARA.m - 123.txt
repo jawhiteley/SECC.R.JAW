@@ -2,10 +2,10 @@ Nested ANOVA Results for: Acetylene Reduction ( ARA.m )
 Transformation used:      Y.sqrt 
 Expt. Time:    12 months, 22 months, 24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, other, Outer 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, intermediate, Outer 
 
-Sun Oct 21 15:29:07 2012
+Sun Nov  4 11:30:26 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -54,7 +54,7 @@ Residuals                  336 6786.4   20.20
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Oct 21 15:29:11 2012
+% Sun Nov  4 11:30:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -104,13 +104,13 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            6.337            7.818            7.783            7.164 
 
  Position 
 Position
-Inner other Outer 
-9.651 7.870 4.306 
+       Inner intermediate        Outer 
+       9.651        7.870        4.306 
 
  Time:Chamber 
            Chamber
@@ -121,40 +121,40 @@ Time        Ambient Full Chamber
 
  Time:Frag 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  6.790      8.831          7.343            7.897  
   22 months  1.500      1.676          2.425            1.513  
   24 months 10.720     12.947         13.580           12.081  
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      7.242      9.813          9.460            8.750   
   Full Chamber 5.432      5.823          6.107            5.578   
 
  Time:Position 
            Position
-Time        Inner  other  Outer 
-  12 months  9.515  8.567  5.064
-  22 months  2.817  1.865  0.655
-  24 months 16.620 13.178  7.199
+Time        Inner  intermediate Outer 
+  12 months  9.515  8.567        5.064
+  22 months  2.817  1.865        0.655
+  24 months 16.620 13.178        7.199
 
  Chamber:Position 
               Position
-Chamber        Inner  other  Outer 
-  Ambient       8.960  9.568  7.920
-  Full Chamber 10.341  6.172  0.692
+Chamber        Inner  intermediate Outer 
+  Ambient       8.960  9.568        7.920
+  Full Chamber 10.341  6.172        0.692
 
  Frag:Position 
                   Position
-Frag               Inner  other  Outer 
-  Continuous        7.677  7.189  4.144
-  Full Corridors   10.902  8.384  4.169
-  Pseudo-Corridors 10.676  7.978  4.695
-  Isolated          9.347  7.928  4.217
+Frag               Inner  intermediate Outer 
+  Contiguous        7.677  7.189        4.144
+  Full Corridors   10.902  8.384        4.169
+  Pseudo-Corridors 10.676  7.978        4.695
+  Isolated          9.347  7.928        4.217
 
  Time:Chamber:Frag 
-, , Frag = Continuous
+, , Frag = Contiguous
 
            Chamber
 Time        Ambient Full Chamber
@@ -196,7 +196,7 @@ Time        Ambient Full Chamber
   22 months  1.331   4.303      
   24 months 15.939  17.300      
 
-, , Position = other
+, , Position = intermediate
 
            Chamber
 Time        Ambient Full Chamber
@@ -217,15 +217,15 @@ Time        Ambient Full Chamber
 , , Position = Inner
 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  7.501     10.628         10.413            9.519  
   22 months  2.805      2.886          3.626            1.951  
   24 months 12.726     19.192         17.990           16.571  
 
-, , Position = other
+, , Position = intermediate
 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  7.398      9.839          6.987           10.044  
   22 months  1.614      2.144          2.297            1.406  
   24 months 12.555     13.170         14.652           12.334  
@@ -233,7 +233,7 @@ Time        Continuous Full Corridors Pseudo-Corridors Isolated
 , , Position = Outer
 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  5.472      6.027          4.631            4.128  
   22 months  0.082      0.000          1.353            1.183  
   24 months  6.880      6.479          8.100            7.338  
@@ -243,27 +243,27 @@ Time        Continuous Full Corridors Pseudo-Corridors Isolated
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       7.095     10.782          9.591            8.373  
   Full Chamber  8.260     11.022         11.761           10.321  
 
-, , Position = other
+, , Position = intermediate
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       8.221     10.320          9.661           10.070  
   Full Chamber  6.157      6.448          6.296            5.785  
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       6.410      8.337          9.127            7.805  
   Full Chamber  1.879      0.000          0.263            0.628  
 
 
  Time:Chamber:Frag:Position 
-, , Frag = Continuous, Position = Inner
+, , Frag = Contiguous, Position = Inner
 
            Chamber
 Time        Ambient Full Chamber
@@ -295,7 +295,7 @@ Time        Ambient Full Chamber
   22 months  0.813   3.089      
   24 months 15.565  17.577      
 
-, , Frag = Continuous, Position = other
+, , Frag = Contiguous, Position = intermediate
 
            Chamber
 Time        Ambient Full Chamber
@@ -303,7 +303,7 @@ Time        Ambient Full Chamber
   22 months  1.128   2.101      
   24 months 14.645  10.466      
 
-, , Frag = Full Corridors, Position = other
+, , Frag = Full Corridors, Position = intermediate
 
            Chamber
 Time        Ambient Full Chamber
@@ -311,7 +311,7 @@ Time        Ambient Full Chamber
   22 months  1.222   3.065      
   24 months 17.944   8.395      
 
-, , Frag = Pseudo-Corridors, Position = other
+, , Frag = Pseudo-Corridors, Position = intermediate
 
            Chamber
 Time        Ambient Full Chamber
@@ -319,7 +319,7 @@ Time        Ambient Full Chamber
   22 months  1.621   2.972      
   24 months 17.913  11.391      
 
-, , Frag = Isolated, Position = other
+, , Frag = Isolated, Position = intermediate
 
            Chamber
 Time        Ambient Full Chamber
@@ -327,7 +327,7 @@ Time        Ambient Full Chamber
   22 months  1.551   1.260      
   24 months 16.403   8.266      
 
-, , Frag = Continuous, Position = Outer
+, , Frag = Contiguous, Position = Outer
 
            Chamber
 Time        Ambient Full Chamber
@@ -425,7 +425,7 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            7.317            9.065            8.970            8.408 
 
  Time:Chamber 
@@ -437,19 +437,19 @@ Time        Ambient Full Chamber
 
  Time:Frag 
            Frag
-Time        Continuous Full Corridors Pseudo-Corridors Isolated
+Time        Contiguous Full Corridors Pseudo-Corridors Isolated
   12 months  7.982     10.064          8.793            9.581  
   22 months  1.903      2.429          2.799            1.904  
   24 months 12.067     14.702         15.318           13.738  
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       8.096     10.431         10.069            9.513  
   Full Chamber  6.539      7.700          7.871            7.302  
 
  Time:Chamber:Frag 
-, , Frag = Continuous
+, , Frag = Contiguous
 
            Chamber
 Time        Ambient Full Chamber

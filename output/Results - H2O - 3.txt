@@ -2,10 +2,10 @@ Nested ANOVA Results for: Moisture ( H2O )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, other, Outer 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, intermediate, Outer 
 
-Sat Oct 27 16:38:30 2012
+Sun Nov  4 11:29:33 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -42,7 +42,7 @@ Residuals             112 1025455    9156
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sat Oct 27 16:38:32 2012
+% Sun Nov  4 11:29:35 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -78,53 +78,53 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            553.7            428.9            454.9            481.2 
 
  Position 
 Position
-Inner other Outer 
-584.8 499.5 354.8 
+       Inner intermediate        Outer 
+       584.8        499.5        354.8 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      586.1      521.4          537.8            592.3   
   Full Chamber 521.4      336.4          371.9            370.2   
 
  Chamber:Position 
               Position
-Chamber        Inner other Outer
-  Ambient      581.0 549.5 547.8
-  Full Chamber 588.7 449.5 161.7
+Chamber        Inner intermediate Outer
+  Ambient      581.0 549.5        547.8
+  Full Chamber 588.7 449.5        161.7
 
  Frag:Position 
                   Position
-Frag               Inner other Outer
-  Continuous       599.2 547.5 514.5
-  Full Corridors   552.8 460.1 273.9
-  Pseudo-Corridors 541.0 508.7 314.9
-  Isolated         646.3 481.6 315.8
+Frag               Inner intermediate Outer
+  Contiguous       599.2 547.5        514.5
+  Full Corridors   552.8 460.1        273.9
+  Pseudo-Corridors 541.0 508.7        314.9
+  Isolated         646.3 481.6        315.8
 
  Chamber:Frag:Position 
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      631.8      543.4          554.0            594.8   
   Full Chamber 566.7      562.1          528.1            697.8   
 
-, , Position = other
+, , Position = intermediate
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      560.6      515.6          546.3            575.4   
   Full Chamber 534.4      404.6          471.0            387.9   
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      565.9      505.2          513.2            606.8   
   Full Chamber 463.0       42.6          116.6             24.8   
 
@@ -173,12 +173,12 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            552.2            436.7            468.3            481.3 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient      579.7      519.9          540.0            588.1   
   Full Chamber 524.6      353.5          396.6            374.6   
 

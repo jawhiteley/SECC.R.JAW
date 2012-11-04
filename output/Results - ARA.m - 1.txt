@@ -2,10 +2,10 @@ Nested ANOVA Results for: Acetylene Reduction ( ARA.m )
 Transformation used:      Y.sqrt 
 Expt. Time:    12 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Pseudo-Corridors, Isolated 
-Patches:       Inner, other, Outer 
+Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
+Patches:       Inner, intermediate, Outer 
 
-Sun Oct 21 15:29:03 2012
+Sun Nov  4 11:30:22 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -40,7 +40,7 @@ Residuals             112 3327.0   29.71
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Oct 21 15:29:04 2012
+% Sun Nov  4 11:30:23 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -76,53 +76,53 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            6.790            8.831            7.343            7.897 
 
  Position 
 Position
-Inner other Outer 
-9.515 8.567 5.064 
+       Inner intermediate        Outer 
+       9.515        8.567        5.064 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       8.318     12.054          9.296            9.519  
   Full Chamber  5.262      5.608          5.391            6.275  
 
  Chamber:Position 
               Position
-Chamber        Inner  other  Outer 
-  Ambient       9.611 10.598  9.182
-  Full Chamber  9.419  6.536  0.947
+Chamber        Inner  intermediate Outer 
+  Ambient       9.611 10.598        9.182
+  Full Chamber  9.419  6.536        0.947
 
  Frag:Position 
                   Position
-Frag               Inner  other  Outer 
-  Continuous        7.501  7.398  5.472
-  Full Corridors   10.628  9.839  6.027
-  Pseudo-Corridors 10.413  6.987  4.631
-  Isolated          9.519 10.044  4.128
+Frag               Inner  intermediate Outer 
+  Contiguous        7.501  7.398        5.472
+  Full Corridors   10.628  9.839        6.027
+  Pseudo-Corridors 10.413  6.987        4.631
+  Isolated          9.519 10.044        4.128
 
  Chamber:Frag:Position 
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       8.211     12.313          9.179            8.741  
   Full Chamber  6.791      8.943         11.646           10.296  
 
-, , Position = other
+, , Position = intermediate
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       8.891     11.795          9.448           12.258  
   Full Chamber  5.905      7.883          4.525            7.830  
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       7.853     12.054          9.261            7.558  
   Full Chamber  3.090      0.000          0.000            0.698  
 
@@ -169,12 +169,12 @@ Chamber
 
  Frag 
 Frag
-      Continuous   Full Corridors Pseudo-Corridors         Isolated 
+      Contiguous   Full Corridors Pseudo-Corridors         Isolated 
            7.982           10.064            8.793            9.581 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Pseudo-Corridors Isolated
+Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
   Ambient       9.711     12.442         10.365           10.994  
   Full Chamber  6.252      7.686          7.222            8.169  
 
