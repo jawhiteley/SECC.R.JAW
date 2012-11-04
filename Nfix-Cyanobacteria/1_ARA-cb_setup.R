@@ -124,7 +124,7 @@ attr(SECC.use, "labels") <- attr(SECC, "labels")
 attr(SECC.use, "units" ) <- attr(SECC, "units" )
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
-## aggregate 'other' patch Positions?
+## aggregate 'intermediate' patch Positions?
 ##   unnecessary: only 'inner' & 'outer' included.
 SECCp  <- if (FALSE)  SECC_aggregate( SECC.use, trt = 'Position' )  else SECC.use
 

@@ -88,7 +88,7 @@ qqline( Nfix$ARA.trans )
 #########################
 ## MODELS
 #########################
-# with position as a 'fixed effect' (N,S,E,W recoded as 'other')
+# with position as a 'fixed effect' (N,S,E,W recoded as 'intermediate')
 ARA.model <- with( Nfix, ARA ~ Warming*Frag*pos1+Error(Block/Warming/Frag) )
 # ignoring effect of position: 'regional' effects only
 ARA.model2 <- with( Nfix, ARA ~ Warming*Frag+Error(Block/Warming/Frag) )
@@ -97,7 +97,7 @@ ARA.ln.model <- with( Nfix, ARA.ln ~ Warming*Frag*pos1+Error(Block/Warming/Frag)
 #########################
 ## ANALYSIS
 #########################
-## with position as a 'fixed effect' (N,S,E,W recoded as 'other')
+## with position as a 'fixed effect' (N,S,E,W recoded as 'intermediate')
 ARA.anova <- aov(ARA.ln.model)
 summary(ARA.anova)
 par(mfrow=c(2,2))	# panel of figures: 2 rows & 2 columns

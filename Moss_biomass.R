@@ -361,7 +361,7 @@ Narrow.mean   <- mean(Narrow.segments$dwt.mg, na.rm=TRUE)
 ##     - Block is implicit in the nearest neighbor criteria, and therefore unnecessary
 ##     - Chamber & Pos are important in some Blocks...
 ##     - Not sure I really have enough to judge if there is a Frag effect
-##       - When in doubt, prefer Continuous patches over Isolated (more crowded)?
+##       - When in doubt, prefer Contiguous patches over Isolated (more crowded)?
 ## - if "skinny" in notes:
 ##   - only use values for Narrow shoots (<1cm); 'skinny' shoots are often even skinnier!
 ##   - use half the average value (value / 2)?  Even this might be generous!
@@ -381,8 +381,8 @@ for (i in 1:nrow(Moss.mg))
   IDi <- Moss.mg[i, "SampleID"]
   iChamber <- Moss.mg[i, "Chamber"]
   iPos     <- if (iChamber=="A") "." else Moss.mg[i, "Pos"] # any Ambient patch will do
-  if (!(iPos %in% c("I", "O"))) iPos <- "." # No useable data for 'other' patches
-  ## currently match any closest patch for 'other' patches (not Inner or Outer)
+  if (!(iPos %in% c("I", "O"))) iPos <- "." # No useable data for 'intermediate' patches
+  ## currently match any closest patch for 'intermediate' patches (not Inner or Outer)
   ## - Ideally, I would average an equal number of Inner AND Outer patches,
   ##   But hopefully this is 'good enough'
   ## try for an exact match?

@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Template for basic analyses of experimental data
 ### Available Nitrogen: NH4, NO3, TAN  @ time 4
-### Jonathan Whiteley     R v2.12     2012-01-23
+### Jonathan Whiteley     R v2.12     2012-11-04
 ##################################################
 ## INITIALISE
 ##################################################
@@ -62,7 +62,7 @@ Time.use     <- levels(SECC$Time)[3]            # Time (index: 1-3) to include i
 Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
 Frag.use     <- levels(SECC$Frag)               # Frag treatments to include
 Position.use <- levels(SECC$Position)[c(1, 3)]           # Patch Positions to include
-## ion resin capsules were placed in "other" patches several months after "Inner" & "Outer" 
+## ion resin capsules were placed in "intermediate" patches several months after "Inner" & "Outer" 
 ##   patches, so they were deployed for a much shorter period
 ##   (see Ndays column).
 
@@ -101,11 +101,11 @@ source("./SECCanova/SECC - nested ANOVA.R", echo = FALSE)
 ## Note that Samples at different times are actually independent
 ## in this design, due to destructive sampling.
 ## For available N data, time is somewhat confounded with Position
-## - capsules in "other" patches were deployed only for the summer before
+## - capsules in "intermediate" patches were deployed only for the summer before
 ##   being collected with the rest.
 ## - see Ndays column for actual number of days each capsule was deployed.
 ## - It does appear that most of the adsorption happens in the summer 
-##   (other patches have much higher rates, but over a much shorter period of time)
+##   (intermediate patches have much higher rates, but over a much shorter period of time)
 
 if (FALSE)
 {
@@ -132,9 +132,9 @@ if (F)
   ARA.N <- qplot(y = log1p(ARA.m), x = log10(TAN), data = subset(SECCp, log10(TAN) < 0.2) )
   print(ARA.N)
   ## average incubation times (Ndays)
-  summary(SECC[SECC$Position!="other", "Ndays"])
-  summary(SECC[SECC$Position=="other", "Ndays"])
-  ## possible outlier (other) (but removing it unbalances the data - I don't think it's that influential)
+  summary(SECC[SECC$Position!="intermediate", "Ndays"])
+  summary(SECC[SECC$Position=="intermediate", "Ndays"])
+  ## possible outlier (intermediate) (but removing it unbalances the data - I don't think it's that influential)
   hist(SECC$TAN)
   hist(SECC$logTAN)
   TAN.order <- order(SECCp$TAN, decreasing = TRUE)
@@ -162,12 +162,12 @@ Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
 Position.map <- plotMap( factor = "Position", labels = levels(SECC$Position) )
 if (length(Position.use) == 3)
 {
-Position.map$label <- c("395d Inner", " 58d other", "395d Outer")
-Position.map$label <- c("Inner - 1 year", "other  - summer", "Outer - 1 year")
+Position.map$label <- c("395d Inner", " 58d intermediate", "395d Outer")
+Position.map$label <- c("Inner       - 1 year", "intermediate - summer", "Outer       - 1 year")
 }
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 Position.map <- Position.map[c(3, 1, 2), ]
-Position.map <- na.omit(Position.map)  # in case 'other' is omitted and there are only 2 levels
+Position.map <- na.omit(Position.map)  # in case 'intermediate' is omitted and there are only 2 levels
 
 
 ## data frame of plot values (for ggplot2).

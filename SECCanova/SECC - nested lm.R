@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Standard Nested modelling of experimental data (unbalanced data)
 ### Response Variable(s)  @ time #s
-### Jonathan Whiteley     R v2.12     2012-02-14
+### Jonathan Whiteley     R v2.12     2012-11-04
 ##################################################
 ##
 ##  This script is used to carry out standard
@@ -60,7 +60,7 @@ SECC.use <- within( SECC.use, {
 ## Meta-community (regional) -level analyses (ignoring position):
 SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
 
-## aggregate 'other' patch Positions
+## aggregate 'intermediate' patch Positions
 SECCp  <- SECC_aggregate( SECC.use, trt = 'Position' )
 
 
@@ -406,7 +406,7 @@ Chamber.map <- plotMap( factor = "Chamber", labels = levels(SECC$Chamber) )
 Chamber.map <- Chamber.map[ levels(SECC$Chamber) %in% Chamber.use, ]
 Frag.map <- plotMap( factor = "Frag", labels = levels(SECC$Frag) )
 Frag.map <- Frag.map[ levels(SECC$Frag) %in% Frag.use, ]
-Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- plotMap( factor = "Position", labels = c("Inner", "intermediate", "Outer") )
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 
 if (length(Time.use) > 1) {

@@ -58,7 +58,7 @@ SECC.use <- within( SECC.use, {
 ## Meta-community (regional) -level analyses (ignoring position):
 SECCmc <- SECC_aggregate( SECC.use, trt = 'Frag' )
 
-## aggregate 'other' patch Positions
+## aggregate 'intermediate' patch Positions
 SECCp  <- SECC_aggregate( SECC.use, trt = 'Position' )
 
 

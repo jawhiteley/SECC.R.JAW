@@ -1,7 +1,7 @@
 ################################################################
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Initialize, load & process data, configure analysis options
-### Jonathan Whiteley     R v2.12     2012-07-31
+### Jonathan Whiteley     R v2.12     2012-11-04
 ################################################################
 ## INITIALISE
 ################################################################
@@ -67,7 +67,7 @@ SECC <- within( SECC, {
   Climate <- gsub(".*Ambient", "Ambient", Climate)
   Climate <- gsub("(.*)Full Chamber", "\\1Chamber", Climate)
   Climate <- gsub("Inner Chamber", "Warm", Climate)
-  Climate <- gsub("other Chamber", "Warm + mod. dry", Climate)
+  Climate <- gsub("intermediate Chamber", "Warm + mod. dry", Climate)
   Climate <- gsub("Outer Chamber", "Warm + Dry", Climate)
   Climate <- factor(Climate)
 })
@@ -154,7 +154,7 @@ attr(SECC.use, "labels") <- attr(SECC, "labels")
 attr(SECC.use, "units" ) <- attr(SECC, "units" )
 
 ## Summarize data by means across different (or all) positions to prevent unbalanced effects?
-## aggregate 'other' patch Positions?
+## aggregate 'intermediate' patch Positions?
 ##   unnecessary: only 'inner' & 'outer' included.
 SECCp  <- if (FALSE)  SECC_aggregate( SECC.use, trt = 'Position' )  else SECC.use
 
