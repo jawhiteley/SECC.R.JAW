@@ -23,6 +23,6 @@ SECC.prime <- SECC    # save a copy of the original for reference.
 ## DO
 ## source("./SECC-Data-Template.R")    # Generate Template Data Frame & files.
 
-source("Fauna.R")                      # Multivariate analyses of community structure
+source("Fauna/Fauna.R")                      # Multivariate analyses of community structure
 ## source("Fauna-univariate.R")           # Nested ANOVA of biodiversity indices (included in above)
 

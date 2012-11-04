@@ -2,10 +2,10 @@ Nested ANOVA Results for: Morphospecies Richness ( Richness )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Isolated 
 Patches:        
 
-Sun Aug 12 12:41:02 2012
+Sun Nov  4 13:06:32 2012
 
 ================================================================
 
@@ -30,7 +30,7 @@ Frag          2 10.083  5.0417  1.4405 0.2750
 Chamber:Frag  2  5.250  2.6250  0.7500 0.4933
 Residuals    12 42.000  3.5000               
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:41:03 2012
+% Sun Nov  4 13:06:32 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -61,12 +61,12 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
         16.250         14.875         14.875 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      16.75      15.00          14.25   
   Full Chamber 15.75      14.75          15.50   
 

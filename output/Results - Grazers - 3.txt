@@ -2,10 +2,10 @@ Nested ANOVA Results for: Grazers (fungivorous Acari + Collembola) ( Grazers )
 Transformation used:      Y.sqrt 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 12:40:42 2012
+Sun Nov  4 13:06:11 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -38,7 +38,7 @@ Residuals             18 15.5940  0.8663
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:40:43 2012
+% Sun Nov  4 13:06:12 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -74,7 +74,7 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          2.856          3.307          3.019 
 
  Position 
@@ -84,7 +84,7 @@ Inner Outer
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      2.811      3.924          3.787   
   Full Chamber 2.901      2.689          2.252   
 
@@ -97,7 +97,7 @@ Chamber        Inner Outer
  Frag:Position 
                 Position
 Frag             Inner Outer
-  Continuous     2.296 3.416
+  Contiguous     2.296 3.416
   Full Corridors 3.647 2.966
   Isolated       3.777 2.262
 
@@ -105,14 +105,14 @@ Frag             Inner Outer
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      1.980      3.772          3.682   
   Full Chamber 2.611      3.521          3.873   
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      3.642      4.076          3.892   
   Full Chamber 3.191      1.857          0.632   
 
@@ -157,12 +157,12 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          3.012          3.425          3.305 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      3.018      3.932          3.830   
   Full Chamber 3.007      2.919          2.780   
 

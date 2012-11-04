@@ -1,5 +1,5 @@
 FAUNA results
- Sun Aug 12 12:44:30 2012 
+ Sun Nov  4 13:10:29 2012 
 
 
 ======== ANOVA results summary ========
@@ -22,7 +22,7 @@ Chamber:Fragmentation:Position   1.5405662  0.241216566  1.6541793 0.2190294775
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:44:30 2012
+% Sun Nov  4 13:10:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrrrrrrrr}
@@ -82,14 +82,14 @@ Sminthuridae_sp.3     0.10408271 0.01398210 0.03541076 0.01776830   Grazer
 
 ======== Species Occurence by Trt (presence/absence) ========
         Time      Chamber           Frag Position Sejina_sp. Uropodina_sp.1 Uropodina_sp.2
-1  24 months      Ambient     Continuous    Inner          0              1              1
-2  24 months Full Chamber     Continuous    Inner          0              1              1
+1  24 months      Ambient     Contiguous    Inner          0              1              1
+2  24 months Full Chamber     Contiguous    Inner          0              1              1
 3  24 months      Ambient Full Corridors    Inner          0              1              1
 4  24 months Full Chamber Full Corridors    Inner          0              1              1
 5  24 months      Ambient       Isolated    Inner          0              1              1
 6  24 months Full Chamber       Isolated    Inner          1              1              1
-7  24 months      Ambient     Continuous    Outer          0              1              1
-8  24 months Full Chamber     Continuous    Outer          0              1              1
+7  24 months      Ambient     Contiguous    Outer          0              1              1
+8  24 months Full Chamber     Contiguous    Outer          0              1              1
 9  24 months      Ambient Full Corridors    Outer          0              1              1
 10 24 months Full Chamber Full Corridors    Outer          0              0              1
 11 24 months      Ambient       Isolated    Outer          0              1              1
@@ -175,7 +175,7 @@ Sminthuridae_sp.3     0.10408271 0.01398210 0.03541076 0.01776830   Grazer
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:44:30 2012
+% Sun Nov  4 13:10:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rllllllllllll}
@@ -184,7 +184,7 @@ Sminthuridae_sp.3     0.10408271 0.01398210 0.03541076 0.01776830   Grazer
   \hline
 Time & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months \\ 
   Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber & Ambient & Full Chamber \\ 
-  Frag & Continuous & Continuous & Full Corridors & Full Corridors & Isolated & Isolated & Continuous & Continuous & Full Corridors & Full Corridors & Isolated & Isolated \\ 
+  Frag & Contiguous & Contiguous & Full Corridors & Full Corridors & Isolated & Isolated & Contiguous & Contiguous & Full Corridors & Full Corridors & Isolated & Isolated \\ 
   Position & Inner & Inner & Inner & Inner & Inner & Inner & Outer & Outer & Outer & Outer & Outer & Outer \\ 
   Sejina\_sp. & 0 & 0 & 0 & 0 & 0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ 
   Uropodina\_sp.1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 1 & 0 & 1 & 0 \\ 
@@ -236,59 +236,59 @@ Time & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 2
 
 ======== ANOSIM results ========
                      Groups      bray_.R bray_.p   bray_log.R bray_log.p euclidean_hell.R
-1                   Chamber  0.056222323   0.006  0.056222323      0.011      0.063550473
-2                       Pos  0.014278885   0.181  0.014278885      0.201      0.001679499
-3                      Frag -0.015856481   0.802 -0.015856481      0.772     -0.018938079
-4                  Frag:1x2 -0.004036458   0.484 -0.004036458      0.471      0.006835938
-5                  Frag:2x4 -0.016276042   0.689 -0.016276042      0.710     -0.025260417
-6                  Frag:1x4 -0.022005208   0.767 -0.022005208      0.754     -0.035123698
-7           Chamber:A x Pos -0.013994108   0.583 -0.013994108      0.582      0.007049663
-8          Chamber:A x Frag  0.079241071   0.048  0.079241071      0.043      0.119295635
-9           Chamber:C x Pos  0.163089226   0.007  0.163089226      0.007      0.135311448
-10         Chamber:C x Frag  0.062996032   0.103  0.062996032      0.096      0.047619048
-11             Pos:I x Frag  0.020461310   0.281  0.020461310      0.278      0.032986111
-12             Pos:O x Frag  0.019965278   0.277  0.019965278      0.281     -0.004216270
-13 Chamber:C x Pos:I x Frag -0.011574074   0.499 -0.011574074      0.516     -0.023148148
-14 Chamber:C x Pos:O x Frag  0.393518519   0.012  0.393518519      0.016      0.296296296
+1                   Chamber  0.056222323   0.016  0.056222323      0.012      0.063550473
+2                       Pos  0.014278885   0.189  0.014278885      0.179      0.001679499
+3                      Frag -0.015856481   0.788 -0.015856481      0.827     -0.018938079
+4                  Frag:1x2 -0.004036458   0.484 -0.004036458      0.479      0.006835938
+5                  Frag:2x4 -0.016276042   0.690 -0.016276042      0.654     -0.025260417
+6                  Frag:1x4 -0.022005208   0.774 -0.022005208      0.754     -0.035123698
+7           Chamber:A x Pos -0.013994108   0.580 -0.013994108      0.592      0.007049663
+8          Chamber:A x Frag  0.079241071   0.044  0.079241071      0.050      0.119295635
+9           Chamber:C x Pos  0.163089226   0.004  0.163089226      0.009      0.135311448
+10         Chamber:C x Frag  0.062996032   0.092  0.062996032      0.109      0.047619048
+11             Pos:I x Frag  0.020461310   0.284  0.020461310      0.259      0.032986111
+12             Pos:O x Frag  0.019965278   0.277  0.019965278      0.276     -0.004216270
+13 Chamber:C x Pos:I x Frag -0.011574074   0.510 -0.011574074      0.513     -0.023148148
+14 Chamber:C x Pos:O x Frag  0.393518519   0.011  0.393518519      0.013      0.296296296
    euclidean_hell.p euclidean_chord.R euclidean_chord.p jaccard_pa.R jaccard_pa.p
-1             0.038       0.063550473             0.030  0.056222323        0.011
-2             0.343       0.001679499             0.356  0.014278885        0.168
-3             0.737      -0.018938079             0.738 -0.015856481        0.795
-4             0.327       0.006835938             0.322 -0.004036458        0.478
-5             0.653      -0.025260417             0.677 -0.016276042        0.684
-6             0.878      -0.035123698             0.877 -0.022005208        0.764
-7             0.349       0.007049663             0.359 -0.013994108        0.585
-8             0.033       0.119295635             0.045  0.079241071        0.053
-9             0.033       0.135311448             0.030  0.163089226        0.012
-10            0.187       0.047619048             0.168  0.062996032        0.109
-11            0.243       0.032986111             0.252  0.020461310        0.254
-12            0.440      -0.004216270             0.441  0.019965278        0.271
-13            0.549      -0.023148148             0.533 -0.011574074        0.509
-14            0.017       0.296296296             0.024  0.393518519        0.011
+1             0.024       0.063550473             0.029  0.056222323        0.019
+2             0.375       0.001679499             0.386  0.014278885        0.199
+3             0.703      -0.018938079             0.732 -0.015856481        0.796
+4             0.361       0.006835938             0.320 -0.004036458        0.495
+5             0.667      -0.025260417             0.701 -0.016276042        0.673
+6             0.872      -0.035123698             0.856 -0.022005208        0.773
+7             0.348       0.007049663             0.338 -0.013994108        0.589
+8             0.035       0.119295635             0.041  0.079241071        0.048
+9             0.031       0.135311448             0.041  0.163089226        0.005
+10            0.182       0.047619048             0.155  0.062996032        0.089
+11            0.231       0.032986111             0.231  0.020461310        0.249
+12            0.442      -0.004216270             0.432  0.019965278        0.269
+13            0.581      -0.023148148             0.555 -0.011574074        0.488
+14            0.025       0.296296296             0.024  0.393518519        0.014
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:44:30 2012
+% Sun Nov  4 13:10:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rlrrr}
   \hline
  & Groups & bray\_.p & bray\_log.p & jaccard\_pa.p \\ 
   \hline
-1 & Chamber & 0.006 & 0.011 & 0.011 \\ 
-  2 & Pos & 0.181 & 0.201 & 0.168 \\ 
-  3 & Frag & 0.802 & 0.772 & 0.795 \\ 
-  4 & Frag:1x2 & 0.484 & 0.471 & 0.478 \\ 
-  5 & Frag:2x4 & 0.689 & 0.710 & 0.684 \\ 
-  6 & Frag:1x4 & 0.767 & 0.754 & 0.764 \\ 
-  7 & Chamber:A x Pos & 0.583 & 0.582 & 0.585 \\ 
-  8 & Chamber:A x Frag & 0.048 & 0.043 & 0.053 \\ 
-  9 & Chamber:C x Pos & 0.007 & 0.007 & 0.012 \\ 
-  10 & Chamber:C x Frag & 0.103 & 0.096 & 0.109 \\ 
-  11 & Pos:I x Frag & 0.281 & 0.278 & 0.254 \\ 
-  12 & Pos:O x Frag & 0.277 & 0.281 & 0.271 \\ 
-  13 & Chamber:C x Pos:I x Frag & 0.499 & 0.516 & 0.509 \\ 
-  14 & Chamber:C x Pos:O x Frag & 0.012 & 0.016 & 0.011 \\ 
+1 & Chamber & 0.016 & 0.012 & 0.019 \\ 
+  2 & Pos & 0.189 & 0.179 & 0.199 \\ 
+  3 & Frag & 0.788 & 0.827 & 0.796 \\ 
+  4 & Frag:1x2 & 0.484 & 0.479 & 0.495 \\ 
+  5 & Frag:2x4 & 0.690 & 0.654 & 0.673 \\ 
+  6 & Frag:1x4 & 0.774 & 0.754 & 0.773 \\ 
+  7 & Chamber:A x Pos & 0.580 & 0.592 & 0.589 \\ 
+  8 & Chamber:A x Frag & 0.044 & 0.050 & 0.048 \\ 
+  9 & Chamber:C x Pos & 0.004 & 0.009 & 0.005 \\ 
+  10 & Chamber:C x Frag & 0.092 & 0.109 & 0.089 \\ 
+  11 & Pos:I x Frag & 0.284 & 0.259 & 0.249 \\ 
+  12 & Pos:O x Frag & 0.277 & 0.276 & 0.269 \\ 
+  13 & Chamber:C x Pos:I x Frag & 0.510 & 0.513 & 0.488 \\ 
+  14 & Chamber:C x Pos:O x Frag & 0.011 & 0.013 & 0.014 \\ 
    \hline
 \end{tabular}
 \end{center}
@@ -302,19 +302,19 @@ Time & 24 months & 24 months & 24 months & 24 months & 24 months & 24 months & 2
 ***VECTORS
 
                   NMDS1     NMDS2     r2   Pr(>r)    
-H2O            0.988474 -0.151394 0.4588 0.000999 ***
-Patch.dwt      0.541947 -0.840413 0.0279 0.549451    
-Cells.g        0.300604  0.953749 0.0323 0.518482    
-Stigonema.g    0.250829  0.968031 0.0410 0.431568    
-Nostoc.g       0.156630 -0.987657 0.0485 0.309690    
-ARA.g          0.997164  0.075255 0.1332 0.059940 .  
-Decomposition  0.999148  0.041276 0.0850 0.162837    
-Prod01         0.713078 -0.701085 0.1148 0.082917 .  
-Prod12         0.983693  0.179855 0.2230 0.006993 ** 
-Prod23         0.931922 -0.362660 0.2599 0.003996 ** 
-NH4            0.666680  0.745344 0.0397 0.401598    
-NO3           -0.461681  0.887046 0.0410 0.415584    
-TAN            0.401315  0.915940 0.0371 0.442557    
+H2O            0.987261 -0.159107 0.4668 0.000999 ***
+Patch.dwt      0.496968 -0.867769 0.0314 0.525475    
+Cells.g        0.281815  0.959469 0.0360 0.460539    
+Stigonema.g    0.239285  0.970949 0.0428 0.400599    
+Nostoc.g       0.256556 -0.966529 0.0280 0.543457    
+ARA.g          0.996604  0.082341 0.1377 0.058941 .  
+Decomposition  0.998583 -0.053210 0.0857 0.176823    
+Prod01         0.733719 -0.679453 0.1152 0.076923 .  
+Prod12         0.985925  0.167188 0.2254 0.012987 *  
+Prod23         0.914187 -0.405292 0.2617 0.004995 ** 
+NH4            0.707926  0.706286 0.0331 0.508492    
+NO3           -0.560228  0.828339 0.0332 0.494505    
+TAN            0.431806  0.901967 0.0271 0.581419    
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 P values based on 1000 permutations.
@@ -323,31 +323,31 @@ P values based on 1000 permutations.
 
 Centroids:
                          NMDS1   NMDS2
-Block1                 -0.1251 -0.4537
+Block1                 -0.1131 -0.3990
 Block2                                
-Block3                 -0.0049  0.3899
+Block3                 -0.0040  0.3814
 Block4                                
-Block5                 -0.1493  0.2102
+Block5                 -0.1511  0.1860
 Block6                                
-Block7                  0.2849 -0.1897
+Block7                  0.2754 -0.2087
 Block8                                
-ChamberAmbient          0.2856 -0.0886
+ChamberAmbient          0.2841 -0.1013
 ChamberPartial Chamber                
-ChamberFull Chamber    -0.3026  0.0852
-FragContinuous          0.1610 -0.1030
-FragFull Corridors      0.0459  0.0606
+ChamberFull Chamber    -0.2998  0.0991
+FragContiguous          0.1620 -0.1103
+FragFull Corridors      0.0450  0.0784
 FragPseudo-Corridors                  
-FragIsolated           -0.2211  0.0304
-PositionInner           0.3085 -0.0990
-Positionother                         
-PositionOuter          -0.3255  0.0955
+FragIsolated           -0.2193  0.0212
+PositionInner           0.3156 -0.0879
+Positionintermediate                  
+PositionOuter          -0.3313  0.0856
 
 Goodness of fit:
              r2  Pr(>r)  
-Block    0.1127 0.12488  
-Chamber  0.0768 0.04695 *
-Frag     0.0249 0.72527  
-Position 0.0898 0.01798 *
+Block    0.0997 0.17782  
+Chamber  0.0778 0.03097 *
+Frag     0.0257 0.70030  
+Position 0.0916 0.01898 *
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 P values based on 1000 permutations.
@@ -565,7 +565,7 @@ Block5               0.06384  0.98908 -0.94037 -0.27633  0.60693  0.60000
 Block7               0.26316 -0.09103  1.02490 -0.29773  0.21259 -0.48791
 ChamberAmbient       0.13436 -0.12437  0.14244 -0.29222  0.41878  0.13890
 ChamberFull Chamber -0.17364  0.16073 -0.18407  0.37764 -0.54120 -0.17950
-FragContinuous       0.01849 -0.28357 -0.30029 -0.28449  0.38872  0.04358
+FragContiguous       0.01849 -0.28357 -0.30029 -0.28449  0.38872  0.04358
 FragFull Corridors  -0.27084  0.29990  0.47844 -0.04948 -0.01242 -0.08731
 FragIsolated         0.25614 -0.03121 -0.19571  0.32298 -0.36039  0.04649
 PositionInner        0.27830  0.13331  0.01818  0.08882 -0.21079  0.04186
@@ -580,17 +580,17 @@ Terms added sequentially (first to last)
 Model: cca(formula = Fauna.subset ~ Block + Chamber + Frag + Position + H2O + Patch.dwt + ARA.g + Cells.g + Decomposition + Prod01 + Prod13 + TAN, data = Fauna.envs)
               Df  Chisq      F N.Perm Pr(>F)   
 Block          3 0.2863 3.0628    199  0.005 **
-Chamber        1 0.0503 1.6128    199  0.025 * 
-Frag           2 0.0711 1.1400    199  0.175   
-Position       1 0.0434 1.3938    199  0.065 . 
+Chamber        1 0.0503 1.6128    199  0.045 * 
+Frag           2 0.0711 1.1400    199  0.170   
+Position       1 0.0434 1.3938    199  0.075 . 
 H2O            1 0.1336 4.2886    199  0.005 **
-Patch.dwt      1 0.0566 1.8168    199  0.065 . 
-ARA.g          1 0.0285 0.9144    199  0.470   
-Cells.g        1 0.0296 0.9502    199  0.430   
-Decomposition  1 0.0738 2.3668    199  0.010 **
-Prod01         1 0.0340 1.0919    199  0.355   
-Prod13         1 0.0184 0.5908    199  0.785   
-TAN            1 0.0497 1.5942    199  0.115   
+Patch.dwt      1 0.0566 1.8168    199  0.020 * 
+ARA.g          1 0.0285 0.9144    199  0.415   
+Cells.g        1 0.0296 0.9502    199  0.455   
+Decomposition  1 0.0738 2.3668    199  0.020 * 
+Prod01         1 0.0340 1.0919    199  0.305   
+Prod13         1 0.0184 0.5908    199  0.810   
+TAN            1 0.0497 1.5942    199  0.105   
 Residual      28 0.8726                        
 ---
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 

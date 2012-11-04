@@ -2,10 +2,10 @@ Nested ANOVA Results for: Inverse Simpson's Index ( Evenness )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 12:39:57 2012
+Sun Nov  4 13:05:28 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -40,7 +40,7 @@ Residuals             18 31.4111  1.7451
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:39:58 2012
+% Sun Nov  4 13:05:29 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -76,7 +76,7 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          5.989          4.253          5.213 
 
  Position 
@@ -86,7 +86,7 @@ Inner Outer
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      5.801      4.440          5.602   
   Full Chamber 6.177      4.065          4.824   
 
@@ -99,7 +99,7 @@ Chamber        Inner Outer
  Frag:Position 
                 Position
 Frag             Inner Outer
-  Continuous     5.522 6.456
+  Contiguous     5.522 6.456
   Full Corridors 5.029 3.476
   Isolated       6.685 3.741
 
@@ -107,14 +107,14 @@ Frag             Inner Outer
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      5.449      4.475          6.859   
   Full Chamber 5.596      5.584          6.511   
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      6.154      4.405          4.344   
   Full Chamber 6.757      2.547          3.138   
 
@@ -161,12 +161,12 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          5.989          4.253          5.213 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      5.801      4.440          5.602   
   Full Chamber 6.177      4.065          4.824   
 

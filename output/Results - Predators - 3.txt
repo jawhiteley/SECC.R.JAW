@@ -2,10 +2,10 @@ Nested ANOVA Results for: Predators (Mesostigmata + Prostigmata) ( Predators )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 12:40:16 2012
+Sun Nov  4 13:05:46 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -40,7 +40,7 @@ Residuals             18 129.251   7.181
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:40:17 2012
+% Sun Nov  4 13:05:47 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -76,7 +76,7 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          5.909          6.716          6.020 
 
  Position 
@@ -86,7 +86,7 @@ Inner Outer
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      4.758      8.034          8.859   
   Full Chamber 7.060      5.399          3.181   
 
@@ -99,7 +99,7 @@ Chamber        Inner Outer
  Frag:Position 
                 Position
 Frag             Inner Outer
-  Continuous     4.908 6.910
+  Contiguous     4.908 6.910
   Full Corridors 8.450 4.983
   Isolated       7.627 4.413
 
@@ -107,14 +107,14 @@ Frag             Inner Outer
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      3.161      7.512          9.128   
   Full Chamber 6.655      9.389          6.127   
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      6.356      8.556          8.591   
   Full Chamber 7.465      1.409          0.235   
 
@@ -161,12 +161,12 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
          5.909          6.716          6.020 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      4.758      8.034          8.859   
   Full Chamber 7.060      5.399          3.181   
 

@@ -2,10 +2,10 @@ Nested ANOVA Results for: Morphospecies Richness ( Richness )
 Transformation used:      Y 
 Expt. Time:    24 months 
 Chamber:       Ambient, Full Chamber 
-Fragmentation: Continuous, Full Corridors, Isolated 
+Fragmentation: Contiguous, Full Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Aug 12 12:39:37 2012
+Sun Nov  4 13:05:09 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -40,7 +40,7 @@ Residuals             18 150.625   8.368
 Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Aug 12 12:39:39 2012
+% Sun Nov  4 13:05:11 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{lrrrrr}
@@ -76,7 +76,7 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
         13.125         10.938         11.000 
 
  Position 
@@ -86,7 +86,7 @@ Position
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      13.000     12.625         12.625  
   Full Chamber 13.250      9.250          9.375  
 
@@ -99,7 +99,7 @@ Chamber        Inner  Outer
  Frag:Position 
                 Position
 Frag             Inner  Outer 
-  Continuous     11.625 14.625
+  Contiguous     11.625 14.625
   Full Corridors 12.125  9.750
   Isolated       14.250  7.750
 
@@ -107,14 +107,14 @@ Frag             Inner  Outer
 , , Position = Inner
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      11.25      11.75          14.00   
   Full Chamber 12.00      12.50          14.50   
 
 , , Position = Outer
 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      14.75      13.50          11.25   
   Full Chamber 14.50       6.00           4.25   
 
@@ -161,12 +161,12 @@ Chamber
 
  Frag 
 Frag
-    Continuous Full Corridors       Isolated 
+    Contiguous Full Corridors       Isolated 
         13.125         10.938         11.000 
 
  Chamber:Frag 
               Frag
-Chamber        Continuous Full Corridors Isolated
+Chamber        Contiguous Full Corridors Isolated
   Ambient      13.000     12.625         12.625  
   Full Chamber 13.250      9.250          9.375  
 
