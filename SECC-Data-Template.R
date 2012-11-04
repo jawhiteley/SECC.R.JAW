@@ -34,7 +34,7 @@ Pos_all_lvls  <- c("I", "S", "W", "E", "N", "O")
 Pos_all_sort  <- c("O", "I", "N", "S", "E", "W") # desired sort order.
 Pos_lvls      <- c("I", "S/N", "W/E", "O")	# S/N is for alphabetical sorting.  Do not change.
 Pos_sort      <- c("O", "I", "S/N", "W/E")	# S/N is for alphabetical sorting.  Do not change.
-Pos_labels    <- c("Inner", "other", "Outer")
+Pos_labels    <- c("Inner", "intermediate", "Outer")
 Pos.Precip    <- c("Wet", "mesic", "Dry")
 
 Trt_nest_order <- c("Block", "Time", "Chamber", "Frag", "Pos")  # Time is higher than Block?
@@ -146,13 +146,13 @@ Rows_mismatched <- sum(
   SECC.base$Frag    != Patch_pos$Frag
 )	# rows where columns are mismatched.  Should be 0
 
-if (Rows_mismatched == 0) {
+if (Rows_mismatched == 0) 
+{
   SECC.merged <- within( SECC.base, {
     Pos <- factor(Patch_pos$Position, levels = Pos_all_lvls)  # levels in desired order.
     SampleID = paste(Block, Time, Chamber, "-", Frag, ".", Pos, sep="")
   })
-}
-else stop("Rows do not all match.  Check row sorting before trying to merge.")
+} else stop("Rows do not all match.  Check row sorting before trying to merge.")
 
 IDs_mismatched <- sum( SECC.merged$SampleID != Patch_pos$PatchID )
 if (IDs_mismatched == 0) {

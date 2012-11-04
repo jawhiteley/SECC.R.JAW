@@ -413,9 +413,9 @@ plotMap <- function (factor = c("Chamber", "Frag", "Position"),
                  pch = c(19, 17, 21), lty = c(2, 3, 1), lwd = c(2, 1.5, 1),
                  stringsAsFactors = FALSE
                  )
-    ## 1) Inner   = black filled circles with dotted line ; 
-    ## 2) other   = blue           stars with dashed line ; 
-    ## 3) Outer   = red   open   circles with solid  line.
+    ## 1) Inner         = black filled circles with dotted line ; 
+    ## 2) intermediate  = blue           stars with dashed line ; 
+    ## 3) Outer         = red   open   circles with solid  line.
   }  
 
   return(PlotMap)

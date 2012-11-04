@@ -1,7 +1,7 @@
 ##################################################
 # Schefferville Experiment on Climate Change (SEC-C)
 # Main control Script
-# Jonathan Whiteley		R v2.12		2011-07-20
+# Jonathan Whiteley		R v2.12		2012-11-04
 ##################################################
 ## INITIALIZE
 rm(list=ls())  # clear memory
@@ -21,7 +21,6 @@ if (FALSE) {  # do not run automatically
 
 ## DO
 source("./SECC-Data-Template.R")       # Generate Template Data Frame & files.
-## source("do.R")                      # Perform Analyses
 
 if (TRUE)
 {
