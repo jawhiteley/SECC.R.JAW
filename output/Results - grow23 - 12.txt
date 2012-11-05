@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Nov  4 13:18:59 2012
+Sun Nov  4 23:52:12 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -32,7 +32,7 @@ Time:Chamber:Frag:Position     3   107  0.87640  0.4558
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Nov  4 13:19:32 2012
+% Sun Nov  4 23:52:43 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}

@@ -5,7 +5,7 @@ Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Sun Nov  4 13:32:15 2012
+Sun Nov  4 23:58:54 2012
 ================================================================
 
 n=127 (1 observation deleted due to missingness)
@@ -32,13 +32,13 @@ Call:
 rpart(formula = Y.main, data = SECCa, control = rpc)
   n=127 (1 observation deleted due to missingness)
 
-          CP nsplit rel error   xerror      xstd
-1 0.22681885      0 1.0000000 1.032755 0.1247193
-2 0.04483650      1 0.7731811 0.902856 0.1138386
-3 0.04460181      2 0.7283446 1.136718 0.1482777
-4 0.04455092      4 0.6391410 1.125390 0.1473163
-5 0.04194012      6 0.5500392 1.165600 0.1551813
-6 0.04000000      7 0.5080991 1.194211 0.1579363
+          CP nsplit rel error    xerror      xstd
+1 0.22681885      0 1.0000000 1.0245494 0.1222635
+2 0.04483650      1 0.7731811 0.8998376 0.1185026
+3 0.04460181      2 0.7283446 0.9519587 0.1344414
+4 0.04455092      4 0.6391410 1.0031991 0.1386340
+5 0.04194012      6 0.5500392 1.0187864 0.1405214
+6 0.04000000      7 0.5080991 1.0182112 0.1437641
 
 Node number 1: 127 observations,    complexity param=0.2268189
   mean=22690.29, MSE=6.986241e+08 
