@@ -13,11 +13,11 @@ if (FALSE) {  # do not run automatically
   setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
   setwd("./")       # relative to this file (\rd in Vim-R)
   getwd()           # Check that we're in the right place
+
+  source("./lib/load.R")  # (re-)load data
+  source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
 }
 
-
-#source("./lib/load.R")  # (re-)load data
-#source("./lib/init.R")  # Initialize - all analysis scripts should start with this.
 
 ## DO
 source("./SECC-Data-Template.R")       # Generate Template Data Frame & files.

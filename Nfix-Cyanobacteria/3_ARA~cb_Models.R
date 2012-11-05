@@ -97,8 +97,10 @@ AIC(ARA.gam, ARA.gam1, ARA.loggam, ARA.loggamF, ARA.loggam1)
 anova(ARA.gam1)
 anova(ARA.loggamF)
 anova(ARA.loggam1)
+
 ## The main non-linear portion for Cells is between 0-values and the rest: non-zero values are rather linear.
 op <- par(mfrow=c(2,2))
+
 plot(ARA.gam)
 plot(ARA.gam1)
 plot(ARA.loggam1)

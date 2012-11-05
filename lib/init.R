@@ -9,7 +9,8 @@ if (FALSE) {  # do not run automatically
 }
 
 ### INITIALIZE
-rm(list=ls())       # house-keeping
+rm(list=ls(all = TRUE))       # house-keeping
+options(contrasts=c("contr.treatment", "contr.poly")) # reset options - this affects model-fitting and summary() outputs
 cat('Memory Cleared.\n')
 
 ## Load Functions and Libraries

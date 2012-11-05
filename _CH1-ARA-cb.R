@@ -2,7 +2,7 @@
 ### Schefferville Experiment on Climate Change (SEC-C)
 ### Main control Script - Chapter 1:
 ### N-fixation, cyanobacteria, and Moisture.
-### Jonathan Whiteley		R v2.12		2011-03-29
+### Jonathan Whiteley		R v2.12		2012-11-04
 ##################################################
 ## INITIALIZE
 rm(list=ls())  # clear memory
@@ -30,5 +30,7 @@ source("H2O.R")             # Water Contents Analysis
 source("ARA.R")             # Acetylene Reduction Assay (N-fixation) Analysis
 source("Cyanobacteria.R")   # Cyanobcateria density Analysis
 
+## model-fitting (gams, etc.) work differently and produce different output with summary() and coef() if run after the univariate scripts
+## use different contrast settings:  ?option
 source("./Nfix-Cyanobacteria/0_ARA~cyanobacteria.R")   # ARA ~ cyanobacteria (regression models)
 

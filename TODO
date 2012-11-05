@@ -1,5 +1,22 @@
 * Change "Continuous" Fragmentation treatment to "Contiguous"
+  Change "other" Patch Position to "intermediate"
   - re-generate graphs & output :/
+  - something changes the way summary() (and coef) labels factor levels in the output: with 'coded' factor levels, rather than the labels
+    - It seems to work as expected when running regression scripts (e.g. CH1 3_ARA~cb_Models), but NOT if these scripts are run *after* the univariate scripts (e.g. H2O.R)
+    - It works as expected during individual analyses, but not when re-running all scripts :(
+    - summary() also works differently on model objects *fitted* at different points in the load order:
+      - saved (glmulti) objects generate different output than new objects, if they were generated before/after running the univariate scripts.
+      * ** This suggests the order of scripts may not affect the summary() method, but model fitting itself (and the way functions like summary() and coef() work on them.  :(
+    - Something changes in memory, which is not reset by `rm(list=ls())` 
+        - this suggests a package issue / conflict / order
+        - but unloading packages and allowing them to be reloaded doesn't solve the problem :(
+        - is there masking going on?
+        - does the order of loading packages matter?
+    - *** The problem is that the nested ANOVA function changes the option() for 'contrasts'
+        - options(contrasts=c("contr.sum","contr.poly"))
+        - I need to learn better what this actually does :/
+        - in the meantime, I'll add a line to `init.R` to re-set these settings to default values.
+      
 Change fileformat of all data files to unix (or dos) for portability.
   - This should not affect the processing or output on my machine (check), but would make it easier for others to read.
 
