@@ -145,17 +145,17 @@ plot.means$error <- as.numeric(msd["Chamber:Frag:Position"]/2)
 plot.data <- decomp.plotcalcs(plot.means)
 
 CxPxF.plot <- qplot(Frag, xtr, data = plot.data, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
+                    geom = "line", ylim = Y.lim, size = Position, 
                     colour = Position, shape = Position,
                     main = Plot.Title, sub = Sub.msd,
                     xlab = attr(SECC, "labels")[["Chamber"]],
                     ylab = Y.plotlab,
                     legend = FALSE,
                     facets = .~ Chamber)
-## CxPxF.plot <- CxPxF.plot + geom_point(aes(Chamber, x), size = 2)
-CxPxF.plot <- CxPxF.plot + geom_line(aes(group = Position), size = 0.8)
+## CxPxF.plot <- CxPxF.plot + geom_line(aes(size = Position))
 CxPxF.plot <- CxPxF.plot + geom_errorbar(aes(ymin = lwr, ymax = upr), 
                                          width = 0.2, size = 0.5)
+CxPxF.plot <- CxPxF.plot + geom_point(aes(fill = Position), size = 3)
 CxPxF.plot <- CxPxF.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label)
@@ -164,6 +164,9 @@ CxPxF.plot <- CxPxF.plot + scale_fill_manual(name = Position.label,
                                          breaks = Position.map$label)
 CxPxF.plot <- CxPxF.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
+                                           breaks = Position.map$label)
+CxPxF.plot <- CxPxF.plot + scale_size_manual(name = Position.label,
+                                           values = Position.map$lwd, 
                                            breaks = Position.map$label)
 CxPxF.plot <- CxPxF.plot + jaw.ggplot()
 ## Add imported graphics as x-axis tick labels :D
@@ -183,17 +186,17 @@ plot.means <- aggregate(SECCp$Y.trans, list(Chamber=SECCp$Chamber,
 plot.means$error <- as.numeric(msd["Chamber:Position"]/2)
 plot.data <- decomp.plotcalcs(plot.means)
 
-CxP.plot <- qplot(Chamber, xtr, data = plot.data, group = Position, 
-                    geom = "point", ylim = Y.lim, size = I(3), 
-                    colour = Position, shape = Position,
-                    main = Plot.Title, sub = Sub.msd,
-                    xlab = attr(SECC, "labels")[["Chamber"]],
-                    ylab = Y.plotlab,
-                    legend = FALSE)
-## CxP.plot <- CxP.plot + geom_point(aes(Chamber, x), size = 2)
-CxP.plot <- CxP.plot + geom_line(aes(group = Position), size = 0.8)
+CxP.plot <- ggplot(data = plot.data, 
+                   aes(x = Chamber, y = xtr, 
+                       group = Position, colour = Position, shape = Position, fill = Position
+                      )
+                   ) +
+     ylim(Y.lim) + opts(title = Plot.Title, sub = Sub.msd) +
+     labs(x = attr(SECC, "labels")[["Chamber"]], y = Y.plotlab)
+CxP.plot <- CxP.plot + geom_line(aes(size = Position))
 CxP.plot <- CxP.plot + geom_errorbar(aes(ymin = lwr, ymax = upr), 
                                          width = 0.2, size = 0.5)
+CxP.plot <- CxP.plot + geom_point(size = 3)
 CxP.plot <- CxP.plot + scale_colour_manual(name = Position.label,
                                            values = Position.map$col, 
                                            breaks = Position.map$label)
@@ -203,6 +206,9 @@ CxP.plot <- CxP.plot + scale_fill_manual(name = Position.label,
 CxP.plot <- CxP.plot + scale_shape_manual(name = Position.label,
                                            values = Position.map$pch, 
                                            breaks = Position.map$label)
+CxP.plot <- CxP.plot + scale_size_manual(name = Position.label,
+                                         values = Position.map$lwd, 
+                                         breaks = Position.map$label)
 CxP.plot <- CxP.plot + jaw.ggplot()
 print(CxP.plot)
 
