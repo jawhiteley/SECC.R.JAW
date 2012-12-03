@@ -46,7 +46,7 @@ SECC <- within( SECC, {
   H2O.wwt <- H2O.wwt * 100
   Growth  <- grow12 + grow23           # moss growth during second year **
   ## Should I be log-transforming moss Growth, or just use non-linear GLMM (log-link?)?  Note negative values!
-  logCells <- log10(Cells +1)        # log-transform of Cyanobacteria;  log10(Cells +1) 
+  logCells <- log10(Cells +1)        # log-transform of Cyanobacteria;  log10(Cells +1) ; DeLuca 2007 used cells/shoot, and 'scaling-up' to /m^2 may simply add noise
   ##   logCells[Cells.m <= 0] <- 0
   logTAN        <- log10(TAN)                 # log-transform of Total (Available) Nitrogen
   Decomp.asq    <- asin(sqrt(Decomposition)) # proportions 0-1; probably better off using glm() anyway.
@@ -74,7 +74,7 @@ SECC <- within( SECC, {
 
 attr(SECC, "labels")[["Climate"]] <- "Climate Treatment: Chamber and Position"
 attr(SECC, "labels")[["logCells"]] <- attr(SECC, "labels")[["Cells"]] # Cells ?
-attr(SECC, "units" )[["logCells"]] <- quote( log("cells" %.% "shoot"^-1) )    # cells / shoot ?
+attr(SECC, "units" )[["logCells"]] <- quote( log[10]("cells" %.% "shoot"^-1) )    # cells / shoot ?
 attr(SECC, "labels")[["Growth"]] <- "Moss growth"
 attr(SECC, "units" )[["Growth"]] <- quote("mm" %.% "yr"^-1)
 attr(SECC, "labels")[["Decomp.asq"]] <- attr(SECC, "labels")[["Decomposition"]]
@@ -107,6 +107,20 @@ Y.units <- attr(SECC, "units" )[[Y.col]]  # response variable units
 
 ## Y.plotlab <- bquote( .(Y.label) * "  " * log[10](.(Y.units)) *  "" )
 Y.plotlab <- SECC.axislab(SECC, Y.col)
+##______________________________________________________________
+## Partial regression labels
+## Don't forget to log-transform the AXES for all but H2O
+Grow.labpart  <- bquote(paste( bold("Residual "), "Moss growth", 
+                              "  ", (.(attr(SECC, "units")[['Growth']])), "" )) 
+Nfix.labpart  <- bquote(paste( bold("Residual "), "N-fixation", 
+                              "  ", (.(attr(SECC, "units")[['Nfix']])), "" )) 
+Cells.labpart <- bquote(paste( bold("Residual "), "Cyanobacteria density", 
+                              "  ", (.(attr(SECC, "units")[['Cells']])), "" )) 
+H2O.labpart   <- bquote(paste( bold("Residual "), "Moisture contents", 
+                              "  ", (.(attr(SECC, "units")[['H2O']])), "" )) 
+TAN.labpart   <- bquote(paste( bold("Residual "), "Total N", 
+                              "  ", (.(attr(SECC, "units")[['TAN']])), "" )) 
+
 
 
 ## Save Output to Files - set to NULL to prevent output.

@@ -503,7 +503,6 @@ avPlots(Y.best2lm, terms= ~ H2O * I(H2O^2) + log10(TAN), ask=FALSE) # car
 avPlots(Y.lfit,    terms= ~ H2O * I(H2O^2) + log10(TAN), ask=FALSE) # car
 
 
-
 ##______________________________________________________________
 ## Partial regression on H2O
 Parts <- PartialFormula("Y.fit", x.var = "H2O")
@@ -711,18 +710,27 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 
 ##______________________________________________________________
 ## Partial Regression: H2O
+Y.plim <- c(10^-5, 10^4)
 Hpart.notes <- RegPlot.annote(Y.H)
+## Back-transform: this is simple 10^x, despite the original log10(x+1) transformation.  Subtracting the 1 leads to -ve values, which won't be plotted on log-axes :(
+Y.H.df <- within(Y.H.df, {
+                 Y <- 10^(Y)
+                 fit <- 10^(fit)
+                 lower <- 10^(lower)
+                 upper <- 10^(upper)
+})
 
-H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
+H.part.plot <- ggplot(data=Y.H.df, aes( x=H, y=Y )) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(max(H), min(Y), label = Hpart.notes[1] ), 
+				 geom_text(aes(max(H), min(Y.plim), label = Hpart.notes[1] ), 
 						   size = 3, hjust = 1, vjust = -1.3, parse = TRUE) +
-				 geom_text(aes(max(H), min(Y), label = Hpart.notes[2] ), 
+				 geom_text(aes(max(H), min(Y.plim), label = Hpart.notes[2] ), 
 						   size = 3, hjust = 1, vjust = 0, parse = TRUE) +
-				 geom_text(aes(max(H), min(Y), label = Hpart.notes[3] ), 
+				 geom_text(aes(max(H), min(Y.plim), label = Hpart.notes[3] ), 
 						   size = 3, hjust = 1, vjust = -2.5, parse = TRUE) +
-                 xlab("Moisture Contents | others") + 
-                 ylab("Cyanobacteria Density | others") 
+                 xlab(H2O.labpart) + 
+                 ylab(Cells.labpart) + 
+                 scale_y_log10(limits = Y.plim)
 H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -732,17 +740,26 @@ H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 ## Partial Regression: TAN
 ## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
 Npart.notes <- RegPlot.annote(Y.N)
+## Back-transform: this is simple 10^x, despite the original log10(x+1) transformation.  Subtracting the 1 leads to -ve values, which won't be plotted on log-axes :(
+Y.N.df <- within(Y.N.df, {
+                 N <- 10^(N)
+                 Y <- 10^(Y)
+                 fit <- 10^(fit)
+                 lower <- 10^(lower)
+                 upper <- 10^(upper)
+})
 
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(max(N), min(Y), label = Npart.notes[1] ), 
+				 geom_text(aes(max(N), min(Y.plim), label = Npart.notes[1] ), 
 						   size = 3, hjust = 1, vjust = -1.3, parse = TRUE) +
-				 geom_text(aes(max(N), min(Y), label = Npart.notes[2] ), 
+				 geom_text(aes(max(N), min(Y.plim), label = Npart.notes[2] ), 
 						   size = 3, hjust = 1, vjust = 0, parse = TRUE) +
-				 geom_text(aes(max(N), min(Y), label = Npart.notes[3] ), 
+				 geom_text(aes(max(N), min(Y.plim), label = Npart.notes[3] ), 
 						   size = 3, hjust = 1, vjust = -2.5, parse = TRUE) +
-                 xlab("Total N | others") + 
-                 ylab("Cyanobacteria Density | others") 
+                 xlab(TAN.labpart) + 
+                 ylab(Cells.labpart) + 
+                 scale_y_log10(limits = Y.plim) + scale_x_log10() 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")

@@ -568,6 +568,11 @@ alog0 <- function(y)
   ##   x[y == 0] <- 0
   x
 }
+alog1 <- function(y, base = 10)
+{   # back-transform log(X+1): this is problematic for log-axes if it results in -ve values :(
+  x <- (base^y) -1
+  x
+}
 
 
 ## Plotting Regression Tree results

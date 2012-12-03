@@ -728,19 +728,24 @@ N.plot  <- ggplot(SECCa, aes(y = Y, x = TAN)) + ylim(Y.lim) +
 
 ##______________________________________________________________
 ## Partial Regression: N-fixation
+Y.plim <- c(-15, 21)
 ## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
 Xpart.notes <- RegPlot.annote(Y.X)
+Y.X.df <- within(Y.X.df, {
+                 X <- alog0(X)
+})
 
 X.part.plot <- ggplot(data=Y.X.df, aes(x=X, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(X), max(Y), label = Xpart.notes[1] ), 
+				 geom_text(aes(min(X), max(Y.plim), label = Xpart.notes[1] ), 
 						   size = 3.5, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = Xpart.notes[2] ), 
+				 geom_text(aes(min(X), max(Y.plim), label = Xpart.notes[2] ), 
 						   size = 3.5, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(X), max(Y), label = Xpart.notes[3] ), 
+				 geom_text(aes(min(X), max(Y.plim), label = Xpart.notes[3] ), 
 						   size = 3.5, hjust = 0, vjust = 2.7, parse = TRUE) +
-                 xlab("N-fixation | others") + 
-                 ylab("Moss Growth | others") 
+                 xlab(Nfix.labpart) + 
+                 ylab(Grow.labpart) +
+                 ylim(Y.plim) + scale_x_log10()
 X.part.plot <- X.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -752,14 +757,15 @@ Hpart.notes <- RegPlot.annote(Y.H)
 
 H.part.plot <- ggplot(data=Y.H.df, aes(x=H, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(min(H), max(Y), label = Hpart.notes[1] ), 
+				 geom_text(aes(min(H), max(Y.plim), label = Hpart.notes[1] ), 
 						   size = 3.5, hjust = 0, vjust = 0, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = Hpart.notes[2] ), 
+				 geom_text(aes(min(H), max(Y.plim), label = Hpart.notes[2] ), 
 						   size = 3.5, hjust = 0, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(min(H), max(Y), label = Hpart.notes[3] ), 
+				 geom_text(aes(min(H), max(Y.plim), label = Hpart.notes[3] ), 
 						   size = 3.5, hjust = 0, vjust = 2.7, parse = TRUE) +
-                 xlab("Moisture Contents | others") + 
-                 ylab("Moss Growth | others") 
+                 xlab(H2O.labpart) + 
+                 ylab(Grow.labpart) +
+                 ylim(Y.plim)
 H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")
@@ -769,17 +775,21 @@ H.part.plot <- H.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC000
 ## Partial Regression: TAN
 ## adding plotMath to a ggplot graph: https://groups.google.com/forum/?fromgroups#!topic/ggplot2/-Ind8XDqaPQ
 Npart.notes <- RegPlot.annote(Y.N)
+Y.N.df <- within(Y.N.df, {
+                 N <- 10^(N)
+})
 
 N.part.plot <- ggplot(data=Y.N.df, aes(x=N, y=Y)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-				 geom_text(aes(max(N), max(Y), label = Npart.notes[1] ), 
-						   size = 3.5, hjust = 1, vjust = 0, parse = TRUE) +
-				 geom_text(aes(max(N), max(Y), label = Npart.notes[2] ), 
-						   size = 3.5, hjust = 1, vjust = 1.5, parse = TRUE) +
-				 geom_text(aes(max(N), max(Y), label = Npart.notes[3] ), 
-						   size = 3.5, hjust = 1, vjust = 2.7, parse = TRUE) +
-                 xlab("Total N | others") + 
-                 ylab("Moss Growth | others") 
+				 geom_text(aes(min(N), max(Y.plim), label = Npart.notes[1] ), 
+						   size = 3.5, hjust = 0, vjust = 0, parse = TRUE) +
+				 geom_text(aes(min(N), max(Y.plim), label = Npart.notes[2] ), 
+						   size = 3.5, hjust = 0, vjust = 1.5, parse = TRUE) +
+				 geom_text(aes(min(N), max(Y.plim), label = Npart.notes[3] ), 
+						   size = 3.5, hjust = 0, vjust = 2.7, parse = TRUE) +
+                 xlab(TAN.labpart) + 
+                 ylab(Grow.labpart) +
+                 ylim(Y.plim) + scale_x_log10() 
 N.part.plot <- N.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#CC0000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#CC0000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#CC0000")

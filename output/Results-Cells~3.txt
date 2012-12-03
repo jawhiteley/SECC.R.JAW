@@ -5,7 +5,7 @@ Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated
 Patches:       Inner, Outer
 
 R version 2.12.0 (2010-10-15)
-Sun Nov  4 23:58:56 2012
+Sun Dec  2 21:07:24 2012
 ================================================================
 
 Analysis of Variance Table
@@ -79,7 +79,7 @@ Block                                  Block 1.000000000
 
 Y.trans ~ Block + Chamber + Frag + H2O + I(H2O^2) + log10(TAN) + 
     Block:H2O
-<environment: 0x4a1fac7c>
+<environment: 0x2abb339c>
 Denom. DF: 104 
             numDF  F-value p-value
 (Intercept)     1 8991.923  <.0001
