@@ -78,7 +78,7 @@ if (ANOVAtable$Df == Fauna.ANOVA$Df)
 
 Y.col <- 'Predators'
 Y.use <- 'Y'
-Y.lim1 <- c(0, 25)  # consistent Y limits :/
+Y.lim1 <- c(-5, 30)  # consistent Y limits :/
 source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 if (ANOVAtable$Df == Fauna.ANOVA$Df)
@@ -139,7 +139,7 @@ ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 4, height
 
 Y.col <- 'Grazers'
 Y.use <- 'Y.sqrt'
-Y.lim1 <- c(0, 25)  # consistent Y limits :/
+Y.lim1 <- c(-5, 30)  # consistent Y limits :/
 source('Fauna/Fauna-univariate.R')
 ANOVAtable <- SECCxtract.aovlist(Yp.aov)
 if (ANOVAtable$Df == Fauna.ANOVA$Df)

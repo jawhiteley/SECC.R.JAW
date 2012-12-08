@@ -161,9 +161,13 @@ plot.means <- SECCplotDataANOVA(SECCp$Y.trans,
                                 )
 levels(plot.means$Chamber)[2] <- "Chamber"
 
-## if (!exists('Y.lim')) Y.lim <- c(-1, 20)
-Y.lim <- with(plot.means, range(lower, upper))
-Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+if (exists('Y.lim1'))
+{
+  Y.lim <- Y.lim1
+} else {
+  Y.lim <- with(plot.means, range(lower, upper))
+  Y.lim <- c(floor(Y.lim[1]/10), ceiling(Y.lim[2]/10) ) *10
+}
 
 CFP.plot <- qplot(Frag, x, data = plot.means, group = Position, 
                     geom = "line", ylim = Y.lim, size = Position, 
@@ -311,7 +315,7 @@ print(CxP.plot)
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 4, height = 4, scale = 1.2)
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.2)
-  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.2)
+  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.2) # width = 4 for slides, 6 for publication
 }
 
 
