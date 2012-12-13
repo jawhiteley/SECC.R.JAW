@@ -433,7 +433,7 @@ print(FP4.plot)
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.2)
   ggsave(file = paste(Save.final, "- CxP-IO.eps"), plot = CPIO.plot, width = 6, height = 3, scale = 1.2)
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 8, height = 4, scale = 1)
+  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 6, height = 4, scale = 1.2)
   ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 6, height = 4, scale = 1)
   ggsave(file = paste(Save.final, "- CPL.eps"), plot = CxP.legend, width = 6, height = 4, scale = 1) # for Oecologia
   ggsave(file = paste(Save.final, "- CP4.eps"), plot = CP4.plot, width = 4, height = 4, scale = 1)

@@ -197,5 +197,5 @@ print(FxP.plot)
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1)
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 8, height = 4, scale = 1)
+  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 6, height = 4, scale = 1.2)
 }
