@@ -274,16 +274,44 @@ CP4.plot <- CP4.plot + scale_size_manual(name = Position.label,
 CP4.plot <- CP4.plot + jaw.ggplot()
 print(CP4.plot)
 
+
 # Inner & Outer only
+IO.map <- subset(Position.map, label!="intermediate")
+
+CPIO.plot <- qplot(Chamber, x, data = droplevels( subset(plot.means, Position!="intermediate") ), 
+                  group = Position,  size = Position,
+                  colour = Position, shape = Position, fill = Position,
+                  geom = "line", ylim = Y.lim,
+                  main = Plot.Title, sub = Sub.msd,
+                  xlab = attr(SECC, "labels")[["Chamber"]],
+                  ylab = Y.plotlab, legend = FALSE) +
+            facet_grid(facets = .~Time)
+CPIO.plot <- CPIO.plot + geom_errorbar(aes(ymin = lower, ymax = upper), 
+                                         width = 0.2, size = 0.5)
+CPIO.plot <- CPIO.plot + geom_point(aes(group = Position), size = 3)
+CPIO.plot <- CPIO.plot + scale_colour_manual(name = Position.label,
+                                               values = IO.map$col, 
+                                               breaks = IO.map$label)
+CPIO.plot <- CPIO.plot + scale_fill_manual(name = Position.label,
+                                             values = IO.map$bg, 
+                                             breaks = IO.map$label)
+CPIO.plot <- CPIO.plot + scale_shape_manual(name = Position.label,
+                                              values = IO.map$pch, 
+                                              breaks = IO.map$label)
+CPIO.plot <- CPIO.plot + scale_size_manual(name = Position.label,
+                                             values = IO.map$lwd*0.5, 
+                                             breaks = IO.map$label)
+CPIO.plot <- CPIO.plot + jaw.ggplot()
+print(CPIO.plot)
+
 plot.means <- SECCplotDataANOVA(SECCp$Y.trans, 
                                 list(Chamber=SECCp$Chamber, 
                                      Position=SECCp$Position, Time=SECCp$Time), 
                                 error = msd.4IO["Chamber:Position"]
                                 )
 levels(plot.means$Chamber)[2] <- "Chamber"
-IO.map <- subset(Position.map, label!="other")
 CP4IO.plot <- qplot(Chamber, x, data = droplevels( subset(plot.means, 
-                                                          Time == "August\n24 months" & Position!="other") ), 
+                                                          Time == "August\n24 months" & Position!="intermediate") ), 
                   group = Position,  size = Position,
                   colour = Position, shape = Position, fill = Position,
                   geom = "line", ylim = Y.lim,
@@ -404,6 +432,7 @@ print(FP4.plot)
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
   ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 6, height = 3, scale = 1.2)
+  ggsave(file = paste(Save.final, "- CxP-IO.eps"), plot = CPIO.plot, width = 6, height = 3, scale = 1.2)
   ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 8, height = 4, scale = 1)
   ggsave(file = paste(Save.final, "- FP4.eps"), plot = FP4.plot, width = 6, height = 4, scale = 1)
   ggsave(file = paste(Save.final, "- CPL.eps"), plot = CxP.legend, width = 6, height = 4, scale = 1) # for Oecologia
