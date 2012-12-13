@@ -80,8 +80,8 @@ SECC <- within( SECC,
                                 )
                  Time[is.na(Time)] <- levels(Time)[1]
                  Position <- recode(Pos, 
-                                    "1='Inner'; 0='Outer'; 'c'='corridor'; 'c2'='corridor'; else='other'", 
-                                    levels=c( "Inner", "other", "Outer", "corridor"),
+                                    "1='Inner'; 0='Outer'; 'c'='corridor'; 'c2'='corridor'; else='intermediate'", # **** non-standard!
+                                    levels=c( "Inner", "intermediate", "Outer", "corridor"),
                                     as.factor.result=TRUE
                                     )
                }
@@ -126,7 +126,7 @@ for (Y.col in Ycols)
   ## delete lines to use the defaults.
 
   ## Specify which treatment levels to include (by index is probably easiest)
-  ## Including "other" patches throws errors when fitting models (for grow01)?
+  ## Including "intermediate" patches throws errors when fitting models (for grow01)?
   ## Include Partial Chambers throws errors when doing post-hoc multiple tests (grow01)?
   Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not normally included in SECC)
   Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include
@@ -214,9 +214,9 @@ rownames(CxP.data) <- NULL
 CxP.labels <- attr(SECC, "labels")[which(names(attr(SECC, "labels")) %in% 
                                          unique(CxP.data$Var) )]
 CxP.TimeP <- substring(CxP.labels, gregexpr("[0-9-]+ months", CxP.labels) )
-Months <- c("August", "June", "August")
-Months <- c(Months, rep( "", len = length(CxP.TimeP) - length(Months) ) )
-CxP.data$Panel <- factor(CxP.data$Var, labels = paste(Months, CxP.TimeP, sep="\n") )
+Season <- c("Year 1", "Winter 2", "Summer 2", "Year 2")
+Season <- c(Season, rep( "", len = length(CxP.TimeP) - length(Season) ) )    # fill panels with blank months?
+CxP.data$Panel <- factor(CxP.data$Var, labels = paste(Season, CxP.TimeP, sep="\n") )
 CxP.data$Chamber <- factor(CxP.data$Chamber, labels = c("Ambient", "Chamber"))
 
 
@@ -246,7 +246,7 @@ Y.labels  <- gsub("\\s+[0-9-]+ months", "", CxP.labels)
 Y.plotlab <- bquote( .(Y.labels[1]) * " (" * .(Y.units) * ")" )
 Plot.Title <- bquote("Patch means " %+-% "95% Confidence Intervals")
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
-Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- plotMap( factor = "Position", labels = levels(SECC.full$Position) )
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 PositionPts  <- ggPts.SECC(Position.map, Position.label) 
 
@@ -290,7 +290,7 @@ if (F)
 { ## Specify which treatment levels to include (optional: hide to use same as previous analyses)
   Time.use     <- levels(SECC$Time)               # samples collected from t3 AND t4 (t3 not normally included in SECC)
   Chamber.use  <- levels(SECC$Chamber)[c(1, 3)]   # Chamber treatments to include (No Productivity measurements from Partial; no Moss_Biomass data for these treatments).
-  Position.use <- levels(SECC$Position)[c(1:3)]  # Position treatments to include: other patches normally excluded for consistency, but they are kind of interesting here ...
+  Position.use <- levels(SECC$Position)[c(1:3)]  # Position treatments to include: intermediate patches normally excluded for consistency, but they are kind of interesting here ...
 }
 
 
@@ -520,6 +520,7 @@ if (T)
 ##================================================
 CPY.data <- effect.to.df(CPY.eff)
 CPY.data$Chamber <- factor(CPY.data$Chamber, labels = c("Ambient", "Chamber"))
+CPY.data$Year    <- factor(CPY.data$Year,    labels = c("Year 1", "Year 2"))
 
 
 
@@ -530,7 +531,7 @@ Y.lim <- range(c(CPY.data$lower, CPY.data$upper))
 Y.plotlab <- bquote( .(attr(SECC, "labels")[["Prod"]]) * " (" * .(attr(SECC, "units")[["Prod"]]) * ")" )
 Plot.Title <- bquote("Patch means " %+-% "95% Confidence Intervals")
 Position.label <- "Patch\nPosition" # attr(SECC, "labels")[["Pos"]]
-Position.map <- plotMap( factor = "Position", labels = c("Inner", "other", "Outer") )
+Position.map <- plotMap( factor = "Position", labels = levels(SECC.full$Position) )
 Position.map <- Position.map[ levels(SECC$Position) %in% Position.use, ]
 PositionPts  <- ggPts.SECC(Position.map, Position.label) 
 

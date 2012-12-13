@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, Outer 
 
-Sun Nov  4 23:51:41 2012
+Thu Dec 13 17:57:04 2012
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -32,7 +32,7 @@ Time:Chamber:Frag:Position     3   103  0.49111  0.6892
 
 
 % latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Nov  4 23:52:11 2012
+% Thu Dec 13 17:57:36 2012
 \begin{table}[ht]
 \begin{center}
 \begin{tabular}{rrrrr}
@@ -71,7 +71,7 @@ Fit: lme.formula(fixed = Y.trans ~ CxP, data = SECCp, random = Yp.random)
 
 Linear Hypotheses:
                                              Estimate Std. Error z value Pr(>|z|)    
-Full Chamber.Inner - Ambient.Inner == 0       0.65167    0.61869   1.053    0.717    
+Full Chamber.Inner - Ambient.Inner == 0       0.65167    0.61869   1.053    0.718    
 Ambient.Outer - Ambient.Inner == 0            0.04474    0.59398   0.075    1.000    
 Full Chamber.Outer - Ambient.Inner == 0      -4.34179    0.61621  -7.046   <1e-04 ***
 Ambient.Outer - Full Chamber.Inner == 0      -0.60693    0.62339  -0.974    0.764    
