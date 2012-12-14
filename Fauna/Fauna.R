@@ -134,7 +134,7 @@ CxF.plot <- CxF.plot + scale_x_discrete(labels = names(FragIconList), # c(1, 2, 
      )
 print(CxF.plot)
 
-ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 4, height = 4, scale = 1.2)
+ggsave(file = paste(Save.final, "- CxF.eps"), plot = CxF.plot, width = 4, height = 5, scale = 1)
 
 
 Y.col <- 'Grazers'

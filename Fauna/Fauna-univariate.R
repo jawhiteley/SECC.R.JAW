@@ -313,9 +313,9 @@ print(CxP.plot)
 
 
 if (Save.results == TRUE && is.null(Save.final) == FALSE) {
-  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 4, height = 4, scale = 1.2)
-  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 4, scale = 1.2)
-  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 4, scale = 1.2) # width = 4 for slides, 6 for publication
+  ggsave(file = paste(Save.final, "- FxP.eps"), plot = FxP.plot, width = 4, height = 5, scale = 1) # extra height to accommodate long Y-axis titles
+  ggsave(file = paste(Save.final, "- CxP.eps"), plot = CxP.plot, width = 4, height = 5, scale = 1)
+  ggsave(file = paste(Save.final, "- CFP.eps"), plot = CFP.plot, width = 6, height = 5, scale = 1) # width = 4 for slides, 6 for publication
 }
 
 

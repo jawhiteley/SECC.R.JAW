@@ -856,9 +856,9 @@ ARA.part.plot <- ARA.part.plot + scale_y_log10() + scale_x_log10()
 Save.plot.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {
   ggsave(filename=paste(Fig.filename, "-Importance.eps", sep=""), 
-         plot = ARA.importance2, width=4, height=4, scale=1.5)
+         plot = ARA.importance2, width=4, height=5, scale=1.2)
   ggsave(filename=paste(Fig.filename, "-Estimates.eps", sep=""), 
-         plot = ARA.est2, width=4, height=4, scale=1.5)
+         plot = ARA.est2, width=4, height=6, scale=1.2)
   ggsave(filename=paste(Fig.filename, "*Time*Position*Chamber.eps", sep=""), 
          plot = ARA.facet.plot, width=5, height=4, scale=1.5)
   ggsave(filename=sprintf("%sFigure-%s~%s", SaveDir.plots(), Y.col, "Frag.eps"),

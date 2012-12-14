@@ -262,30 +262,7 @@ clean.term.labels <- function(tls, coef.labels = FALSE) {
 
 ## ggplot2: theme settings
 library(ggplot2)
-bar.import <- function(glm.imp) 
-{
-  ##     glm.imp <- importance.glmulti(glmObj)
-  ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
-  list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
-       scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
-       geom_hline(aes(yintercept=0.8), colour="#000000", lty=3),
-       opts(title = "Model-averaged importance of effects",
-            panel.border=theme_blank(), axis.line=theme_segment(),
-            plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")
-            )
-       )
-}
-est.confint <- function(glmObj) 
-{
-  ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
-  ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
-  ggplot(glmObj, aes(x=Term, y=Estimate) ) +
-  geom_hline(yintercept=0, colour="grey") + 
-  list(geom_point(),
-       geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
-       coord_flip()
-       )
-}
+## custom plot functions in lib/jaw.graph.functions
 
 ## MAIN effects
 Y.importance1 <- bar.import(Y.imp1) + jaw.ggplot()
@@ -297,7 +274,7 @@ print(Y.importance1)
 Y.imp2$Term <- clean.term.labels(Y.imp2$Term)            # DO NOT run this more than once ;)
 Y.imp2$Term <- factor(Y.imp2$Term, levels = Y.imp2$Term) # for ggplot order
 
-Y.importance2 <- bar.import(Y.imp2) + jaw.ggplot()       # + opts(axis.text.y=theme_text(size=8, hjust=1))
+Y.importance2 <- bar.import(Y.imp2, imp.line=NULL) + jaw.ggplot()       # + opts(axis.text.y=theme_text(size=8, hjust=1))
 Y.coef2plot <- Y.coef2[Y.coef2$Importance>=0.2, ]        # Plot the "most important"
 Y.coef2plot$Term <- clean.term.labels(Y.coef2plot$Term, coef = TRUE)
 Y.coef2plot$Term <- factor(Y.coef2plot$Term, levels=Y.coef2plot$Term)
