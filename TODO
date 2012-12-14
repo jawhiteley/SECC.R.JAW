@@ -1,4 +1,4 @@
-* Change "Continuous" Fragmentation treatment to "Contiguous"
++ Change "Continuous" Fragmentation treatment to "Contiguous"
   Change "other" Patch Position to "intermediate"
   - re-generate graphs & output :/
   - something changes the way summary() (and coef) labels factor levels in the output: with 'coded' factor levels, rather than the labels
@@ -110,6 +110,7 @@ ________________________________
     + per patch
     - mean & CI
     - SD: variability**
+* investigate borderline Fragmentation effects in moss growth (t3)
 
 
 

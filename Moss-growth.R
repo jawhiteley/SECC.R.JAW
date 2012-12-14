@@ -170,6 +170,8 @@ for (Y.col in Ycols)
   print( effect("Chamber:Position", Y.fits[[Y.col]]) ) # works fine here
 
 }
+## Check ANOVA outputs with backward-model selection ***
+## Borderline Fragmentation effects in ts (summer 2)?
 
 
 ##================================================
