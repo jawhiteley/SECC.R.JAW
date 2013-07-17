@@ -22,6 +22,8 @@ Change fileformat of all data files to unix (or dos) for portability.
 
 ARA cyanobacteria regression models
 ================================
+- Compute Effect Sizes for nested ANOVAs (SS_trt / SS_total)
+
 - Regressions: ARA vs. Cyanobacteria - GLM(M)
   - GLMM: What's the best (linear) model?
   - GAMM: check for non-linearity?
@@ -61,6 +63,12 @@ ARA cyanobacteria regression models
   - reduce by 50%?  25 - 75%?
   - weighting?  Remove from analysis as missing data?
 
+
+Moss Growth
+================================
+
+x ANOVA with unbalanced data (using type II SS after checking for interactions), rather than interpreting type I SS?
+  x I cannot perform a nested ANOVA with unbalanced data in R using the aov() or lm() functions: that's why I use lme() ...
 
 Microarthropods: Fauna
 ================================
