@@ -5,7 +5,7 @@ Chamber:       Ambient, Full Chamber
 Fragmentation: Contiguous, Full Corridors, Pseudo-Corridors, Isolated 
 Patches:       Inner, intermediate, Outer 
 
-Sun Jul 14 19:04:17 2013
+Sat Oct 26 20:51:57 2013
 
 ================================================================
 ================  Patch scale Results  =========================
@@ -13,56 +13,55 @@ Sun Jul 14 19:04:17 2013
 Y.trans ~ Chamber * Frag * Position + Error(Block/Chamber/Frag)
 
 Error: Block
-          Df  Sum Sq Mean Sq F value Pr(>F)
-Residuals  7 1820664  260095               
+          Df  Sum Sq Mean Sq     ES F value Pr(>F)
+Residuals  7 1820664  260095 0.1429               
 
 Error: Block:Chamber
-          Df  Sum Sq Mean Sq F value  Pr(>F)  
-Chamber    1 1767205 1767205  8.0279 0.02528 *
-Residuals  7 1540936  220134                  
+          Df  Sum Sq Mean Sq     ES F value Pr(>F)  
+Chamber    1 1767205 1767205 0.1387   8.028 0.0253 *
+Residuals  7 1540936  220134 0.1210                 
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Block:Chamber:Frag
-             Df  Sum Sq Mean Sq F value  Pr(>F)  
-Frag          3  455218  151739  2.3409 0.08697 .
-Chamber:Frag  3  225192   75064  1.1580 0.33708  
-Residuals    42 2722478   64821                  
+             Df  Sum Sq Mean Sq      ES F value Pr(>F)  
+Frag          3  455218  151739 0.03574   2.341  0.087 .
+Chamber:Frag  3  225192   75064 0.01768   1.158  0.337  
+Residuals    42 2722478   64821 0.21374                 
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Within
-                       Df  Sum Sq Mean Sq F value    Pr(>F)    
-Position                2  374485  187243  8.4393 0.0003856 ***
-Chamber:Position        2 1214568  607284 27.3712 2.097e-10 ***
-Frag:Position           6   65411   10902  0.4914 0.8136535    
-Chamber:Frag:Position   6   66514   11086  0.4996 0.8074798    
-Residuals             112 2484940   22187                      
+                       Df  Sum Sq Mean Sq      ES F value   Pr(>F)    
+Position                2  374485  187243 0.02940   8.439 0.000386 ***
+Chamber:Position        2 1214568  607284 0.09535  27.371  2.1e-10 ***
+Frag:Position           6   65411   10902 0.00514   0.491 0.813653    
+Chamber:Frag:Position   6   66514   11086 0.00522   0.500 0.807480    
+Residuals             112 2484940   22187 0.19509                     
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
-% latex table generated in R 2.12.0 by xtable 1.5-6 package
-% Sun Jul 14 19:04:18 2013
+% latex table generated in R 2.15.1 by xtable 1.7-1 package
+% Sat Oct 26 20:52:00 2013
 \begin{table}[ht]
-\begin{center}
-\begin{tabular}{lrrrrr}
+\centering
+\begin{tabular}{lrrrrrr}
   \hline
- & Df & Sum Sq & Mean Sq & F value & Pr($>$F) \\ 
+ & Df & Sum Sq & Mean Sq & ES & F value & Pr($>$F) \\ 
   \hline
-Residuals & 7 & 1820663.53 & 260094.79 &  &  \\ 
-  Chamber   & 1 & 1767204.59 & 1767204.59 & 8.03 & 0.0253 \\ 
-  Residuals1 & 7 & 1540936.19 & 220133.74 &  &  \\ 
-  Frag         & 3 & 455218.12 & 151739.37 & 2.34 & 0.0870 \\ 
-  Chamber:Frag & 3 & 225191.92 & 75063.97 & 1.16 & 0.3371 \\ 
-  Residuals    & 42 & 2722478.31 & 64820.91 &  &  \\ 
-  Position              & 2 & 374485.03 & 187242.51 & 8.44 & 0.0004 \\ 
-  Chamber:Position      & 2 & 1214567.57 & 607283.78 & 27.37 & 0.0000 \\ 
-  Frag:Position         & 6 & 65410.82 & 10901.80 & 0.49 & 0.8137 \\ 
-  Chamber:Frag:Position & 6 & 66514.25 & 11085.71 & 0.50 & 0.8075 \\ 
-  Residuals             & 112 & 2484939.98 & 22186.96 &  &  \\ 
+Residuals & 7 & 1820663.53 & 260094.79 & 0.14 &  &  \\ 
+  Chamber   & 1 & 1767204.59 & 1767204.59 & 0.14 & 8.03 & 0.0253 \\ 
+  Residuals1 & 7 & 1540936.19 & 220133.74 & 0.12 &  &  \\ 
+  Frag         & 3 & 455218.12 & 151739.37 & 0.04 & 2.34 & 0.0870 \\ 
+  Chamber:Frag & 3 & 225191.92 & 75063.97 & 0.02 & 1.16 & 0.3371 \\ 
+  Residuals    & 42 & 2722478.31 & 64820.91 & 0.21 &  &  \\ 
+  Position              & 2 & 374485.03 & 187242.51 & 0.03 & 8.44 & 0.0004 \\ 
+  Chamber:Position      & 2 & 1214567.57 & 607283.78 & 0.10 & 27.37 & 0.0000 \\ 
+  Frag:Position         & 6 & 65410.82 & 10901.80 & 0.01 & 0.49 & 0.8137 \\ 
+  Chamber:Frag:Position & 6 & 66514.25 & 11085.71 & 0.01 & 0.50 & 0.8075 \\ 
+  Residuals             & 112 & 2484939.98 & 22186.96 & 0.20 &  &  \\ 
    \hline
 \end{tabular}
-\end{center}
 \end{table}
 
 
@@ -130,10 +129,12 @@ Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
 
 
 95% Minimum Significant Ranges (MSR):
-              Chamber                  Frag              Position          Chamber:Frag 
-            153.00214             148.01509              69.23101             242.66220 
-     Chamber:Position         Frag:Position Chamber:Frag:Position 
-            116.28906             186.31904             291.44311 
+              Chamber                  Frag              Position 
+            153.00214             148.01509              69.23101 
+         Chamber:Frag      Chamber:Position         Frag:Position 
+            242.66220             116.28906             186.31904 
+Chamber:Frag:Position 
+            291.44311 
 
 
 ================================================================
@@ -142,23 +143,23 @@ Chamber        Contiguous Full Corridors Pseudo-Corridors Isolated
 Y.trans ~ Chamber * Frag + Error(Block/Chamber)
 
 Error: Block
-          Df Sum Sq Mean Sq F value Pr(>F)
-Residuals  7 599249   85607               
+          Df Sum Sq Mean Sq     ES F value Pr(>F)
+Residuals  7 599249   85607 0.2143               
 
 Error: Block:Chamber
-          Df Sum Sq Mean Sq F value  Pr(>F)  
-Chamber    1 490591  490591  6.3909 0.03935 *
-Residuals  7 537349   76764                  
+          Df Sum Sq Mean Sq     ES F value Pr(>F)  
+Chamber    1 490591  490591 0.1754   6.391 0.0393 *
+Residuals  7 537349   76764 0.1921                 
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 Error: Within
-             Df Sum Sq Mean Sq F value  Pr(>F)  
-Frag          3 162781   54260  2.4506 0.07671 .
-Chamber:Frag  3  76644   25548  1.1539 0.33867  
-Residuals    42 929939   22141                  
+             Df Sum Sq Mean Sq     ES F value Pr(>F)  
+Frag          3 162781   54260 0.0582   2.451 0.0767 .
+Chamber:Frag  3  76644   25548 0.0274   1.154 0.3387  
+Residuals    42 929939   22141 0.3325                 
 ---
-Signif. codes:  0 â€˜***â€™ 0.001 â€˜**â€™ 0.01 â€˜*â€™ 0.05 â€˜.â€™ 0.1 â€˜ â€™ 1 
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1 
 
 
 Tables of means

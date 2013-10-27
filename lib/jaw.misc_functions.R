@@ -197,150 +197,57 @@ gmean <- function (x) exp( mean( log(x) ) ) # Geometric mean == nth root of prod
 
 
 ###=============================================================
-## modified summary.aov to include Effect Sizes for factors (SS_factor / SS_total)
+## modify summary.aov() output to include Effect Sizes for factors (SS_factor / SS_total)
 
-summary.jaw <- function (object, intercept = FALSE, split, expand.split = TRUE, 
-    keep.zero.df = TRUE, ...) 
-{
-    splitInteractions <- function(split, factors, names, asgn, 
-        df.names) {
-        ns <- names(split)
-        for (i in unique(asgn)) {
-            if (i == 0 || names[i + 1L] %in% ns) 
-                next
-            f <- rownames(factors)[factors[, i] > 0]
-            sp <- f %in% ns
-            if (any(sp)) {
-                if (sum(sp) > 1) {
-                  old <- split[f[sp]]
-                  nn <- f[sp]
-                  names(nn) <- nn
-                  marg <- lapply(nn, function(x) df.names[asgn == 
-                    (match(x, names) - 1L)])
-                  term.coefs <- strsplit(df.names[asgn == i], 
-                    ":", fixed = TRUE)
-                  ttc <- sapply(term.coefs, function(x) x[sp])
-                  rownames(ttc) <- nn
-                  splitnames <- apply(expand.grid(lapply(old, 
-                    names)), 1L, function(x) paste(x, collapse = "."))
-                  names(splitnames) <- splitnames
-                  tmp <- sapply(nn, function(i) names(old[[i]])[match(ttc[i, 
-                    ], marg[[i]])])
-                  tmp <- apply(tmp, 1L, function(x) paste(x, 
-                    collapse = "."))
-                  new <- lapply(splitnames, function(x) match(x, 
-                    tmp))
-                  split[[names[i + 1L]]] <- new[sapply(new, function(x) length(x) > 
-                    0L)]
-                }
-                else {
-                  old <- split[[f[sp]]]
-                  marg.coefs <- df.names[asgn == (match(f[sp], 
-                    names) - 1L)]
-                  term.coefs <- strsplit(df.names[asgn == i], 
-                    ":", fixed = TRUE)
-                  ttc <- sapply(term.coefs, function(x) x[sp])
-                  new <- lapply(old, function(x) seq_along(ttc)[ttc %in% 
-                    marg.coefs[x]])
-                  split[[names[i + 1L]]] <- new
-                }
-            }
-        }
-        split
+summary_ES <- function (object)
+{   # takes a `summary` object as the first argument, and returns a modified version with a column added for 'effect size' (ES)
+  if (strsplit(class(object)[1], "\\.")[[1]][1] != "summary")
+  {
+    stop("The first argument to the summary.es() function must be the result of summary(). \nPlease run summary() on your fitted model object, and pass the result to summary.es().")
+  }
+  isaovlist <- if ("summary.aovlist" %in% class(object)) TRUE else FALSE
+  if (isaovlist)
+    object.flat <- unlist(object, recursive = FALSE)
+  else
+    object.flat <- object
+  object.df <- rbind.fill(object.flat)  # make one big df: to calculate SS.total
+  SS.total <- sum(object.df[["Sum Sq"]], na.rm=TRUE)    # First, I need the Total SS, which is the sum of ALL SS, over all levels.
+  Insert.ES <- function (df)
+  { # subroutine to use on anova data frames, wherever they happen to be
+    df$ES <- df[["Sum Sq"]] / SS.total
+    ESi <- which(colnames(df) == "ES")  # in case it's already there
+    colI <- setdiff( 1:ncol(df), ESi )
+    df <- df[, c(colI[1:3], ESi, colI[4:length(colI)]) ]   # re-arrange columns reproducibly
+    df
+  }
+  for (i in 1:length(object))
+  { # summary objects are lists, with an item for each level; loop through and add the "ES" column to each.
+    if (isaovlist)
+    {   ## Actually, `summary.aov` is a list of 1 data.frame; summary.aovlist is a list of `summary.aov` objects ... :/
+      object[[i]][[1]] <- Insert.ES( object[[i]][[1]] )
+    } else {
+      object[[i]] <- Insert.ES( object[[i]] )
     }
-    asgn <- object$assign[object$qr$pivot[1L:object$rank]]
-    uasgn <- unique(asgn)
-    nterms <- length(uasgn)
-    effects <- object$effects
-    if (!is.null(effects)) 
-        effects <- as.matrix(effects)[seq_along(asgn), , drop = FALSE]
-    rdf <- object$df.residual
-    nmeffect <- c("(Intercept)", attr(object$terms, "term.labels"))
-    coef <- as.matrix(object$coefficients)
-    resid <- as.matrix(object$residuals)
-    wt <- object$weights
-    if (!is.null(wt)) 
-        resid <- resid * wt^0.5
-    nresp <- NCOL(resid)
-    ans <- vector("list", nresp)
-    if (nresp > 1) {
-        names(ans) <- character(nresp)
-        for (y in 1L:nresp) {
-            cn <- colnames(resid)[y]
-            if (is.null(cn) || cn == "") 
-                cn <- y
-            names(ans)[y] <- paste(" Response", cn)
-        }
-    }
-    if (!is.null(effects) && !missing(split)) {
-        ns <- names(split)
-        if (!is.null(Terms <- object$terms)) {
-            if (!is.list(split)) 
-                stop("the 'split' argument must be a list")
-            if (!all(ns %in% nmeffect)) 
-                stop("unknown name(s) in the 'split' list")
-        }
-        if (expand.split) {
-            df.names <- names(coef(object))
-            split <- splitInteractions(split, attr(Terms, "factors"), 
-                nmeffect, asgn, df.names)
-            ns <- names(split)
-        }
-    }
-    for (y in 1L:nresp) {
-        if (is.null(effects)) {
-            nterms <- 0
-            df <- ss <- ms <- numeric(0L)
-            nmrows <- character(0L)
-        }
-        else {
-            df <- ss <- numeric(0L)
-            nmrows <- character(0L)
-            for (i in seq(nterms)) {
-                ai <- (asgn == uasgn[i])
-                df <- c(df, sum(ai))
-                ss <- c(ss, sum(effects[ai, y]^2))
-                nmi <- nmeffect[1 + uasgn[i]]
-                nmrows <- c(nmrows, nmi)
-                if (!missing(split) && !is.na(int <- match(nmi, 
-                  ns))) {
-                  df <- c(df, unlist(lapply(split[[int]], length)))
-                  if (is.null(nms <- names(split[[int]]))) 
-                    nms <- paste("C", seq_along(split[[int]]), 
-                      sep = "")
-                  ss <- c(ss, unlist(lapply(split[[int]], function(i, 
-                    e) sum(e[i]^2), effects[ai, y])))
-                  nmrows <- c(nmrows, paste("  ", nmi, ": ", 
-                    nms, sep = ""))
-                }
-            }
-        }
-        if (rdf > 0) {
-            df <- c(df, rdf)
-            ss <- c(ss, sum(resid[, y]^2))
-            nmrows <- c(nmrows, "Residuals")
-        }
-        nt <- length(df)
-        ms <- ifelse(df > 0L, ss/df, NA)
-        x <- list(Df = df, `Sum Sq` = ss, `Mean Sq` = ms)
-        if (rdf > 0) {
-            TT <- ms/ms[nt]
-            TP <- pf(TT, df, rdf, lower.tail = FALSE)
-            TT[nt] <- TP[nt] <- NA
-            x$"F value" <- TT
-            x$"Pr(>F)" <- TP
-        }
-        class(x) <- c("anova", "data.frame")
-        attr(x, "row.names") <- format(nmrows)
-        if (!keep.zero.df) 
-            x <- x[df > 0, ]
-        pm <- pmatch("(Intercept)", row.names(x), 0L)
-        if (!intercept && pm > 0) 
-            x <- x[-pm, ]
-        ans[[y]] <- x
-    }
-    class(ans) <- c("summary.aov", "listof")
-    attr(ans, "na.action") <- object$na.action
-    ans
+  }
+  if (FALSE)
+  { # test code
+    ## using examples from ?aov
+    utils::data(npk, package="MASS")
+    summary.es(summary( aov(yield ~ block + N * P + K, npk) ))
+    npk.aovE <- aov(yield ~  N*P*K + Error(block), npk)
+    summary.es( summary(npk.aovE) )
+  }
+  object
 }
 
+### re-define wrapper functions for summary() methods, to add ES automatically (saves having to rewrite old code! :D)
+### I could just redefine summary(), but I haven't tested summary_ES() with all the different summary classes, so that would not be safe right now.
+summary.aov <- function (object, ...)
+{
+  summary_ES( stats::summary.aov(object, ...) )
+}
+
+summary.aovlist <- function (object, ...)
+{
+  summary_ES( stats::summary.aovlist(object, ...) )
+}

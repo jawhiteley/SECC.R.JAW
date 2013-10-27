@@ -1,7 +1,7 @@
 + Change "Continuous" Fragmentation treatment to "Contiguous"
   Change "other" Patch Position to "intermediate"
   - re-generate graphs & output :/
-  - something changes the way summary() (and coef) labels factor levels in the output: with 'coded' factor levels, rather than the labels
+  + something changes the way summary() (and coef) labels factor levels in the output: with 'coded' factor levels, rather than the labels
     - It seems to work as expected when running regression scripts (e.g. CH1 3_ARA~cb_Models), but NOT if these scripts are run *after* the univariate scripts (e.g. H2O.R)
     - It works as expected during individual analyses, but not when re-running all scripts :(
     - summary() also works differently on model objects *fitted* at different points in the load order:
@@ -12,7 +12,7 @@
         - but unloading packages and allowing them to be reloaded doesn't solve the problem :(
         - is there masking going on?
         - does the order of loading packages matter?
-    - *** The problem is that the nested ANOVA function changes the option() for 'contrasts'
+    + *** The problem is that the nested ANOVA function changes the option() for 'contrasts'
         - options(contrasts=c("contr.sum","contr.poly"))
         - I need to learn better what this actually does :/
         - in the meantime, I'll add a line to `init.R` to re-set these settings to default values.
@@ -23,6 +23,7 @@ Change fileformat of all data files to unix (or dos) for portability.
 ARA cyanobacteria regression models
 ================================
 - Compute Effect Sizes for nested ANOVAs (SS_trt / SS_total)
+    + for aov() ('jaw.misc.functions')
 
 - Regressions: ARA vs. Cyanobacteria - GLM(M)
   - GLMM: What's the best (linear) model?

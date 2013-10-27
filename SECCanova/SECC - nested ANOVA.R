@@ -224,7 +224,8 @@ hist(Ymc.residuals) # plot residuals
 # names(Yp.aov)
 cat("\n\n")
 print(Yp.model)                 # for output
-print( summary(Yp.aov) )        # summary statistics
+print( summary(Yp.aov) )        # summary statistics: 
+## ES column in summary() output added by custom function, and a wrapper for summary.aov() - see 'jaw.misc.functions.R'
 Yp.mtab <- try( model.tables(Yp.aov, "means")   # effect sizes
                , silent = TRUE)        # wrapped in try() statement, because unbalanced designs throw errors :(
 # Interaction Plots
