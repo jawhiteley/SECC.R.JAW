@@ -22,8 +22,7 @@ Change fileformat of all data files to unix (or dos) for portability.
 
 ARA cyanobacteria regression models
 ================================
-- Compute Effect Sizes for nested ANOVAs (SS_trt / SS_total)
-    + for aov() ('jaw.misc.functions')
++ Compute Effect Sizes for nested ANOVAs (SS_trt / SS_total)
 
 - Regressions: ARA vs. Cyanobacteria - GLM(M)
   - GLMM: What's the best (linear) model?
