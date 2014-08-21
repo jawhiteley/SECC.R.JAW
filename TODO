@@ -187,6 +187,9 @@ X allow plotMeans to accept a single value for error, and create appropriate mat
   - inside a for loop to do the same thing on each scale of data...
     - collect results for output?
 - can I turn major operations of Nested ANOVA script into functions?
+- make analysis output to text files more stable?
+    - significant digits
+    - text width
 
 
 Current Changes:

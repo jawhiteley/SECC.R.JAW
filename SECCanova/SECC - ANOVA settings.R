@@ -57,6 +57,8 @@ SECC <- within( SECC, {
 
 }
 
+# options(digits=6)                      # level of detail when printing numbers?
+
 ##================================================
 ## Define Labels
 ##================================================
