@@ -157,11 +157,14 @@ print(CxP.plot)
 
 ## Same plot with internal legend, for Oecologia
 CxP.legend <- CxP.plot + 
-                opts(legend.position = c(0.54, 0.7),  # position legend inside main graph (for export dimensions)
-                     legend.text = theme_text(size = 10),
-                     legend.key.size = unit(1.5, "lines"),
-                     legend.title = theme_blank()
-                )
+                opts(legend.position = c(0.55, 0.72),  # position legend inside main graph (for export dimensions)
+                     legend.title = theme_blank(),
+                     legend.text  = theme_text(size = 10),
+                     legend.key.width  = unit(1.5, "lines"),
+                     legend.key.height = unit(1.0, "lines"),
+                     panel.grid.major = theme_blank(),
+                     panel.grid.minor = theme_blank()
+                     )
                 # opts(legend.position = "none")
 print(CxP.legend)
 

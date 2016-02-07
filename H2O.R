@@ -238,12 +238,15 @@ print(CxP.plot)
 ## Same plot with internal legend, for Oecologia
 CxP.legend <- CxP.plot + 
                 ## geom_text(aes(label = label), size = 4, hjust = 1.5, vjust = 0.5) +
-                facet_grid(facets = .~Time, scales = "free_x", space = "free") +  # adjust panel sizes to show text annotations?
-                opts(legend.position = c(0.25, 0.67),  # position legend inside main graph (for export dimensions)
-                     legend.text = theme_text(size = 10),
-                     legend.key.size = unit(1.5, "lines"),
-                     legend.title = theme_blank()
-                )
+                ## facet_grid(facets = .~Time, scales = "free_x", space = "free") +  # adjust panel sizes to show text annotations?
+                opts(legend.position = c(0.24, 0.69),  # position legend inside main graph (for export dimensions)
+                     legend.title = theme_blank(),
+                     legend.text  = theme_text(size = 10, lineheight=1),
+                     legend.key.width  = unit(1.5, "lines"),
+                     legend.key.height = unit(1.0, "lines"),
+                     panel.grid.major = theme_blank(),
+                     panel.grid.minor = theme_blank()
+                     )
                 # opts(legend.position = "none")
 print(CxP.legend)
 

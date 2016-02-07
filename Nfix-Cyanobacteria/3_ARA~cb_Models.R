@@ -334,14 +334,19 @@ if (file.exists(Save.glmulti)) { ## load saved object to speed things up
 
 ## ggplot2: theme settings - in jaw.graph_functions.R
 bar.import <- function(glm.imp, imp.line=0.8) 
-{   # horizontal bar graph of importance of model terms from glmulti
+{  # horizontal bar graph of importance of model terms from glmulti
+  Terms <- levels(glm.imp$Term)
+  Terms <- gsub("\\s?:\\s?", " %*% ", Terms)
   ##     glm.imp <- importance.glmulti(glmObj)
   ## include passed parameter, so the actual value is included in the ggplot call, not the variable name 
   ## (ggplot functions build structures, they aren't evaluated until a print() call to actually draw the graph) :P
   geom_impline <- eval(substitute( geom_hline(aes(yintercept = imp.line), colour="#000000", lty=3) )) 
   ggplot(glm.imp, aes(x=Term, y=Importance), stat="identity", xlab = "Model Terms") +
   list(geom_bar(colour="#333333", fill="#999999"), coord_flip(), 
-       scale_y_continuous(expand=c(0,0)), scale_x_discrete(expand=c(0.01,0)),
+       scale_y_continuous(expand=c(0, 0)), 
+       eval(substitute( scale_x_discrete(expand=c(0.01, 0),
+                                         breaks=levels(glm.imp$Term), 
+                                         labels=parse(text=Terms)) )),
        geom_impline,
        opts(title = "Model-averaged importance of effects",
             panel.border=theme_blank(), axis.line=theme_segment(),
@@ -351,12 +356,19 @@ bar.import <- function(glm.imp, imp.line=0.8)
 }
 est.confint <- function(glmObj) 
 {
+  Terms <- levels(glmObj$Term)
+  Terms <- gsub("-", "*'-'*", Terms)
+  Terms <- gsub("\\s", "~", Terms)
+  Terms <- gsub("\\s?:\\s?", " %*% ", Terms)
   ##   conf.wd <- glmObj[, "+/- (alpha=0.05)"]
   ##   conf.int <- aes(ymax = Estimate + conf.wd, ymin = Estimate - conf.wd)
   ggplot(glmObj, aes(x=Term, y=Estimate) ) +
   geom_hline(yintercept=0, colour="grey") + 
   list(geom_point(),
        geom_errorbar(aes(ymax = Emax, ymin = Emin), width=0.2),
+       eval(substitute( scale_x_discrete(expand=c(0.01, 0),
+                                         breaks=levels(glmObj$Term), 
+                                         labels=parse(text=Terms)) )),
        coord_flip())
 }
 
@@ -368,6 +380,9 @@ print(ARA.est1)
 
 ## ALL model terms
 ARA.importance2 <- bar.import(ARA.imp2, imp.line = 0.5) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
+## remove grid lines for Oecologia
+ARA.importance2 <- ARA.importance2 + 
+  opts(panel.grid.major=theme_blank(), panel.grid.minor=theme_blank())
 ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ] #  sharp jump from 0.2->0.3->0.99
 ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
 ARA.est2 <- est.confint(ARA.coef2plot) + jaw.ggplot() + 
@@ -842,16 +857,22 @@ ARA.H2O.plot <- ARA.H2O.plot +
 ## Partial Regression graph
 ARA.part.plot <- ggplot(data=as.data.frame(alog0(ARA.cb.df)), aes(x=Cells, y=ARA)) +
                  geom_point(size=3, pch=20) + jaw.ggplot()   +
-                 xlab( bquote(paste( bold("Residual "), .(attr(SECC, "labels")[[X.col]]), 
+                 xlab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[X.col]]), 
                                     " ", (.(attr(SECC, "units")[[X.col]])), "" ))   # different parens in text vs. literal :/
                  ) + 
-                 ylab( bquote(paste( bold("Residual "), .(attr(SECC, "labels")[[Y.col]]), 
+                 ylab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[Y.col]]), 
                                     " ", (.(attr(SECC, "units")[[Y.col]])), "" )) 
                  ) 
 ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#990000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
 ARA.part.plot <- ARA.part.plot + scale_y_log10() + scale_x_log10()
+## Remove grid for Oecologia
+ARA.part.plot <- ARA.part.plot +
+opts(panel.grid.major = theme_blank(),
+     panel.grid.minor = theme_blank()
+)
+
 
 Save.plot.dir <- "./graphs/"               # for output
 if (Save.results == TRUE) {
@@ -871,7 +892,7 @@ if (Save.results == TRUE) {
          plot = ARA.H2O.plot, width=4, height=4, scale=1.5)
   ggsave(filename=paste(Suppl.filename, "*H2O*Block.eps", sep=""), 
          plot = ARA.HB.plot, width=8, height=6, scale=1.5)
-  ggsave(filename=paste(Suppl.filename, "-partial.eps", sep=""), 
+  ggsave(filename=paste(Fig.filename, "-partial.eps", sep=""), 
          plot = ARA.part.plot, width=4, height=4, scale=1.5)
 } else {
   print(ARA.importance2)
