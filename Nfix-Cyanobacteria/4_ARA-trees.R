@@ -3,13 +3,14 @@
 ### Regression trees:
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density (& other explanatory variables)
-### Jonathan Whiteley     R v2.12     2011-12-06
+### Jonathan Whiteley     R v2.12     2016-02-12
 ################################################################
 ## INITIALISE
 ################################################################
 ## Working Directory: see lib/init.R below [\rd in Vim]
 if (FALSE) {  # do not run automatically
-  setwd("./ SECC/")  # relative to my usual default wd in R GUI (MBP).
+  setwd("./ SECC/") # relative to my usual default wd in R GUI (MBP).
+  setwd("..")       # relative to this file.
   getwd()  # Check that we're in the right place
 
   ## Load data, functions, etc.  Process data & setup config. values.  
@@ -273,7 +274,7 @@ RegTreePlot.SECC <- function(Reg.tree, minsplit) {
   require(ggdendro)
   ARA.cp <- min(Reg.tree$cptable[, "CP"])
   Suppl.text  <- paste("cp = ", ARA.cp, ", split min. n = ", minsplit, sep="")
-
+  ## Labels
   Yvals       <- as.numeric(Reg.tree$frame[, "yval"])
   Ylabels     <- paste(" ", formatC(Yvals, digits=1, flag="-", format="f"), sep="")
   Nvals       <- as.numeric(Reg.tree$frame[, "n"])
@@ -281,29 +282,47 @@ RegTreePlot.SECC <- function(Reg.tree, minsplit) {
   Droot       <- as.numeric(Reg.tree$frame[1, "dev"]) 
   Dvals       <- as.numeric(Reg.tree$frame[, "dev"]) / Droot # proportion of total deviance
   Dlabels     <- paste("", formatC(Dvals, digits=2, big.mark=",", flag="-", format="f"), sep="")
+  ##Leaf.labels <- paste("\" \" * bold(", Ylabels, ") * \" (", Dlabels, ")\"", sep="") # plotmath bold() does not work on numbers.
   Leaf.labels <- paste(Ylabels, " (", Dlabels, ")", sep="") #
   Info.labels <- paste(" n=", Nlabels, sep="") # ARA.tree.labels
   Var.labels  <- labels(Reg.tree, pretty=F) # includes full factor levels, decision criteria, etc.
-  ## clean up labels
+  ## variable labels
   Var.labels <- gsub(" months,", ",", Var.labels) #  duplicate month labels
-  Var.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Var.labels)
   Var.labels <- gsub("X.trans", "Cells", Var.labels)
   Var.labels <- gsub("Full Corridors", "Corridors", Var.labels)
   Var.labels <- gsub("Pseudo-Corridors", "Pseudo-Cs", Var.labels)
-  if (FALSE) { # ggplot2 doesn't support math expressions (yet)?
+  if (TRUE) { # ggplot2 doesn't support math expressions (yet)?
     Var.labels <- gsub("H2O(..[0-9.]+)", "H[2]*O\\1%", Var.labels)
-    Var.labels <- gsub("\\de\\+(\\d+)", " %*% 10^{\\1}", Var.labels)
-    Var.labels <- expression(Var.labels)      # expressions
+    Var.labels <- gsub("\\de\\+(\\d+)", "\" %*% 10^{\\1} * \"", Var.labels)
   } else {
+    Var.labels <- gsub("H2O(..[0-9.]+)", "Moisture\\1%", Var.labels)
   }
-  Var.labels  <- paste(" ", Var.labels, sep="")
+  ## clean-up
+  Var.labels  <- sub("([<>= ]+)", "\n \\1 ", Var.labels)
+  Var.labels  <- gsub(",", ", ", Var.labels)
+  Var.labels  <- paste(" ", Var.labels, sep="") # hack for alignment
+  ## convert to expressions to be parse()d
+  ## - no linebreaks in plotmath! I would have to draw each piece separately.
+  Var.labels  <- sub("^ ?(.*)\n ?([<>=]+) ?", "\" \" * bold(\\1) \\2 \"", Var.labels)
+  Var.labels  <- sub(" = ", " == ", Var.labels)
+  Var.labels  <- sub("^ ", "\" ", Var.labels)
+  Var.labels  <- sub("$", "\"", Var.labels)
+  Var.name.labels <- sub(" [<>=].*", "", Var.labels)
+  Var.name.labels[!grepl("Frag", Var.name.labels)] <- "\"\""
+  #Var.val.labels <- sub(" ?\\* ?bold\\(.+)", "", Var.labels)
+  Var.val.labels <- sub(" ?\\* ?bold\\(Frag)", "", Var.labels)
+  Var.val.labels <- sub("\" \"( ?\\* ?==)", "\"\"\\1", Var.val.labels)
+  ## other labels
   Node.labels <- paste(Var.labels, "\n", Dlabels, sep="") # space in front of each line for padding (hack) ; blank line for leaf labels in between
   Full.labels <- paste(" ", Var.labels, "\n ", Ylabels, " (n=", Nlabels, ") ", Dlabels, sep="")
   ARA.tree.labels <- data.frame(label=Full.labels, 
                                 node=Node.labels, leaf=Leaf.labels, info=Info.labels,
-                                var=Var.labels, dev=Dlabels, n=Nlabels, yval=Ylabels)
+                                var=Var.labels, dev=Dlabels, n=Nlabels, yval=Ylabels,
+                                leaf_dev=paste("(", Dlabels, ")", sep=""),
+                                node_var=Var.name.labels,
+                                node_val=Var.val.labels)
   ## x=ARA.plot$x, y=ARA.plot$y, 
-
+  ## Prepare plotting components
   class(Reg.tree) <- c("rpart", "tree") # largely the same, but no methods for "rpart"
   dend_data <- dendro_data(Reg.tree)
   ## dend.labels <- ARA.tree.labels$label[as.numeric(row.names(dend_data$labels)) +1]
@@ -327,32 +346,49 @@ RegTreePlot.SECC <- function(Reg.tree, minsplit) {
   Suppl.label <- rbind(Suppl.label, 
                        data.frame(label=" ", x=1, y=Y.lim[1], stringsAsFactors=FALSE)
   ) # add some space 'below' bottom leaves for labels.
-
+  ## Plot it
   RegTree.plot <- ggplot(segment(dend_data)) +
   geom_segment(aes(x=x, y=y, xend=xend, yend=yend), size=1, color="grey50") +
   scale_size_identity() + scale_color_identity()
   RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
-                                             aes(label=var, x=xend, y=yend),
-                                             hjust=0, vjust=-0.7, size=3.1, colour="grey20") + 
+                                           aes(label=node_var, x=(xend + 0.35), y=yend),
+                                           hjust=0, vjust=0.5, size=3.5, 
+                                           colour="#330000", parse=TRUE) + 
                                    scale_size_identity() + scale_colour_identity()
   RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
-                                             aes(label=info, x=xend, y=yend),
-                                             hjust=0, vjust=1.75, size=3.1, colour="grey20") + 
+                                           aes(label=node_val, x=xend, y=yend),
+                                           hjust=0, vjust=-0.2, size=3.5, 
+                                           colour="#330000", parse=TRUE) +
                                    scale_size_identity() + scale_colour_identity()
   RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
-                                             aes(label=leaf, x=x, y=y),
-                                             hjust=0, vjust=0.5, size=3) + 
+                                           aes(label=info, x=xend, y=yend),
+                                           hjust=0, vjust=1.5, size=3.1, 
+                                           colour="grey20") + 
+                                   scale_size_identity() + scale_colour_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                           aes(label=yval, x=x, y=y),
+                                           hjust=0, vjust=0.5, size=3) + 
                                    scale_size_identity()
+  RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                           aes(label=leaf_dev, x=x, y=y),
+                                           hjust=-1.2, vjust=0.5, size=3,
+                                           colour="grey40") + 
+                                   scale_size_identity() + scale_colour_identity()  
+  if (FALSE) {
+    RegTree.plot <- RegTree.plot + geom_text(data=branch_labels, 
+                                           aes(label=leaf, x=x, y=y),
+                                           hjust=0, vjust=0.5, size=3) + 
+                                   scale_size_identity()
+  }
   ## RegTree.plot <- RegTree.plot + geom_text(data=leaf_labels, aes(label=label, x=x, y=y), 
   ##                                            hjust=-0.1, size=4) + scale_size_identity()
   RegTree.plot <- RegTree.plot + geom_text(data=Suppl.label, aes(label=label, x=x, y=y), 
                                              hjust=0, size=4) + scale_size_identity()
   RegTree.plot <- RegTree.plot + coord_flip() + scale_y_reverse() + 
   theme_dendro() + opts(panel.border = theme_blank())
-  ## expand=c(0.2, 0) within the sacle_y_reverse() adds space to *both* sides, to make room for long labels.  Not ideal, but it works
+  ## expand=c(0.2, 0) within the scale_y_reverse() adds space to *both* sides, to make room for long labels.  Not ideal, but it works
   ## expand=c(0.2, 0)
-
-  ## these ggplot objects are not entirely stand-alone if they depend on the dendro objects!!
+  ## These ggplot objects are not entirely stand-alone if they depend on the dendro objects!!
   ## dendro_data()
   RegTree.plot                          # return
 }
@@ -365,7 +401,7 @@ ARA.tree3.plot <- RegTreePlot.SECC(ARA.treeP3, minsplit) + opts(title = levels(S
 
 if (Save.results == TRUE) {
   FileName = paste(Save.plot.dir, gsub("Results", "Figure", Save.filename), ".eps", sep="")
-  ggsave(filename = FileName, plot = ARA.tree.plot, width=6, height=6, scale=1.5)
+  ggsave(filename = FileName, plot = ARA.tree.plot, width=6, height=6, scale=1.4)
 } else {
   print(ARA.tree.plot)
   print(ARA.tree1.plot)

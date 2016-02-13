@@ -3,7 +3,7 @@
 ### Data Exploration
 ### Acetylene Reduction Assay (ARA: N-fixation)
 ### vs. cyanobacteria density
-### Jonathan Whiteley     R v2.12     2012-10-28
+### Jonathan Whiteley     R v2.12     2016-02-12
 ################################################################
 ## INITIALISE
 ################################################################
@@ -125,6 +125,8 @@ if (FALSE) {
 library(mgcv)                          # gam()
 Cells.scale <- 1000
 Cells.axlab  <- SECC.axislab(SECC, "Cells", unit=Cells.scale, big.mark=",")
+CB.axlab     <- parse(text=sub("Cyanobacteria", "Total Cyanobacteria", Cells.axlab))
+Genus.axlab  <- parse(text=sub("Cyanobacteria", "Genus", Cells.axlab))
 Cells.units  <- bquote("" %*%.(format(Cells.scale, big.mark=",")) * 
                        " " * .(attr(SECC, "units" )[["Cells"]]) ) 
 HCells.axlab <- SECC.axislab(SECC, "Hcells", unit=Cells.scale, big.mark=",")
@@ -164,7 +166,7 @@ Spp.lines <- list(stat_smooth(aes(y=Stigonema, linetype="Stigonema"),
                               method="gam", se=FALSE)
                   )
 
-Cyano_scaleName <- "Genus"
+Cyano_scaleName <- "Cyanobacteria\ngenus"
 if (F) {                               # using melted df & group variable?
   Cells.df <- melt(SECCa, id=c("SampleID", "Cells"), 
                    measure=c("Hcells", "Stigonema", "Stigonema.H", "Nostoc", "Nostoc.H", 
@@ -209,7 +211,7 @@ if (F) {                               # using melted df & group variable?
 Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
                 geom_abline(intercept=0, slope=1, aes(group="Cells"), 
                             colour="#333333", size=1) +
-                xlab(Cells.axlab) + ylab(Cells.units) +
+                xlab(CB.axlab) + ylab(Genus.axlab) +
                 scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                 scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
                 scale_colour_manual(name=Cyano_scaleName,
@@ -234,8 +236,9 @@ Cells.plot <- ggplot(data=SECCa, aes(x=Cells, y=Cells)) +
                                        labels=Spp.plotMap[, "Label"]) +
                 coord_equal(ratio = 1) 
 ## log-transforming axes doesn't agree with gam - too many 0s?
-Cells.logplot <- Cells.plot + xlab(SECC.axislab(SECC, "Cells")) + ylab(SECC.axislab(SECC, "Cells")) +
-                    scale_x_log10() + scale_y_log10() + Spp.points + jaw.ggplot() + Square.plot
+Cells.logplot <- Cells.plot + xlab(parse(text=sub("Cyanobacteria", "Total Cyanobacteria", SECC.axislab(SECC, "Cells")))) + 
+    ylab(parse(text=sub("Cyanobacteria", "Genus", SECC.axislab(SECC, "Cells")))) +
+    scale_x_log10() + scale_y_log10() + Spp.points + jaw.ggplot() + Square.plot
 Cells.plot <- Cells.plot + Spp.lines + Spp.points + jaw.ggplot() + Square.plot 
 ## jaw.ggplot() won't work in large call above
 
@@ -292,7 +295,7 @@ geom_point(aes(y=Stigonema.H, colour="Stigonema",
                                   shape="Nostoc", size="Nostoc") ) +
                    geom_point(aes(y=Hcells, colour="Hcells", 
                                   shape="Hcells", size="Hcells") ) +
-                   xlab(Cells.axlab) + ylab(HCells.axlab) +
+                   xlab(CB.axlab) + ylab(HCells.axlab) +
                    scale_x_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) + 
                    scale_y_continuous(expand=c(0.01,0), formatter="format_scale", num.scale=Cells.scale) +
                    scale_shape_manual(name=Cyano_scaleName,
