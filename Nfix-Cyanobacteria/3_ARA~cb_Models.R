@@ -348,9 +348,12 @@ bar.import <- function(glm.imp, imp.line=0.8)
                                          breaks=levels(glm.imp$Term), 
                                          labels=parse(text=Terms)) )),
        geom_impline,
+       labs(x=NULL, y="Importance"),
        opts(title = "Model-averaged importance of effects",
-            panel.border=theme_blank(), axis.line=theme_segment(),
-            plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")
+            plot.title = theme_text(size = 16, lineheight = 1.2, face = "bold")#,
+            ##panel.border=theme_blank(), axis.line=theme_segment(),
+            ##axis.text.x=theme_text(size=10),
+            ##axis.title.y=theme_text(hjust=0.6)
             )
        )
 }
@@ -379,10 +382,12 @@ print(ARA.importance1)
 print(ARA.est1)
 
 ## ALL model terms
-ARA.importance2 <- bar.import(ARA.imp2, imp.line = 0.5) + jaw.ggplot() # + opts(axis.text.y=theme_text(size=8, hjust=1))
+ARA.importance2 <- bar.import(ARA.imp2, imp.line = 0.5) + jaw.ggplot() 
 ## remove grid lines for Oecologia
 ARA.importance2 <- ARA.importance2 + 
-  opts(panel.grid.major=theme_blank(), panel.grid.minor=theme_blank())
+  opts(panel.grid.major=theme_blank(), panel.grid.minor=theme_blank(),
+       axis.text.y=theme_text(size=8, hjust=1),
+       axis.title.x=theme_text(size=12, hjust=0.75))
 ARA.coef2plot <- ARA.coef2[ARA.coef2$Importance>=0.5, ] #  sharp jump from 0.2->0.3->0.99
 ARA.coef2plot$Term <- factor(ARA.coef2plot$Term, levels=unique(ARA.coef2plot$Term))
 ARA.est2 <- est.confint(ARA.coef2plot) + jaw.ggplot() + 
@@ -855,18 +860,22 @@ ARA.H2O.plot <- ARA.H2O.plot +
                 facet_wrap(~ H2Obin9)
 
 ## Partial Regression graph
+##library(scales)
 ARA.part.plot <- ggplot(data=as.data.frame(alog0(ARA.cb.df)), aes(x=Cells, y=ARA)) +
-                 geom_point(size=3, pch=20) + jaw.ggplot()   +
-                 xlab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[X.col]]), 
-                                    " ", (.(attr(SECC, "units")[[X.col]])), "" ))   # different parens in text vs. literal :/
+                 geom_point(size=3, pch=20, colour="black", fill="#999999") + jaw.ggplot()   +
+                 ##geom_point(size=2, pch=21, colour="black", fill="#999999") + jaw.ggplot()   +
+                 xlab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[X.col]]) ))#, 
+                                    ##" ", (.(attr(SECC, "units")[[X.col]])), "" ))   # different parens in text vs. literal :/
                  ) + 
-                 ylab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[Y.col]]), 
-                                    " ", (.(attr(SECC, "units")[[Y.col]])), "" )) 
+                 ylab( bquote(paste( italic("Residual "), .(attr(SECC, "labels")[[Y.col]]) ))#, 
+                                    ##" ", (.(attr(SECC, "units")[[Y.col]])), "" )) # residuals of a log-linear regression = ratio to geometric mean, not original units?
                  ) 
 ARA.part.plot <- ARA.part.plot + geom_line(aes(y=fit), size=1, lty=1, colour="#990000") +
                  geom_line(aes(y=lower), size=0.5, lty=2, colour="#990000") + 
                  geom_line(aes(y=upper), size=0.5, lty=2, colour="#990000")
-ARA.part.plot <- ARA.part.plot + scale_y_log10() + scale_x_log10()
+ARA.part.plot <- ARA.part.plot + scale_y_log10(limits=10^c(-2, 1.5)) + scale_x_log10()
+## I wanted to format the numbers in the exponent, but could not figure out how. mathformat() (library(scales)) keeps returning an error.
+##ARA.part.plot <- ARA.part.plot + scale_y_log10(limits=10^c(-2, 1.5), breaks=10^seq(-2, 2, by=0.5), labels=parse(text=paste("10^", format(seq(-2, 2, by=0.5), digits=2), sep="")) ) + scale_x_log10()
 ## Remove grid for Oecologia
 ARA.part.plot <- ARA.part.plot +
 opts(panel.grid.major = theme_blank(),
